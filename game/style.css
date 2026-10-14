@@ -619,3 +619,4 @@ body:has(#screen.on) .powup,body:has(.modal) .powup,body:has(.rwpop) .powup,body
 .bfr img{width:36px;height:36px;object-fit:contain}.bfr .f{flex:1}.bfr b{display:block;font-size:13px}.bfr small{font-size:10.5px;color:#cfc0a8}.bfr.on small{color:#ffd27a}.bfn{margin-top:8px;font-size:10px;color:#aaa;text-align:center}
 #bufBtn{position:absolute;left:74px;top:172px;z-index:12;margin:0;padding:2px 7px 2px 4px!important;border-radius:10px;background:linear-gradient(#3a3040ee,#1a1420ee);border:1px solid #ffd25a;color:#ffe9b8}
 body.bron #bufBtn,body.wbon #bufBtn{display:none}
+#qhBtn{margin-top:6px;background:linear-gradient(#5ab0ff,#1a6ad0)!important;color:#fff!important;border-color:#0a3a7a!important}#qhBtn.off{filter:grayscale(1) brightness(.7)}#qhBtn small{font-size:10px;opacity:.85}

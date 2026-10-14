@@ -838,3 +838,12 @@ const add=()=>{const d=document.getElementById('battle');if(!d||document.getElem
 setInterval(()=>{try{add();const b=document.getElementById('bufBtn');if(!b)return;const on=BF.filter(x=>left(x.k));b.classList.toggle('on',on.length>0);b.querySelector('i').textContent=on.length?mm(Math.min(...on.map(x=>left(x.k)))):'버프';
  const s=C.S(),ready=BF.some(x=>(st().n[x.k]||0)<MAXN&&!left(x.k));b.classList.toggle('rd',ready)}catch(_){}},500);
 })();
+;(()=>{// v39 빠른 사냥: instantly collect 2h of hunting rewards from the idle popup; 1 free + 2 for 50 gems per day
+const N=3,COST=[0,50,50],SEC=7200;
+const st=()=>{const s=C.S(),d=new Date().toDateString();s.qh=s.qh||{};if(s.qh.day!==d){s.qh.day=d;s.qh.n=0}return s.qh};
+G.quickHunt=()=>{const q=st(),s=C.S();if(q.n>=N)return 'max';const c=COST[q.n];if(s.gems<c)return 'gem';s.gems-=c;const r=C.offlineCalc(SEC);r.o=Math.floor(r.o);C.addGold(r.g);C.gainExp(r.x);s.orbs+=r.o;const stn=Math.floor(SEC/900);s.stone=(s.stone||0)+stn;r.st=stn;q.n++;G.qhN=(G.qhN||0)+1;try{G.save()}catch(_){}return r};
+const lbl=()=>{const q=st();return q.n>=N?'빠른 사냥 (오늘 소진)':`⚡ 빠른 사냥 2시간 · ${COST[q.n]?'<img class=ci src=assets/it2_gem.png> '+COST[q.n]:'무료'} <small>(${N-q.n}/${N})</small>`};
+setInterval(()=>{try{const b=document.getElementById('idleClaim');if(!b||document.getElementById('qhBtn'))return;const m=b.closest('.modal');const q=document.createElement('span');q.id='qhBtn';q.className='pill wide '+(st().n>=N?'off':'blue');q.innerHTML=lbl();b.after(q);
+ q.onclick=e=>{e.stopPropagation();const r=G.quickHunt();if(r==='max')return toast('오늘 빠른 사냥을 모두 사용했습니다');if(r==='gem')return toast('다이아가 부족합니다');m&&m.remove();try{idleBurst(r)}catch(_){}
+  G.rewardPop([['it2_gold.png',r.g,'골드'],['it2_xp.png',r.x,'경험치'],['it2_exp.png',r.o,'마정구'],['it2_stone.png',r.st,'강화석']].filter(x=>x[1]>0),'빠른 사냥 · 2시간');try{updateHud()}catch(_){}}}catch(_){}},250);
+})();
