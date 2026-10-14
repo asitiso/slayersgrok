@@ -1,0 +1,15 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s103');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await ev(()=>{const s=G.S();s.maxSi=5;s.stars={0:3,1:3,2:2,3:3,4:1};G.C.selectStage(5);s.wave=G.C.BAL?G.C.BAL.waves:3;const o=G.C.ATK;G.C.ATK=()=>o()*40});await sl(1500);
+await ev(()=>{const s=G.S();s.wave=99;G.C.startBoss()});
+await until(()=>!!document.querySelector('.vic.win:not(.out) .vst'),30000);await sl(900);await sh('600-victory-stars');
+console.log('last',JSON.stringify(await ev(()=>G.lastStar)),'ch',await ev(()=>G.chStars(0)));
+await sl(3000);await ev(()=>{document.querySelectorAll('.vic').forEach(x=>x.remove());menuGo('map')});await sl(1500);await sh('601-map-stars');
+await ev(()=>document.querySelector('#schB').click());await sl(700);await sh('602-star-chest');
+const g0=await ev(()=>G.S().gems);await ev(()=>document.querySelector('[data-sc="0"]').click());await sl(800);
+console.log('gems',g0,'->',await ev(()=>G.S().gems),'again',await ev(()=>G.starClaim(0,0)));await sh('603-star-chest-claimed');
+stop();console.log('ERR',errs);await b.close()})();
