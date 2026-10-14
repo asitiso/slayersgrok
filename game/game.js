@@ -762,7 +762,7 @@ const ods=dunScreen;dunScreen=function(el,s){ods.apply(this,arguments);const d=C
 ;(()=>{// v30 boss enrage at 50% HP (광폭화)
 G.enrN=0;const EN=[];
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{C.alive().forEach(e=>{if(!e.boss||e.wb||e.enr||e.hp>e.max*.5)return;e.enr=1;e.spd*=1.3;e.atk*=1.15;G.enrN++;EN.push({e,t:0});R.hs=Math.max(R.hs||0,.12);
-  if(!G.screen)setTimeout(()=>{const d=document.createElement('div');d.className='enrb';d.innerHTML='<b>광폭화!</b><small>공격 속도 상승</small>';document.getElementById('battle').appendChild(d);setTimeout(()=>d.remove(),1400)},e.grog>0?1100:0)})}catch(_){}return r};
+  if(!G.screen){let w=0;const go=()=>{if((e.grog>0||R.slowT>0||document.querySelector('.grogt,.cutin'))&&w++<30)return setTimeout(go,200);const d=document.createElement('div');d.className='enrb';d.innerHTML='<b>광폭화!</b><small>공격 속도 상승</small>';document.getElementById('battle').appendChild(d);setTimeout(()=>d.remove(),1400)};go()}})}catch(_){}return r};
 const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=document.querySelector('#battle canvas');if(!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,ES=R._ES();ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
  C.alive().forEach(e=>{if(!e.enr)return;const q=ES.get(e);if(!q)return;const t=performance.now()/1000,h=150*(e.sc||1);ctx.globalAlpha=.32+.12*Math.sin(t*6);const g=ctx.createRadialGradient(q.x,q.y-h*.45,10,q.x,q.y-h*.45,h*.75);g.addColorStop(0,'rgba(255,60,30,.9)');g.addColorStop(1,'rgba(255,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(q.x,q.y-h*.45,h*.6,h*.75,0,0,6.283);ctx.fill();
   if(Math.random()<.35){ctx.globalAlpha=.7;ctx.fillStyle='#ff7a3a';ctx.beginPath();ctx.arc(q.x+(Math.random()-.5)*h*.8,q.y-Math.random()*h,2+Math.random()*2,0,6.283);ctx.fill()}});
@@ -774,4 +774,11 @@ G.dngN=0;let on=0;
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const b=document.getElementById('battle');if(!b)return r;let v=document.getElementById('dangerV');if(!v){v=document.createElement('div');v.id='dangerV';b.appendChild(v)}
   const A=C.B.allies||[];let low=0;const pp=document.querySelectorAll('#partycol .pp');A.forEach((a,i)=>{const l=a.hp>0&&a.hp<a.max*.3;if(l)low++;if(pp[i])pp[i].classList.toggle('dng',l)});
   const n=low>0&&!G.screen;if(n&&!on)G.dngN++;on=n;v.classList.toggle('on',n)}catch(_){}return r};
+})();
+;(()=>{// v32 loot fly: coins pop from kills and fly into the gold counter
+G.lootN=0;let live=0;
+const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{const q=R._ES().get(e),b=document.getElementById('battle'),tg=document.getElementById('cGold');if(q&&b&&tg&&!G.screen&&live<36){const br=b.getBoundingClientRect(),tr=tg.getBoundingClientRect(),n=e.boss?10:e.el?5:2;
+  for(let i=0;i<n;i++){const d=document.createElement('img');d.src='assets/it2_gold.png';d.className='lootc';const x=q.x+(Math.random()-.5)*30,y=q.y-30;d.style.left=x+'px';d.style.top=y+'px';d.style.setProperty('--dx',((Math.random()-.5)*(e.boss?160:70))+'px');d.style.setProperty('--dy',(-30-Math.random()*40)+'px');b.appendChild(d);live++;G.lootN++;
+   setTimeout(()=>{d.classList.add('fly');d.style.transform=`translate(${tr.left+tr.width/2-br.left-x}px,${tr.top+tr.height/2-br.top-y}px) scale(.55)`},520+i*45);
+   setTimeout(()=>{d.remove();live--;tg.classList.remove('gbump');void tg.offsetWidth;tg.classList.add('gbump')},1150+i*45)}}}catch(_){}return ok(e,...a)};
 })();
