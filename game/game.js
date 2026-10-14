@@ -856,3 +856,8 @@ setInterval(()=>{try{const el=document.getElementById('stName');if(!el)return;le
 ;(()=>{// v41 guard: never hit/kill an enemy that is already dead or no longer on the field (stale refs from deferred hits/DoTs could re-trigger kill → repeated bossClear)
 const oh=C.hitEnemy;C.hitEnemy=(e,...a)=>{if(!e||!(e.hp>0)||!C.B.enemies.includes(e)){G.staleHitN=(G.staleHitN||0)+1;return}return oh(e,...a)};
 })();
+;(()=>{// v41 stage first-clear reward: 다이아 30 (chapter boss 100) shown on VICTORY
+const fc=()=>{const s=C.S();if(s.fcl==null)s.fcl=s.maxSi;return s};fc();
+const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{const s=fc();if(!w||C.B.br||C.B.rb||s.maxSi<=s.fcl)return r;let g=0;for(let i=s.fcl;i<s.maxSi;i++)g+=i%7==6?100:30;s.fcl=s.maxSi;s.gems+=g;G.fcN=(G.fcN||0)+1;G.fcG=g;try{updateHud()}catch(_){}
+ let k=0;const put=()=>{const d=[...document.querySelectorAll('.vic.win:not(.out)')].pop(),vr=d&&d.querySelector('.vr');if(vr&&!vr.querySelector('.fcl')){vr.insertAdjacentHTML('beforeend',`<span class=fcl><img class=ci src=assets/it2_gem.png> +${g}<small>최초 클리어</small></span>`);G.fcShown=performance.now();return}if(k++<40)setTimeout(put,100)};put()}catch(_){}return r};
+})();
