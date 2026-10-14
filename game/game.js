@@ -849,7 +849,10 @@ setInterval(()=>{try{const b=document.getElementById('idleClaim');if(!b||documen
 })();
 ;(()=>{// v40 stage 권장 전투력: estimated power to clear this stage's boss within ~60% of the timer; shown by the stage name (green/red)
 const BAL=D.BAL;
-C.stageReq=i=>{const pl=D.BOSSPLAN[Math.floor(i/7)],b=pl&&D.BOSSES[pl[i%7==6?1:0]];if(!b)return 0;const h=C.mobHP(i)*BAL.bossHP*(i<7?.55+.45*i/7:1)*(b.s||1)*(i%7==6?BAL.chBoss:1);const dps=Math.max(1e-9,C.estDPS());return Math.ceil(C.POW()*h/(dps*BAL.bossTime*.6)/10)*10};
+C.stageReq=i=>{const pl=D.BOSSPLAN[Math.floor(i/7)],b=pl&&D.BOSSES[pl[i%7==6?1:0]];if(!b)return 0;const h=C.mobHP(i)*BAL.bossHP*(i<7?.55+.45*i/7:1)*(b.s||1)*(i%7==6?BAL.chBoss:1);const dps=Math.max(1e-9,C.estDPS());return Math.ceil(C.POW()*h/(dps*BAL.bossTime*.6)*(1+.075*i)/10)*10};
 setInterval(()=>{try{const el=document.getElementById('stName');if(!el)return;let t=document.getElementById('stReq');const sb=document.getElementById('battle');if(!t&&sb){t=document.createElement('span');t.id='stReq';sb.appendChild(t)}if(!t)return;
  if(C.B.br||C.B.rb||C.B.wb){t.style.display='none';return}t.style.display='';const s=C.S(),rq=C.stageReq(s.si),pw=C.POW(),ok=pw>=rq;t.className=ok?'ok':'lo';t.innerHTML=`권장 <span class=rv>⚔${fmt(rq)}</span>`;G._stReq=rq}catch(_){}},500);
+})();
+;(()=>{// v41 guard: never hit/kill an enemy that is already dead or no longer on the field (stale refs from deferred hits/DoTs could re-trigger kill → repeated bossClear)
+const oh=C.hitEnemy;C.hitEnemy=(e,...a)=>{if(!e||!(e.hp>0)||!C.B.enemies.includes(e)){G.staleHitN=(G.staleHitN||0)+1;return}return oh(e,...a)};
 })();
