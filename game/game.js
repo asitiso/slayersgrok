@@ -790,7 +790,7 @@ const busy=()=>R.slowT>0||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');let fired=0;
  B.allies.forEach((a,i)=>{const el=pp[i];if(el&&!el.querySelector('.ugb'))el.insertAdjacentHTML('beforeend','<div class=ugb><i></i></div>');
   if(!a.c||a.hp<=0||!(D.CSKI||{})[a.k])return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){el.querySelector('.ugb i').style.width=(a._ug*100)+'%';el.classList.toggle('ugf',a._ug>=1)}
-  if(fired||a._ug<1||G.screen||!C.alive().some(e=>R._ES().get(e))||(G._ugPick&&G._ugPick!=a.k)||busy())return;G._ugPick=null;const q=R._AS().get(a.k);if(!q)return;R.ccCd=0;ocs(a.k,q,true);a._ug=0;G.ultN++;fired=1;G.lastUlt=D.CSKI[a.k][1];
+  if(fired||a._ug<1||G.screen||(!G.S().autoSpell&&G._ugPick!=a.k)||!C.alive().some(e=>R._ES().get(e))||(G._ugPick&&G._ugPick!=a.k)||busy())return;G._ugPick=null;const q=R._AS().get(a.k);if(!q)return;R.ccCd=0;ocs(a.k,q,true);a._ug=0;G.ultN++;G._ultT=performance.now();fired=1;G.lastUlt=D.CSKI[a.k][1];
   setTimeout(()=>{try{if(a.c.healer){C.aliveAllies().forEach(x=>{const h=x.max*.25;x.hp=Math.min(x.max,x.hp+h);C.ev.heal&&C.ev.heal(x,h)})}
    else{const T=C.alive().slice().sort((p,q)=>(q.boss?1:0)-(p.boss?1:0)).slice(0,a.c.aoe?6:3);T.forEach(t=>C.hitEnemy(t,C.ATK()*C.compMul(a.k)*4,true,{sp:'ult_'+a.k}))}
    R.hs=Math.max(R.hs||0,.08);const q2=R._AS().get(a.k);if(q2)FX.push({x:q2.x,y:q2.y,t:0,h:a.c.healer})}catch(_){}},450)})}catch(_){}return r};
@@ -799,4 +799,7 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||!FX.length)return;const c=
 })();
 ;(()=>{// v34 tap a glowing portrait to fire that companion's ultimate now (manual), else it auto-fires
 document.addEventListener('click',ev=>{const p=ev.target.closest&&ev.target.closest('#partycol .pp.ugf');if(!p)return;const i=[...p.parentNode.children].indexOf(p),a=C.B.allies[i];if(!a||a._ug<1)return;ev.stopPropagation();G._ugPick=a.k;p.classList.add('ugtap');setTimeout(()=>p.classList.remove('ugtap'),300)},true);
+})();
+;(()=>{// v35 tap guard: a portrait tap within 0.6s after an ult fires does not open 파티 편성
+document.addEventListener('click',ev=>{const p=ev.target.closest&&ev.target.closest('#partycol');if(p&&performance.now()-(G._ultT||0)<600){ev.stopPropagation();ev.preventDefault();G.tapGuardN=(G.tapGuardN||0)+1}},true);
 })();
