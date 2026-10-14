@@ -587,3 +587,14 @@ body:has(#screen.on) .powup,body:has(.modal) .powup,body:has(.rwpop) .powup,body
 .lootc.fly{animation:none;transition:transform .6s cubic-bezier(.5,0,.8,.4),opacity .6s;opacity:.85}
 @keyframes lootP{0%{transform:translate(0,0) scale(.3)}45%{transform:translate(calc(var(--dx)*.6),var(--dy)) scale(1.1)}100%{transform:translate(var(--dx),8px) scale(1)}}
 .gbump{animation:gbmp .25s}@keyframes gbmp{50%{transform:scale(1.18);filter:brightness(1.5)}}
+.lootc{animation:lootP .5s cubic-bezier(.2,.8,.4,1) both,lootS .45s linear infinite}
+.lootc.fly{animation:lootS .3s linear infinite}
+@keyframes lootS{0%,100%{scale:1 1}50%{scale:.25 1}}
+.lootc{width:18px;height:18px;margin:-9px 0 0 -9px;animation:lootP .5s cubic-bezier(.2,.8,.4,1) both,lootS .45s linear infinite}
+.lootc.fly{animation:lootS .3s linear infinite}
+@keyframes lootS{0%,100%{scale:1 1}50%{scale:.2 1}}
+.pp .ugb{height:3px;background:#111;border:1px solid #000;border-top:0}.pp .ugb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3aa8ff,#9ae4ff)}
+.pp.ugf img{border-color:#7ad8ff;box-shadow:0 0 8px 2px #4ab8ff}
+.ultc{position:absolute;left:64px;z-index:9;pointer-events:none;padding:3px 12px 3px 10px;background:linear-gradient(90deg,#0a2a4aee,#0a2a4a00);border-left:3px solid #7ad8ff;animation:ultc 1.3s both;white-space:nowrap}
+.ultc b{display:block;font:italic 900 17px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #062040,0 0 8px #4ab8ff}.ultc small{color:#bfe8ff;font-size:10px;font-weight:800}
+@keyframes ultc{0%{opacity:0;transform:translateX(-20px)}12%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateX(8px)}}
