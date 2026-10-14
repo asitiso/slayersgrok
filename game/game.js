@@ -842,8 +842,14 @@ setInterval(()=>{try{add();const b=document.getElementById('bufBtn');if(!b)retur
 const N=3,COST=[0,50,50],SEC=7200;
 const st=()=>{const s=C.S(),d=new Date().toDateString();s.qh=s.qh||{};if(s.qh.day!==d){s.qh.day=d;s.qh.n=0}return s.qh};
 G.quickHunt=()=>{const q=st(),s=C.S();if(q.n>=N)return 'max';const c=COST[q.n];if(s.gems<c)return 'gem';s.gems-=c;const r=C.offlineCalc(SEC);r.o=Math.floor(r.o);C.addGold(r.g);C.gainExp(r.x);s.orbs+=r.o;const stn=Math.floor(SEC/900);s.stone=(s.stone||0)+stn;r.st=stn;q.n++;G.qhN=(G.qhN||0)+1;try{G.save()}catch(_){}return r};
-const lbl=()=>{const q=st();return q.n>=N?'빠른 사냥 (오늘 소진)':`⚡ 빠른 사냥 2시간 · ${COST[q.n]?'<img class=ci src=assets/it2_gem.png> '+COST[q.n]:'무료'} <small>(${N-q.n}/${N})</small>`};
+const lbl=()=>{const q=st();return q.n>=N?'빠른 사냥 (오늘 소진)':`<span class=qhl>⚡ 빠른 사냥 2시간 <em>${COST[q.n]?'<img src=assets/it2_gem.png>'+COST[q.n]:'무료'}</em> <small>${N-q.n}/${N}</small></span>`};
 setInterval(()=>{try{const b=document.getElementById('idleClaim');if(!b||document.getElementById('qhBtn'))return;const m=b.closest('.modal');const q=document.createElement('span');q.id='qhBtn';q.className='pill wide '+(st().n>=N?'off':'blue');q.innerHTML=lbl();b.after(q);
  q.onclick=e=>{e.stopPropagation();const r=G.quickHunt();if(r==='max')return toast('오늘 빠른 사냥을 모두 사용했습니다');if(r==='gem')return toast('다이아가 부족합니다');m&&m.remove();try{idleBurst(r)}catch(_){}
   G.rewardPop([['it2_gold.png',r.g,'골드'],['it2_xp.png',r.x,'경험치'],['it2_exp.png',r.o,'마정구'],['it2_stone.png',r.st,'강화석']].filter(x=>x[1]>0),'빠른 사냥 · 2시간');try{updateHud()}catch(_){}}}catch(_){}},250);
+})();
+;(()=>{// v40 stage 권장 전투력: estimated power to clear this stage's boss within ~60% of the timer; shown by the stage name (green/red)
+const BAL=D.BAL;
+C.stageReq=i=>{const pl=D.BOSSPLAN[Math.floor(i/7)],b=pl&&D.BOSSES[pl[i%7==6?1:0]];if(!b)return 0;const h=C.mobHP(i)*BAL.bossHP*(i<7?.55+.45*i/7:1)*(b.s||1)*(i%7==6?BAL.chBoss:1);const dps=Math.max(1e-9,C.estDPS());return Math.ceil(C.POW()*h/(dps*BAL.bossTime*.6)/10)*10};
+setInterval(()=>{try{const el=document.getElementById('stName');if(!el)return;let t=document.getElementById('stReq');const sb=document.getElementById('battle');if(!t&&sb){t=document.createElement('span');t.id='stReq';sb.appendChild(t)}if(!t)return;
+ if(C.B.br||C.B.rb||C.B.wb){t.style.display='none';return}t.style.display='';const s=C.S(),rq=C.stageReq(s.si),pw=C.POW(),ok=pw>=rq;t.className=ok?'ok':'lo';t.innerHTML=`권장 <span class=rv>⚔${fmt(rq)}</span>`;G._stReq=rq}catch(_){}},500);
 })();
