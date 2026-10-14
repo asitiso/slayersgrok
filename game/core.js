@@ -75,7 +75,7 @@ function kill(e){const i=S.si,q=e.q||1,g=C.goldKill(i)*(e.boss?15:q)*(e.el?4:1),
   let o=0;if(e.el||C.rand()<BAL.orbDrop*(e.q||1))o=e.el?3:1;if(e.boss){o=BAL.bossOrbs;S.gems+=BAL.bossGems;C.mAdd('boss')}S.orbs+=o;if(C.rand()<(e.boss?1:.03))S.stone=(S.stone||0)+(e.boss?5:1);emit('kill',e,g,o);if(e.boss)bossClear()}
 C.gainExp=x=>{if(!isFinite(x))return;S.exp+=x;let up=0;while(S.exp>=C.needExp()&&up<500){S.exp-=C.needExp();S.lv++;up++}if(up){C.refreshMax();emit('banner','LEVEL UP! Lv.'+S.lv)}};
 function bossClear(){B.boss=false;emit('banner','스테이지 클리어!');C.lastClear=C.stageName(S.si);
-  if(S.si==S.maxSi){if(S.maxSi<20){S.maxSi++;S.si=S.maxSi}else S.done=1}else S.si++;
+  if(S.si==S.maxSi){if(S.maxSi<D.FIELDS.length-1){S.maxSi++;S.si=S.maxSi}else S.done=1}else S.si++;
   S.wave=0;S.failPow=0;B.lock=1.6;reviveAll(1);emit('clear')}
 function bossFail(why){B.boss=false;S.failPow=C.POW();S.failAt=C.now();S.stats.bossFails++;emit('banner',why);emit('toast','보스 실패 · 더 강해진 뒤 자동 재도전');S.wave=0;B.lock=1.6;reviveAll(1);emit('fail')}
 C.canAutoBoss=()=>S.autoBoss&&(!S.failPow||C.POW()>=S.failPow*1.08||C.now()-S.failAt>180e3);

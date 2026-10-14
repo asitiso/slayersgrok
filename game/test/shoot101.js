@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s101');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=60;s.maxSi=21;s.si=20;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(1200);await ev(()=>{G.C.selectStage(21)});await until(()=>document.querySelector('.chap'),4000);await sl(900);await sh('592-ch4-card');await sl(2600);
+await sl(1500);await sh('593-ch4-beach-field');
+await ev(()=>{G.S().maxSi=23;G.C.selectStage(23)});await sl(2500);await sh('594-ch4-volcano-mobs');
+await ev(()=>{G.screen=null;G.C.startBoss()});await until(()=>G.C.alive().some(e=>e.boss),15000);await sl(2600);await ev(()=>G.C.alive().forEach(e=>{if(e.boss){e.max*=50;e.hp=e.max}}));await sl(800);await sh('595-ch4-boss-salamander');
+await ev(()=>{G.S().maxSi=27;G.C.selectStage(27)});await sl(1200);await ev(()=>{G.screen=null;G.C.startBoss()});await until(()=>G.C.alive().some(e=>e.boss),15000);await sl(2600);await ev(()=>G.C.alive().forEach(e=>{if(e.boss){e.max*=50;e.hp=e.max}}));await sl(800);await sh('596-ch4-boss-flamelord');
+await ev(()=>menuGo('map'));await sl(1200);await ev(()=>{const c=document.querySelector('[data-ch="3"]');c&&c.click()});await sl(1500);await sh('597-map-ch4');
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+stop();console.log('fps',fps,'ERR',errs);await b.close()})();
