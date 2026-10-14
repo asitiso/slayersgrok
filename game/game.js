@@ -823,3 +823,18 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
  setTimeout(()=>{n.classList.add('out');setTimeout(()=>n.remove(),400)},5000);
 }catch(_){}return r};
 })();
+;(()=>{// v38 timed battle buffs (화룡전-style): 공격력 +50% / 골드 x2 / 경험치 x2, 30분 each, 3 free claims per day, stack to 2h
+const BF=[{k:'atk',n:'공격력 +50%',img:'it2_sword.png'},{k:'gold',n:'골드 획득 x2',img:'it2_gold.png'},{k:'exp',n:'경험치 x2',img:'it2_exp.png'}],DUR=30*60e3,CAP=120*60e3,MAXN=3;
+const st=()=>{const s=C.S();const d=new Date().toDateString();s.buf=s.buf||{};if(s.buf.day!==d){s.buf.day=d;s.buf.n={}}s.buf.n=s.buf.n||{};return s.buf};
+const left=k=>Math.max(0,(st()[k]||0)-Date.now());G.bufOn=k=>left(k)>0;
+const oA=C.ATK;C.ATK=()=>oA()*(G.bufOn('atk')?1.5:1);
+const og=C.goldKill;C.goldKill=i=>og(i)*(G.bufOn('gold')?2:1);const ox=C.expKill;C.expKill=i=>ox(i)*(G.bufOn('exp')?2:1);
+const mm=ms=>{const m=Math.floor(ms/60e3),s=Math.floor(ms/1e3)%60;return m+':'+String(s).padStart(2,'0')};
+G.bufClaim=k=>{const b=st();if((b.n[k]||0)>=MAXN)return 'max';const cur=Math.max(Date.now(),b[k]||0);if(cur-Date.now()+DUR>CAP)return 'cap';b[k]=cur+DUR;b.n[k]=(b.n[k]||0)+1;try{G.save&&G.save()}catch(_){}try{updateHud()}catch(_){}return true};
+const html=()=>`<div class=ttl style="justify-content:center">전투 버프</div><div class=bfl>${BF.map(x=>{const l=left(x.k),n=st().n[x.k]||0;return `<div class="bfr ${l?'on':''}"><img src=assets/${x.img}><div class=f><b>${x.n}</b><small>${l?'남은 시간 '+mm(l):'비활성'} · 오늘 ${n}/${MAXN}</small></div><span class="pill ${n>=MAXN?'off':'green'}" data-bf=${x.k}>${n>=MAXN?'소진':'+30분'}</span></div>`}).join('')}</div><div class=bfn>최대 2시간까지 누적 · 매일 초기화</div>`;
+G.bufOpen=()=>{const m=modal(html());const card=m.querySelector('.card');const wire=()=>card.querySelectorAll('[data-bf]').forEach(p=>p.onclick=e=>{e.stopPropagation();const r=G.bufClaim(p.dataset.bf);if(r!==true){toast(r=='max'?'오늘 횟수를 모두 사용했습니다':'최대 2시간까지 누적됩니다');return}G.bufN=(G.bufN||0)+1;const ok=card.querySelector('.btn');card.innerHTML=html();card.appendChild(ok);wire()});wire();
+  const iv=setInterval(()=>{if(!document.body.contains(m))return clearInterval(iv);card.querySelectorAll('.bfr').forEach((r,i)=>{const l=left(BF[i].k);r.classList.toggle('on',!!l);const sm=r.querySelector('small');sm.textContent=(l?'남은 시간 '+mm(l):'비활성')+' · 오늘 '+(st().n[BF[i].k]||0)+'/'+MAXN})},1000)};
+const add=()=>{const d=document.getElementById('battle');if(!d||document.getElementById('bufBtn'))return;const b=document.createElement('span');b.id='bufBtn';b.innerHTML='<img src=assets/it2_sword.png><i>버프</i>';d.appendChild(b);b.onclick=e=>{e.stopPropagation();G.bufOpen()}};
+setInterval(()=>{try{add();const b=document.getElementById('bufBtn');if(!b)return;const on=BF.filter(x=>left(x.k));b.classList.toggle('on',on.length>0);b.querySelector('i').textContent=on.length?mm(Math.min(...on.map(x=>left(x.k)))):'버프';
+ const s=C.S(),ready=BF.some(x=>(st().n[x.k]||0)<MAXN&&!left(x.k));b.classList.toggle('rd',ready)}catch(_){}},500);
+})();

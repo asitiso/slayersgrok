@@ -1,0 +1,12 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s95');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(2000);const a0=await ev(()=>G.C.ATK());const g0=await ev(()=>G.C.goldKill(G.S().si));await sh('579-buff-btn-ready');
+await ev(()=>G.bufOpen());await sl(400);await sh('580-buff-modal');await p.click('[data-bf=atk]');await sl(300);await p.click('[data-bf=gold]');await sl(1500);await sh('581-buff-claimed');
+const a1=await ev(()=>G.C.ATK()),g1=await ev(()=>G.C.goldKill(G.S().si));await ev(()=>document.querySelector('.modal')?.remove());await sl(800);await sh('582-buff-btn-active');
+await ev(()=>{G.bufClaim('exp');G.bufClaim('exp');G.bufClaim('exp')});const r4=await ev(()=>G.bufClaim('exp'));
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+stop();console.log('atk',(a1/a0).toFixed(2),'gold',(g1/g0).toFixed(2),'4th',r4,'fps',fps,'ERR',errs);await b.close()})();
