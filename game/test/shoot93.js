@@ -1,0 +1,12 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s93');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(1500);await ev(()=>{G.C.B.allies.forEach((a,i)=>a._ug=i==2?1:0);G.C.startBoss()});await until(()=>R.elT&&R.elT.t<.05&&R.ccut&&R.ccut.t<1,1)||0;
+await ev(()=>{R.ccut={t:0,bust:true,img:'cutc/zelgadis.png',n:'젤가디스',sk:'아스트랄 바인',rc:'#4ab0ff'};R.elT={t:0,n:'고블린'}});await sl(450);await sh('575-elite-held-during-cutin');await sl(900);await sh('576-elite-after-cutin');
+await until(()=>G.C.alive().some(e=>e.boss),15000);await sl(1500);await ev(()=>{const e=G.C.alive().find(e=>e.boss);e.max*=40;e.hp=e.max*.37;G.C.B.allies.forEach(a=>{a.hp=0;a.dead=true})});
+await until(()=>document.querySelector('.vic.guide'),25000);await sl(600);await sh('577-defeat-guide');await sl(3000);const still=await ev(()=>!!document.querySelector('.vic.guide'));
+await ev(()=>document.querySelector('.vic.guide [data-g=comp]')?.click());await sl(800);await sh('578-guide-to-comp');const scr=await ev(()=>[G.screen,G.enTab]);
+stop();console.log('guide',await ev(()=>G.guideN),'still@3.6s',still,'scr',scr,'ERR',errs);await b.close()})();

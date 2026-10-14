@@ -786,7 +786,7 @@ const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{const q=R._ES().get(e),b=document.ge
 G.ultN=0;G._grogT=0;const FX=[];
 const og=C.ev.grog;C.ev.grog=(e,...a)=>{if(e&&e.boss)G._grogT=performance.now();return og(e,...a)};
 const ocs=R.csk;R.csk=(k,s,force)=>{if(force)return ocs(k,s,force);const cc=R.ccCd;R.ccCd=99;const r=ocs(k,s,force);R.ccCd=cc;return r};
-const busy=()=>R.slowT>0||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT<1600||C.alive().some(e=>e.boss&&e.grog>0)||(R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||document.querySelector('.bwarn,.combo,.enrb,.vic,.chap');
+const busy=()=>R.slowT>0||(R.elT&&R.elT.t<1.6)||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT<1600||C.alive().some(e=>e.boss&&e.grog>0)||(R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||document.querySelector('.bwarn,.combo,.enrb,.vic,.chap');
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');let fired=0;
  B.allies.forEach((a,i)=>{const el=pp[i];if(el&&!el.querySelector('.ugb'))el.insertAdjacentHTML('beforeend','<div class=ugb><i></i></div>');
   if(!a.c||a.hp<=0||!(D.CSKI||{})[a.k])return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){el.querySelector('.ugb i').style.width=(a._ug*100)+'%';el.classList.toggle('ugf',a._ug>=1)}
@@ -809,4 +809,17 @@ const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)retu
  B.allies.forEach((a,i)=>{const el=pp[i];if(a.dead){a._rv=(a._rv||0)+dt;const left=Math.ceil(RT-a._rv);if(el){el.classList.add('down');let c=el.querySelector('.rvc');if(!c){c=document.createElement('b');c.className='rvc';el.appendChild(c)}c.textContent=left>0?left:''}
    if(a._rv>=RT&&C.alive().length){a.dead=false;a.hp=a.max*.5;a._rv=0;G.revN++;if(C.ev.heal)C.ev.heal(a,a.hp);const q=R._AS().get(a.k);if(q){q.alpha=0;q.revT=0}}}
   else{a._rv=0;if(el&&el.classList.contains('down')){el.classList.remove('down');const c=el.querySelector('.rvc');c&&c.remove()}}})}catch(_){}return r};
+})();
+;(()=>{// v37 defeat growth guide: boss HP left + tappable shortcuts (장비 강화 / 동료 육성 / 소환), shown longer
+let bp=null;const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const b=C.alive().find(e=>e.boss&&!e.wb);if(b)bp=Math.max(0,b.hp/b.max)}catch(_){}return r};
+const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w||C.B.br||C.B.rb)return r;const d=[...document.querySelectorAll('.vic.lose')].pop();if(!d)return r;G.guideN=(G.guideN||0)+1;
+ const s=C.S(),gc=s.gold,pct=bp!=null?Math.max(1,Math.round(bp*100)):null;
+ const vn=d.querySelector('.vn');vn.outerHTML=`${pct?`<div class=gdhp>보스 남은 체력 <b>${pct}%</b><i><em style="width:${pct}%"></em></i></div>`:''}<div class=gdt>강해지는 방법</div><div class=gdb>
+  <span data-g=gear><img src=assets/it2_stone.png><b>장비 강화</b><small>강화석 ${fmt(s.stone||0)}</small></span>
+  <span data-g=comp><img src=assets/ally_gourry.png><b>동료 육성</b><small>레벨·스킬 강화</small></span>
+  <span data-g=summon><img src=assets/it2_gold.png><b>소환</b><small>새 동료·장비</small></span></div><div class=gdn>탭하여 이동 · 자동 재도전 대기</div>`;
+ const n=d.cloneNode(true);d.replaceWith(n);n.classList.add('guide');n.classList.remove('out');
+ n.onclick=ev=>{const g=ev.target.closest('[data-g]');n.remove();if(!g)return;ev.stopPropagation();if(g.dataset.g=='summon')menuGo('summon');else{G.enTab=g.dataset.g;menuGo('enhance')}};
+ setTimeout(()=>{n.classList.add('out');setTimeout(()=>n.remove(),400)},5000);
+}catch(_){}return r};
 })();
