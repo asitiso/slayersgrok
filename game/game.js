@@ -562,7 +562,7 @@ const fire=(a,b)=>{const A=D.COMPS.find(x=>x.k==a),Bc=D.COMPS.find(x=>x.k==b);if
  R.hs=Math.max(R.hs||0,.18);const n=nm(a,b);
  const d=document.createElement('div');d.className='combo';d.innerHTML=`<img class=cl src="${A0}${A.img}"><div class=cm><small>연계기</small><b>${n}</b><i>${A.n} × ${Bc.n}</i></div><img class=cr src="${A0}${Bc.img}">`;$('#battle').appendChild(d);setTimeout(()=>d.remove(),1500);
  setTimeout(()=>{const LL=C.alive();const es=LL.map(e=>R._ES().get(e)).filter(Boolean);const cx=es.reduce((s,q)=>s+q.x,0)/(es.length||1),cy=es.reduce((s,q)=>s+q.y,0)/(es.length||1);RING={x:cx,y:cy,t:0,c1:COL[a]||'#fff',c2:COL[b]||'#ffd25a'};
-  const mul=(C.compMul(a)+C.compMul(b))*1.6;LL.forEach(e=>{const cr=Math.random()<.5;C.hitEnemy(e,C.ATK()*mul*(cr?2:1),cr);if(e.hp>0){C.stApply(e,STK[a]||'burn');if(STK[b]!==STK[a])C.stApply(e,STK[b]||'stun')}})},450)};
+  const mul=(C.compMul(a)+C.compMul(b))*1.6;C._combo=1;setTimeout(()=>C._combo=0,0);LL.forEach(e=>{const cr=Math.random()<.5;C.hitEnemy(e,C.ATK()*mul*(cr?2:1),cr);if(e.hp>0){C.stApply(e,STK[a]||'burn');if(STK[b]!==STK[a])C.stApply(e,STK[b]||'stun')}})},450)};
 const A0=A;const oc=R.csk;R.csk=(k,s,force)=>{const r=oc(k,s,force);if(r&&!G.screen){const now=performance.now()/1000;if(cd<=0&&last&&last.k!==k&&now-last.t<1.6&&C.alive().length){fire(last.k,k);last=null}else last={k,t:now}}return r};
 const of=R.frame;R.frame=dt=>{cd=Math.max(0,cd-dt);of(dt);try{if(!RING||G.screen)return;const c=document.querySelector('#battle canvas');if(!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth;RING.t+=dt;const k=RING.t/.7;if(k>1){RING=null;return}ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
  [[RING.c1,0],[RING.c2,.15]].forEach(([col,o])=>{const kk=Math.max(0,k-o);ctx.globalAlpha=Math.max(0,1-kk)*.9;ctx.strokeStyle=col;ctx.lineWidth=10*(1-kk)+2;ctx.beginPath();ctx.ellipse(RING.x,RING.y-30,30+kk*170,12+kk*70,0,0,6.283);ctx.stroke()});
@@ -596,3 +596,20 @@ const of=R.frame;R.frame=dt=>{const ES=R._ES&&R._ES(),app=[];
 const oh=C.ev.hit;C.ev.hit=(e,d,cr)=>{if(e&&!C._dot)e._lc=!!cr;oh(e,d,cr)};
 const ot=C.tick;C.tick=dt=>{if(R.slowT>0){R.slowT-=dt;dt*=R.slowT>.3?.3:.3+(.3-R.slowT)/.3*.7;document.body.classList.add('slowmo')}else if(R.slowT!==undefined){R.slowT=undefined;document.body.classList.remove('slowmo')}return ot(dt)};
 const of=R.frame;R.frame=dt=>of(R.slowT>0?dt*.45:dt)})();
+;(()=>{// v22 dmg colors, VICTORY/BREAK delay during boss slow-mo, ally knockback
+const SPC={fire:'#ff7a2a',ragna:'#ff4a6a',giga:'#ff3a3a',ds:'#ff9a3a',ice:'#6ad0ff',bolt:'#ffe24a',poison:'#7aff6a',charm:'#ff8ad8'};
+const oh=C.hitEnemy;C.hitEnemy=(e,d,cr,src)=>{if(e)e._hc=src&&src.sp?SPC[src.sp]||'#c8a0ff':C._combo?'#d08aff':null;return oh(e,d,cr,src)};
+// slow-mo gating
+const orp=resultPop;resultPop=function(w){if(R.slowT>0){setTimeout(()=>resultPop(w),Math.max(80,R.slowT*1000+150));return}return orp.apply(this,arguments)};
+const og=C.ev.grog;C.ev.grog=e=>{if(R.slowT>0||e&&e.hp<=0)return;og(e)};
+const ok=C.ev.kill;C.ev.kill=(e,...a)=>{if(e&&e.boss){R.slowT=Math.max(R.slowT||0,1.3)}return ok(e,...a)};
+// ally knockback
+const HA=new Map();G.HA=HA;G.haN=0;
+const kb=(a,pow,up)=>{if(!a||a.hp<=0&&!up)return;HA.set(a.k,{t:0,T:up?.7:.42,pow,up});G.haN++};
+const od=C.ev.dmgAlly;C.ev.dmgAlly=(a,d,kind)=>{od(a,d,kind);if(kind)return;const bo=C.alive().find(e=>e.boss);if(bo&&!B.teleHitNow)kb(a,d>a.max*.12?22:14,0)};
+const ot=C.ev.teleHit;C.ev.teleHit=(bo,res)=>{B.teleHitNow=1;try{ot&&ot(bo,res)}finally{B.teleHitNow=0}(res||[]).forEach(([a,d])=>{if(d>0)kb(a,30,1)})};
+const of=R.frame;R.frame=dt=>{const AS=R._AS&&R._AS(),app=[];if(AS)HA.forEach((h,k)=>{const q=AS.get(k);h.t+=dt;if(!q||h.t>=h.T){HA.delete(k);return}const p=h.t/h.T;
+  let ox=-h.pow*Math.sin(Math.PI*Math.min(1,p*1.25))*(1-p*.5),oy=h.up?-Math.sin(Math.PI*Math.min(1,p*1.6))*26:-Math.sin(Math.PI*Math.min(1,p*2))*5;
+  if(q.x+ox<70)ox=Math.min(0,70-q.x);q.x+=ox;q.y+=oy;app.push([q,ox,oy])});of(dt);app.forEach(([q,ox,oy])=>{q.x-=ox;q.y-=oy})};
+})();
+;(()=>{const ob=banner;banner=function(t){if(R.slowT>0&&!/^LEVEL UP/.test(t)){setTimeout(()=>banner(t),R.slowT*1000+100);return}return ob.apply(this,arguments)}})();
