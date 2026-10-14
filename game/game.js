@@ -729,12 +729,12 @@ G.brReal=realRun;G.brRun=realRun;
 ;(()=>{// v28 real-canvas dungeon / tower fights
 const B=C.B;const dps=()=>C.ATK()*(1.2+C.S().party.reduce((a,k)=>a+C.compMul(k),0));
 const MK=n=>D.MONS.find(m=>m.k==n)||D.MONS[0];
-const TH={gold:{m:['goblin','bandit','garcher'],b:0,bg:'bg_base.jpg'},exp:{m:['cultist','dmage','ghost'],b:2,bg:'bg_guild.jpg'},stone:{m:['golem','skeleton','orc'],b:1,bg:'bg_dungeon.jpg'},frag:{m:['imp','harpy','lizard'],b:3,bg:'bg_map.jpg'}};
+const TH={gold:{m:['goblin','bandit','garcher'],b:0,bg:'bg_mine.jpg'},exp:{m:['cultist','dmage','ghost'],b:2,bg:'bg_guild.jpg'},stone:{m:['golem','skeleton','orc'],b:1,bg:'bg_dungeon.jpg'},frag:{m:['imp','harpy','lizard'],b:3,bg:'bg_map.jpg'}};
 G.rbForce=fn=>{const op=C.POW;C.POW=()=>1e18;try{return fn()}finally{C.POW=op}};
 let cb=null;
 const mob=(m,ratio,j)=>({res:j>=(C.CAP||6)?1:0,fac:m.fac,sc:m.sc,n:m.n,img:m.img,max:dps()*.9*ratio,hp:dps()*.9*ratio,atk:C.MAXHP()*.012*ratio,spd:.8,t:-Math.random()*.6,q:1,rbm:1});
 const boss=(bo,n,ratio)=>({fac:bo.fac,n,img:bo.img,sc:bo.sc,max:dps()*9*ratio,hp:dps()*9*ratio,atk:C.MAXHP()*.03*ratio,spd:.7,t:-.8,boss:1,rbb:1});
-G.rbRun=(o,done)=>{if(B.boss||B.wb||B.br||B.rb)return toast('다른 전투 중에는 도전할 수 없습니다');cb=done;const ratio=Math.max(.6,Math.min(3,o.req/Math.max(1,C.POW())));const waves=[];
+G.rbRun=(o,done)=>{if(B.boss||B.wb||B.br||B.rb)return toast('다른 전투 중에는 도전할 수 없습니다');cb=done;const ratio=Math.max(1.1,Math.min(3,o.req/Math.max(1,C.POW())));const waves=[];
  if(o.kind=='dun'){const th=TH[o.k]||TH.gold,rr=ratio*(1+.15*o.t);for(let w=0;w<2;w++)waves.push(Array.from({length:5},(_,j)=>mob(MK(th.m[(j+w)%th.m.length]),rr,j)));const bo=D.BOSSES[th.b];waves.push([boss(bo,bo.n,rr)]);R.bgOv=th.bg}
  else{const mm=D.MONS.find(m=>m.img==o.mob)||{n:'탑의 수호자',img:o.mob,fac:'chaos'};
   if(o.boss){waves.push(Array.from({length:4},(_,j)=>mob(MK(['skeleton','ghost','imp','garcher'][j]),ratio,j)));const bo=D.BOSSES.find(b=>b.img==o.mob)||D.BOSSES[(o.f/10|0)%D.BOSSES.length];waves.push([boss(bo,bo.n+' · '+o.f+'층',ratio)])}
@@ -750,4 +750,12 @@ const ot=C.tick;C.tick=dt=>{const r=B.rb;if(r){r.t=(r.end-performance.now())/100
   if(G.rbHud){G.rbHud.querySelector('.brht').textContent=Math.max(0,r.t).toFixed(1)+'초';G.rbHud.querySelector('.brtime s').style.width=Math.max(0,r.t/45*100)+'%';G.rbHud.querySelector('.brhk i').textContent=r.w+'/'+r.waves.length}}return ot(dt)};
 const oh=C.hitEnemy;C.hitEnemy=(e,d,cr,src)=>{if(!(e&&e.rbb&&B.rb))return oh(e,d,cr,src);if(e.hp<=0)return;const BIG=1e15;e.hp+=BIG;const r=oh(e,d,cr,src);e.hp-=BIG;if(e.hp<=0){e.hp=0;try{R.kill(e,0,0)}catch(_){}R.hs=Math.max(R.hs||0,.3)}return r};
 const ots=toast;toast=function(t){if(B.rb)return;return ots.apply(this,arguments)};const obn=banner;banner=function(t){if(B.rb)return;return obn.apply(this,arguments)};
+})();
+;(()=>{// v29 under-power confirm + 일괄 소탕
+const orb=G.rbRun;G.rbRun=(o,done)=>{const pw=C.POW();if(pw>=o.req)return orb(o,done);const m=document.createElement('div');m.className='modal pwwarn';
+ m.innerHTML=`<div class=mbox><div class=ttl style="justify-content:center;color:#ff9a6a">⚠ 전투력 부족</div><div class=pwrow><span>권장 전투력<b>${fmt(o.req)}</b></span><span>내 전투력<b class=low>${fmt(pw)}</b></span></div><small>패배해도 입장 횟수는 차감되지 않습니다.<br>그래도 도전하시겠습니까?</small><div class=pwbtn><span class=pill id=pwNo>취소</span><span class="pill gold" id=pwYes>도전</span></div></div>`;
+ document.getElementById('app').appendChild(m);m.querySelector('#pwNo').onclick=()=>m.remove();m.querySelector('#pwYes').onclick=()=>{m.remove();orb(o,done)}};
+const sweepAll=()=>{const d=C.dunDaily(),tot={};let n=0;C.DUN.keys.forEach(k=>{const t=(d.clr[k]||0)-1;if(t<0)return;while(d.t[k]>0){const r=C.dunSweep(k,t);if(!r||r.err)break;n++;for(const x in r)if(typeof r[x]=='number')tot[x]=(tot[x]||0)+r[x]}});
+ if(!n)return toast('소탕 가능한 던전이 없습니다');const s=C.S();s.dstat=(s.dstat||0)+n;updateHud();renderScreen();rewardPop(dunItems(tot),`일괄 소탕 ${n}회 완료`)};G.sweepAll=sweepAll;
+const ods=dunScreen;dunScreen=function(el,s){ods.apply(this,arguments);const d=C.dunDaily(),can=C.DUN.keys.reduce((a,k)=>a+((d.clr[k]||0)>0?d.t[k]:0),0);const b=document.createElement('div');b.className='swall '+(can?'':'off');b.innerHTML=`⚡ 일괄 소탕 <small>${can}회 가능</small>`;b.onclick=sweepAll;const tb=el.querySelector('.duntabs');tb?tb.after(b):el.appendChild(b)};
 })();
