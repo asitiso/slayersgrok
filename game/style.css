@@ -603,3 +603,4 @@ body:has(#screen.on) .powup,body:has(.modal) .powup,body:has(.rwpop) .powup,body
 .pp.ugf{cursor:pointer}.pp.ugtap img{transform:scale(1.12);transition:transform .15s}
 .pp.ugf::after{content:'필살';position:absolute;right:-6px;top:-6px;padding:0 4px;border-radius:6px;background:linear-gradient(#9ae4ff,#2a8ae0);color:#fff;font:900 9px Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a6a;border:1px solid #0a3a6a;animation:ugr .8s ease-in-out infinite alternate;pointer-events:none}
 @keyframes ugr{from{transform:scale(.92)}to{transform:scale(1.08)}}
+.pp.down img{filter:grayscale(1) brightness(.55)}.pp .rvc{position:absolute;left:0;right:0;top:10px;text-align:center;font:900 18px Maplestory,sans-serif;color:#fff;text-shadow:0 0 3px #000,0 2px 0 #000;pointer-events:none}

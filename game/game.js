@@ -803,3 +803,10 @@ document.addEventListener('click',ev=>{const p=ev.target.closest&&ev.target.clos
 ;(()=>{// v35 tap guard: a portrait tap within 0.6s after an ult fires does not open 파티 편성
 document.addEventListener('click',ev=>{const p=ev.target.closest&&ev.target.closest('#partycol');if(p&&performance.now()-(G._ultT||0)<600){ev.stopPropagation();ev.preventDefault();G.tapGuardN=(G.tapGuardN||0)+1}},true);
 })();
+;(()=>{// v36 downed companions revive after 8s at 50% HP; portrait greys out with a countdown
+G.revN=0;const RT=8;
+const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');
+ B.allies.forEach((a,i)=>{const el=pp[i];if(a.dead){a._rv=(a._rv||0)+dt;const left=Math.ceil(RT-a._rv);if(el){el.classList.add('down');let c=el.querySelector('.rvc');if(!c){c=document.createElement('b');c.className='rvc';el.appendChild(c)}c.textContent=left>0?left:''}
+   if(a._rv>=RT&&C.alive().length){a.dead=false;a.hp=a.max*.5;a._rv=0;G.revN++;if(C.ev.heal)C.ev.heal(a,a.hp);const q=R._AS().get(a.k);if(q){q.alpha=0;q.revT=0}}}
+  else{a._rv=0;if(el&&el.classList.contains('down')){el.classList.remove('down');const c=el.querySelector('.rvc');c&&c.remove()}}})}catch(_){}return r};
+})();
