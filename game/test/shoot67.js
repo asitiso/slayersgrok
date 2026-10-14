@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s67');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=4;s.si=4;s.comps={gourry:1,borin:1,amelia:1};s.party=['gourry','borin','amelia'];s.autoSpell=false;G.C.buildAllies();window._log=[];const o1=G.C.ev.teleHit;G.C.ev.teleHit=(e,r)=>{window._log.push(r.map(([a,d])=>[a.k,Math.round(d)]));o1(e,r)};s.wave=9;G.C.startBoss()});
+await p.waitForFunction(()=>G.C.B.tele,{timeout:15000}).catch(()=>console.log('no tele'));await sl(300);await sh('461-tele-warn');await sl(600);await sh('462-tele-charging');
+await p.waitForFunction(()=>window._log.length>0,{timeout:5000}).catch(()=>{});await sl(120);await sh('463-tele-hit-dodge');
+await ev(()=>{const bo=G.C.alive().find(e=>e.boss);if(bo){bo.tcd=.1}});await p.waitForFunction(()=>G.C.B.tele,{timeout:5000}).catch(()=>{});await sl(200);await ev(()=>{const bo=G.C.alive().find(e=>e.boss);G.C.stApply(bo,'stun',2)});await sl(200);await sh('464-tele-interrupted');
+console.log('log',JSON.stringify(await ev(()=>window._log)),'cancel',await ev(()=>window._can));
+await sl(9000);const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+stop();console.log('fps',fps,'hits',await ev(()=>window._log.length),'ERR',errs);await b.close()})();

@@ -1,0 +1,15 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);const clr=()=>ev(()=>document.querySelectorAll('.rwpop,.modal').forEach(x=>x.remove()));
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(2000);
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=30;s.maxSi=14;s.gold=1e6;s.gems=99999;G.C.buildAllies();G.open('tower')});await sl(900);await sh('429-tower-newbg');
+await ev(()=>document.querySelector('#twGo').click());await sl(700);await sh('430-tower-fight-newbg');await sl(1200);await clr();
+await ev(()=>{G.close();G.open('summon')});await sl(500);for(let i=0;i<3;i++){await ev(()=>{document.querySelectorAll('#sumModal').forEach(x=>x.remove());document.querySelector('#su10').click()});await sl(400)}await sl(2400);await sh('431-summon-dup-shards');
+console.log(await ev(()=>JSON.stringify([G.S().comps,G.S().csh])));await clr();
+await ev(()=>{G.close();G.open('star')});await sl(600);await sh('432-star-screen');
+await ev(()=>{const s=G.S();const k=Object.keys(s.comps)[0];G.stSel=k;s.csh[k]=(s.csh[k]||0)+400;G.open('star')});await sl(300);
+await ev(()=>document.querySelector('#stUp').click());await sl(250);await sh('433-star-up');
+for(let i=0;i<6;i++){await ev(()=>{const u=document.querySelector('#stUp');u&&u.click()});await sl(150)}await sl(300);await sh('434-star-max-awaken');
+await ev(()=>document.querySelector('#stAw').click());await sl(300);await sh('435-awaken-1');
+await ev(()=>{G.close();document.querySelector('#menuBtn').click()});await sl(400);await sh('436-menu-star');
+console.log(await ev(()=>JSON.stringify([G.S().comps,G.S().caw,G.S().csh,G.C.POW()])),'ERR',errs);await b.close()})();

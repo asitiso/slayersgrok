@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:390px;height:844px;overflow:hidden;font-family:"Noto Sans KR",sans-serif;color:#fff;background:#0b0714;position:relative}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.shade{position:absolute;inset:0;z-index:0;background:linear-gradient(#0009 0,#0000 22%,#0000 55%,#0b0714f2 100%)}
+.z{position:relative;z-index:1}.abs{position:absolute;z-index:1}
+.hud{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 8px}
+.prof{display:flex;gap:8px;align-items:center;background:linear-gradient(90deg,#000b,#0000);padding:3px 14px 3px 3px;border-radius:30px}
+.av{width:46px;height:46px;border-radius:50%;border:2px solid #f4c66b;background:radial-gradient(#7a2a1a,#2a0f1a);overflow:hidden;box-shadow:0 0 0 2px #0008,0 0 10px #f4a63a88}
+.av img{width:180%;margin:-6px 0 0 -40%}
+.prof b{font-size:13px}.prof small{display:block;color:#f4c66b;font-size:11px;font-weight:700}
+.cur{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.cur span{background:#000a;border:1px solid #f4c66b66;border-radius:12px;padding:2px 10px 2px 8px;font-size:11px;font-weight:700;min-width:84px;text-align:right}
+.nav{position:absolute;bottom:0;left:0;right:0;display:flex;z-index:5;background:linear-gradient(#2a1838,#120a1e);border-top:2px solid #c9953f;box-shadow:0 -6px 20px #000c;padding-bottom:10px}
+.nav a{flex:1;text-align:center;padding:8px 0 2px;font-size:11px;font-weight:700;color:#b9a9c9;text-decoration:none}
+.nav a i{display:block;width:30px;height:30px;margin:0 auto 2px;border-radius:8px;background-size:cover;border:1px solid #c9953f88;filter:saturate(.6) brightness(.8)}
+.nav a.on{color:#ffd77a}.nav a.on i{filter:none;box-shadow:0 0 10px #ffb43a;border-color:#ffd77a}
+.panel{background:linear-gradient(#24143acc,#120a1ee8);border:1px solid #c9953f99;border-radius:14px;margin:8px 12px;padding:12px;box-shadow:inset 0 1px 0 #ffffff1a,0 6px 18px #0008}
+.ttl{font-size:15px;font-weight:900;color:#ffd77a;margin-bottom:8px;letter-spacing:.5px;text-shadow:0 2px 0 #0008}
+.btn{display:block;text-align:center;background:linear-gradient(#ff9a4a,#d2401f 60%,#9e2512);border:2px solid #ffe09a;border-radius:14px;padding:13px;font-weight:900;font-size:16px;color:#fff;text-decoration:none;text-shadow:0 2px 0 #7a1a0a;box-shadow:0 4px 0 #5a1208,0 8px 18px #0009,inset 0 2px 0 #fff5}
+.btn.sub{background:linear-gradient(#4a3a6a,#241840);border-color:#c9953f;text-shadow:none;box-shadow:0 4px 0 #120a1e,0 8px 18px #0009}
+.bar{height:8px;background:#000a;border-radius:5px;overflow:hidden;border:1px solid #ffffff22}.bar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a3d,#ffd36b)}
+small{color:#c9bcd8;font-size:11px}
+.ic{border-radius:10px;box-shadow:0 3px 8px #000a;display:block}
+.badge{position:absolute;font-size:10px;font-weight:900;background:#e23a2a;border-radius:8px;padding:1px 6px;border:1px solid #fff8}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;background:#000a;border:1px solid #c9953f88}
+.sprite{filter:drop-shadow(0 10px 8px #000a)}
+.glow{text-shadow:0 0 12px #ff7a2a,0 2px 0 #7a1a0a}
+body>div:not(.abs):not(.shade){position:relative;z-index:1}

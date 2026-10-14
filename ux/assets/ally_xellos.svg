@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 340"><defs><linearGradient id="hair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a3d"/><stop offset="1" stop-color="#b3201a"/></linearGradient>
+<radialGradient id="skin" cx=".5" cy=".4"><stop offset="0" stop-color="#ffe8d6"/><stop offset="1" stop-color="#f3c3a3"/></radialGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#fff6c0"/><stop offset=".4" stop-color="#ffb02e"/><stop offset="1" stop-color="#ff3d00" stop-opacity="0"/></radialGradient>
+<linearGradient id="cape" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2a6a"/><stop offset="1" stop-color="#1a1236"/></linearGradient>
+<filter id="sh"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity=".35"/></filter></defs><g filter="url(#sh)">
+<path d="M60 150 Q40 260 30 330 L170 330 Q160 260 140 150Z" fill="#1c1030"/>
+<path d="M58 95 Q40 160 50 230 Q70 200 75 150Z M142 95 Q160 160 150 230 Q130 200 125 150Z" fill="#5b3e8c"/>
+<path d="M78 165 L122 165 L135 300 L65 300Z" fill="#3e2a5c"/><path d="M78 165 L122 165 L115 200 L85 200Z" fill="#fff" opacity=".25"/>
+<rect x="72" y="225" width="56" height="10" fill="#5a3a1a"/><circle cx="100" cy="230" r="7" fill="#e74c3c" stroke="#ffd36b" stroke-width="2"/>
+<path d="M65 300 L80 300 L82 335 L64 335Z M120 300 L135 300 L136 335 L118 335Z" fill="#4a2c1a"/>
+<rect x="92" y="140" width="16" height="26" fill="url(#skin)"/>
+<ellipse cx="100" cy="110" rx="38" ry="42" fill="url(#skin)"/>
+<path d="M60 112 Q58 62 100 58 Q144 62 140 112 Q132 82 112 78 Q104 96 82 92 Q72 100 60 112Z" fill="#5b3e8c"/>
+<path d="M66 70 L50 45 L80 62Z M134 70 L150 45 L120 62Z" fill="#5b3e8c"/>
+<ellipse cx="86" cy="115" rx="7" ry="10" fill="#fff"/><ellipse cx="114" cy="115" rx="7" ry="10" fill="#fff"/>
+<ellipse cx="87" cy="117" rx="5" ry="7" fill="#5b3e8c"/><ellipse cx="113" cy="117" rx="5" ry="7" fill="#5b3e8c"/>
+<circle cx="88" cy="114" r="2" fill="#fff"/><circle cx="114" cy="114" r="2" fill="#fff"/>
+<path d="M92 135 Q100 141 108 135" stroke="#8a3a2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<ellipse cx="78" cy="128" rx="6" ry="3" fill="#ff8a8a" opacity=".5"/><ellipse cx="122" cy="128" rx="6" ry="3" fill="#ff8a8a" opacity=".5"/>
+<rect x="40" y="90" width="6" height="230" fill="#4a3020"/><circle cx="43" cy="88" r="10" fill="#c0392b"/>
+
+
+</g></svg>

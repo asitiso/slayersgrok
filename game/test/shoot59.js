@@ -1,0 +1,17 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);const clr=()=>ev(()=>document.querySelectorAll('.rwpop,.modal').forEach(x=>x.remove()));
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(2000);
+console.log('reset',await ev(()=>[G.C.today(),new Date(G.C.nextReset()).toString()]));
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=30;s.maxSi=14;s.gems=600;s.gold=5e4;G.C.buildAllies();G.open('guild')});await sl(900);await sh('405-guild-join');
+await ev(()=>document.querySelector('[data-gj="0"]').click());await sl(800);await sh('406-guild-main');
+const p0=await ev(()=>G.C.POW());await ev(()=>document.querySelector('#gAtt').click());await sl(1200);await sh('407-guild-attend-reward');await clr();
+await ev(()=>{G.S().gcoin=200;G.render&&0;G.open('guild')});await sl(500);
+await ev(()=>document.querySelector('[data-gb=atk]').click());await sl(300);await ev(()=>document.querySelector('[data-gb=atk]').click());await sl(300);await ev(()=>document.querySelector('[data-gb=hp]').click());await sl(400);
+const p1=await ev(()=>G.C.POW());console.log('pow',p0,p1);
+await ev(()=>document.querySelector('.gx:nth-of-type(n)')&&document.querySelectorAll('.gx')[1].scrollIntoView());await sl(300);await sh('408-guild-buffs');
+await ev(()=>document.querySelector('[data-gb=atk]').click());await sl(300);await sh('409-guild-buff-cap');
+await ev(()=>document.querySelector('[data-gs=gs_stone]').click());await sl(1200);await sh('410-guild-shop-buy');await clr();
+await ev(()=>document.querySelectorAll('.gx')[2].scrollIntoView());await sl(300);await sh('411-guild-shop');
+console.log('gx',await ev(()=>JSON.stringify([G.S().gx,G.S().gcoin])));
+console.log('ERR',errs);await b.close()})();

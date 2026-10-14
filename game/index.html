@@ -1,0 +1,18 @@
+<!doctype html><html lang=ko><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>슬레이어즈 붉은 마도사전</title><link rel=icon href="data:,"><link rel=stylesheet href=style.css></head><body>
+<div id=app>
+ <div id=battle><canvas id=cv width=390 height=844></canvas>
+  <div class=hud><div class=prof id=prof><div class=av><img src=assets/hero_lina.png></div><div class=pinfo><b id=hName>Lv.1</b><small id=hPow>0</small><div class=xpbar><i id=xpBar></i></div></div></div><div class=cur><span id=cGold>0</span><span id=cGem>0</span><span id=menuBtn class=menubtn>▼</span></div></div>
+  <div class=stagebar id=stagebar><b id=stName>[일반] 1-1</b><div class=srow><i class=snode></i><div class=bar><i id=stBar></i></div><img class=sboss src=assets/boss_demon.png></div><div class=trow><span>⏱</span><div class=bar><i id=tBar></i></div><small id=stInfo></small></div></div>
+  <div class=bossrow><span id=bossBtn class=bossbtn><i>ϟ</i></span><span id=autoBoss class=autob>자동</span><span id=facTag class=factag></span></div>
+  <div class="side left" id=sideL></div><div class="side right" id=sideR></div><div class="side rlow" id=sideR2></div>
+  <div class=partycol id=partycol></div>
+  <div class=idle id=idleBtn><img src=assets/ic3_chest.png><b>방치보상</b><small id=idleT></small></div>
+  <div class=mission id=mission></div>
+  <div class=skills id=skills></div>
+  <div class=chat id=chat><img class=cb src=assets/ic3_chat.png><span id=chatT></span></div>
+ </div>
+ <div id=sheet><div class=sheethead><b id=sheetTitle></b><span class=xbtn id=sheetClose>✕</span></div><div id=panel></div></div>
+ <div id=screen></div><div id=menuPop><div class=mbox><div class=sheethead><b>메뉴</b><span class=xbtn id=menuClose>✕</span></div><div class=mgrid id=mgrid></div></div></div>
+ <nav class=nav id=nav></nav>
+</div>
+<script src=data.js></script><script src=core.js></script><script src=render.js></script><script src=game.js></script></body></html>

@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);const clr=()=>ev(()=>document.querySelectorAll('.rwpop,.modal').forEach(x=>x.remove()));
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(2000);
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=30;s.maxSi=14;s.gems=600;G.C.buildAllies();G.open('dungeon')});await sl(900);
+await ev(()=>document.querySelector('[data-dk=exp]').click());await sl(400);await sh('397-dungeon-exp-icon');
+console.log('gold tiers',await ev(()=>[0,1,2,3,4].map(t=>Math.round(G.C.dunRew('gold',t).g))));
+await ev(()=>document.querySelector('[data-ch="0"]').click());await sl(1900);await sh('398-dungeon-exp-reward');await clr();
+await ev(()=>G.open('shop'));await sl(900);await sh('399-shop-deals');
+const g0=await ev(()=>G.S().gems);await ev(()=>(document.querySelector('[data-deal]:not(.off)')).click());await sl(1200);await sh('400-deal-buy');await clr();await sl(300);await sh('401-deal-sold');
+await ev(()=>document.querySelector('#dealRef').click());await sl(500);await sh('402-deal-refreshed');console.log('gems',g0,await ev(()=>G.S().gems),await ev(()=>JSON.stringify(G.C.deals())));
+await ev(()=>{const s=G.S();s.gold=0;s.deal.day='x';s.idleAt=Date.now()-3*3600e3;G.save();const d=JSON.parse(localStorage.getItem('slayers_save_v2'));d.last=Date.now()-3*3600e3;localStorage.setItem('slayers_save_v2',JSON.stringify(d));G.noSave=1});await p.goto(U);await sl(2500);await sh('403-offline-xp-icon');
+await ev(()=>document.querySelector('#offOk').click());await sl(1200);await sh('404-offline-xp-reward');
+console.log('ERR',errs);await b.close()})();

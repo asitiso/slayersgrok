@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(1000);
+const ev=(f,...a)=>p.evaluate(f,...a),sh=n=>p.screenshot({path:`screenshots/${n}.jpg`,quality:85,type:'jpeg'});
+await ev(()=>{const s=G.S();s.maxSi=9;s.lv=22;s.gold=5e6;s.gems=900;s.stone=80;s.orbs=50;s.dkey=3;s.gcoin=12;s.atoken=8;s.mile=45;s.comps={gourry:1,zelgadis:1,amelia:1,xellos:1,sera:1,rhea:1,lyra:1,borin:1,kaede:1,pip:1};s.party=['amelia','xellos','sera','borin'];for(let i=0;i<40;i++){G.C.rollOnce();if(s.bag)G.C.equipBag()}G.C.buildAllies();G.C.selectStage(0)});await sl(2800);
+await sh('89-battle-newposes');
+await ev(()=>G.open('enhance'));await sl(400);await sh('90-enhance-items');
+await ev(()=>document.querySelector('[data-et=comp]').click());await sl(300);await sh('91-enhance-comp');
+await ev(()=>{document.querySelector('#sBack').click()});await sl(200);await ev(()=>G.open('bag'));await sl(400);await sh('92-bag-items');
+await ev(()=>{document.querySelector('#sBack').click()});await sl(200);await ev(()=>G.open('shop'));await sl(400);await sh('93-shop-items');
+console.log('ERR',JSON.stringify(errs));await b.close()})();

@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(2000);
+await p.evaluate(()=>{const s=G.S();s.lv=40;s.maxSi=10;s.comps={gourry:1,sera:1,zelgadis:1,borin:1};s.party=['gourry','sera','zelgadis','borin'];G.C.buildAllies();G.C.selectStage(8);RENDER.opt=Object.assign({},RENDER.opt,{cut:false})});await sl(4000);
+const meas=async()=>p.evaluate(()=>{let minA=1e9,maxE=0,minEy=1e9;RENDER._AS().forEach(s=>{minA=Math.min(minA,s.x)});G.C.alive().forEach(e=>{const s=RENDER._ES().get(e);if(s&&s.enter>=1){maxE=Math.max(maxE,s.x);minEy=Math.min(minEy,s.y)}});return [Math.round(minA),Math.round(maxE),Math.round(minEy)]});
+let w=[];for(let i=0;i<40;i++){await sl(200);w.push(await meas())}console.log('wave minAllyX/maxEnemyX/topEnemyFootY',JSON.stringify(w.filter((_,i)=>i%5==0)));
+await p.screenshot({path:'screenshots/307-wave-btns.jpg',type:'jpeg',quality:86});
+await p.evaluate(()=>{const s=G.S();s.wave=99;s.failPow=0;G.C.startBoss();G.C.B.enemies.filter(e=>e.boss).forEach(e=>{e.max*=30;e.hp=e.max})});await sl(4000);
+w=[];for(let i=0;i<20;i++){await sl(200);w.push(await meas())}console.log('boss',JSON.stringify(w.filter((_,i)=>i%4==0)));
+await p.screenshot({path:'screenshots/308-boss-portraits.jpg',type:'jpeg',quality:86});
+console.log('ERR',JSON.stringify(errs));await b.close()})();

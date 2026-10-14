@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(2000);
+await p.evaluate(()=>{const s=G.S();s.lv=40;s.maxSi=10;s.comps={gourry:1,sera:1,zelgadis:1,xellos:1};s.party=['gourry','sera','zelgadis','xellos'];G.C.buildAllies();G.C.selectStage(8)});await sl(3000);
+await p.evaluate(()=>document.querySelector('#menuPop').classList.add('on'));await sl(400);await p.screenshot({path:'/tmp/slayers_m.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelector('#menuPop').classList.remove('on');G.open('wboss')});await sl(800);await p.screenshot({path:'/tmp/slayers_s.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelectorAll('.chap').forEach(x=>x.remove());if(G.C.B.boss){}document.querySelector('#wbGo').click()});await sl(500);await p.screenshot({path:'screenshots/354-wboss-warning.jpg',type:'jpeg',quality:85});
+console.log('wb',await p.evaluate(()=>!!G.C.B.wb));
+await sl(6000);await p.screenshot({path:'screenshots/355-wboss-fight.jpg',type:'jpeg',quality:85});await sl(8000);await p.screenshot({path:'screenshots/356-wboss-fight2.jpg',type:'jpeg',quality:85});
+let e=0;for(let i=0;i<120&&!e;i++){await sl(250);e=await p.evaluate(()=>!!document.querySelector('.rwpop'))}await sl(900);await p.screenshot({path:'screenshots/357-wboss-result.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelectorAll('.rwpop').forEach(x=>x.remove());G.open('wboss')});await sl(800);await p.screenshot({path:'screenshots/358-wboss-rank-after.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelector('#screen').classList.remove('on');G.screen=null});await sl(3000);await p.screenshot({path:'screenshots/359-after-wboss-battle.jpg',type:'jpeg',quality:85});
+console.log(e,await p.evaluate(()=>JSON.stringify([G.S().wbd,G.C.B.boss,G.C.alive().length])),'ERR',JSON.stringify(errs));await b.close()})();

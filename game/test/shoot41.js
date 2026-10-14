@@ -1,0 +1,8 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(2000);
+await p.evaluate(()=>{const s=G.S();s.lv=40;s.maxSi=10;s.comps={gourry:1,sera:1};s.party=['gourry','sera'];G.C.buildAllies();G.C.selectStage(8)});
+let f=0;for(let i=0;i<80&&!f;i++){await sl(250);f=await p.evaluate(()=>G.C.alive().some(e=>e.el))}console.log('elite seen',f);await p.evaluate(()=>{const e=G.C.B.enemies.find(e=>e.el);e.max*=50;e.hp=e.max*.6;document.querySelectorAll('.chap').forEach(x=>x.remove())});await sl(4500);
+await p.screenshot({path:'screenshots/286-elite-mob.jpg',type:'jpeg',quality:88});await p.screenshot({path:'screenshots/287-elite-crop.jpg',type:'jpeg',quality:92,clip:{x:120,y:330,width:270,height:300}});
+const g0=await p.evaluate(()=>G.S().gold);let k=0;for(let i=0;i<80&&!k;i++){await sl(200);if(i==0)await p.evaluate(()=>{G.C.B.enemies.filter(e=>e.el).forEach(e=>e.hp=1)});k=await p.evaluate(()=>!G.C.B.enemies.some(e=>e.el&&e.hp>0))}await sl(500);await p.screenshot({path:'screenshots/288-elite-loot.jpg',type:'jpeg',quality:88});
+console.log('killed',k,'ERR',JSON.stringify(errs));await b.close()})();

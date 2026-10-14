@@ -1,0 +1,17 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);const clr=()=>ev(()=>document.querySelectorAll('.rwpop,.modal').forEach(x=>x.remove()));
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(2000);
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=30;s.maxSi=14;G.C.buildAllies();G.open('map')});await sl(800);await sh('388-map-dungeon-btn');
+await ev(()=>document.querySelector('#mapDun').click());await sl(1200);await sh('389-dungeon-gold');
+console.log('pow',await ev(()=>G.C.POW()));
+await ev(()=>document.querySelector('[data-ch="0"]').click());await sl(500);await sh('390-dungeon-fight');await sl(1500);await sh('391-dungeon-firstclear');await clr();await sl(300);await sh('392-dungeon-sweep-avail');
+await ev(()=>document.querySelector('[data-sw="0"]').click());await sl(900);await clr();
+const t=await ev(()=>G.C.dunDaily().t.gold);console.log('gold tries left',t);
+await ev(()=>{const x=document.querySelector('[data-ch="1"]');x&&x.click()});await sl(1900);await sh('393-dungeon-notries-or-fail');await clr();
+await ev(()=>{document.querySelector('[data-dk=stone]').click()});await sl(300);await ev(()=>document.querySelector('[data-ch="1"]')?0:0);
+await ev(()=>{const s=G.S();s.stl.atk=400;s.stl.hp=400});const pw2=await ev(()=>G.C.POW());console.log('pow2',pw2);
+await ev(()=>document.querySelector('[data-ch="0"]').click());await sl(1800);await clr();await ev(()=>G.render&&0);await ev(()=>{G.open('dungeon')});await sl(400);
+await ev(()=>{const x=document.querySelector('[data-ch="1"]');x&&x.click()});await sl(1800);await sh('394-dungeon-stone-tier2');await clr();await ev(()=>{G.open('dungeon')});await sl(400);await sh('395-dungeon-stone-list');
+console.log('state',await ev(()=>JSON.stringify(G.C.dunDaily())));
+console.log('ERR',errs);await b.close()})();

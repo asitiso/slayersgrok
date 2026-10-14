@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(2000);
+await p.evaluate(()=>{const s=G.S();s.lv=40;s.maxSi=10;s.tut=99;s.autoSpell=false;G.C.selectStage(8)});await sl(4000);
+await p.screenshot({path:'screenshots/379-bctl-off.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelector('#bAutoSk').click();document.querySelector('#bSpd').click()});await sl(1200);await p.screenshot({path:'screenshots/380-bctl-on.jpg',type:'jpeg',quality:85});
+await p.screenshot({path:'screenshots/381-bctl-crop.jpg',type:'jpeg',quality:92,clip:{x:0,y:660,width:390,height:110}});
+const before=await p.evaluate(()=>[G.S().autoSpell,G.speed,G.S().spd]);await sl(6000);
+await p.goto(U);await sl(2500);const after=await p.evaluate(()=>[G.S().autoSpell,G.speed,G.S().spd,document.querySelector('#bSpd').className,document.querySelector('#bAutoSk').className]);
+await p.screenshot({path:'screenshots/382-bctl-after-reload.jpg',type:'jpeg',quality:85});
+console.log('before',before,'after',after,'ERR',JSON.stringify(errs));await b.close()})();

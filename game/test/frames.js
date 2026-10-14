@@ -1,0 +1,12 @@
+const puppeteer=require('puppeteer-core');const fs=require('fs');const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});
+const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:1});const errs=[];p.on('console',m=>{if(['error','warning'].includes(m.type()))errs.push(m.text())});p.on('pageerror',e=>errs.push('PAGEERR '+e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sleep(800);
+const boss=process.argv[2]=='boss';
+await p.evaluate((boss)=>{const s=G.S();s.maxSi=15;s.lv=22;s.stl.atk=28;s.stl.hp=40;s.comps={gourry:1,zelgadis:1,amelia:1,xellos:1};s.party=['gourry','amelia','xellos','zelgadis'];G.C.buildAllies();G.C.selectStage(boss?7:4);s.autoBoss=false;G.C.B.cds.ds=5;G.C.B.cds.giga=9;G.C.B.cds.ragna=3;if(boss){s.wave=3;G.C.startBoss()}},boss);await sleep(500);
+fs.rmSync('/tmp/frames',{recursive:true,force:true});fs.mkdirSync('/tmp/frames');
+const cdp=await p.target().createCDPSession();let n=0;cdp.on('Page.screencastFrame',async f=>{fs.writeFileSync(`/tmp/frames/f${String(n++).padStart(4,'0')}.jpg`,Buffer.from(f.data,'base64'));await cdp.send('Page.screencastFrameAck',{sessionId:f.sessionId})});
+if(process.argv[2]!=='boss')setTimeout(()=>p.evaluate(()=>{G.C.selectStage(7)}).catch(()=>{}),5000);
+const fpsP=p.evaluate(()=>new Promise(r=>{let n=0,t0=performance.now();function f(){n++;if(performance.now()-t0<10000)requestAnimationFrame(f);else r(n/10)}requestAnimationFrame(f)}));
+await cdp.send('Page.startScreencast',{format:'jpeg',quality:88,everyNthFrame:1});const fps=await fpsP;await cdp.send('Page.stopScreencast');await sleep(200);
+console.log('frames',n,'fps',fps,'ERR',JSON.stringify(errs));await b.close()})();

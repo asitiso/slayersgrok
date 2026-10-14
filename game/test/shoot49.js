@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(2500);
+await p.evaluate(()=>{const s=G.S();s.gems=1e5;G.C.summon(10);G.C.summon(10);s.maxSi=8;s.gold=1e9;s.stone=1e4;for(let i=0;i<8;i++)G.C.mAdd('boss');G.C.mAdd('kill',600);});
+const en=await p.evaluate(()=>{const s=G.S();const sl=Object.keys(s.gear||{})[0];let r=[];for(let i=0;i<8;i++)r.push(G.C.enhance(sl));return [sl,r.join(','),s.ac.enh]});console.log('enh',JSON.stringify(en));
+await sl(300);await p.evaluate(()=>document.querySelector('#menuPop').classList.add('on'));await sl(500);await p.screenshot({path:'screenshots/326-menu-ach-dot.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelector('#menuPop').classList.remove('on');G.open('ach')});await sl(700);await p.screenshot({path:'screenshots/327-ach-screen.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>document.querySelector('[data-ach]').click());await sl(900);await p.screenshot({path:'screenshots/328-ach-claim-one.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelectorAll('.rwpop').forEach(x=>x.remove());document.querySelector('#achAll').click()});await sl(1000);await p.screenshot({path:'screenshots/329-ach-claim-all.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>document.querySelectorAll('.rwpop').forEach(x=>x.remove()));await sl(300);await p.screenshot({path:'screenshots/330-ach-after.jpg',type:'jpeg',quality:85});
+console.log(await p.evaluate(()=>JSON.stringify({acl:G.S().acl,dot:G.BD.ach})),'ERR',JSON.stringify(errs));await b.close()})();

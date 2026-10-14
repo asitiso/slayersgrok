@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s69');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(6000);
+const hitN=k=>ev(k=>{const L=G.C.alive().filter(e=>!e.boss);const e=k=='ef'?L.find(e=>e.el)||L[0]:L[L.length-1];if(!e)return 0;if(k=='ef')e.el=1;G.C.ev.hit(e,e.max*(k=='kd'?.2:.3),k!='kd');return 1},k);
+await hitN('ln');await sl(260);await sh('469-hr-launch');await hitN('kd');await sl(120);await sh('470-hr-knockback');await hitN('ef');await sl(60);await sh('471-hr-elite-flinch');
+await sl(20000);const n=await ev(()=>G.hrN);await sh('472-hr-natural');
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+stop();console.log('reactions',n,'fps',fps,'ERR',errs);await b.close()})();

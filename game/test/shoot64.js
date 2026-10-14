@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);const clr=()=>ev(()=>document.querySelectorAll('.rwpop,.modal').forEach(x=>x.remove()));
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(2000);
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=30;s.maxSi=14;s.gems=5000;s.comps={gourry:3,zelgadis:2,amelia:2,xellos:1,borin:1};s.party=['gourry','zelgadis','amelia'];s.pet={own:{slime:2,mush:1,bat:1,imp:3,wolf:1,golem:1},eq:'wolf',egg:0,gift:1};G.C.buildAllies();G.open('pet')});await sl(800);await sh('444-pet-newart-screen');
+await ev(()=>{G.ptSel='golem';G.open('pet')});await sl(400);await sh('445-pet-golem-detail');
+await ev(()=>G.close());await sl(2500);await p.screenshot({path:'screenshots/446-pet-wolf-battle.jpg',type:'jpeg',quality:90,clip:{x:0,y:360,width:260,height:320}});
+const p0=await ev(()=>G.C.POW());
+await ev(()=>G.open('codex'));await sl(600);await sh('447-codex-comps');
+await ev(()=>document.querySelector('[data-ct=s]').click());await sl(300);await sh('448-codex-sets');
+await ev(()=>document.querySelector('[data-ct=p]').click());await sl(300);await sh('449-codex-pets');
+const g0=await ev(()=>G.S().gems);await ev(()=>document.querySelector('#cdAll').click());await sl(1200);await sh('450-codex-regall');await clr();
+await ev(()=>{document.querySelector('[data-ct=m]').click()});await sl(300);await sh('451-codex-mons');
+console.log('pow',p0,await ev(()=>G.C.POW()),'gems',g0,await ev(()=>G.S().gems),'ERR',errs);await b.close()})();

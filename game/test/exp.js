@@ -1,0 +1,10 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(900);
+await p.evaluate(()=>{const s=G.S();s.maxSi=20;s.lv=30;s.stl.hp=300;s.comps={gourry:1,zelgadis:1,amelia:1,xellos:1};s.party=['gourry','zelgadis','amelia','xellos'];s.autoSpell=true;s.autoBoss=false;G.C.buildAllies();G.C.selectStage(14)});await sl(2000);
+const fps=()=>p.evaluate(()=>new Promise(r=>{let n=0;const t0=performance.now();(function l(){n++;if(performance.now()-t0<4000)requestAnimationFrame(l);else r((n/4).toFixed(1))})()}));
+console.log('base',await fps());
+await p.evaluate(()=>{const st=document.createElement('style');st.id='x1';st.textContent='*{animation:none!important;transition:none!important}';document.head.appendChild(st)});console.log('noCSSanim',await fps());
+await p.evaluate(()=>{document.querySelectorAll('#app>*:not(#battle), #battle>*:not(canvas)').forEach(e=>e.style.display='none')});console.log('noDOM',await fps());
+await p.evaluate(()=>{document.querySelector('#cv').style.visibility='hidden'});console.log('noCanvasShow',await fps());
+await b.close()})();

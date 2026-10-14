@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=f=>p.evaluate(f);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(2000);
+console.log('A');await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=12;s.maxSi=4;s.comps={lyra:1,pip:1,zelgadis:1};s.party=['lyra','pip','zelgadis'];s.autoSpell=false;G.C.buildAllies()});await sl(3000);
+console.log('B');const fps0=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+await ev(()=>{const L=G.C.alive();L.forEach((e,i)=>{G.C.stApply(e,['burn','frz','stun','psn'][i%4]);e.hp=e.max*50;e.max*=50});});await p.waitForFunction(()=>G.C.alive().length>=3&&[...RENDER._ES()].filter(([e,q])=>e.hp>0&&q.x<330).length>=3,{timeout:15000}).catch(()=>{});await ev(()=>{const L=G.C.alive();L.forEach((e,i)=>{G.C.stApply(e,['burn','frz','stun','psn'][i%4],6);e.hp=e.max*50;e.max*=50})});console.log('C');await sl(700);await sh('452-status-all');
+await p.screenshot({path:'screenshots/453-status-crop.jpg',type:'jpeg',quality:90,clip:{x:120,y:250,width:270,height:420}});
+await ev(()=>{const L=G.C.alive();L.forEach(e=>{G.C.stApply(e,'burn');G.C.stApply(e,'psn');G.C.stApply(e,'frz')})});await sl(900);await p.screenshot({path:'screenshots/454-status-multi-dot.jpg',type:'jpeg',quality:90,clip:{x:120,y:250,width:270,height:420}});
+console.log('D');const att=await ev(()=>new Promise(r=>{const e=G.C.alive()[0];G.C.stApply(e,'stun',3);let n=0;const o=G.C.ev.eatk;G.C.ev.eatk=x=>{if(x===e)n++;o&&o(x)};setTimeout(()=>{G.C.ev.eatk=o;r([n,!!(e.st&&e.st.stun)])},2000)}));console.log('stunned attacks in 2s',att);
+await ev(()=>{const s=G.S();s.autoSpell=true});await sl(4000);await sh('455-status-natural');
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+const cnt=await ev(()=>G.C.alive().map(e=>Object.keys(e.st||{}).join('+')));console.log('fps',fps0,fps,'st',cnt,'ERR',errs);await b.close()})();

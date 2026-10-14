@@ -1,0 +1,8 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(2000);
+await p.evaluate(()=>{const s=G.S();s.lv=30;s.maxSi=6;s.comps={gourry:2,zelgadis:1};s.party=['gourry','zelgadis'];s.autoSpell=false;G.C.buildAllies();G.C.selectStage(3)});await sl(3000);
+let ok=false;for(let i=0;i<40&&!ok;i++){ok=await p.evaluate(()=>{RENDER.ccCd=0;RENDER.ccut=null;RENDER.cut=null;return RENDER.csk('zelgadis',RENDER._AS().get('zelgadis'),true)});if(!ok)await sl(250)}
+await p.evaluate(()=>{window.__pin=setInterval(()=>{if(RENDER.ccut&&RENDER.ccut.t>.4)RENDER.ccut.t=.4},5)});await sl(500);await p.evaluate(()=>clearInterval(window.__pin));await p.screenshot({path:'screenshots/273-ccut-zelgadis.jpg',type:'jpeg',quality:85});
+await sl(1200);await p.evaluate(()=>{const s=G.S();s.wave=99;s.failPow=0;G.C.startBoss()});await sl(450);await p.screenshot({path:'screenshots/274-boss-warning.jpg',type:'jpeg',quality:85});await sl(2000);console.log('left',await p.evaluate(()=>document.querySelectorAll('.bwarn').length));await p.screenshot({path:'screenshots/275-boss-after.jpg',type:'jpeg',quality:85});
+console.log(ok,'ERR',JSON.stringify(errs));await b.close()})();

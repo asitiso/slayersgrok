@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(900);
+const ev=(f,...a)=>p.evaluate(f,...a),sh=n=>p.screenshot({path:`screenshots/${n}.jpg`,quality:85,type:'jpeg'});
+await ev(()=>{const s=G.S();s.maxSi=15;s.lv=22;s.gold=5e6;s.gems=2000;s.comps={gourry:1,zelgadis:1,amelia:1,xellos:1};s.party=['gourry','zelgadis','amelia','xellos'];G.C.buildAllies();G.C.selectStage(2);G.C.bp().xp=760});await sl(2500);
+await ev(()=>G.open('pass'));await sl(500);await sh('139-battlepass');
+await ev(()=>document.querySelector('#bpb').click());await sl(300);await ev(()=>document.querySelector('.bpc.can').click());await sl(300);await sh('140-battlepass-prem');await ev(()=>G.close());
+await ev(()=>G.open('skin'));await sl(400);await sh('141-costume');
+await ev(()=>document.querySelector('[data-sk=ice]').click());await sl(400);await sh('142-costume-ice');await ev(()=>G.close());await sl(2200);await sh('143-battle-iceskin');
+await ev(()=>{G.open('menu')});await sl(100);await ev(()=>G.close&&G.close());
+console.log('ERR',JSON.stringify(errs));await b.close()})();

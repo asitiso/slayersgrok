@@ -1,0 +1,15 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(900);
+await p.evaluate(st=>{const s=G.S();s.maxSi=20;s.lv=30;s.stl.hp=300;s.comps={gourry:1,zelgadis:1,amelia:1,xellos:1};s.party=['gourry','zelgadis','amelia','xellos'];s.autoSpell=true;s.autoBoss=false;G.C.buildAllies();G.C.selectStage(st)},+(process.argv[2]||14));await sl(2000);
+const cdp=await p.target().createCDPSession();await cdp.send('Profiler.enable');await cdp.send('Profiler.setSamplingInterval',{interval:200});
+const f0=await p.evaluate(()=>new Promise(r=>{let n=0;const t0=performance.now();(function l(){n++;if(performance.now()-t0<6000)requestAnimationFrame(l);else r(n/6)})()}));
+await cdp.send('Profiler.start');
+const fps=await p.evaluate(()=>new Promise(r=>{let n=0;const t0=performance.now();(function l(){n++;if(performance.now()-t0<6000)requestAnimationFrame(l);else r(n/6)})()}));
+const {profile}=await cdp.send('Profiler.stop');
+const self={};const dt=profile.timeDeltas;const idx={};profile.nodes.forEach(n=>idx[n.id]=n);
+profile.samples.forEach((s,i)=>{const n=idx[s];const k=n.callFrame.functionName+':'+n.callFrame.lineNumber+':'+(n.callFrame.url.split('/').pop());self[k]=(self[k]||0)+(dt[i]||0)});
+const tot=Object.values(self).reduce((a,b)=>a+b,0);
+console.log('fps(noProf)',f0.toFixed(1),'fps(prof)',fps.toFixed(1),'enemies',await p.evaluate(()=>G.C.B.enemies.length));
+Object.entries(self).sort((a,b)=>b[1]-a[1]).slice(0,22).forEach(([k,v])=>console.log((v/tot*100).toFixed(1).padStart(5),k));
+await b.close()})();

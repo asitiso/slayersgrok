@@ -1,0 +1,6 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(900);
+await p.evaluate(st=>{const s=G.S();s.maxSi=20;s.lv=30;s.stl.hp=300;s.comps={gourry:1,zelgadis:1,rhea:1,kaede:1,borin:1};s.party=['gourry','zelgadis','rhea','borin'];s.autoSpell=true;G.C.buildAllies();DATA.BAL.swarm=[12,12];G.C.selectStage(st)},+(process.argv[2]||14));
+await p.evaluate(()=>{window.__f=[];let l=performance.now();const f=t=>{__f.push(t-l);l=t;requestAnimationFrame(f)};requestAnimationFrame(f)});await sl(10000);
+console.log(await p.evaluate(()=>{const a=__f.slice(30),m=a.reduce((x,y)=>x+y,0)/a.length,s=[...a].sort((x,y)=>x-y);return JSON.stringify({fps:+(1000/m).toFixed(1),p95ms:+s[Math.floor(s.length*.95)].toFixed(1),dpr:window.devicePixelRatio,cw:document.querySelector("canvas").width,bg:G.C.B.enemies.map(e=>e.img).join(",")})}),'ERR',JSON.stringify(errs));await b.close()})();

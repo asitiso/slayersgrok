@@ -1,0 +1,13 @@
+// watchdog-enabled
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:1});const errs=[];p.on('pageerror',e=>errs.push('PE '+e.message));p.on('console',m=>m.type()=='error'&&errs.push('CE '+m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));p.on('response',r=>{if(r.status()>=400)errs.push('HTTP'+r.status()+' '+r.url())});
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(4000);const __wd=await require('./watchdog')(p,'regress');
+await p.screenshot({path:'/tmp/slayers_rg_00_battle.jpg',type:'jpeg',quality:60});
+const keys=await p.evaluate(()=>[...document.querySelectorAll('#mgrid a')].map(a=>a.dataset.k||a.getAttribute('data-k')||a.textContent.trim()));console.log('menu',keys.join(','));
+const scr=['mail','event','map','base','guild','arena','dungeon','relic','explore','summon','party','enhance','bag','codex','ach','title','wboss','rank','pass','skin','settings','shop'];
+const res=[];let i=1;for(const k of scr){const e0=errs.length;await p.evaluate(k=>{document.querySelectorAll('.rwpop,.vic,.modal').forEach(x=>x.remove());G.open(k)},k).catch(e=>errs.push('OPEN '+k+' '+e.message));await sl(500);const ok=await p.evaluate(()=>{const s=document.querySelector('#screen');return s.classList.contains('on')&&s.innerText.trim().length>5});res.push(k+':'+(ok?'ok':'EMPTY')+(errs.length>e0?'!ERR':''));await p.screenshot({path:`/tmp/slayers_rg_${String(i++).padStart(2,'0')}_${k}.jpg`,type:'jpeg',quality:55})}
+await p.evaluate(()=>{document.querySelector('#screen').classList.remove('on');G.screen=null});
+for(const k of ['train','gear','comp','mission']){const e0=errs.length;await p.evaluate(k=>{try{openSheet(k)}catch(e){G.openSheet?G.openSheet(k):0}},k).catch(e=>errs.push('SHEET '+k+' '+e.message));await sl(400);res.push('sheet '+k+(errs.length>e0?' !ERR':' ok'));await p.screenshot({path:`/tmp/slayers_rg_${String(i++).padStart(2,'0')}_sheet_${k}.jpg`,type:'jpeg',quality:55});await p.evaluate(()=>document.querySelectorAll('#sheet.on').forEach(x=>x.classList.remove('on')))}
+// battle 20s + boss
+await sl(15000);const st=await p.evaluate(()=>[G.S().wave,G.S().kills,G.C.alive().length]);
+console.log(res.join(' | '));console.log('battle',st);console.log('ERRS',JSON.stringify(errs));await b.close()})();

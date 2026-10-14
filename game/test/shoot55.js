@@ -1,0 +1,16 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});
+await p.goto(U);await p.evaluate(()=>localStorage.clear());await p.goto(U);await sl(2000);
+await p.evaluate(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());['스킬 자동 시전 ON','전투 속도 ×2','방치 보상 수령: 12.3K','보석이 부족합니다','칭호 획득!'].forEach((t,i)=>setTimeout(()=>G.toast?G.toast(t):toast(t),i*120))});await sl(800);await sh('383-toast-queue');
+console.log('toasts',await p.evaluate(()=>document.querySelectorAll('#toastQ .toast').length));
+const prep=async gems=>{await p.evaluate(g=>{const s=G.S();s.lv=30;s.maxSi=12;s.si=12;s.gems=g;s.tut=9;G.save();const d=JSON.parse(localStorage.getItem('slayers_save_v2'));d.last=Date.now()-5.4*3600e3;localStorage.setItem('slayers_save_v2',JSON.stringify(d));G.noSave=1},gems);await p.goto(U);await sl(2500)};
+await prep(500);await sh('384-offline-pop');
+const b0=await p.evaluate(()=>{const s=G.S();return[s.gold,s.gems,s.stone||0]});
+await p.evaluate(()=>document.querySelector('#offX2').click());await sl(1500);await sh('385-offline-x2-reward');
+const b1=await p.evaluate(()=>{const s=G.S();return[s.gold,s.gems,s.stone||0]});console.log('x2',b0,b1);
+await p.evaluate(()=>document.querySelectorAll('.rwpop').forEach(x=>x.remove()));
+await prep(10);await p.evaluate(()=>document.querySelector('#offX2').click());await sl(400);await sh('386-offline-nogems');
+const c0=await p.evaluate(()=>G.S().gold);await p.evaluate(()=>document.querySelector('#offOk').click());await sl(1200);await sh('387-offline-claim');
+console.log('x1 gold',c0,await p.evaluate(()=>G.S().gold),'modal',await p.evaluate(()=>!!document.querySelector('#offModal')));
+console.log('ERR',errs);await b.close()})();

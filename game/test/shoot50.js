@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',timeout:180000,protocolTimeout:240000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()=='error'&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U,{timeout:200000});await p.evaluate(()=>localStorage.clear());await p.goto(U,{timeout:200000});await sl(2500);
+await p.evaluate(()=>{const s=G.S();s.gems=1e5;for(let i=0;i<4;i++)G.C.summon(10);s.maxSi=8;for(let i=0;i<8;i++)G.C.mAdd('boss');G.C.mAdd('kill',600);G.open('ach')});await sl(600);
+await p.evaluate(()=>document.querySelector('#achAll').click());await sl(1200);await p.screenshot({path:'screenshots/337-title-unlock-popup.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>document.querySelectorAll('.rwpop').forEach(x=>x.remove()));await sl(200);await p.screenshot({path:'/tmp/slayers_a.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>document.querySelector('#ttlBtn').click());await sl(600);await p.screenshot({path:'/tmp/slayers_b.jpg',type:'jpeg',quality:85});
+const a0=await p.evaluate(()=>G.C.atkPct());await p.evaluate(()=>[...document.querySelectorAll('[data-ttl]')].pop().click());await sl(500);const a1=await p.evaluate(()=>G.C.atkPct());
+await p.screenshot({path:'/tmp/slayers_c.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>{document.querySelector('#screen').classList.remove('on');G.screen=null});await sl(1500);await p.screenshot({path:'/tmp/slayers_d.jpg',type:'jpeg',quality:85});await p.screenshot({path:'/tmp/slayers_e.jpg',type:'jpeg',quality:92,clip:{x:0,y:0,width:240,height:80}});
+console.log('atk',a0,a1,await p.evaluate(()=>JSON.stringify(G.C.titleCur())),'ERR',JSON.stringify(errs));await b.close()})();

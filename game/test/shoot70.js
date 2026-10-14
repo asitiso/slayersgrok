@@ -1,0 +1,15 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const W=()=>p.waitForFunction(()=>G.C.alive().filter(e=>!e.boss).length>=2,{timeout:15000}).catch(()=>console.log('wait timeout'));
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s70');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(4000);await W();console.log('a');
+await ev(()=>{const e=G.C.alive().find(e=>!e.boss);if(!e)return;e.el=1;G.C.ev.hit(e,e.max*.3,true)});await sl(70);await sh('473-hr-elite-flinch-reshoot');
+await sl(500);await W();await ev(()=>{const L=G.C.alive().filter(e=>!e.boss);const e=L[L.length-1];if(e)G.C.hitEnemy(e,e.max*5,true)});await sl(300);await sh('474-death-critfly');await sl(300);await sh('475-death-critfly-fade');
+await sl(800);await W();await ev(()=>{const e=G.C.alive().filter(e=>!e.boss)[0];if(e)G.C.hitEnemy(e,e.max*5,false)});await sl(350);await sh('476-death-normal-fade');console.log('b');
+const ok=await ev(()=>{try{G.C.startBoss();return 1}catch(e){return e.message}});await p.waitForFunction(()=>G.C.alive().some(e=>e.boss),{timeout:15000}).catch(()=>console.log('noboss'));await sl(2500);
+await ev(()=>{const e=G.C.alive().find(e=>e.boss);if(e)G.C.hitEnemy(e,e.max*5,true)});await sl(400);await sh('477-boss-slowmo');await sl(900);await sh('478-boss-slowmo-late');console.log('c');
+await sl(15000);const n=await ev(()=>RENDER.flyN||0);await sh('479-death-natural');
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+stop();console.log('boss',ok,'flyN',n,'fps',fps,'ERR',errs);await b.close()})();
