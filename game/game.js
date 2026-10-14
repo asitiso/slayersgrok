@@ -675,3 +675,37 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
  d.querySelector('.vn').insertAdjacentHTML('beforebegin',`<div class=vbx><div class=vmvp><img src="${A}${im(mvp)}"><i>MVP</i><b>${nm(mvp)}</b><em>${Math.round(G.DM_(mvp)/tot*100)}%</em></div><div class=vbl>${ks.map((k,i)=>`<div class=vbr style="animation-delay:${.25+i*.12}s"><img src="${A}${im(k)}"><span class=vbb><s style="width:${(G.DM_(k)/G.DM_(ks[0])*100).toFixed(0)}%" class="${i?'':'top'}"></s></span><em>${fmt(Math.round(G.DM_(k)))}</em></div>`).join('')}</div></div>`);
  d.onclick=()=>d.remove();setTimeout(()=>d.classList.add('out'),3600);setTimeout(()=>d.remove(),4000)}catch(_){}return r};
 let cur=null;G.DM_=k=>cur?cur[k]||0:0;const or2=resultPop;resultPop=function(w){cur=snap;return or2.apply(this,arguments)}})();
+;(()=>{// v27 보스 러시 (boss rush)
+const BR={tries:3,time:30,names:['마천루 무사','주간 랭커','슬레이어','붉은달','용사지망','은빛검','마도학자','고블린킬러','검은고양이','세이룬기사','방랑시인','젤가팬','마족사냥꾼','달빛여우','노을','폭염','라그나','빙결공주','현자의돌','떠돌이'],
+ tier:[[1,800,'1위'],[3,500,'2~3위'],[10,300,'4~10위'],[30,150,'11~30위'],[999,60,'참가']]};C.BR=BR;
+const st=()=>{const s=C.S();s.br=s.br||{};const b=s.br;if(b.day!==C.today()){b.day=C.today();b.tries=BR.tries}if(b.w!==C.week()){if(b.w!=null&&b.best>0){b.pend={rk:rank(b.best,b.w).me,w:b.w}}b.w=C.week();b.best=0}return b};
+const rng=seed=>()=>((seed=(seed*1103515245+12345)&0x7fffffff)/0x7fffffff);
+const ai=w=>{const r=rng(w*7919+13),lv=Math.max(3,(C.S().maxSi||0)/2+4);return BR.names.map(n=>({n,sc:+(lv*(.35+r()*1.1)).toFixed(1)}))};
+const rank=(best,w)=>{const L=ai(w).concat([{n:'나',sc:best,me:1}]).sort((a,b)=>b.sc-a.sc);return{L,me:L.findIndex(x=>x.me)+1}};
+const tierOf=rk=>BR.tier.find(t=>rk<=t[0]);C.brSt=st;C.brRank=()=>rank(st().best,st().w);
+const dps=()=>C.ATK()*(1.2+C.S().party.reduce((a,k)=>a+C.compMul(k),0))*(1+C.stat('crit')/100);
+const bossHp=i=>dps()*3*Math.pow(1.3,i);
+const rew=sc=>{const k=Math.floor(sc);return{g:Math.round(k*(60+(C.S().maxSi||0)*25)),gem:k*5,st:k*2}};
+C.brRed=()=>{try{const b=st();return b.tries>0||!!b.pend}catch(_){return false}};
+// screen card
+const ods=dunScreen;dunScreen=function(el,s){ods.apply(this,arguments);const b=st(),r=rank(b.best,b.w);const c=document.createElement('div');c.className='card brc';
+ c.innerHTML=`<div class=brh><img src="${A}boss_demon.png"><div><b>보스 러시</b><small>${BR.time}초 동안 보스를 연속 처치! 주간 랭킹 · 월 05:00 정산</small></div></div><div class=brs><span>오늘 <b>${b.tries}/${BR.tries}</b></span><span>주간 최고 <b>${b.best||0}</b></span><span>순위 <b>${b.best?r.me+'위':'-'}</b></span></div><div class=brbtns><span class="pill ${b.tries?'gold':''}" id=brGo>도전</span><span class=pill id=brRk>랭킹</span></div>${b.pend?`<div class=brpend id=brPend>지난 주 ${b.pend.rk}위 보상 받기 · 💎${tierOf(b.pend.rk)[1]}</div>`:''}`;
+ {const an=el.querySelector('.dunh');an?an.before(c):el.appendChild(c)}c.querySelector('#brGo').onclick=()=>{if(!st().tries)return toast('오늘 도전 횟수를 모두 사용했습니다');run()};c.querySelector('#brRk').onclick=rkPop;
+ const pd=c.querySelector('#brPend');if(pd)pd.onclick=()=>{const b=st(),t=tierOf(b.pend.rk);C.S().gems+=t[1];b.pend=null;rewardPop([['it2_gem.png',t[1],'보석']],'보스 러시 주간 '+t[2]+' 보상');G.screen&&renderScreen()}};
+const rkPop=()=>{const b=st(),r=rank(b.best,b.w);const m=document.createElement('div');m.className='modal brmod';m.innerHTML=`<div class=mbox><div class=ttl>보스 러시 주간 랭킹</div><div class=brl>${r.L.slice(0,30).map((x,i)=>`<div class="brr ${x.me?'me':''}"><i>${i+1}</i><b>${x.n}</b><em>${x.sc}</em></div>`).join('')}</div><div class=brtier>${BR.tier.map(t=>`<span>${t[2]} 💎${t[1]}</span>`).join('')}</div><div class="pill gold" id=brX>닫기</div></div>`;document.getElementById('app').appendChild(m);m.querySelector('#brX').onclick=()=>m.remove();setTimeout(()=>{const me=m.querySelector('.brr.me');me&&me.scrollIntoView({block:'center'})},50)};
+// run overlay
+const run=()=>{const b=st();b.tries--;const BS=D.BOSSES;let i=0,hp=bossHp(0),T=BR.time,kills=0,done=false,last=performance.now(),acc=0,fast=1;
+ const m=document.createElement('div');m.className='brrun';m.innerHTML=`<div class=brtop><div class=brtime><s></s></div><b class=brt></b></div><div class=brk>처치 <b>0</b></div><div class=brbn></div><div class=brboss><img></div><div class=brhp><s></s><i></i></div><div class=brparty>${['lina'].concat(C.S().party).slice(0,5).map(k=>`<img src="${A}${k=='lina'?'hero_lina.png':(D.COMPS.find(c=>c.k==k)||{}).img}">`).join('')}</div><div class=brfx></div><div class=brskip>⏩ 빠르게</div>`;
+ document.getElementById('app').appendChild(m);const img=m.querySelector('.brboss img'),hpS=m.querySelector('.brhp s'),hpI=m.querySelector('.brhp i'),fx=m.querySelector('.brfx'),tS=m.querySelector('.brtime s'),tB=m.querySelector('.brt'),kB=m.querySelector('.brk b'),bn=m.querySelector('.brbn');
+ const setB=()=>{const bo=BS[i%BS.length];img.src=A+bo.img;img.className='';void img.offsetWidth;img.className='in';bn.textContent=`#${i+1} ${bo.n}`;};setB();
+ m.querySelector('.brskip').onclick=()=>{fast=fast==1?6:1;m.querySelector('.brskip').classList.toggle('on',fast>1)};
+ const fin=()=>{done=true;const sc=+(kills+Math.max(0,1-hp/bossHp(i))).toFixed(1);const nb=sc>b.best;if(nb)b.best=sc;const r=rew(sc);C.addGold(r.g);C.S().gems+=r.gem;C.S().stone=(C.S().stone||0)+r.st;G.brLast=sc;
+  m.insertAdjacentHTML('beforeend',`<div class=brend><div class=vt>TIME UP</div><div class=brsc>${sc}<small>점</small></div>${nb?'<div class=brnew>주간 최고 기록!</div>':''}<div class=brsub>처치 ${kills} · 순위 ${rank(b.best,b.w).me}위</div><div class="pill gold" id=brOk>보상 받기</div></div>`);
+  m.querySelector('#brOk').onclick=()=>{m.remove();rewardPop([['it2_gold.png',r.g,'골드'],['it2_gem.png',r.gem,'보석'],['it2_stone.png',r.st,'강화석']],'보스 러시 '+sc+'점');if(G.screen)renderScreen()}};
+ const loop=now=>{if(done||!m.isConnected)return;const dt=Math.min(.1,(now-last)/1000)*fast;last=now;T-=dt;acc+=dt;
+  while(acc>.25){acc-=.25;const cr=Math.random()<.2,d=dps()*.25*(cr?2:1)*(.85+Math.random()*.3);hp-=d;const n=document.createElement('i');n.className=cr?'cr':'';n.textContent=fmt(Math.round(d));n.style.left=(150+Math.random()*120)+'px';n.style.top=(300+Math.random()*80)+'px';fx.appendChild(n);setTimeout(()=>n.remove(),700);
+   if(hp<=0){kills++;i++;hp=bossHp(i);kB.textContent=kills;const k=document.createElement('div');k.className='brko';k.textContent='격파!';m.appendChild(k);setTimeout(()=>k.remove(),700);setB()}}
+  hpS.style.width=Math.max(0,hp/bossHp(i)*100)+'%';hpI.textContent=fmt(Math.max(0,Math.round(hp)));tS.style.width=Math.max(0,T/BR.time*100)+'%';tB.textContent=Math.max(0,T).toFixed(1)+'초';
+  if(T<=0)return fin();requestAnimationFrame(loop)};requestAnimationFrame(loop)};
+G.brRun=run;
+})();
