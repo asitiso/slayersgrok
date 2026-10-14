@@ -172,7 +172,7 @@ let AQ={t:performance.now(),n:0,lvl:0};R.dprLvl=()=>dpr;R.frame=dt=>{{const now=
   const sx=shake?rnd(-shake,shake):0,sy=shake?rnd(-shake,shake)*.6:0;shake=Math.max(0,shake*Math.pow(.004,dt)-dt*6);if(R.opt&&!R.opt.shake)shake=0;if(R.opt&&!R.opt.fx){flash=Math.min(flash,.08);if(FX.length>10)FX.splice(0,FX.length-10)}R.hsCd=(R.hsCd||0)-dt;
   cx.save();cx.translate(sx,sy);
   // background parallax: far image + mirrored tiling
-  const fname='bg_f_'+D.FIELDS[C.S().si%D.FIELDS.length]+'.jpg';const mk=n=>{const im=load(n);if(!im.complete||!im.naturalWidth)return null;R.bgCache=R.bgCache||{};if(!R.bgCache[n]){const c=document.createElement('canvas');c.height=900;c.width=Math.round(900*im.naturalWidth/im.naturalHeight);c.getContext('2d').drawImage(im,0,0,c.width,c.height);R.bgCache[n]=c}return R.bgCache[n]};
+  const fname=R.bgOv||('bg_f_'+D.FIELDS[C.S().si%D.FIELDS.length]+'.jpg');const mk=n=>{const im=load(n);if(!im.complete||!im.naturalWidth)return null;R.bgCache=R.bgCache||{};if(!R.bgCache[n]){const c=document.createElement('canvas');c.height=900;c.width=Math.round(900*im.naturalWidth/im.naturalHeight);c.getContext('2d').drawImage(im,0,0,c.width,c.height);R.bgCache[n]=c}return R.bgCache[n]};
   if(R.bgn!==fname){R.prevBg=R.bgn;R.bgn=fname;R.fade=R.prevBg?0:1}R.fade=Math.min(1,(R.fade??1)+dt*1.2);
   const drawField=(cv0,al)=>{if(!cv0)return;const tw=cv0.width,th=cv0.height;const CX0=CX;const ix0=Math.floor(CX/tw),iy0=Math.floor(CY/th);cx.globalAlpha=al;
    for(let ix=ix0;ix<=ix0+1;ix++)for(let iy=iy0;iy<=iy0+2;iy++){const x=ix*tw-CX,y=iy*th-CY;const mx=ix&1,my=iy&1;cx.save();cx.translate(x+(mx?tw:0),y+(my?th:0));cx.scale(mx?-1:1,my?-1:1);cx.drawImage(cv0,0,0,tw+1,th+1);cx.restore()}cx.globalAlpha=1;CX=CX0};
