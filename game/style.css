@@ -530,3 +530,11 @@ body:has(#screen.on) .vic,body:has(.modal) .vic,body:has(.rwpop) .vic{display:no
 .combo .cm{display:flex;flex-direction:column;align-items:center;min-width:150px}.combo small{color:#ffd25a;font-weight:900;font-size:12px;letter-spacing:3px}.combo b{font:italic 900 26px Maplestory,sans-serif;color:#fff;text-shadow:0 0 12px #ff7a2a,0 3px 0 #000}.combo i{font-style:normal;font-size:11px;color:#cfd8ff}
 @keyframes cmb{0%{opacity:0;transform:scaleY(.2)}10%{opacity:1;transform:scaleY(1)}80%{opacity:1}100%{opacity:0}}@keyframes cml{from{transform:translateX(-140px);opacity:0}}@keyframes cmr{from{transform:scaleX(-1) translateX(-140px);opacity:0}}
 body.slowmo #battle canvas{filter:saturate(1.25) contrast(1.08)}
+#dpsBtn{cursor:pointer;margin-left:4px}#dpsBtn.on{background:linear-gradient(#ffd25a,#e09a20);color:#3a2000}
+#dpsPan{display:none;position:absolute;z-index:8;left:66px;top:212px;width:168px;padding:6px 8px;border-radius:10px;background:rgba(12,10,30,.72);border:1px solid #ffd25a66;pointer-events:none;font-size:11px;color:#fff}
+#dpsPan.on{display:block}.dph{font-weight:900;color:#ffd25a;margin-bottom:4px;display:flex;justify-content:space-between}.dph i{font-style:normal;color:#cfe}
+.dpr{display:flex;align-items:center;gap:4px;height:20px}.dpr img{width:18px;height:18px;object-fit:cover;object-position:top;border-radius:50%;background:#334}.dpr b{width:44px;font-size:10px;white-space:nowrap;overflow:hidden}
+.dpb{flex:1;height:7px;border-radius:4px;background:#ffffff22;overflow:hidden}.dpb s{display:block;height:100%;background:linear-gradient(90deg,#6ad0ff,#4a8aff);text-decoration:none}.dpb s.top{background:linear-gradient(90deg,#ffe27a,#ff9a2a)}.dpr em{width:28px;text-align:right;font-style:normal;font-weight:900;font-size:10px}.dpe{color:#aab;font-size:10px}
+#facTag,#dpsBtn,#facTag~*,#facTag+*{white-space:nowrap}#facTag{flex-shrink:0}#dpsBtn{flex-shrink:0;padding-left:7px!important;padding-right:7px!important}
+:has(>#facTag)>*{white-space:nowrap;flex-shrink:0}
+.bossrow{flex-wrap:nowrap!important;width:max-content!important;max-width:none!important}.bossrow .autob{width:auto!important;white-space:nowrap!important}

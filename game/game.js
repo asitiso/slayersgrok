@@ -624,8 +624,8 @@ const od=C.ev.dmgAlly;C.ev.dmgAlly=(a,d,kind)=>{const e=lastE;lastE=null;const k
 const MV={slam:{n:'대지 강타',m:1.1,all:1,col:'#ffb040'},charge:{n:'맹렬한 돌진',m:2.4,all:0,col:'#ff5040'},volley:{n:'일제 사격',m:.9,all:1,col:'#a0e0ff'},hex:{n:'암흑 저주',m:1,all:1,col:'#b070ff'}};
 const mvOf=e=>RNG[e.img]?(RNG[e.img]=='orb'||RNG[e.img]=='wisp'||RNG[e.img]=='fire'?'hex':'volley'):(/golem|treant|orc|slime/.test(e.img)?'slam':'charge');
 const ot=C.tick;C.tick=dt=>{ot(dt);if(B.wb)return;C.alive().forEach(e=>{if(!e.el||e.boss||e.hp<=0)return;if(e.esk==null)e.esk=3+Math.random()*2;
-  const held=e.st&&(e.st.stun||e.st.frz);
-  if(e.eskW!=null){if(held){e.eskW=null;LB.push({e,t:0,txt:'기술 저지!',c:'#9ef'});return}e.eskW-=dt;if(e.eskW<=0){e.eskW=null;fireMv(e)}return}
+  const held=!!(e.st&&e.st.stun&&e.st.stun.t>0&&(e.eskW==null||e.st.stun.t>(e._stun0||0)));e._stun0=e.st&&e.st.stun?e.st.stun.t:0;
+  if(e.eskW!=null){if(held&&Math.random()<.5){LB.push({e,t:0,txt:'저항!',c:'#ffd25a'})}else if(held){e.eskW=null;LB.push({e,t:0,txt:'기술 저지!',c:'#9ef'});return}e.eskW-=dt;if(e.eskW<=0){e.eskW=null;fireMv(e)}return}
   if(!held)e.esk-=dt;if(e.esk<=0){e.esk=7+Math.random()*3;e.eskW=.85;e.mv=mvOf(e);LB.push({e,t:0,txt:'⚠ '+MV[e.mv].n,c:MV[e.mv].col,warn:1})}})};
 const fireMv=e=>{const al=C.aliveAllies();if(!al.length)return;const M=MV[e.mv],tg=M.all?al:[al[0]];G.eskN++;C._esk=1;
  tg.forEach(t=>{const d=Math.max(1,e.atk*M.m*(1-Math.min(.6,C.stat('def')/200)));t.hp-=d;C.ev.dmgAlly(t,d,'');if(G.HA)G.HA.set(t.k,{t:0,T:e.mv=='charge'?.6:.42,pow:e.mv=='charge'?28:16,up:e.mv=='charge'?1:0});if(t.hp<=0){t.hp=0;t.dead=true;C.ev.allyDead&&C.ev.allyDead(t)}});C._esk=0;
@@ -657,3 +657,12 @@ const of=R.frame;R.frame=dt=>{try{const ES=R._ES(),AS=R._AS();if(ES&&AS&&!B.boss
   let dmin=1e9;AS.forEach(a=>{if(a.x!=null)dmin=Math.min(dmin,Math.hypot(a.x-q.x,(a.y-q.y)*1.4))});const CXv=q.wx-q.x;
   const back=dmin<80?70:dmin<130?45:30;let want=q.home+back;want=Math.min(want,CXv+292);const k=Math.min(1,dt*(dmin<80?3:1.2));q.tx+=(want-q.tx)*k;
   q.kite=dmin<80})}catch(_){}of(dt)}})();
+;(()=>{// v25 DPS meter (전투 기여도)
+const DM={};let t0=performance.now(),open=false;const nm=k=>k=='lina'?'리나':(D.COMPS.find(c=>c.k==k)||{}).n||k;const im=k=>k=='lina'?'hero_lina.png':(D.COMPS.find(c=>c.k==k)||{}).img;
+const oh=C.hitEnemy;C.hitEnemy=(e,d,cr,src)=>{const hp0=e&&e.hp>0?e.hp:0;const r=oh(e,d,cr,src);if(hp0&&!e.wb){const k=src&&src.k&&src.k!='lina'?src.k:'lina';DM[k]=(DM[k]||0)+Math.max(0,hp0-Math.max(0,e.hp))}return r};
+G.dmReset=()=>{for(const k in DM)delete DM[k];t0=performance.now()};G.DM=DM;
+let lsi=null;
+const add=()=>{const ft=document.getElementById('facTag');if(!ft||document.getElementById('dpsBtn'))return;const b=document.createElement('span');b.id='dpsBtn';b.className='factag';b.textContent='📊';ft.after(b);
+ const p=document.createElement('div');p.id='dpsPan';document.getElementById('battle').appendChild(p);b.onclick=e=>{e.stopPropagation();open=!open;p.classList.toggle('on',open);b.classList.toggle('on',open);G.S().dpsOpen=open};open=!!G.S().dpsOpen;p.classList.toggle('on',open)};
+setInterval(()=>{add();{const si=G.S().si;if(si!==lsi){lsi=si;G.dmReset()}}const p=document.getElementById('dpsPan');if(!p||!open)return;const ks=Object.keys(DM).sort((a,b)=>DM[b]-DM[a]),tot=ks.reduce((s,k)=>s+DM[k],0)||1,sec=Math.max(1,(performance.now()-t0)/1000);
+ p.innerHTML=`<div class=dph>전투 기여도 <i>${fmt(Math.round(tot/sec))}/초</i></div>`+(ks.length?ks.slice(0,6).map((k,i)=>`<div class=dpr><img src="${A}${im(k)}"><b>${nm(k)}</b><span class=dpb><s style="width:${(DM[k]/DM[ks[0]]*100).toFixed(1)}%" class="${i==0?'top':''}"></s></span><em>${Math.round(DM[k]/tot*100)}%</em></div>`).join(''):'<div class=dpe>전투 대기 중…</div>')},500)})();

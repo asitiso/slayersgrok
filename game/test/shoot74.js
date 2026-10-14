@@ -1,0 +1,16 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s74');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await p.waitForFunction(()=>G.C.alive().length>=3,{timeout:20000}).catch(()=>{});
+await ev(()=>{G.C.alive().forEach(e=>{e.max=e.hp=4e4});G.eskTest('')});await sl(500);await sh('505-elite-warn-fixed');
+await p.waitForFunction(()=>G.eskN>=1,{timeout:6000}).catch(()=>console.log('NO FIRE'));await sl(80);await sh('506-elite-move-fires');
+const n1=await ev(()=>G.eskN);
+await ev(()=>{const e=G.C.alive().find(e=>!e.el)||G.C.alive()[0];e.el=1;e.esk=0});await sl(250);await ev(()=>{const e=G.C.alive().find(e=>e.eskW!=null);if(e)G.C.stApply(e,'stun')});await sl(200);await sh('507-elite-stun-interrupt');
+await p.click('#dpsBtn');await sl(6000);await sh('508-dps-meter');
+await sl(15000);await sh('509-dps-meter-later');const dm=await ev(()=>JSON.stringify(G.DM));
+await p.click('#dpsBtn');await sl(600);await sh('510-dps-closed');
+const n=await ev(()=>G.eskN);
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));
+stop();console.log('esk first',n1,'total',n,'dm',dm,'fps',fps,'ERR',errs);await b.close()})();
