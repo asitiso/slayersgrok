@@ -769,3 +769,9 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=document.que
  for(let i=EN.length-1;i>=0;i--){const n=EN[i];n.t+=dt;const q=ES.get(n.e);if(n.t>.6||!q){EN.splice(i,1);continue}const k=n.t/.6;ctx.globalAlpha=(1-k)*.9;ctx.strokeStyle='#ff4020';ctx.lineWidth=10*(1-k)+2;ctx.beginPath();ctx.ellipse(q.x,q.y-60,30+k*200,12+k*80,0,0,6.283);ctx.stroke()}
  ctx.restore()}catch(_){}};
 })();
+;(()=>{// v31 party danger: red edge vignette + portrait pulse when an ally is low
+G.dngN=0;let on=0;
+const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const b=document.getElementById('battle');if(!b)return r;let v=document.getElementById('dangerV');if(!v){v=document.createElement('div');v.id='dangerV';b.appendChild(v)}
+  const A=C.B.allies||[];let low=0;const pp=document.querySelectorAll('#partycol .pp');A.forEach((a,i)=>{const l=a.hp>0&&a.hp<a.max*.3;if(l)low++;if(pp[i])pp[i].classList.toggle('dng',l)});
+  const n=low>0&&!G.screen;if(n&&!on)G.dngN++;on=n;v.classList.toggle('on',n)}catch(_){}return r};
+})();
