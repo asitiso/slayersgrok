@@ -538,3 +538,13 @@ body.slowmo #battle canvas{filter:saturate(1.25) contrast(1.08)}
 #facTag,#dpsBtn,#facTag~*,#facTag+*{white-space:nowrap}#facTag{flex-shrink:0}#dpsBtn{flex-shrink:0;padding-left:7px!important;padding-right:7px!important}
 :has(>#facTag)>*{white-space:nowrap;flex-shrink:0}
 .bossrow{flex-wrap:nowrap!important;width:max-content!important;max-width:none!important}.bossrow .autob{width:auto!important;white-space:nowrap!important}
+.vic.vbd{width:330px;top:38%}
+.vbx{display:flex;gap:8px;align-items:center;margin:10px auto 0;padding:8px;border-radius:12px;background:#ffffff10;border:1px solid #ffd25a55;width:290px}
+.vmvp{position:relative;width:78px;flex-shrink:0;animation:vmvp .5s .15s cubic-bezier(.2,1.6,.4,1) both}.vmvp img{width:64px;height:64px;object-fit:cover;object-position:top;border-radius:50%;border:2px solid #ffd25a;background:radial-gradient(#5a3a10,#1a1020);box-shadow:0 0 12px #ffb02e99}
+.vmvp i{position:absolute;left:50%;top:50px;transform:translateX(-50%);font:italic 900 12px Maplestory,sans-serif;background:linear-gradient(#ffe27a,#e08a10);color:#3a1a00;padding:0 7px;border-radius:8px}
+.vmvp b{display:block;margin-top:8px;font-size:11px;color:#fff}.vmvp em{font-style:normal;font-size:10px;color:#ffd25a;font-weight:900}
+.vbl{flex:1;display:flex;flex-direction:column;gap:4px}.vbr{display:flex;align-items:center;gap:5px;animation:vbr .35s both}.vbr img{width:20px;height:20px;border-radius:50%;object-fit:cover;object-position:top;background:#334}
+.vbb{flex:1;height:8px;border-radius:4px;background:#ffffff22;overflow:hidden}.vbb s{display:block;height:100%;background:linear-gradient(90deg,#6ad0ff,#4a8aff);text-decoration:none;animation:vbw .6s .3s both;transform-origin:left}.vbb s.top{background:linear-gradient(90deg,#ffe27a,#ff9a2a)}
+.vbr em{font-style:normal;font-size:10px;font-weight:900;color:#fff;width:42px;text-align:right}
+@keyframes vmvp{from{transform:scale(.3);opacity:0}}@keyframes vbr{from{transform:translateX(20px);opacity:0}}@keyframes vbw{from{transform:scaleX(0)}}
+.vbx{background:rgba(10,8,24,.88)!important}

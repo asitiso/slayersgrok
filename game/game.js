@@ -666,3 +666,12 @@ const add=()=>{const ft=document.getElementById('facTag');if(!ft||document.getEl
  const p=document.createElement('div');p.id='dpsPan';document.getElementById('battle').appendChild(p);b.onclick=e=>{e.stopPropagation();open=!open;p.classList.toggle('on',open);b.classList.toggle('on',open);G.S().dpsOpen=open};open=!!G.S().dpsOpen;p.classList.toggle('on',open)};
 setInterval(()=>{add();{const si=G.S().si;if(si!==lsi){lsi=si;G.dmReset()}}const p=document.getElementById('dpsPan');if(!p||!open)return;const ks=Object.keys(DM).sort((a,b)=>DM[b]-DM[a]),tot=ks.reduce((s,k)=>s+DM[k],0)||1,sec=Math.max(1,(performance.now()-t0)/1000);
  p.innerHTML=`<div class=dph>전투 기여도 <i>${fmt(Math.round(tot/sec))}/초</i></div>`+(ks.length?ks.slice(0,6).map((k,i)=>`<div class=dpr><img src="${A}${im(k)}"><b>${nm(k)}</b><span class=dpb><s style="width:${(DM[k]/DM[ks[0]]*100).toFixed(1)}%" class="${i==0?'top':''}"></s></span><em>${Math.round(DM[k]/tot*100)}%</em></div>`).join(''):'<div class=dpe>전투 대기 중…</div>')},500)})();
+;(()=>{// v26 stage-clear result breakdown (MVP + contribution)
+let snap=null;const nm=k=>k=='lina'?'리나':(D.COMPS.find(c=>c.k==k)||{}).n||k;const im=k=>k=='lina'?'hero_lina.png':(D.COMPS.find(c=>c.k==k)||{}).img;
+const ok=C.ev.kill;C.ev.kill=(e,...a)=>{if(e&&e.boss&&!e.wb&&G.DM)snap=Object.assign({},G.DM);return ok(e,...a)};
+const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(!w||!snap)return r;const o=[...document.querySelectorAll('.vic.win')].pop();if(!o)return r;const ks=Object.keys(snap).sort((a,b)=>snap[b]-snap[a]).slice(0,4);snap=null;if(!ks.length)return r;
+ const tot=ks.reduce((s,k)=>s+G.DM_(k),0)||1;
+ const d=o.cloneNode(true);o.replaceWith(d);d.classList.add('vbd');const mvp=ks[0];
+ d.querySelector('.vn').insertAdjacentHTML('beforebegin',`<div class=vbx><div class=vmvp><img src="${A}${im(mvp)}"><i>MVP</i><b>${nm(mvp)}</b><em>${Math.round(G.DM_(mvp)/tot*100)}%</em></div><div class=vbl>${ks.map((k,i)=>`<div class=vbr style="animation-delay:${.25+i*.12}s"><img src="${A}${im(k)}"><span class=vbb><s style="width:${(G.DM_(k)/G.DM_(ks[0])*100).toFixed(0)}%" class="${i?'':'top'}"></s></span><em>${fmt(Math.round(G.DM_(k)))}</em></div>`).join('')}</div></div>`);
+ d.onclick=()=>d.remove();setTimeout(()=>d.classList.add('out'),3600);setTimeout(()=>d.remove(),4000)}catch(_){}return r};
+let cur=null;G.DM_=k=>cur?cur[k]||0:0;const or2=resultPop;resultPop=function(w){cur=snap;return or2.apply(this,arguments)}})();
