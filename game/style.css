@@ -601,3 +601,5 @@ body:has(#screen.on) .powup,body:has(.modal) .powup,body:has(.rwpop) .powup,body
 .bkflash{background:radial-gradient(circle at 70% 55%,#fff9 0,#fff4 28%,#ffd27a22 55%,#0000 78%)!important}
 .grogfl{background:radial-gradient(#fff3c066,#ffb03a33 40%,#0000 70%)!important}
 .pp.ugf{cursor:pointer}.pp.ugtap img{transform:scale(1.12);transition:transform .15s}
+.pp.ugf::after{content:'필살';position:absolute;right:-6px;top:-6px;padding:0 4px;border-radius:6px;background:linear-gradient(#9ae4ff,#2a8ae0);color:#fff;font:900 9px Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a6a;border:1px solid #0a3a6a;animation:ugr .8s ease-in-out infinite alternate;pointer-events:none}
+@keyframes ugr{from{transform:scale(.92)}to{transform:scale(1.08)}}
