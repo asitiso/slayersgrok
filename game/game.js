@@ -782,18 +782,21 @@ const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{const q=R._ES().get(e),b=document.ge
    setTimeout(()=>{d.classList.add('fly');d.style.transform=`translate(${tr.left+tr.width/2-br.left-x}px,${tr.top+tr.height/2-br.top-y}px) scale(.55)`},520+i*45);
    setTimeout(()=>{d.remove();live--;tg.classList.remove('gbump');void tg.offsetWidth;tg.classList.add('gbump')},1150+i*45)}}}catch(_){}return ok(e,...a)};
 })();
-;(()=>{// v33 ally ultimate gauge: fills over time, fires a burst with a callout on the portrait
-G.ultN=0;const FX=[];const NM={gourry:'광검 일섬',zelgadis:'라 틸트',amelia:'비슈라 랑가',naga:'다크 미스트',xellos:'흑추 난무',sylphiel:'성광 방벽'};
-const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');
+;(()=>{// v33 companion ultimate: gauge fills, at full fires the companion's own CSKI skill (with its cut-in) + burst. Random procs no longer show the named cut-in.
+G.ultN=0;G._grogT=0;const FX=[];
+const og=C.ev.grog;C.ev.grog=(e,...a)=>{if(e&&e.boss)G._grogT=performance.now();return og(e,...a)};
+const ocs=R.csk;R.csk=(k,s,force)=>{if(force)return ocs(k,s,force);const cc=R.ccCd;R.ccCd=99;const r=ocs(k,s,force);R.ccCd=cc;return r};
+const busy=()=>R.slowT>0||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT<1600||C.alive().some(e=>e.boss&&e.grog>0)||(R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||document.querySelector('.bwarn,.combo,.enrb,.vic,.chap');
+const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');let fired=0;
  B.allies.forEach((a,i)=>{const el=pp[i];if(el&&!el.querySelector('.ugb'))el.insertAdjacentHTML('beforeend','<div class=ugb><i></i></div>');
-  if(!a.c||a.hp<=0)return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){el.querySelector('.ugb i').style.width=(a._ug*100)+'%';el.classList.toggle('ugf',a._ug>=1)}
-  if(a._ug<1||G.screen||!C.alive().length||R.slowT>0||document.querySelector('.bwarn,.combo,.enrb,.ultc,.vic'))return;a._ug=0;G.ultN++;
-  if(a.c.healer){C.aliveAllies().forEach(x=>{const h=x.max*.25;x.hp=Math.min(x.max,x.hp+h);C.ev.heal&&C.ev.heal(x,h)})}
-  else{const T=C.alive().slice().sort((p,q)=>(q.boss?1:0)-(p.boss?1:0)).slice(0,a.c.aoe?6:3);T.forEach(t=>C.hitEnemy(t,C.ATK()*C.compMul(a.k)*4,true,{sp:'ult_'+a.k}))}
-  R.hs=Math.max(R.hs||0,.08);const q=R._AS().get(a);if(q)FX.push({x:q.x,y:q.y,t:0,h:a.c.healer});
-  const b=document.getElementById('battle'),d=document.createElement('div');d.className='ultc';d.style.top=(el?el.offsetTop+(el.offsetParent?el.offsetParent.offsetTop:0):480)+'px';
-  d.innerHTML=`<b>${NM[a.k]||'필살기'}!</b><small>${a.c.n||''}</small>`;b&&b.appendChild(d);setTimeout(()=>d.remove(),1300)})}catch(_){}return r};
+  if(!a.c||a.hp<=0||!(D.CSKI||{})[a.k])return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){el.querySelector('.ugb i').style.width=(a._ug*100)+'%';el.classList.toggle('ugf',a._ug>=1)}
+  if(fired||a._ug<1||G.screen||!C.alive().length||(G._ugPick&&G._ugPick!=a.k)||busy())return;G._ugPick=null;const q=R._AS().get(a.k);if(!q)return;R.ccCd=0;ocs(a.k,q,true);a._ug=0;G.ultN++;fired=1;G.lastUlt=D.CSKI[a.k][1];
+  setTimeout(()=>{try{if(a.c.healer){C.aliveAllies().forEach(x=>{const h=x.max*.25;x.hp=Math.min(x.max,x.hp+h);C.ev.heal&&C.ev.heal(x,h)})}
+   else{const T=C.alive().slice().sort((p,q)=>(q.boss?1:0)-(p.boss?1:0)).slice(0,a.c.aoe?6:3);T.forEach(t=>C.hitEnemy(t,C.ATK()*C.compMul(a.k)*4,true,{sp:'ult_'+a.k}))}
+   R.hs=Math.max(R.hs||0,.08);const q2=R._AS().get(a.k);if(q2)FX.push({x:q2.x,y:q2.y,t:0,h:a.c.healer})}catch(_){}},450)})}catch(_){}return r};
 const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||!FX.length)return;const c=document.querySelector('#battle canvas'),ctx=c.getContext('2d'),sc=c.width/c.clientWidth;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
- for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.t+=dt;if(f.t>.55){FX.splice(i,1);continue}const k=f.t/.55;ctx.globalAlpha=(1-k);ctx.strokeStyle=f.h?'#7affb0':'#7ad8ff';ctx.lineWidth=8*(1-k)+2;ctx.beginPath();ctx.ellipse(f.x,f.y-4,20+k*110,8+k*40,0,0,6.283);ctx.stroke();
-  ctx.globalAlpha=(1-k)*.5;ctx.fillStyle=f.h?'#c8ffd8':'#d8f4ff';ctx.fillRect(f.x-10+k*6,f.y-170,20-k*12,170)}ctx.restore()}catch(_){}};
+ for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.t+=dt;if(f.t>.55){FX.splice(i,1);continue}const k=f.t/.55;ctx.globalAlpha=(1-k);ctx.strokeStyle=f.h?'#7affb0':'#7ad8ff';ctx.lineWidth=8*(1-k)+2;ctx.beginPath();ctx.ellipse(f.x,f.y-4,20+k*110,8+k*40,0,0,6.283);ctx.stroke()}ctx.restore()}catch(_){}};
+})();
+;(()=>{// v34 tap a glowing portrait to fire that companion's ultimate now (manual), else it auto-fires
+document.addEventListener('click',ev=>{const p=ev.target.closest&&ev.target.closest('#partycol .pp.ugf');if(!p)return;const i=[...p.parentNode.children].indexOf(p),a=C.B.allies[i];if(!a||a._ug<1)return;ev.stopPropagation();G._ugPick=a.k;p.classList.add('ugtap');setTimeout(()=>p.classList.remove('ugtap'),300)},true);
 })();

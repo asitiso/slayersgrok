@@ -598,3 +598,6 @@ body:has(#screen.on) .powup,body:has(.modal) .powup,body:has(.rwpop) .powup,body
 .ultc{position:absolute;left:64px;z-index:9;pointer-events:none;padding:3px 12px 3px 10px;background:linear-gradient(90deg,#0a2a4aee,#0a2a4a00);border-left:3px solid #7ad8ff;animation:ultc 1.3s both;white-space:nowrap}
 .ultc b{display:block;font:italic 900 17px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #062040,0 0 8px #4ab8ff}.ultc small{color:#bfe8ff;font-size:10px;font-weight:800}
 @keyframes ultc{0%{opacity:0;transform:translateX(-20px)}12%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateX(8px)}}
+.bkflash{background:radial-gradient(circle at 70% 55%,#fff9 0,#fff4 28%,#ffd27a22 55%,#0000 78%)!important}
+.grogfl{background:radial-gradient(#fff3c066,#ffb03a33 40%,#0000 70%)!important}
+.pp.ugf{cursor:pointer}.pp.ugtap img{transform:scale(1.12);transition:transform .15s}
