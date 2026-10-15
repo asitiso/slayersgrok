@@ -934,3 +934,52 @@ const odp=diffPop;diffPop=function(){if(G._bulk)return;return odp.apply(this,arg
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab=='mission'){const p=$('#panel');if(!p.querySelector('.mcall')){const {d,w}=ready(),n=d.length+w.length;const b=document.createElement('div');b.className='mcall '+(n?'':'off');b.innerHTML=`🎁 모두 받기${n?` <small>${n}</small>`:''}`;b.onclick=()=>G.missionClaimAll();p.insertBefore(b,p.firstChild)}}}catch(_){}return r};
 })();
 ;(()=>{setInterval(()=>{document.body.classList.toggle('sheeton',!!(G.tab&&G.tab!='battle')||!!G.screen)},150)})();
+;(()=>{// v51 사운드: procedural WebAudio SFX + light BGM (original, synthesized; respects 설정 배경음/효과음)
+let ac=null,mg=null,sg=null,bg=null,nz=null;G.sfxN={};
+const on=k=>{try{const s=G.set||G.loadSet();return s[k]!==false&&s[k]!==0}catch(_){return true}};
+const init=()=>{if(ac)return;try{ac=new (window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.gain.value=.8;mg.connect(ac.destination);G._an=ac.createAnalyser();G._an.fftSize=2048;mg.connect(G._an);G._mg=mg;sg=ac.createGain();sg.gain.value=.55;sg.connect(mg);bg=ac.createGain();bg.gain.value=.16;bg.connect(mg);
+ const len=ac.sampleRate*.5,b=ac.createBuffer(1,len,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;nz=b;startBgm()}catch(_){ac=null}};
+['pointerdown','keydown','touchstart'].forEach(e=>window.addEventListener(e,()=>{init();if(ac&&ac.state=='suspended')ac.resume()},{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!ac)return;document.hidden?ac.suspend():ac.resume()});
+const tone=(f,t0,dur,{type='square',vol=.3,f2=null,att=.005,dest=sg}={})=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(dest);o.start(t0);o.stop(t0+dur+.02)};
+const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null}={})=>{const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(f2,t0+dur);f.Q.value=q;g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(sg);s.start(t0);s.stop(t0+dur+.02)};
+const LIM={hit:.06,crit:.08,coin:.07,kill:.05,click:.05};const last={};
+const SFX={
+ hit:t=>{noise(t,.07,{vol:.18,fq:1800,q:.8});tone(220,t,.06,{type:'triangle',vol:.12,f2:120})},
+ crit:t=>{noise(t,.12,{vol:.3,fq:2600,q:.6});tone(660,t,.1,{type:'square',vol:.1,f2:330})},
+ kill:t=>{tone(520,t,.08,{type:'triangle',vol:.14,f2:260})},
+ coin:t=>{tone(1320,t,.07,{type:'square',vol:.07});tone(1760,t+.06,.1,{type:'square',vol:.07})},
+ spell:t=>{noise(t,.35,{vol:.22,fq:500,f2:3000,q:1.5});tone(300,t,.3,{type:'sawtooth',vol:.06,f2:900})},
+ ds:t=>{noise(t,1.1,{vol:.25,fq:300,f2:2400,q:2});for(let i=0;i<4;i++)tone(180+i*90,t+i*.12,.5,{type:'sawtooth',vol:.05,f2:500+i*200});noise(t+1.15,1.2,{vol:.55,fq:900,f2:120,q:.6,type:'lowpass'});tone(70,t+1.15,1,{type:'sine',vol:.5,f2:35})},
+ heal:t=>{[784,988,1175].forEach((f,i)=>tone(f,t+i*.07,.35,{type:'sine',vol:.12}))},
+ lvup:t=>{[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.08,.25,{type:'square',vol:.09}));tone(1047,t+.32,.5,{type:'triangle',vol:.12})},
+ win:t=>{[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+[0,.12,.24,.36,.6,.72][i],.3,{type:'square',vol:.1}));tone(262,t,.9,{type:'triangle',vol:.12})},
+ lose:t=>{[392,349,311,262].forEach((f,i)=>tone(f,t+i*.18,.35,{type:'triangle',vol:.12}))},
+ warn:t=>{for(let i=0;i<3;i++){tone(220,t+i*.45,.38,{type:'sawtooth',vol:.12});tone(233,t+i*.45,.38,{type:'sawtooth',vol:.08})}},
+ brk:t=>{noise(t,.5,{vol:.5,fq:3000,f2:400,q:.5});tone(110,t,.4,{type:'square',vol:.15,f2:40})},
+ summon:t=>{noise(t,.8,{vol:.18,fq:400,f2:5000,q:3});[659,880,1175,1568].forEach((f,i)=>tone(f,t+.5+i*.07,.4,{type:'sine',vol:.1}))},
+ click:t=>{tone(880,t,.04,{type:'square',vol:.05})},
+ ult:t=>{noise(t,.25,{vol:.3,fq:4000,f2:800,q:.7});tone(440,t+.05,.4,{type:'sawtooth',vol:.07,f2:880})}};
+const play=G.sfx=k=>{G.sfxN[k]=(G.sfxN[k]||0)+1;if(!ac||!on('sfx')||document.hidden)return;const now=ac.currentTime;if(LIM[k]&&last[k]&&now-last[k]<LIM[k])return;last[k]=now;try{SFX[k](now+.005)}catch(_){}};
+// hooks
+{const oh=C.ev.hit;C.ev.hit=(e,d,cr,...a)=>{play(cr?'crit':'hit');return oh&&oh(e,d,cr,...a)}}
+{const ok=C.ev.kill;C.ev.kill=(e,g,o,...a)=>{play(e&&e.boss?'brk':'kill');if(g)setTimeout(()=>play('coin'),120);return ok&&ok(e,g,o,...a)}}
+{const og=C.ev.grog;if(og)C.ev.grog=(...a)=>{play('brk');return og(...a)}}
+{const oc=C.castSpell;C.castSpell=sp=>{const r=oc(sp);if(r)play(sp.k=='ds'||sp.k=='giga'?'ds':sp.heal?'heal':'spell');return r}}
+{const ob=banner;banner=function(t){if(/^LEVEL UP/.test(t))play('lvup');return ob.apply(this,arguments)}}
+{const orp=resultPop;resultPop=function(w){play(w?'win':'lose');return orp.apply(this,arguments)}}
+{const obw=bossWarn;bossWarn=function(){const r=obw.apply(this,arguments);if(document.querySelector('.bwarn'))play('warn');return r}}
+{const os=C.summon;C.summon=n=>{const r=os(n);if(r)play('summon');return r}}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.btn,.pill,.mcall,.tog,.navb,nav *,.chip,.sk'))play('click')},true);
+// BGM: soft procedural loop (calm on field, driving in boss fights)
+const PROG=[[57,60,64],[53,57,60],[55,59,62],[52,55,59]],ARP=[0,2,1,2,0,2,1,2];let step=0,nextT=0,timer=null;
+const mid=n=>440*Math.pow(2,(n-69)/12);
+function startBgm(){if(timer)return;nextT=ac.currentTime+.1;timer=setInterval(()=>{if(!ac||document.hidden)return;const boss=!!(C.B.boss);const spb=boss?.16:.24;
+ while(nextT<ac.currentTime+.3){if(on('bgm')){const ch=PROG[Math.floor(step/16)%4],i=step%16;
+   if(i%8==0)ch.forEach(n=>tone(mid(n-12),nextT,spb*8,{type:'triangle',vol:boss?.10:.07,att:.08,dest:bg}));
+   if(i%2==0)tone(mid(ch[ARP[(i/2)%8]]+(boss?0:12)),nextT,spb*1.6,{type:boss?'sawtooth':'square',vol:boss?.035:.03,dest:bg});
+   if(boss&&i%4==0)noise(nextT,.08,{vol:.12,fq:150,type:'lowpass'});
+   if(i%4==0)tone(mid(ch[0]-24),nextT,spb*3,{type:'sine',vol:.12,dest:bg})}
+  step++;nextT+=spb}},80)}
+G.audioState=()=>({ctx:ac?ac.state:null,n:G.sfxN});
+})();
