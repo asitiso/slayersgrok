@@ -648,3 +648,5 @@ body.bron #bufBtn,body.wbon #bufBtn{display:none}
 .jobfx .je{position:relative;height:64px;margin-top:-30px;animation:jfPop .6s .3s both}
 .jobfx .jt{position:relative;text-align:center;margin-top:6px}.jobfx .jt small{display:block;color:#ffd77a;font-weight:900;letter-spacing:2px}.jobfx .jt b{display:block;font-size:30px;color:#fff;text-shadow:0 0 14px #ff6a2a,0 3px 0 #000}.jobfx .jt span{font-size:12px;color:#fde}
 @keyframes jfIn{from{opacity:0}to{opacity:1}}@keyframes jfPop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+body.bossfight .combo{top:548px;height:76px;transform-origin:center;}
+body.bossfight .combo img{height:96px;width:90px;margin-top:-20px}

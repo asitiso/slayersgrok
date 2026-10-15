@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s109');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=150;s.maxSi=29;s.si=29;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(1200);await ev(()=>{document.querySelectorAll('.chap').forEach(x=>x.remove());G.C.selectStage(29)});await sl(1500);
+await ev(()=>{G.screen=null;G.C.startBoss()});await until(()=>G.C.alive().some(e=>e.boss),15000);await sl(2600);await ev(()=>G.C.alive().forEach(e=>{if(e.boss){e.max*=50;e.hp=e.max}}));await sl(500);
+await ev(()=>G.comboTest('gourry','zelgadis'));await sl(450);await sh('635-boss-combo-low');
+console.log('bossfight',await ev(()=>document.body.classList.contains('bossfight')),await ev(()=>{const c=document.querySelector('.combo');return c&&c.getBoundingClientRect().top}));
+await sl(3000);await ev(()=>{document.querySelectorAll('.vic,.bwarn').forEach(x=>x.remove());G.C.alive().forEach(e=>{e.hp=0});});await sl(4000);
+await until(()=>!G.C.B.boss&&G.C.alive().length>0,15000);await sl(800);await ev(()=>G.comboTest('gourry','zelgadis'));await sl(450);await sh('636-field-combo-normal');
+console.log('field',await ev(()=>{const c=document.querySelector('.combo');return c&&c.getBoundingClientRect().top}),'req',await ev(()=>[28,30,34].map(i=>G.C.stageName(i)+':'+G.C.stageReq(i))));
+stop();console.log('ERR',errs);await b.close()})();
