@@ -651,3 +651,7 @@ body.bron #bufBtn,body.wbon #bufBtn{display:none}
 body.bossfight .combo{top:548px;height:76px;transform-origin:center;}
 body.bossfight .combo img{height:96px;width:90px;margin-top:-20px}
 .vic .vr{flex-wrap:wrap;row-gap:2px}.vic .vr .vst{flex-basis:100%;margin-bottom:0}.vic .vr .vst i{font-size:24px}.vic .vr .tkg{color:#ffd77a}.vic .vr .tkg small{background:#b06a10}
+.mcall{margin:0 0 8px auto;width:max-content;padding:7px 16px;border-radius:16px;background:linear-gradient(#ffd25a,#e89a1a);color:#3a1a00;font-weight:900;font-size:13px;box-shadow:0 2px 0 #8a4a00,0 0 12px #ffb02e88;cursor:pointer}
+.mcall small{display:inline-block;min-width:16px;margin-left:4px;padding:0 5px;border-radius:8px;background:#e33;color:#fff;font-size:11px}
+.mcall.off{filter:grayscale(1);opacity:.55;box-shadow:none}
+body.sheeton .combo{display:none}
