@@ -1,0 +1,18 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s105');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await ev(()=>{const s=G.S();s.lv=60;s.maxSi=9;G.C.selectStage(9);updateHud()});await sl(1500);
+await ev(()=>openSheet('train'));await sl(900);await sh('607-train-job-card');
+const p0=await ev(()=>G.C.POW());
+await ev(()=>document.getElementById('jobGo').click());await sl(300);await ev(()=>{const o=G.C.ATK;G.C.ATK=()=>o()*6;window.__o=o});
+await until(()=>C.B.rb&&C.B.enemies.some(e=>e.boss),20000);await sl(1200);await sh('608-job-trial-boss');
+await until(()=>!!document.querySelector('.jobfx'),40000);await sl(900);await sh('609-job2-promote');
+await ev(()=>{G.C.ATK=window.__o});await sl(4500);await ev(()=>{document.querySelectorAll('.jobfx').forEach(x=>x.remove());closeScreen&&G.screen&&closeScreen();openSheet('battle')});
+console.log('job',await ev(()=>G.S().job),'pow',p0,'->',await ev(()=>G.C.POW()),'skin',await ev(()=>G.S().skin+' '+RENDER.skinImg));
+await sl(2500);await sh('610-job2-battle');for(let q=0;q<6;q++){await sl(180);await p.screenshot({path:'/tmp/slayers_r50_f'+q+'.png',clip:{x:40,y:400,width:200,height:200}})}await sh('611-job2-battle-b');
+await ev(()=>{const s=G.S();s.lv=150;updateHud();openSheet('train')});await sl(800);await sh('612-train-job3-ready');
+await ev(()=>{G.jobPromote()});await sl(900);await sh('613-job3-promote');await sl(4800);await ev(()=>openSheet('battle'));await sl(2500);await sh('614-job3-battle');
+const fps=await ev(()=>window.__fps||0);stop();console.log('fps',fps,'ERR',errs);await b.close()})();

@@ -638,3 +638,13 @@ body.bron #bufBtn,body.wbon #bufBtn{display:none}
 .schm .sbar{position:relative;height:18px;background:#000a;border:1px solid #e8b85a;border-radius:9px;overflow:hidden;margin:8px 0}.schm .sbar i{display:block;height:100%;background:linear-gradient(90deg,#ffb02e,#ffe27a)}.schm .sbar b{position:absolute;inset:0;text-align:center;font-size:12px;line-height:18px;color:#fff;text-shadow:0 1px 2px #000}
 .srw{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #ffffff1a}.srw>img{width:40px;height:40px}.srw>div{flex:1}.srw .rl{display:flex;gap:8px;font-size:12px;margin-top:2px}.srw .btn{min-width:70px;text-align:center}
 .shint{display:block;text-align:center;color:#cbb;margin-top:8px;font-size:11px}
+#hJob{display:flex;align-items:center;gap:2px;font-size:9px;font-weight:900;color:#ffd77a;text-shadow:0 1px 2px #000;line-height:11px;white-space:nowrap}#hJob img{height:12px}
+.jobc{position:relative;margin:0 0 8px;border-radius:12px;border:1.5px solid #e8b85a;overflow:hidden;padding:10px 12px;background:linear-gradient(90deg,#1a0806ee 35%,#1a080666),var(--art) center/cover;min-height:74px}
+.jobc .jl1{display:flex;align-items:center;gap:8px}.jobc .jl1 img{height:40px;filter:drop-shadow(0 2px 4px #000)}.jobc small{font-size:10px;color:#e8b85a;display:block}.jobc b{font-size:16px;color:#fff;text-shadow:0 0 8px #ff6a2a,0 2px 0 #000}
+.jobc .jl2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-size:11px;color:#fde}.jobc .jl2 b{font-size:11px;text-shadow:none;color:#ffd77a}.jobc .pill.off{opacity:.55;pointer-events:none}
+.jobfx{position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:jfIn .4s ease-out;transition:opacity .5s}.jobfx.out{opacity:0}
+.jobfx .jbg{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,#ffb34a99,#5a0a06ee 55%,#000e)}
+.jobfx .jl{position:relative;height:300px;filter:drop-shadow(0 0 24px #ff8a2a);animation:jfPop .7s cubic-bezier(.2,1.4,.4,1)}
+.jobfx .je{position:relative;height:64px;margin-top:-30px;animation:jfPop .6s .3s both}
+.jobfx .jt{position:relative;text-align:center;margin-top:6px}.jobfx .jt small{display:block;color:#ffd77a;font-weight:900;letter-spacing:2px}.jobfx .jt b{display:block;font-size:30px;color:#fff;text-shadow:0 0 14px #ff6a2a,0 3px 0 #000}.jobfx .jt span{font-size:12px;color:#fde}
+@keyframes jfIn{from{opacity:0}to{opacity:1}}@keyframes jfPop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}

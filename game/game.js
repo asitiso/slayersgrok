@@ -878,3 +878,25 @@ G.starOpen=c=>{const s=st(),n=G.chStars(c);const m=document.createElement('div')
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='map'){const el=$('#screen');el.querySelectorAll('.node').forEach(nd=>{const i=+nd.dataset.n,n=get(i);const sm=nd.querySelector('small');if(sm)sm.remove();if(n)nd.insertAdjacentHTML('beforeend',`<small class=nst>${[0,1,2].map(j=>`<i class="${j<n?'on':''}">★</i>`).join('')}</small>`)});
  const mc=el.querySelector('.mapch');if(mc){const c=Math.floor(C.S().si/7);mc.insertAdjacentHTML('afterbegin',`<div class="schb ${ready(c)?'rdy':''}" id=schB><img src=assets/ic3_chest.png><em>★${G.chStars(c)}</em></div>`);el.querySelector('#schB').onclick=e=>{e.stopPropagation();G.starOpen(c)}}}}catch(_){}return r};
 })();
+;(()=>{// v43 전직 (class advancement): 2차 붉은 마도사 Lv.60, 3차 드래곤 슬레이어 Lv.150
+const JOB=[{n:'견습 마도사'},{n:'붉은 마도사',lv:60,img:'skin/lina_job2.png',ic:'ic_job2.png',atk:1.25,boss:'boss_salamander.png',bn:'시련의 화염 살라만더'},{n:'드래곤 슬레이어',lv:150,img:'skin/lina_job3.png',ic:'ic_job3.png',atk:1.6,boss:'boss_flamelord.png',bn:'시련의 염제'}];
+D.SKINS.push({k:'job2',n:'붉은 마도사 (2차 전직)',img:JOB[1].img,atk:JOB[1].img,cast:JOB[1].img,cost:0,job:1},{k:'job3',n:'드래곤 슬레이어 (3차 전직)',img:JOB[2].img,atk:JOB[2].img,cast:JOB[2].img,cost:0,job:1});
+const jt=()=>C.S().job||0;G.JOB=JOB;G.jobT=jt;
+const oatk=C.ATK;C.ATK=function(){let m=1;for(let i=1;i<=jt();i++)m*=JOB[i].atk;return oatk.apply(this,arguments)*m};
+const osb=C.skinBuy;C.skinBuy=k=>{const sk=D.SKINS.find(x=>x.k==k);if(sk&&sk.job)return 'job';return osb(k)};
+const wear=k=>{const sk=D.SKINS.find(x=>x.k==k);if(!sk||!C.skinSet(k))return;R.skinImg=sk.img;R.skinAtk=sk.atk;R.skinCast=sk.cast};
+const promote=()=>{const s=C.S(),t=jt()+1;s.job=t;s.skins=s.skins||{base:1};s.skins['job'+(t+1)]=1;wear('job'+(t+1));try{G.save()}catch(_){}try{updateHud()}catch(_){}
+ const J=JOB[t],m=document.createElement('div');m.className='jobfx';m.innerHTML=`<div class=jbg></div><img class=jl src="assets/${J.img}"><img class=je src="assets/${J.ic}"><div class=jt><small>${t+1}차 전직 완료</small><b>${J.n}</b><span>공격력 ×${J.atk} 영구 증가 · 전용 복장 획득</span></div>`;
+ document.getElementById('app').appendChild(m);G.jobFxAt=performance.now();m.onclick=()=>{m.classList.add('out');setTimeout(()=>m.remove(),500)};setTimeout(()=>{if(m.isConnected){m.classList.add('out');setTimeout(()=>m.remove(),500)}},4200)};
+G.jobPromote=promote;
+G.jobTrial=()=>{const s=C.S(),t=jt()+1,J=JOB[t];if(!J)return 'max';if(s.lv<J.lv){toast(`Lv.${J.lv} 달성 시 도전 가능`);return 'lv'}
+ try{openSheet('battle')}catch(_){}G.rbRun({kind:'tw',f:t,boss:1,mob:J.boss,req:Math.floor(C.POW()*.95),title:`${t+1}차 전직 시련`},won=>{if(won)promote();else{toast('시련 실패… 더 강해져서 다시 도전하세요');renderPanel()}});
+ try{const w=C.B.rb&&C.B.rb.waves,bb=w&&w[w.length-1][0];if(bb&&bb.boss){bb.n=J.bn;bb.max*=1.3;bb.hp=bb.max}}catch(_){}return 'ok'};
+const card=()=>{const s=C.S(),t=jt(),cur=JOB[t],nx=JOB[t+1];
+ return `<div class=jobc style="--art:url(assets/chap/job_trial.jpg)"><div class=jl1>${t?`<img src="assets/${cur.ic}">`:''}<div><small>현재 클래스</small><b>${cur.n}</b></div></div>${nx?`<div class=jl2><span>다음: <b>${t+2}차 ${nx.n}</b> · 공격력 ×${nx.atk}</span><span class="pill ${s.lv>=nx.lv?'gold':'off'}" id=jobGo>${s.lv>=nx.lv?'전직 시련':'Lv.'+nx.lv+' 필요'}</span></div>`:'<div class=jl2><span>최종 전직 완료</span></div>'}</div>`};
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab=='train'){const h=document.querySelector('#panel .trainhero');if(h&&!document.querySelector('#panel .jobc')){h.insertAdjacentHTML('beforebegin',card());const g=document.getElementById('jobGo');if(g)g.onclick=()=>G.jobTrial()}
+ const im=h&&h.querySelector('img');if(im&&jt())im.src='assets/'+JOB[jt()].img}}catch(_){}return r};
+const ouh=updateHud;updateHud=function(){const r=ouh.apply(this,arguments);try{const t=jt(),pi=document.querySelector('#prof .pinfo');let b=document.getElementById('hJob');if(t&&pi){if(!b){b=document.createElement('span');b.id='hJob';pi.insertBefore(b,pi.firstChild)}const v=`<img src="assets/${JOB[t].ic}">${JOB[t].n}`;if(b.innerHTML!==v)b.innerHTML=v}else if(b)b.remove();}catch(_){}return r};
+// restore worn job skin on load
+setTimeout(()=>{const s=C.S();if(s.skin&&/^job/.test(s.skin))wear(s.skin);try{updateHud()}catch(_){}},50);
+})();
