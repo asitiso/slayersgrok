@@ -1,0 +1,2 @@
+const puppeteer=require('puppeteer-core');(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.goto('http://127.0.0.1:18791/index.html');await new Promise(r=>setTimeout(r,1500));
+console.log(await p.evaluate(()=>{const C=G.C;let o=[];for(let i=18;i<35;i++)o.push(C.stageName(i)+':'+(C.stageReq(i)/1e6).toFixed(2)+(i>18?' x'+(C.stageReq(i)/C.stageReq(i-1)).toFixed(2):''));return o.join('  ')}));await b.close()})();
