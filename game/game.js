@@ -913,5 +913,12 @@ const DSM=[1,1.5,2.2];const ocs=C.castSpell;C.castSpell=sp=>{const t=G.jobT();if
 ;(()=>{// v45 boss-fight body flag (combo banner moves off the boss band)
 let on=false;setInterval(()=>{const b=!!(C.B.boss&&C.alive().some(e=>e.boss));if(b!==on){on=b;document.body.classList.toggle('bossfight',b)}},150);
 // 권장 전투력 recalibration from growth sim (players clear ch3+ at well under the old estimate)
-const osr=C.stageReq;C.stageReq=i=>{const v=osr(i);return v?Math.ceil(v*Math.pow(.94,Math.max(0,i-14))/10)*10:v};
+const osr=C.stageReq;C.stageReq=i=>{const v=osr(i);const k=i<=3?1:i<=10?1-(i-3)*.09:.37*Math.pow(.97,i-10);return v?Math.ceil(v*k/10)*10:v};
 })();
+;(()=>{// v46 scripted free 10-pull tickets on first clear of 1-7 / 2-7 (smooth early companion curve)
+const GR={3:3,7:5,11:5,14:10};const oc=C.ev.clear;C.ev.clear=function(){const r=oc&&oc.apply(this,arguments);try{const s=C.S();s.fgr=s.fgr||{};for(const k in GR){if(s.maxSi>=+k&&!s.fgr[k]){s.fgr[k]=1;s.tickets=(s.tickets||0)+GR[k];G.fgrN=(G.fgrN||0)+1;(()=>{const n=GR[k];let tries=0;const put=()=>{const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop(),vr=v&&v.querySelector('.vr');if(vr&&!vr.querySelector('.tkg')){vr.insertAdjacentHTML('beforeend',`<span class="fcl tkg"><img class=ci src=assets/it2_ticket.png> +${n}<small>소환권 보상</small></span>`);return}if(tries++<40)setTimeout(put,100);else try{toast(`🎁 동료 소환권 ×${n} 지급`)}catch(_){}};put();setTimeout(()=>{try{toast(`<b style="color:#ffd77a">🎁 동료 소환권 ×${n}</b> 지급 · 소환 탭에서 사용`);updateHud()}catch(_){}},5200)})()}}}catch(_){}return r};
+})();
+;(()=>{// v47 companion scaling trim (pacing: 5-7 ≈ 6-10h active)
+G.COMP_TRIM=.85;const om=C.compMul;C.compMul=k=>om(k)*G.COMP_TRIM;try{C.buildAllies()}catch(_){}})();
+;(()=>{// v48 income trim (gold/exp per kill; offline & quick hunt derive from these)
+G.INC_TRIM=.45;const og=C.goldKill,ox=C.expKill;C.goldKill=i=>og(i)*G.INC_TRIM;C.expKill=i=>ox(i)*G.INC_TRIM})();

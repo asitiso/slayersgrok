@@ -650,3 +650,4 @@ body.bron #bufBtn,body.wbon #bufBtn{display:none}
 @keyframes jfIn{from{opacity:0}to{opacity:1}}@keyframes jfPop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
 body.bossfight .combo{top:548px;height:76px;transform-origin:center;}
 body.bossfight .combo img{height:96px;width:90px;margin-top:-20px}
+.vic .vr{flex-wrap:wrap;row-gap:2px}.vic .vr .vst{flex-basis:100%;margin-bottom:0}.vic .vr .vst i{font-size:24px}.vic .vr .tkg{color:#ffd77a}.vic .vr .tkg small{background:#b06a10}

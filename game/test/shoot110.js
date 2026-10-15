@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s110');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await ev(()=>{const s=G.S();s.maxSi=6;G.C.selectStage(6);const o=G.C.ATK;G.C.ATK=()=>o()*30});await sl(1500);await ev(()=>{G.S().wave=99;G.C.startBoss()});
+await until(()=>G.S().maxSi>=7,30000);await sl(2300);
+console.log('vr',await ev(()=>[...document.querySelectorAll('.vic')].map(v=>v.className+'|'+((v.querySelector('.vr')||{}).innerHTML||'')).join(' ;; ').slice(0,900)));
+await sh('636-ch1-boss-ticket-grant');
+console.log('tickets',await ev(()=>G.S().tickets));
+await sl(3000);await ev(()=>document.querySelectorAll('.vic').forEach(x=>x.remove()));await sl(500);await sh('637-stage-req-2-1');
+stop();console.log('ERR',errs);await b.close()})();
