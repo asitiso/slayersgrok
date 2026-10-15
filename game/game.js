@@ -901,7 +901,7 @@ const ouh=updateHud;updateHud=function(){const r=ouh.apply(this,arguments);try{c
 setTimeout(()=>{const s=C.S();if(s.skin&&/^job/.test(s.skin))wear(s.skin);try{updateHud()}catch(_){}},50);
 })();
 ;(()=>{// v44 전직 signature: 드래곤 슬레이브 Ⅱ / 극 + job attack/cast poses
-const P={'skin/lina_job2_atk.png':[1.021,.021,.177],'skin/lina_job2_cast.png':[1.2,.074,-.03],'skin/lina_job3_atk.png':[1.044,.014,.147],'skin/lina_job3_cast.png':[1.164,.046,-.07]};R.PB=Object.assign(R.PB||{},P);
+const P={'skin/lina_job2_atk.png':[1.021,.021,.177],'skin/lina_job2_cast.png':[1.2,.074,-.03],'skin/lina_job3_atk.png':[1.044,.014,.147],'skin/lina_job3_cast.png':[1.164,.046,.011]};R.PB=Object.assign(R.PB||{},P);
 const J={job2:['skin/lina_job2_atk.png','skin/lina_job2_cast.png'],job3:['skin/lina_job3_atk.png','skin/lina_job3_cast.png']};
 for(const k in J){const sk=D.SKINS.find(x=>x.k==k);if(sk){sk.atk=J[k][0];sk.cast=J[k][1]}}
 const fix=()=>{const s=C.S();if(s.skin&&J[s.skin]){R.skinAtk=J[s.skin][0];R.skinCast=J[s.skin][1]}};fix();setTimeout(fix,80);
@@ -909,3 +909,4 @@ const op=G.jobPromote;G.jobPromote=function(){const r=op.apply(this,arguments);f
 Object.defineProperty(R,'jobLv',{get:()=>G.jobT(),configurable:true});
 const DSM=[1,1.5,2.2];const ocs=C.castSpell;C.castSpell=sp=>{const t=G.jobT();if(sp&&sp.k=='ds'&&t)sp=Object.assign({},sp,{mul:sp.mul*DSM[t]});return ocs(sp)};
 })();
+;(()=>{['cut/lina_ult_job2.png','cut/lina_ult_job3.png','skin/lina_job2_atk.png','skin/lina_job2_cast.png','skin/lina_job3_atk.png','skin/lina_job3_cast.png'].forEach(s=>{const i=new Image();i.src='assets/'+s})})();
