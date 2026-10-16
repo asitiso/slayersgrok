@@ -760,3 +760,7 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 #skills .sk.skm::before{content:'수동';position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);z-index:3;font-size:9px;font-weight:900;color:#fff;background:#c0503a;border:1px solid #ffd0b0;border-radius:6px;padding:0 4px;line-height:13px;white-space:nowrap}
 #skills .sk.skm img{filter:saturate(.55)}
 #skills .sk.skp{transform:scale(.88);transition:transform .15s}
+.psr{display:flex;gap:6px}.psl{flex:1;position:relative;background:#0004;border:1.5px solid #ffffff22;border-radius:10px;padding:6px 4px 6px;min-height:58px;text-align:center}
+.psl.on{border-color:#ffd77a;box-shadow:0 0 8px #ffd77a66}.psl>b{position:absolute;left:6px;top:3px;font-size:11px;color:#ffd77a}
+.psi{display:flex;justify-content:center;gap:1px;margin-top:12px;min-height:30px;align-items:center}.psi img{width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:top;background:#0006}
+.psl.emp .psi{opacity:.55}.pss{position:absolute;right:4px;top:2px;font-size:13px;padding:1px 2px}

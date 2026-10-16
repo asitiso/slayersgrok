@@ -1337,3 +1337,8 @@ const cancel=e=>{if(tm&&(e.type!='pointermove'||Math.hypot(e.clientX-sx,e.client
 sk.addEventListener('click',e=>{if(ate){ate=0;e.stopPropagation();e.preventDefault()}},true);sk.addEventListener('contextmenu',e=>e.preventDefault());
 setInterval(sync,500);sync();G.skOffSync=sync;
 })();
+/* v75 편성 프리셋 */
+(()=>{const C=G.C;const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='party'){const sb=document.querySelector('#screen .sbody'),c1=sb&&sb.querySelector('.card');if(c1&&!sb.querySelector('.pset')){const s=C.S(),P=s.pset=s.pset||[null,null,null],cur=s.party.join();
+ const h=`<div class="card pset"><div class=ttl>편성 프리셋 <small>탭: 불러오기 · 💾: 현재 편성 저장</small></div><div class=psr>${P.map((p,i)=>{const on=p&&p.join()==cur;return `<div class="psl ${p?'':'emp'} ${on?'on':''}" data-pi=${i}><b>${i+1}</b><div class=psi>${p?(p.length?p.map(k=>{const c=D.COMPS.find(x=>x.k==k);return c?`<img src="${A}${c.img}">`:''}).join(''):'<small>리나 단독</small>'):'<small>비어 있음</small>'}</div><span class=pss data-ps=${i}>💾</span></div>`}).join('')}</div></div>`;
+ c1.insertAdjacentHTML('afterend',h);
+ sb.querySelectorAll('.psl').forEach(el=>el.onclick=e=>{const i=+el.dataset.pi;if(e.target.closest('.pss')){P[i]=s.party.slice();toast(`프리셋 ${i+1}에 저장했습니다`);G.save&&G.save();renderScreen();return}const p=P[i];if(!p)return toast('먼저 💾로 현재 편성을 저장하세요');const q=p.filter(k=>s.comps[k]).slice(0,4);s.party=q;C.buildAllies();C.refreshMax();toast(`프리셋 ${i+1} 편성 적용 · 전투력 ${fmt(C.POW())}`);renderScreen()})}}}catch(_){}return r}})();
