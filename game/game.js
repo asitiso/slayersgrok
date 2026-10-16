@@ -1664,3 +1664,49 @@ G.bossDex=()=>{const r=rec(),n=D.BOSSES.filter(b=>r[b.img]).length,tot=Object.va
  return `<div class=card><div class=ttl>보스 토벌 기록 ${n}/${D.BOSSES.length} <small>총 토벌 ${tot}회</small></div>${last&&last.q?`<div class=bdxq>최근 토벌 · ${last.n}: 「${last.q}」</div>`:''}</div>
  <div class=bdx>${D.BOSSES.map((b,i)=>{const o=r[b.img];return `<div class="bdxc ${o?'':'lock'}"><span class=ch>${chOf(i)}</span>${o?`<span class=kc>×${o.n}</span>`:''}<img src="${A}${b.img}"><div class=ft><b>${o?b.n:'???'}</b><small>${o?(o.best?'최단 '+o.best+'초':'토벌 완료'):'미토벌'}</small></div></div>`}).join('')}</div>`};
 })();
+;(()=>{// v106 낚시터 (일일 5회 · 타이밍 낚시 · 어종 도감)
+const F=[{k:'f1',n:'피라미',ic:'🐟',w:46,sz:[8,15],g:20,c:'#9a9a9a'},{k:'f2',n:'은빛 송어',ic:'🐟',w:28,sz:[25,45],g:60,c:'#4ad07a'},{k:'f3',n:'무지개 잉어',ic:'🐠',w:16,sz:[30,60],st:3,c:'#4ab0ff'},{k:'f4',n:'황금 메기',ic:'🐡',w:8,sz:[50,90],st:8,c:'#b07cff'},{k:'f5',n:'전설의 용어',ic:'🐉',w:2,sz:[120,200],gm:20,c:'#ffa03a'}];
+const LIM=5;
+const st=()=>{const s=C.S();if(!s.fish)s.fish={day:'',n:0,col:{}};const f=s.fish;if(f.day!=C.today()){f.day=C.today();f.n=0}return f};
+const roll=()=>{let t=F.reduce((a,x)=>a+x.w,0),r=Math.random()*t;for(const x of F){if((r-=x.w)<0)return x}return F[0]};
+let ph='idle',tm=[],biteAt=0,res=null;const clr=()=>{tm.forEach(clearTimeout);tm=[]};
+G._fishForce=k=>{G._fk=k};
+const give=x=>{const s=C.S(),gk=C.goldKill(Math.max(0,s.maxSi));const it=[];if(x.g){const v=Math.round(gk*x.g);s.gold+=v;it.push(['it2_gold.png',v,'골드'])}if(x.st){s.stone=(s.stone||0)+x.st;it.push(['it2_stone.png',x.st,'강화석'])}if(x.gm){s.gems+=x.gm;it.push(['it2_gem.png',x.gm,'다이아'])}return it};
+const css=document.createElement('style');css.textContent=`
+.fsh{position:relative;height:330px;border-radius:14px;overflow:hidden;border:2px solid #8fd8ff;background:url(assets/bg_f_beach.jpg) center 30%/cover}
+.fsh .wt{position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(#5ac8f0cc,#1a7ab0ee);border-top:2px solid #e8faff}
+.fsh .wt:before,.fsh .wt:after{content:'';position:absolute;left:-20%;width:140%;height:10px;top:18px;background:repeating-radial-gradient(ellipse at 50% 0,#fff8 0 2px,#0000 3px 22px);animation:fwv 4s linear infinite}
+.fsh .wt:after{top:60px;opacity:.6;animation-duration:6s}
+@keyframes fwv{from{transform:translateX(0)}to{transform:translateX(-44px)}}
+.fsh .rod{position:absolute;left:24px;bottom:-10px;width:8px;height:250px;background:linear-gradient(90deg,#7a4a1a,#c08040);border-radius:4px;transform-origin:50% 100%;transform:rotate(28deg);transition:transform .35s}
+.fsh.fcast .rod,.fsh.fbite .rod{transform:rotate(36deg)}.fsh.freel .rod{transform:rotate(14deg)}
+.fsh .ln{position:absolute;left:174px;top:134px;width:1.5px;height:45px;background:#fffc;transform-origin:top;transform:rotate(20deg);opacity:0;transition:opacity .2s}
+.fsh.fcast .ln,.fsh.fbite .ln{opacity:1}
+.fsh .bob{position:absolute;left:150px;top:176px;width:18px;height:22px;border-radius:50% 50% 45% 45%;background:linear-gradient(#ff3a3a 50%,#fff 50%);border:1.5px solid #222;opacity:0;transition:opacity .2s}
+.fsh.fcast .bob{opacity:1;animation:fbob 1.6s ease-in-out infinite}.fsh.fbite .bob{opacity:1;animation:fbite .18s ease-in-out infinite}
+@keyframes fbob{50%{transform:translateY(3px)}}@keyframes fbite{0%,100%{transform:translateY(4px)}50%{transform:translateY(12px)}}
+.fsh .rip{position:absolute;left:132px;top:192px;width:54px;height:16px;border:2px solid #fffa;border-radius:50%;opacity:0}.fsh.fbite .rip{animation:frip .6s ease-out infinite}
+@keyframes frip{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.fsh .ex{position:absolute;left:142px;top:118px;font:900 42px sans-serif;color:#ffe23a;text-shadow:0 3px 0 #a04000,0 0 12px #fff;opacity:0}.fsh.fbite .ex{opacity:1;animation:fex .3s ease-out}
+@keyframes fex{0%{transform:scale(2)}100%{transform:scale(1)}}
+.fsh .msg{position:absolute;left:10px;right:10px;top:10px;text-align:center;background:#000a;color:#fff;font-weight:800;font-size:13px;padding:6px;border-radius:10px}
+.fsh .catch{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);text-align:center;background:radial-gradient(#fff8e0,#ffd77a);border:3px solid var(--c);border-radius:16px;padding:10px 18px;box-shadow:0 0 24px var(--c);animation:fcat .5s cubic-bezier(.2,1.5,.4,1) both;min-width:170px}
+.fsh .catch .i{font-size:58px;display:block;animation:fjump 1s ease-in-out infinite}.fsh .catch b{display:block;color:#3a2010;font-size:17px}.fsh .catch small{color:#7a4a10;font-weight:700}
+@keyframes fcat{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}@keyframes fjump{50%{transform:translateY(-6px) rotate(-8deg)}}
+.fbtn{display:block;margin:10px auto 0;width:220px;text-align:center;font:900 18px 'Noto Sans KR',sans-serif;padding:12px;border-radius:14px;color:#fff;background:linear-gradient(#4ac0ff,#1a70d0);border:2px solid #cfeeff;box-shadow:0 4px 0 #0a3a80}
+.fbtn.hot{background:linear-gradient(#ff7a3a,#d02a1a);border-color:#ffe0c0;box-shadow:0 4px 0 #701000;animation:fhot .3s infinite alternate}.fbtn.off{opacity:.45}
+@keyframes fhot{to{transform:scale(1.06)}}
+.fcol{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.fcc{text-align:center;border:2px solid var(--c);border-radius:10px;background:#1a2030;padding:4px 0}.fcc .i{font-size:26px;display:block}.fcc b{font-size:10px;color:#fff;display:block}.fcc small{font-size:9px;color:#ffd77a}.fcc.lock{filter:grayscale(1);opacity:.4}`;document.head.appendChild(css);
+const draw=()=>{const el=$('#screen'),f=st(),left=LIM-f.n;
+ el.innerHTML=shell('낚시터','bg_f_beach.jpg',`<div class="fsh f${ph}" id=fsh><div class=wt></div><div class=rod></div><div class=ln></div><div class=rip></div><div class=bob></div><div class=ex>!</div>
+ <div class=msg id=fmsg>${ph=='idle'?`찌를 던지고 입질이 오면 재빨리 챔질하세요! · 오늘 ${left}/${LIM}회`:ph=='cast'?'입질을 기다리는 중…':ph=='bite'?'지금이에요! 챔질!':''}</div>
+ ${res?res.x?`<div class=catch style="--c:${res.x.c}"><span class=i>${res.x.ic}</span><b>${res.x.n}</b><small>${res.sz}cm${res.rec?' · 최고 기록!':''}</small></div>`:`<div class=catch style="--c:#888"><span class=i>💨</span><b>놓쳤다…</b><small>타이밍이 늦었어요</small></div>`:''}</div>
+ <span class="fbtn ${ph=='bite'?'hot':''} ${ph=='cast'||(ph=='idle'&&left<=0)?'off':''}" id=fgo>${ph=='bite'?'챔질!':ph=='cast'?'기다리는 중…':left>0?'던지기 🎣':'내일 다시 (05:00)'}</span>
+ <div class=card style="margin-top:10px"><div class=ttl>어종 도감 ${F.filter(x=>f.col[x.k]).length}/${F.length}</div><div class=fcol>${F.map(x=>{const o=f.col[x.k];return `<div class="fcc ${o?'':'lock'}" style="--c:${x.c}"><span class=i>${x.ic}</span><b>${o?x.n:'???'}</b><small>${o?`×${o.n} · ${o.max}cm`:''}</small></div>`}).join('')}</div>
+ <small style="display:block;margin-top:6px">피라미·송어: 골드 · 잉어·메기: 강화석 · 전설의 용어: 다이아 20</small></div>`);
+ el.querySelector('#sBack').onclick=()=>{clr();ph='idle';res=null;closeScreen()};
+ el.querySelector('#fgo').onclick=()=>{const f=st();if(ph=='idle'){if(f.n>=LIM)return toast('오늘 낚시 횟수를 모두 사용했어요');f.n++;res=null;ph='cast';draw();tm.push(setTimeout(()=>{ph='bite';biteAt=performance.now();draw();tm.push(setTimeout(()=>{if(ph=='bite'){ph='idle';res={};draw()}},900))},1500+Math.random()*2500))}
+  else if(ph=='bite'){clr();const x=G._fk?F.find(q=>q.k==G._fk):roll();G._fk=0;const sz=Math.round(x.sz[0]+Math.random()*(x.sz[1]-x.sz[0]));const o=f.col[x.k]||(f.col[x.k]={n:0,max:0});o.n++;const rec=sz>o.max;if(rec)o.max=sz;const it=give(x);ph='idle';res={x,sz,rec};updateHud();draw();tm.push(setTimeout(()=>rewardPop(it,'낚시 · '+x.n),900))}}};
+if(!MENU.some(m=>m[0]=='fish')){const i=MENU.findIndex(m=>m[0]=='explore');MENU.splice(i+1,0,['fish','낚시','it3_gempouch.png'])}try{renderHub()}catch(_){}
+const rs=renderScreen;renderScreen=function(){if(G.screen=='fish')return draw();return rs.apply(this,arguments)};
+})();
