@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+const kn=()=>ev(()=>document.querySelectorAll('#notice,.chap,.sty,.unl,.rwpop,.rpop,.modal').forEach(x=>x.remove()));
+await ev(()=>{const s=G.S();s.maxSi=8;s.autoBoss=false;G.C.selectStage(2)});await sl(2500);await kn();await sh('1220_town');
+await ev(()=>{G.C.selectStage(4)});await sl(2500);await kn();await sh('1221_autumn');
+await ev(()=>{G.C.selectStage(2)});await sl(1500);await kn();
+await ev(()=>G.C.startBoss());const t0=Date.now();const at=async(ms,n)=>{const w=ms-(Date.now()-t0);if(w>0)await sl(w);await sh(n)};
+await at(700,'1222_boss_warn');for(let i=0;i<80&&!(await ev(()=>!!document.querySelector('.vsx')));i++)await sl(40);for(let i=0;i<100&&await ev(()=>!!document.querySelector('.vsx'));i++)await sl(40);await sl(200);await sl(90);await sh('1223_boss_drop');await sl(180);await sh('1224_boss_land');await sl(900);await sh('1225_boss_after');
+console.log('ERRS',errs);stop();await b.close()})();
