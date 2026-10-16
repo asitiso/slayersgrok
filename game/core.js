@@ -105,7 +105,7 @@ C.tick=dt=>{
   C.spells().forEach(s=>{B.cds[s.k]=Math.max(0,(B.cds[s.k]||0)-dt)});
   B.allies.forEach(a=>{if(a.dead)return;a.t+=dt*a.spd;if(a.t>=1){a.t=0;allyAttack(a)}});
   C.alive().forEach(e=>{e.t+=dt*e.spd;if(e.t>=1){e.t=0;enemyAttack(e)}});
-  if(S.autoSpell){const low=C.aliveAllies().some(a=>a.hp<a.max*.55);for(const s of C.spells()){if(s.heal&&!low)continue;if(!s.heal&&!C.alive().length)continue;if(C.castSpell(s))break}}
+  if(S.autoSpell){const low=C.aliveAllies().some(a=>a.hp<a.max*.55);for(const s of C.spells()){if(S.skOff&&S.skOff[s.k])continue;if(s.heal&&!low)continue;if(!s.heal&&!C.alive().length)continue;if(C.castSpell(s))break}}
   if(B.wb){B.wb.t-=dt;B.timer=Math.max(0,B.wb.t);if(B.wb.t<=0||!C.aliveAllies().length)C.wbEnd();return}
   if(B.boss){B.timer-=dt;if(B.timer<=0&&C.alive().length)return bossFail('시간 초과!')}
   if(!C.aliveAllies().length){if(B.boss)return bossFail('파티 전멸!');reviveAll(1);emit('toast','파티가 쓰러졌다… 재정비');B.lock=1.2;S.wave=0;return}

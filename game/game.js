@@ -1320,10 +1320,20 @@ for(const a of C.B.allies||[]){const q=AS.get(a.k);if(!q)continue;const w=DW.get
  ctx.globalAlpha=.35*k;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(q.x,q.y+2,30,8,0,0,7);ctx.fill();
  for(let i=0;i<3;i++){const an=T*3+i*2.09;ctx.globalAlpha=.9*k;ctx.fillStyle='#ffe066';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('★',q.x+Math.cos(an)*18,q.y-62+Math.sin(an)*5)}
  const u=(d.t*.6)%1;ctx.globalAlpha=k*(1-u)*.6;const g=ctx.createRadialGradient(q.x,q.y-70-u*40,1,q.x,q.y-70-u*40,12);g.addColorStop(0,'#fff');g.addColorStop(1,'rgba(160,200,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(q.x,q.y-70-u*40,12,0,7);ctx.fill();
- ctx.globalAlpha=k;ctx.font='bold 11px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#000a';ctx.strokeText('전투 불능',q.x,q.y+16);ctx.fillStyle='#ff9a9a';ctx.fillText('전투 불능',q.x,q.y+16)}
+ ctx.globalAlpha=k;ctx.font='bold 9px sans-serif';ctx.textAlign='center';const ly=q.y-84;ctx.fillStyle='#000a';ctx.beginPath();ctx.roundRect?ctx.roundRect(q.x-22,ly-9,44,13,6):ctx.rect(q.x-22,ly-9,44,13);ctx.fill();ctx.fillStyle='#ff9a9a';ctx.fillText('전투 불능',q.x,ly+1)}
  else if(w){DW.delete(a.k);RV.push({k:a.k,t:0})}}
 for(let i=RV.length-1;i>=0;i--){const r=RV[i],q=AS.get(r.k);r.t+=dt;const k=r.t/.9;if(k>=1||!q){RV.splice(i,1);continue}ctx.globalCompositeOperation='lighter';ctx.globalAlpha=(1-k)*.8;const g=ctx.createLinearGradient(q.x-22,0,q.x+22,0);g.addColorStop(0,'rgba(255,230,120,0)');g.addColorStop(.5,'rgba(255,240,170,1)');g.addColorStop(1,'rgba(255,230,120,0)');ctx.fillStyle=g;ctx.fillRect(q.x-22,q.y-140,44,145);
  ctx.strokeStyle='#ffe58a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(q.x,q.y,18+k*40,(18+k*40)*.3,0,0,7);ctx.stroke();ctx.globalCompositeOperation='source-over';
  ctx.globalAlpha=k<.7?1:(1-k)/.3;ctx.font='900 14px sans-serif';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#5a3a00';ctx.strokeText('부활!',q.x,q.y-95-k*14);ctx.fillStyle='#fff3b0';ctx.fillText('부활!',q.x,q.y-95-k*14)}
 ctx.restore()}catch(_){}};
+})();
+
+/* v74 스킬별 자동 사용 설정 (길게 누르기) */
+(()=>{const C=G.C;let tm=null,ate=0,sx=0,sy=0;const off=()=>{const s=C.S();return s.skOff=s.skOff||{}};
+const sync=()=>document.querySelectorAll('#skills .sk').forEach(el=>{const o=!!off()[el.dataset.k];if(el.classList.contains('skm')!==o)el.classList.toggle('skm',o)});
+const sk=document.getElementById('skills');if(!sk)return;
+sk.addEventListener('pointerdown',e=>{const el=e.target.closest('.sk');if(!el||el.classList.contains('lock'))return;sx=e.clientX;sy=e.clientY;clearTimeout(tm);tm=setTimeout(()=>{tm=null;ate=1;const k=el.dataset.k,o=off();o[k]=!o[k];const sp=D.SPELLS.find(x=>x.k==k);sync();el.classList.add('skp');setTimeout(()=>el.classList.remove('skp'),300);toast(`<b>${sp?sp.n:'스킬'}</b> 자동 사용 ${o[k]?'<b style="color:#ff9a7a">제외</b> · 직접 눌러 사용':'<b style="color:#8f8">포함</b>'}`)},500)},true);
+const cancel=e=>{if(tm&&(e.type!='pointermove'||Math.hypot(e.clientX-sx,e.clientY-sy)>10)){clearTimeout(tm);tm=null}};['pointerup','pointercancel','pointerleave','pointermove'].forEach(t=>sk.addEventListener(t,cancel,true));
+sk.addEventListener('click',e=>{if(ate){ate=0;e.stopPropagation();e.preventDefault()}},true);sk.addEventListener('contextmenu',e=>e.preventDefault());
+setInterval(sync,500);sync();G.skOffSync=sync;
 })();
