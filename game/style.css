@@ -1110,3 +1110,35 @@ body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:h
 .vic.clr .vr .rcd{padding:3px 6px}
 .vic.clr .vst i.gs{transform:none}
 .vic.clr .clt{color:#4a2200;font-size:10px;text-shadow:0 0 3px #fff,0 0 3px #fff}
+/* v131 arena */
+.arena2 .sbody>.card{background:#1a1230d9}
+.arhd2{display:flex;align-items:center;gap:8px;margin:2px 0 8px;padding:8px 10px;border-radius:14px;background:linear-gradient(90deg,#2a1a4aee,#1a1230ee);border:2px solid #ffd77a}
+.arhd2 .tier{width:58px;height:58px;object-fit:contain}
+.arhd2 .ahi{flex:1;min-width:0}.arhd2 .ahi b{font:900 17px Maplestory,sans-serif;color:#ffe27a;text-shadow:0 2px 0 #000}
+.arhd2 .ahr{margin-left:6px;font-weight:900;color:#fff;font-size:13px}
+.arhd2 .ahb{height:7px;border-radius:4px;background:#0008;margin:4px 0 2px;overflow:hidden}.arhd2 .ahb i{display:block;height:100%;background:linear-gradient(90deg,#ffb02e,#ffe27a)}
+.arhd2 small{font-size:10px;color:#d8cfee}
+.arhd2 .aht{text-align:center;line-height:1.1}.arhd2 .aht img{width:26px;display:block;margin:0 auto}.arhd2 .aht b{color:#fff;font-size:14px}.arhd2 .aht small{display:block}
+.aocg{display:flex;gap:6px;margin-top:4px}
+.aoc{flex:1;position:relative;border-radius:12px;padding:6px 4px 6px;text-align:center;background:linear-gradient(#3a2a5a,#1a1230);border:2px solid #8a7ab0;overflow:hidden;animation:aocin .35s ease-out both}
+.aoc:nth-child(2){animation-delay:.08s}.aoc:nth-child(3){animation-delay:.16s}
+.aoc.hard{border-color:#ff6a5a}.aoc.easy{border-color:#5ad07a}
+.aoc .aolead{height:78px;border-radius:8px;background:radial-gradient(#fff3,#0000 70%)}.aoc .aolead img{height:78px;max-width:100%;object-fit:contain}
+.aoc .aotg{position:absolute;left:3px;top:3px}.aoc .aotg .tier{width:26px;height:26px;object-fit:contain}
+.aoc .aon{display:block;font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aoc .aop{display:block;font-size:10px;color:#ffd77a;font-weight:800}
+.aoc .aopt{display:flex;justify-content:center;gap:1px;margin:2px 0}.aoc .aopt img{width:22px;height:22px;border-radius:5px;background:#0006;object-fit:cover}
+.aoc .aopr{display:block;font-style:normal;font-size:10px;font-weight:900;color:#cfd8ff}.aoc.hard .aopr{color:#ff9a8a}.aoc.easy .aopr{color:#8aff9a}
+.aoc .btn{margin-top:4px;padding:4px 0;width:100%;font-size:12px}
+@keyframes aocin{from{opacity:0;transform:translateY(20px)}}
+.arvsi{position:absolute;inset:0;z-index:1200;background:url(assets/vs_bg.jpg) center/cover;display:flex;align-items:center;justify-content:space-between;padding:0 14px;overflow:hidden}
+.arvsi .avs{width:140px;text-align:center;color:#fff;animation:avsl .35s ease-out both}.arvsi .avs.r{animation-name:avsr}
+.arvsi .avs img{height:170px;max-width:140px;object-fit:contain;filter:drop-shadow(0 4px 8px #000)}
+.arvsi .avs b{display:block;font:900 15px Maplestory,sans-serif;text-shadow:0 2px 0 #000}.arvsi .avs small{color:#ffd77a;font-weight:900}
+.arvsi .avs.r img{transform:scaleX(-1)}
+.arvsi .avx{font:italic 900 64px Maplestory,sans-serif;background:linear-gradient(#fff6c8,#ffb02e 50%,#e03010);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #000) drop-shadow(0 0 12px #ff6a00);animation:avxin .4s .25s cubic-bezier(.2,1.8,.4,1) both}
+@keyframes avsl{from{transform:translateX(-200px);opacity:0}}@keyframes avsr{from{transform:translateX(200px);opacity:0}}@keyframes avxin{from{transform:scale(3);opacity:0}}
+#screen.arena2 .shade{opacity:.35}
+#screen.arena2 .sbody>.card{background:#1a1230b8!important;backdrop-filter:blur(2px)}
+.arvsi .avs b{display:inline-block;margin-top:4px;padding:3px 10px;border-radius:10px;background:#000a;font-size:16px}
+.arvsi .avs small{display:block;margin-top:3px;font-size:14px;text-shadow:0 1px 0 #000,0 0 4px #000}

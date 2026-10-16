@@ -2005,3 +2005,19 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
 d.insertAdjacentHTML('afterbegin',`<div class=clbw><img class=clb src="assets/clear_banner.png"><b class=clt>${chc?'CHAPTER CLEAR':'STAGE CLEAR'}</b></div>${chc?`<div class=chcr>제${s.si/7}장 「${D.CH[s.si/7-1]}」 완료!</div>`:''}`);
 d.querySelectorAll('.vr>span:not(.vst)').forEach((x,i)=>{x.classList.add('rcd');x.style.animationDelay=(.25+i*.09)+'s'});
 let k=0;const st=()=>{const v=d.querySelector('.vst');if(!v){if(k++<20)setTimeout(st,100);return}[...v.querySelectorAll('i')].forEach((x,i)=>{const on=x.classList.contains('on');x.className='gs'+(on?'':' off');x.innerHTML='<img src="assets/star_gold.png">';x.style.animationDelay=(.1+i*.15)+'s'})};st();}catch(_){}return r}})();
+;(()=>{/* v131 화룡전-style 투기장: arena bg, tier/rank header, opponent cards, short VS intro (reuses vs_bg.jpg) */
+const TI=['tier_bronze','tier_silver','tier_gold','tier_gold','tier_gold','tier_gold'],TF=['','','','hue-rotate(150deg) saturate(.7)','hue-rotate(185deg) saturate(1.4)','hue-rotate(290deg) saturate(1.3)'];
+G.tierImg=L=>{const i=Math.max(0,D.LEAGUE.indexOf(L));return `<img class=tier src="assets/${TI[i]}.png" style="filter:${TF[i]||'none'} drop-shadow(0 3px 4px #0008)">`};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='arena')return r;const sc=document.querySelector('#screen'),sb=sc&&sc.querySelector('.sbody');if(!sb||sb.querySelector('.arhd2'))return r;
+const bg=sc.querySelector('.sbg');if(bg)bg.src='assets/bg_arena2.jpg';sc.classList.add('arena2');
+const s=C.S(),a=s.arena,L=C.league(),li=D.LEAGUE.indexOf(L),nx=D.LEAGUE[li+1],pc=nx?Math.min(100,(a.pts-L.pts)/(nx.pts-L.pts)*100):100;
+const cards=[...sb.querySelectorAll('.card')],me=cards.find(c=>/내 순위/.test(c.textContent)),op=cards.find(c=>c.querySelector('[data-f]'));
+if(me)me.style.display='none';
+sb.insertAdjacentHTML('afterbegin',`<div class=arhd2>${G.tierImg(L)}<div class=ahi><b>${L.n} 리그</b><span class=ahr>${fmt(C.rank())}위</span><div class=ahb><i style="width:${pc}%"></i></div><small>점수 ${a.pts}${nx?` / ${nx.pts} (${nx.n})`:' · 최고 리그'} · ${a.streak}연승</small></div><div class=aht><img src="assets/it2_ticket.png"><b>${a.tickets}/${BAL.arena.tickets}</b><small>도전권</small></div></div>`);
+if(op){const P=C.POW();op.classList.add('arops');const g=a.opps.map((o,j)=>{const p=1/(1+Math.exp(-(P/o.pow-1)*7)),lv=p<.4?'hard':p<.7?'mid':'easy',pt=o.party||[o.img],oL=C.league(o.pts||a.pts);
+return `<div class="aoc ${lv}"><div class=aolead><img src="${A}${pt[0]}"></div><div class=aotg>${G.tierImg(oL)}</div><b class=aon>${o.n}</b><small class=aop>⚔ ${fmt(o.pow)}</small><div class=aopt>${pt.slice(1).map(im=>`<img src="${A}${im}">`).join('')}</div><em class=aopr>승률 ${Math.round(p*100)}%</em><span class="btn ${a.tickets<1?'off':''}" data-f2=${j}>도전</span></div>`}).join('');
+op.querySelectorAll('.row').forEach(x=>x.style.display='none');op.querySelector('.ttl').insertAdjacentHTML('afterend',`<div class=aocg>${g}</div>`);
+op.querySelectorAll('[data-f2]').forEach(b=>b.onclick=()=>{const o=op.querySelector(`[data-f="${b.dataset.f2}"]`);if(o)o.click()})}}catch(e){console.warn(e)}return r};
+const ar0=arenaReplay;arenaReplay=function(r,re){if(re||!r||!r.o)return ar0.apply(this,arguments);const args=arguments,L=r.party||['hero_lina.png'],R=r.o.party||[r.o.img];
+const d=document.createElement('div');d.className='arvsi';d.innerHTML=`<div class="avs l"><img src="${A}${L[0]}"><b>${G.nick?G.nick():'나'}</b><small>⚔ ${fmt(r.my||C.POW())}</small></div><b class=avx>VS</b><div class="avs r"><img src="${A}${R[0]}"><b>${r.o.n}</b><small>⚔ ${fmt(r.o.pow)}</small></div>`;
+$('#app').appendChild(d);let gone=0;const go=()=>{if(gone)return;gone=1;d.remove();ar0.apply(this,args)};d.onclick=go;setTimeout(go,1300)};G.arenaReplay=arenaReplay})();
