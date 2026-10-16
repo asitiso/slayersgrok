@@ -2925,3 +2925,10 @@ setInterval(up,300)})();
 /* v188: victory moment — party hop + sparkle on win (visual only; within clear card time) */
 (()=>{const go=()=>{const fx=!(R.opt&&R.opt.fx===false);R.cheer={t:0,id:(R._chid=(R._chid||0)+1),fx};if(!fx)return;const s=C.S(),ch=Math.floor(s.si/7),ci=(s.maxSi-1)-ch*7;const nd=document.querySelectorAll('#strt .nd')[ci];if(nd&&ci>=0){nd.classList.remove('fl');void nd.offsetWidth;nd.classList.add('fl')}};
 const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w&&!C.B.br&&!C.B.rb&&!G.screen){const d=[...document.querySelectorAll('.vic.win')].pop();let n=0;const wt=()=>{if(++n>60)return;if(!d||!d.isConnected||d.classList.contains('out'))go();else setTimeout(wt,80)};setTimeout(wt,80)}}catch(_){}return r}})();
+
+/* v189: slim "N-N 이동" card to a compact stage-name banner (header route keeps the dots) */
+(()=>{const st=document.createElement('style');st.textContent=`
+.stmv{top:246px!important;width:auto!important;min-width:150px;max-width:260px;padding:4px 16px 5px!important;border-radius:6px!important;background:linear-gradient(90deg,#0000,#2a1608e6 14%,#2a1608e6 86%,#0000)!important;border:0!important;border-top:1px solid #d8b0607a!important;border-bottom:1px solid #d8b0607a!important;box-shadow:none!important;white-space:nowrap}
+.stmv .pth{display:none!important}
+.stmv h4{font-size:14px!important;margin:0!important}
+.stmv p{margin:0!important;font-size:10px!important;opacity:.8}`;document.head.appendChild(st)})();

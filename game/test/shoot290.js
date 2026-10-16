@@ -10,5 +10,5 @@ await ev(()=>{const s=G.S();s.autoBoss=false;s.maxSi=3;G.C.selectStage(3)});awai
 await ev(()=>{G.C.startBoss()});for(let i=0;i<80&&!(await ev(()=>G.C.alive().some(e=>e.boss)));i++)await sl(100);await sl(2500);
 await ev(()=>{G.C.alive().forEach(e=>{if(e.boss)e.hp=1})});
 for(let i=0;i<100&&!(await ev(()=>!!document.querySelector('.vic.win')));i++)await sl(50);
-for(let i=0;i<100&&(await ev(()=>!!document.querySelector('.vic.win:not(.out)')));i++)await sl(50);for(let i=0;i<8;i++){await sh('_vc'+i);await sl(110)}
+for(let i=0;i<100&&(await ev(()=>!!document.querySelector('.vic.win:not(.out)')));i++)await sl(50);for(let i=0;i<8;i++){await sh('_vc'+i);await sl(110)}console.log('stmv',await ev(()=>{const e=document.querySelector('.stmv');return e?[e.getBoundingClientRect().top,e.getBoundingClientRect().height]:null}));
 console.log('ERRS',errs);stop();await b.close()})();
