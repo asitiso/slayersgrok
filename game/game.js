@@ -2141,3 +2141,30 @@ const t=rk.querySelector('.ttl');if(t)t.insertAdjacentHTML('afterbegin','<img sr
 const go=sb.querySelector('#wbGo');if(go)go.innerHTML=`<img src="assets/wb_sword.png">도전하기 (${left}/${C.WB.tries})`}catch(e){console.warn(e)}return r};
 let last=0;setInterval(()=>{const wb=C.B.wb;if(!wb){last=0;return}const d=wb.dmg||0,dd=d-last;last=d;if(dd<=0)return;const bt=$('#battle');if(!bt)return;const n=document.createElement('b');n.className='wbdn'+(dd>C.wbRef()*.6?' big':'');n.textContent=fmt(Math.round(dd));n.style.left=(165+Math.random()*80)+'px';n.style.top=(370+Math.random()*50)+'px';bt.appendChild(n);setTimeout(()=>n.remove(),900)},300);
 Object.assign(C.ev,{wbEnd:(o=>function(){document.querySelectorAll('.wbtot,.wbdn').forEach(x=>x.remove());return o&&o.apply(this,arguments)})(C.ev.wbEnd)})})();
+;(()=>{/* v141 무한의 탑 계단 등반 */
+const st=document.createElement('style');st.textContent=`.twst{position:relative;height:560px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+.twst>.tbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 50%}
+.twst:after{content:'';position:absolute;inset:0;background:linear-gradient(#0a102a99,#0000 30%,#0000 75%,#0a102a88);pointer-events:none}
+.tfl{position:absolute;z-index:2;display:flex;align-items:center;gap:6px;height:46px;padding:0 10px 0 6px;border-radius:12px;background:linear-gradient(#2c3a5cee,#1a2238ee);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #8aa6e066,0 3px 6px #0009;color:#fff}
+.tfl b{font-size:16px;color:#ffe08a;min-width:38px;text-shadow:0 2px 0 #000}.tfl small{font-size:10px;opacity:.85;line-height:1.2}.tfl .ti{height:34px;filter:drop-shadow(0 2px 2px #000)}
+.tfl.done{background:linear-gradient(#24405aee,#16283aee)}.tfl.done b{color:#9fd8ff}
+.tfl.up{filter:saturate(.5) brightness(.8)}.tfl.boss{background:linear-gradient(#6a1a24f2,#300a12f2);box-shadow:inset 0 0 0 1px #ff6a5a88,0 0 10px #ff303066}.tfl.boss b{color:#ffb0a0}
+.tfl.cur{background:linear-gradient(#ffd86af5,#d08a1af5);box-shadow:0 0 0 2px #fff6,0 0 18px #ffc040;animation:tfp 1.4s infinite}.tfl.cur b{color:#5a2a00;text-shadow:none}.tfl.cur small{color:#4a2400;opacity:1;font-weight:800}
+@keyframes tfp{50%{box-shadow:0 0 0 2px #fff9,0 0 28px #ffd060}}
+.tlina{position:absolute;z-index:3;height:78px;filter:drop-shadow(0 4px 4px #000b);animation:tlb 1.2s ease-in-out infinite;pointer-events:none}@keyframes tlb{50%{transform:translateY(-5px)}}
+.ttop{position:absolute;z-index:3;left:10px;top:10px;display:flex;gap:6px}.ttop span{background:#0009;border:1px solid #fff3;border-radius:10px;padding:3px 8px;font-size:11px;font-weight:800;color:#fff}.ttop img{height:15px;vertical-align:-3px}
+.tgo{position:absolute;z-index:3;left:50%;bottom:16px;transform:translateX(-50%);min-width:180px;text-align:center;font-size:18px;font-weight:900;padding:10px 18px;border-radius:16px;color:#fff;border:2px solid #0b0d0f;background:linear-gradient(#a8f070,#4cbf3a 55%,#2f9a2a);box-shadow:inset 0 2px 0 #e0ffc0,0 4px 0 #145a12,0 0 16px #8f8a;text-shadow:0 2px 0 #0006}
+.tgo.hard{background:linear-gradient(#ff8a6a,#c02a1a);box-shadow:inset 0 2px 0 #ffc0b0,0 4px 0 #5a0a0a}.tgo small{display:block;font-size:10px;font-weight:700}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='tower')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen'),T=C.T,t=C.tower(),cur=t.f+1,pw=C.POW(),list=el.querySelector('.twl'),go=el.querySelector('#twGo');if(!list||el.querySelector('.twst'))return;
+ const fs=[];for(let f=cur+5;f>=Math.max(1,cur-1);f--)fs.push(f);
+ const nb=Math.ceil(cur/10)*10;let h=`<img class=tbg src="${A}bg_tower_climb.jpg"><div class=ttop><span><img src="${A}tw_flag.png"> 최고 ${t.f}층</span><span><img src="${A}tw_door.png"> 다음 보스 ${nb}F</span></div>`;
+ const n=fs.length;fs.forEach((f,i)=>{const s=f<cur?'done':f==cur?'cur':'up',y=18+i*64,x=[30,150,60,170,40,160,70,150][i%8],b=T.boss(f),rq=T.req(f);
+  const ic=s=='done'?'tw_flag':b?'tw_door':s=='up'?'tw_lock':null;
+  h+=`<div class="tfl ${s} ${b?'boss':''}" style="left:${x}px;top:${y+20}px">${ic?`<img class=ti src="${A}${ic}.png">`:''}<b>${f}F</b><small>${b?'보스층<br>':''}${s=='done'?'클리어':'권장 '+fmt(rq)}</small></div>`;
+  if(s=='cur')h+=`<img class=tlina src="${A}hero_lina.png" data-y=${y}>`});
+ const rq=T.req(cur);h+=`<span class="tgo ${pw>=rq?'':'hard'}" id=twGo2>${cur}층 도전<small>전투력 ${fmt(pw)} / ${fmt(rq)}</small></span>`;
+ const d=document.createElement('div');d.className='twst';d.innerHTML=h;list.parentNode.insertBefore(d,el.querySelector('.twh'));list.style.display='none';
+ const cp=d.querySelector('.tfl.cur'),li=d.querySelector('.tlina');if(cp&&li){cp.style.paddingRight='60px';li.style.left=(cp.offsetLeft+cp.offsetWidth-62)+'px';li.style.top=(cp.offsetTop-38)+'px'}
+ d.querySelector('#twGo2').onclick=()=>{const g=el.querySelector('#twGo');if(g)g.click()}}
+})();
