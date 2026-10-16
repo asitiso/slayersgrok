@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+const rm=()=>ev(()=>document.querySelectorAll('#notice,.modal,.unl,.chap,.banner,.tut').forEach(x=>x.remove()));
+await rm();await ev(()=>{const s=G.S();s.idleAt=Date.now()-3600e3*2.5;const e=document.querySelector('[data-k=idle],[data-s=idle],#idleBtn');console.log(!!e);if(e)e.click()});await sl(800);
+const has=await ev(()=>!!document.querySelector('.modal .ppx'));console.log('idle',has);await sh('1153-pop-idle');await rm();
+await ev(()=>{const s=G.S();s.ol={day:C.today(),sec:25*60,c:{0:1}};G.olOpen()});await sl(600);await sh('1154-pop-online');await rm();
+await ev(()=>{G.rbRun=(o,cb)=>cb(false);G.open('tower')});await sl(1000);await ev(()=>document.querySelector('#twGo').click());await sl(700);await sh('1155-pop-fail');
+console.log(await ev(()=>[...document.querySelectorAll('.modal .card')].map(c=>c.className)));
+console.log('ERRS',errs);stop();await b.close()})();

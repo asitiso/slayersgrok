@@ -2613,3 +2613,23 @@ const dec=()=>{const sb=$('#screen');if(G.screen!='gallery'){sb.classList.remove
  sb.querySelectorAll('.glc').forEach(c=>{if(c.querySelector('.gfr'))return;c.insertAdjacentHTML('beforeend',`<img class=gfr src="${A}gl_frame.png">`);if(c.classList.contains('lock')){c.insertAdjacentHTML('afterbegin',`<img class=gvl src="${A}gl_veil.png">`);const b=c.querySelector('b');if(b)b.textContent='🔒 '+CND[t]}});
  sb.querySelectorAll('[data-gt]').forEach(b=>b.addEventListener('click',()=>setTimeout(dec,0)))};
 const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
+/* v163 공통 팝업: 방치/접속 보상·도전 실패 scroll */
+(function(){const st=document.createElement('style');st.textContent=`
+.modal .card.ppx{position:relative;background:none!important;border-style:solid!important;border-width:44px 36px 40px!important;border-image:url(assets/pp_scroll.png) 150 190 150 190 fill stretch!important;border-radius:0!important;box-shadow:none!important;color:#3a2810!important;padding:6px 4px 4px!important;filter:drop-shadow(0 10px 18px #000c);min-width:290px}
+.modal .card.ppx small,.modal .card.ppx b,.modal .card.ppx span:not(.btn):not(.pill){color:#3a2810}
+.modal .card.ppx .pph{display:flex;flex-direction:column;align-items:center;margin:-30px 0 4px}
+.modal .card.ppx .pph img{height:74px;filter:drop-shadow(0 4px 6px #0008)}
+.modal .card.ppx .ppb{margin-top:-6px;padding:4px 22px;font:900 16px Maplestory,'Noto Sans KR',sans-serif;color:#fff!important;text-shadow:0 1px 2px #000;background:var(--bn);clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);box-shadow:inset 0 -3px 0 #0003}
+.modal .card.ppx .ttl.pphid{display:none!important}.modal .card.ppx .idlebar span{color:#fff!important;text-shadow:0 1px 2px #000;font-weight:800}
+.modal .card.ppx.pp-idle{--bn:linear-gradient(#e0902a,#a8520c)}.modal .card.ppx.pp-ol{--bn:linear-gradient(#c8302a,#801818)}.modal .card.ppx.pp-fail{--bn:linear-gradient(#8a4a4a,#4a2626)}
+.modal .card.ppx .idlebar{background:#5a4020!important}
+.modal .card.ppx .rwgrid>div{background:rgba(255,248,225,.6)!important;border:1px solid #b08a4a!important}
+.modal .card.ppx .olr{background:rgba(255,248,225,.55)!important;border:1px solid #b08a4a!important;color:#3a2810!important}
+.modal .card.ppx .olr em{color:#6a4a20!important}.modal .card.ppx .olr.rdy{box-shadow:0 0 0 2px #ffb000 inset}.modal .card.ppx .olr.got{opacity:.65}
+.modal .card.ppx .olr.got em{color:#2a7a2a!important;font-weight:900}
+.modal .card.ppx.pp-fail .ppf{display:flex;justify-content:space-around;margin:4px 0;font-weight:900}.modal .card.ppx.pp-fail .ppf div{display:flex;flex-direction:column}.modal .card.ppx.pp-fail .ppf i{font-style:normal;font-size:16px}.modal .card.ppx.pp-fail .ppf .lo{color:#b02020}`;document.head.appendChild(st);
+const deco=m=>{const c=m.querySelector(':scope>.card');if(!c||c.classList.contains('ppx'))return;const t=c.querySelector('.ttl');if(!t)return;const tx=t.textContent.trim();let k=null,ic=null;
+ if(tx=='방치 보상'){k='idle';ic='pp_idle'}else if(tx=='접속 보상'){k='ol';ic='pp_cal'}else if(/도전 실패$/.test(tx)){k='fail';ic='pp_fail'}if(!k)return;
+ c.classList.add('ppx','pp-'+k);t.classList.add('pphid');t.insertAdjacentHTML('beforebegin',`<div class=pph><img src="${A}${ic}.png"><span class=ppb>${tx}</span></div>`);
+ if(k=='fail'){const sm=c.querySelector('small');const mm=sm&&sm.innerHTML.match(/권장 전투력 ([^·<]+) · 내 전투력 ([^<]+)<br>/);if(mm){sm.innerHTML=sm.innerHTML.replace(mm[0],'');sm.insertAdjacentHTML('beforebegin',`<div class=ppf><div><small>권장 전투력</small><i>${mm[1].trim()}</i></div><div><small>내 전투력</small><i class=${parseFloat(mm[2].replace(/,/g,''))<parseFloat(mm[1].replace(/,/g,''))?'lo':''}>${mm[2].trim()}</i></div></div>`)}}};
+new MutationObserver(ms=>ms.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType==1&&n.classList.contains('modal'))try{deco(n)}catch(_){}}))).observe(document.getElementById('app'),{childList:true})})();
