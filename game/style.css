@@ -933,3 +933,14 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .bsht b{display:block;font:italic 900 56px Maplestory,"Noto Sans KR",sans-serif;color:#ffe066;-webkit-text-stroke:2px #5a1a00;text-shadow:0 0 18px #ff8a1a,0 4px 0 #5a1a00;letter-spacing:4px}
 .bsht small{font:900 15px "Noto Sans KR",sans-serif;color:#fff;text-shadow:0 0 4px #000,0 2px 2px #000}
 @keyframes bsht{0%{opacity:0;transform:scale(2.6) rotate(-8deg)}12%{opacity:1;transform:scale(.92) rotate(-4deg)}20%{transform:scale(1) rotate(-4deg)}75%{opacity:1}100%{opacity:0;transform:scale(1.05) rotate(-4deg)}}
+/* v101 storm */
+.storm{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(#1a2040aa,#2a305055 60%,#0000);animation:stIn .8s ease-out both}
+.storm.out{transition:opacity .8s;opacity:0}
+.storm.fl{background:linear-gradient(#e8f0ffcc,#b0c4ff66 60%,#fff2)}
+.srain{position:absolute;inset:0;background:repeating-linear-gradient(105deg,#0000 0 14px,#c8d8ff55 14px 15px,#0000 15px 34px);background-size:200% 200%;animation:rain .45s linear infinite;opacity:.8}
+@keyframes rain{from{background-position:0 0}to{background-position:-60px 120px}}
+@keyframes stIn{from{opacity:0}}
+.stban{position:absolute;left:0;right:0;top:300px;text-align:center;z-index:11;pointer-events:none;animation:stb 2.2s ease-out forwards}
+.stban b{display:block;font:italic 900 30px Maplestory,"Noto Sans KR",sans-serif;color:#e8f0ff;-webkit-text-stroke:1.5px #1a2a6a;text-shadow:0 0 14px #6a9aff}
+.stban small{font:800 12px "Noto Sans KR",sans-serif;color:#fff;text-shadow:0 0 3px #000}
+@keyframes stb{0%{opacity:0;transform:scale(1.6)}12%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
