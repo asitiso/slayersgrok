@@ -1499,4 +1499,8 @@ function brk(byTap){if(!el)return;const w=el,s=C.S(),g=Math.round(C.goldKill(s.s
  const t=document.createElement('div');t.className='crt';t.innerHTML=`<img src="assets/it2_gold.png">+${R.fmt(g)}`;w.appendChild(t);setTimeout(()=>w.remove(),1300)}
 function spawn(){const b=document.getElementById('battle');if(!b)return;el=document.createElement('div');el.className='crate';el.style.left=(235+Math.random()*35)+'px';el.style.top=(455+Math.random()*30)+'px';el.innerHTML='<img src="assets/prop_crate.png"><div class="crhp"><b></b></div>';el.dataset.h=4;b.appendChild(el);
  el.addEventListener('pointerdown',ev=>{ev.stopPropagation();brk(1)});el._t=0}
+G._crSpawn=()=>{if(!el)spawn()};
 const ot=C.tick;C.tick=(dt,...a)=>{const r=ot(dt,...a);try{if(G.screen=='sim'||G.screen)return r;const B=C.B;if(!el){if(B&&!B.enemies.some(e=>e.boss)&&(cd-=dt)<=0){cd=20+Math.random()*15;spawn()}}else if(B&&B.enemies.some(e=>e.boss)){el.remove();el=null}else{el._t+=dt;if(el._t>.9){el._t=0;const h=+el.dataset.h-1;el.dataset.h=h;el.querySelector('b').style.width=(h*25)+'%';const im=el.querySelector('img');im.classList.remove('hit');void im.offsetWidth;im.classList.add('hit');if(h<=0)brk(0)}}}catch(_){}return r}})();
+/* v96 spawn rift portal */
+(()=>{const C=G.C;const os=C.ev.spawn;C.ev.spawn=function(){const r=os&&os.apply(this,arguments);try{if(G.screen)return r;const b=document.getElementById('battle');if(!b)return r;const bo=(C.B.enemies||[]).some(e=>e.boss);
+ const d=document.createElement('div');d.className='rift'+(bo?' boss':'');d.innerHTML='<i class="rs"></i><i class="rc"></i><i class="rb"></i>';b.appendChild(d);setTimeout(()=>d.remove(),bo?1400:1700)}catch(_){}return r}})();

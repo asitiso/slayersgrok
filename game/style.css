@@ -886,3 +886,21 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .crate.brk::before{content:'';position:absolute;left:-50px;top:-80px;width:100px;height:100px;border-radius:50%;background:radial-gradient(#fff8,#ffd24a66 40%,#0000 70%);animation:crF .45s ease-out forwards}
 @keyframes crF{0%{transform:scale(.3);opacity:1}100%{transform:scale(1.6);opacity:0}}
 .crp{width:16px;height:8px}.crt{font-size:19px}
+/* v96 rift */
+.rift{position:absolute;left:262px;top:540px;opacity:.85;width:0;height:0;z-index:4;pointer-events:none;animation:rfOut .4s ease-in forwards;animation-delay:1.3s}
+.rift.boss{left:262px;top:520px;animation-delay:.9s}
+.rift i{position:absolute;border-radius:50%}
+.rift .rs{left:-22px;top:-60px;width:44px;height:120px;background:conic-gradient(from 0deg,#b07cff,#3a1a7a,#ff7af0,#2a0a5a,#b07cff);filter:blur(1px);animation:rfOpen .45s cubic-bezier(.3,1.5,.5,1) both;box-shadow:0 0 24px 8px #b07cffaa}
+.rift .rc{left:-11px;top:-46px;width:22px;height:92px;background:radial-gradient(#fff,#1a0630 55%);animation:rfOpen .45s cubic-bezier(.3,1.5,.5,1) both}
+.rift .rb{left:-60px;top:-6px;width:120px;height:24px;background:radial-gradient(#b07cff88,#0000 70%);animation:rfOpen .45s both}
+.rift.boss .rs{left:-30px;top:-80px;width:60px;height:160px;background:conic-gradient(#ff5a3a,#4a0a0a,#ffb03a,#2a0000,#ff5a3a);box-shadow:0 0 40px 14px #ff3a1aaa}
+.rift.boss .rc{left:-15px;top:-62px;width:30px;height:124px;background:radial-gradient(#ffe,#300 55%)}
+.rift.boss .rb{left:-90px;width:180px;height:30px;background:radial-gradient(#ff5a3a88,#0000 70%)}
+@keyframes rfOpen{0%{transform:scale(.05,.05)}100%{transform:scale(1)}}
+@keyframes rfSpin{to{filter:blur(1px) hue-rotate(60deg)}}
+@keyframes rfOut{to{transform:scaleX(0);opacity:0}}
+/* crate art + golden chest tint */
+.crate>img{width:64px;left:-32px;top:-54px}.crhp{top:-64px}
+.ech.gold>img{filter:drop-shadow(0 0 10px #ffd23a) drop-shadow(0 0 4px #fff3a0) sepia(1) saturate(4) hue-rotate(-12deg) brightness(1.25)}
+.ech.gold::after{content:'';position:absolute;left:-55px;top:-80px;width:110px;height:110px;border-radius:50%;background:radial-gradient(#ffe57a99,#ffb40033 50%,#0000 70%);animation:gGl 1s ease-in-out infinite alternate;z-index:-1}
+@keyframes gGl{from{transform:scale(.85);opacity:.7}to{transform:scale(1.1);opacity:1}}
