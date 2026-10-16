@@ -1251,3 +1251,17 @@ G.chatSys=t=>add({ch:'시스템',who:'',t});G.chatLog=LOG;
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#chat')){e.stopPropagation();e.preventDefault();G.chatOpen()}},true);
 if(C.ev){const ok=C.ev.kill;C.ev.kill=function(e){const r=ok&&ok.apply(this,arguments);try{if(e&&e.boss&&!e.wb)G.chatSys(`${G.nick?G.nick():'나'}님이 ${e.n||'보스'}을(를) 처치했습니다!`)}catch(_){}return r}}
 })();
+;(()=>{// v69 공지 · 이벤트 배너 팝업 (접속 시 · 오늘 하루 보지 않기)
+const P=[{img:'chap/ch1.jpg',tag:'EVENT',t:'신규 7일 성장 이벤트',d:'매일 3개의 성장 과제를 달성하고 보상을 받으세요!',go:()=>G.nbOpen&&G.nbOpen()},
+ {img:'chap/ch3.jpg',tag:'NEW',t:'접속 보상 · 친구 시스템',d:'플레이 시간에 따라 상자 획득 · 친구와 하트를 주고받으세요.',go:()=>menuGo('friend')},
+ {img:'chap/ch5.jpg',tag:'UPDATE',t:'장비 세트 · 장비 도감',d:'같은 등급으로 8부위를 맞추면 세트 효과 발동!',go:()=>openSheet('gear')}];
+let i=0,el=null;
+const draw=()=>{const p=P[i];el.querySelector('.ntb').style.backgroundImage=`linear-gradient(transparent 40%,rgba(0,0,0,.85)),url(assets/${p.img})`;el.querySelector('.ntg').textContent=p.tag;el.querySelector('.ntt').textContent=p.t;el.querySelector('.ntd').textContent=p.d;el.querySelectorAll('.ntdot i').forEach((d,j)=>d.classList.toggle('on',j==i))};
+G.noticeOpen=()=>{if(el)return;i=0;el=document.createElement('div');el.id='notice';el.innerHTML=`<div class=ntc><div class=nth>공지사항 <span class=ntx>✕</span></div><div class=ntb><em class=ntg></em><b class=ntt></b><small class=ntd></small><span class="ntar l">‹</span><span class="ntar r">›</span></div><div class=ntdot>${P.map(()=>'<i></i>').join('')}</div><span class=ntgo>바로 가기 ▶</span><label class=ntn><input type=checkbox id=ntToday> 오늘 하루 보지 않기</label></div>`;document.body.appendChild(el);
+ const close=()=>{if(el.querySelector('#ntToday').checked)localStorage.setItem('slayers_notice',C.today());el.classList.add('out');const e=el;setTimeout(()=>e.remove(),220);el=null};
+ el.querySelector('.ntx').onclick=close;el.querySelector('.l').onclick=()=>{i=(i+P.length-1)%P.length;draw()};el.querySelector('.r').onclick=()=>{i=(i+1)%P.length;draw()};el.querySelector('.ntgo').onclick=()=>{const g=P[i].go;close();setTimeout(g,250)};
+ let sx=null;const b=el.querySelector('.ntb');b.addEventListener('pointerdown',e=>sx=e.clientX);b.addEventListener('pointerup',e=>{if(sx!=null&&Math.abs(e.clientX-sx)>40){i=(i+(e.clientX<sx?1:P.length-1))%P.length;draw()}sx=null});draw()};
+const auto=()=>{const s=C.S();if((s.tut||0)<9||localStorage.getItem('slayers_notice')==C.today()||G.noSave)return;if(G.storyOn||G.screen||document.querySelector('.modal,.rwpop,.sty,.unl,.chap,.tut')||C.B.boss)return setTimeout(auto,1500);G.noticeOpen()};
+setTimeout(auto,4500);
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='settings'){const e2=$('#screen'),sv=e2.querySelector('#svRow');if(sv&&!e2.querySelector('#ntRow')){sv.insertAdjacentHTML('afterend',`<div class="card row" id=ntRow><div class=f><b>공지사항</b><small style="display:block;opacity:.7">이벤트 · 업데이트 소식</small></div><span class="pill" id=ntGo>📢 보기</span></div>`);e2.querySelector('#ntGo').onclick=()=>{closeScreen();G.noticeOpen()}}}}catch(_){}return r};
+})();
