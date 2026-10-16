@@ -1922,3 +1922,15 @@ const of=R.frame;R.frame=dt=>{of(dt);try{const [cb]=R._cmbGet?R._cmbGet():[0];co
  if(!el){el=document.createElement('div');el.className='cmbx';el.innerHTML='<b></b><small></small>';b.appendChild(el)}if(cb!==lv){if(cb>lv)pop=1;lv=cb;const t=cb>=100?3:cb>=50?2:cb>=20?1:0,c=TC[t];el.style.setProperty('--c0',c[0]);el.style.setProperty('--c1',c[1]);el.style.setProperty('--lc',c[2]);el.style.setProperty('--gl',c[3]);el.firstChild.textContent=cb;el.lastChild.textContent=t==3?'LEGEND COMBO':t==2?'GREAT COMBO':t==1?'NICE COMBO':'COMBO'}
  pop=Math.max(0,pop-dt*6);el.style.transform=`translate(-50%,-70%) scale(${1+pop*.25})`}catch(_){}};
 })();
+/* v123 소환 연출 (마법진 → 등급색 구슬 강림 → 전설 이상 단독 등장 · 탭으로 건너뛰기, 시각 전용) */
+;(()=>{const oc=C.summon;C.summon=n=>{const r=oc(n);G._sumGot=r;return r};
+const os=summon;summon=function(n){G._sumGot=null;os(n);const got=G._sumGot,m=document.getElementById('sumModal');if(!got||!m)return;
+ const cs=got.map(k=>D.COMPS.find(x=>x.k==k)),top=Math.max(...cs.map(c=>c.g)),col=D.RAR[top].c;m.style.display='none';
+ const v=document.createElement('div');v.className='sumcin'+(top>=4?' leg':'');v.style.setProperty('--oc',col);
+ v.innerHTML=`<div class=scc><i class=r1></i><i class=r2></i><i class=r3></i></div><div class=sco></div><div class=scf></div><div class=scl>${top>=4?'✦ 강렬한 빛이 쏟아진다! ✦':'소환 중…'}</div><small class=scs>탭하여 건너뛰기</small>`;
+ document.body.appendChild(v);let done=0;const heroes=cs.filter((c,i)=>c.g>=4&&got.indexOf(c.k)==i);
+ const fin=()=>{if(done)return;done=1;v.remove();next()};
+ const next=()=>{const c=heroes.shift();if(!c){m.style.display='';return}const h=document.createElement('div');h.className='sumhero';h.style.setProperty('--oc',D.RAR[c.g].c);
+  h.innerHTML=`<div class=shr></div><img src="${A}cutc/${c.k}.png" onerror="this.src='${A}${c.img}'"><div class=shn><span>${D.RAR[c.g].n}</span><b>${c.n}</b><em>${'★'.repeat(c.g+1)}</em></div><small class=scs>탭하여 계속</small>`;
+  document.body.appendChild(h);setTimeout(()=>h.onclick=()=>{h.classList.add('out');setTimeout(()=>{h.remove();next()},250)},500)};
+ v.onclick=fin;setTimeout(fin,top>=4?2600:1900)}})();

@@ -1,0 +1,17 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s219');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await ev(()=>{G.C.rand0=G.C.gpick;});
+await ev(()=>menuGo('summon'));await sl(800);
+await ev(()=>{const o=G.C.gpick;G.C.gpick=()=>D.COMPS.find(c=>c.g==4)||o();});
+await ev(()=>summon(1));await sl(1300);await sh('974-summon-orb-legend');
+await sl(1700);await sh('975-summon-hero-reveal');
+await ev(()=>document.querySelector('.sumhero').click());await sl(1200);await sh('976-summon-result');
+await ev(()=>{document.querySelectorAll('.modal').forEach(x=>x.remove());G.C.gpick=()=>D.COMPS.find(c=>c.g==2);});
+await ev(()=>summon(10));await sl(1500);await sh('977-summon10-orb-rare');
+await ev(()=>document.querySelector('.sumcin').click());await sl(2500);await sh('978-summon10-result');
+console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();
