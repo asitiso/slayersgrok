@@ -2822,3 +2822,20 @@ new MutationObserver(mark).observe(document.getElementById('screen'),{childList:
 #mgrid a:active img,#mgrid a.prs img{transform:scale(.92);filter:drop-shadow(0 0 7px #ffc94a) brightness(1.12)}
 #mgrid a em{color:#ffe6b0!important;text-shadow:0 1px 2px #000!important}`;document.head.appendChild(st);
 document.addEventListener('pointerdown',e=>{const a=e.target.closest&&e.target.closest('#mgrid a');if(a){a.classList.add('prs');setTimeout(()=>a.classList.remove('prs'),180)}},true)})();
+
+/* v175 battle feel: loot lands in header gold slot / nav orb with a pulse; skill-ready socket flash (visual only, off when effects off) */
+(function(){const st=document.createElement('style');st.textContent=`
+@keyframes slotglow{0%{box-shadow:0 0 0 0 #ffd77a00}35%{box-shadow:0 0 10px 3px #ffd77acc}100%{box-shadow:0 0 0 0 #ffd77a00}}
+#battle>.hud #cGold.lpop{animation:cpop .25s ease-out,slotglow .45s ease-out;border-radius:10px!important}
+#navroll .cnt.lpop{animation:cpop .25s ease-out}
+@keyframes skring{0%{transform:scale(.8);opacity:1;border-width:3px}100%{transform:scale(1.55);opacity:0;border-width:1px}}
+@keyframes skflash{0%{opacity:.9}100%{opacity:0}}
+@keyframes skglow{0%{filter:drop-shadow(0 0 2px #ffd77a) brightness(1.5)}30%{filter:drop-shadow(0 0 12px #ffd77a) brightness(1.3)}100%{filter:none}}@keyframes skin{0%{box-shadow:inset 0 0 0 4px #fff2b0,inset 0 0 16px #ffc94a;opacity:1}100%{box-shadow:inset 0 0 0 1px #ffd77a,inset 0 0 4px #ffc94a;opacity:0}}#skills .sk.rdyfx{animation:skglow .7s ease-out}#skills .sk.rdyfx::after{content:'';position:absolute;inset:0;border-radius:50%;animation:skin .6s ease-out forwards;pointer-events:none;z-index:5}body.fxoff #skills .sk.rdyfx{animation:none}
+#skills .sk.rdyfx::before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#fff6d0cc,#ffc94a55 50%,#0000 70%);animation:skflash .4s ease-out forwards;pointer-events:none;z-index:4}
+body.fxoff #skills .sk.rdyfx::after,body.fxoff #skills .sk.rdyfx::before{display:none}`;document.head.appendChild(st);
+const fxOn=()=>!R.opt||R.opt.fx!==false;
+const pulse=e=>{if(!e)return;e.classList.remove('lpop');void e.offsetWidth;e.classList.add('lpop')};
+let lastG=0,lastO=0;const prev=R.onCoin;
+R.onCoin=k=>{const now=performance.now();if(k=='orb'){if(fxOn()&&now-lastO>90){lastO=now;pulse(document.querySelector('#navroll .cnt'))}return}
+ if(!fxOn()){prev&&prev(k);return}if(now-lastG>90){lastG=now;pulse(document.getElementById('cGold'))}};
+const was=new WeakMap();setInterval(()=>{document.body.classList.toggle('fxoff',!fxOn());if(G.screen)return;document.querySelectorAll('#skills .sk').forEach(el=>{const r=el.classList.contains('ready');if(r&&was.get(el)===false&&fxOn()){el.classList.remove('rdyfx');void el.offsetWidth;el.classList.add('rdyfx');setTimeout(()=>el.classList.remove('rdyfx'),750)}was.set(el,r)})},100)})();
