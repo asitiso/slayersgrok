@@ -1133,3 +1133,18 @@ G.nickEdit=()=>{modal(`<div class=ttl style="justify-content:center;font-size:18
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const n=document.getElementById('hName');if(n){const t=`${G.nick()} <i>Lv.${C.S().lv}</i>`;if(n.innerHTML!==t)n.innerHTML=t}}catch(_){}return r};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='settings'){const el=$('#screen'),c=el.querySelector('.card');if(c&&!el.querySelector('#nkRow')){c.insertAdjacentHTML('beforebegin',`<div class="card row" id=nkRow><div class=f><b>닉네임</b><small style="display:block;opacity:.7">${G.nick()}</small></div><span class="pill green" id=nkBtn>✏️ 변경</span></div>`);el.querySelector('#nkBtn').onclick=()=>G.nickEdit()}}}catch(_){}return r};
 })();
+;(()=>{// v61 물약 (회복/마나 물약 · 보스전 자동 사용)
+const CD=8;let cdH=0,cdM=0;
+const usable=()=>C.B&&C.aliveAllies&&C.aliveAllies().length>0;
+G.potHp=(auto)=>{const s=C.S();if((s.pot||0)<1||cdH>0||!usable())return 0;const L=C.aliveAllies();if(!L.some(a=>a.hp<a.max*.9))return 0;s.pot--;cdH=CD;L.forEach(a=>{a.hp=Math.min(a.max,a.hp+a.max*.4)});fx('hp',auto);return 1};
+G.potMp=(auto)=>{const s=C.S();if((s.mpot||0)<1||cdM>0||!usable())return 0;const c=C.B.cds||{};if(!Object.values(c).some(v=>v>0.5))return 0;s.mpot--;cdM=CD;for(const k in c)c[k]=c[k]*.4;fx('mp',auto);return 1};
+const fx=(k,auto)=>{try{const b=document.getElementById(k=='hp'?'potH':'potM');if(b){b.classList.remove('pfx');void b.offsetWidth;b.classList.add('pfx')}if(!auto)return;const t=document.createElement('div');t.className='potfl '+k;t.textContent=k=='hp'?'자동 회복 +40%':'자동 마나 회복';document.getElementById('battle').appendChild(t);setTimeout(()=>t.remove(),1100)}catch(_){}};
+const ot=C.tick;C.tick=function(dt){const r=ot.apply(this,arguments);cdH=Math.max(0,cdH-dt);cdM=Math.max(0,cdM-dt);try{const s=C.S();if(s.autoPot!==false&&C.B.boss&&!G.noSave){const L=C.aliveAllies();if(L.some(a=>a.hp<a.max*.35))G.potHp(1);const c=C.B.cds||{},v=Object.values(c);if(v.length&&v.every(x=>x>2))G.potMp(1)}}catch(_){}return r};
+const ui=()=>{const bt=document.getElementById('battle');if(!bt)return;let w=document.getElementById('potW');if(!w){w=document.createElement('div');w.id='potW';w.innerHTML=`<span id=potH class=potb><img src="assets/it2_hp.png"><b></b><i></i></span><span id=potM class=potb><img src="assets/it2_mp.png"><b></b><i></i></span><span id=potA class=pota></span>`;bt.appendChild(w);
+ w.querySelector('#potH').onclick=()=>{if(!G.potHp())toast((C.S().pot||0)<1?'회복 물약이 없습니다 (상점에서 구매)':cdH>0?'재사용 대기 중':'체력이 충분합니다')};
+ w.querySelector('#potM').onclick=()=>{if(!G.potMp())toast((C.S().mpot||0)<1?'마나 물약이 없습니다':cdM>0?'재사용 대기 중':'쿨타임 중인 스킬이 없습니다')};
+ w.querySelector('#potA').onclick=()=>{const s=C.S();s.autoPot=s.autoPot===false;toast(s.autoPot?'보스전 물약 자동 사용 ON':'물약 자동 사용 OFF');ui()}}
+ const s=C.S();w.querySelector('#potH b').textContent=s.pot||0;w.querySelector('#potM b').textContent=s.mpot||0;w.querySelector('#potH i').style.height=(cdH/CD*100)+'%';w.querySelector('#potM i').style.height=(cdM/CD*100)+'%';w.querySelector('#potH').classList.toggle('emp',!(s.pot>0));w.querySelector('#potM').classList.toggle('emp',!(s.mpot>0));const a=w.querySelector('#potA');a.textContent=s.autoPot===false?'자동 OFF':'자동';a.classList.toggle('on',s.autoPot!==false)};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{ui()}catch(_){}return r};
+G.potCd=()=>[cdH,cdM];
+})();
