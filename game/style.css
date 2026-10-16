@@ -766,3 +766,5 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .psl.emp .psi{opacity:.55}.pss{position:absolute;right:4px;top:2px;font-size:13px;padding:1px 2px}
 .csort{display:flex;gap:5px;margin:2px 0 8px;flex-wrap:wrap}.cso{font-size:12px;padding:3px 10px;border-radius:12px;background:#0005;border:1px solid #ffffff2a;color:#cfd3d8}.cso.on{background:#ffd77a;color:#3a2600;border-color:#ffd77a;font-weight:800}.cso.own{margin-left:auto}.cso.own.on{background:#2a8a4a;color:#fff;border-color:#6aff8a}
 .cfcv{position:fixed;left:50%;top:0;width:390px;height:844px;transform:translateX(-50%);z-index:9998;pointer-events:none}
+#battle canvas.bland{animation:bland .5s ease-out}
+@keyframes bland{0%{translate:0 0}10%{translate:-6px 7px}25%{translate:5px -5px}40%{translate:-4px 3px}60%{translate:2px -2px}80%{translate:-1px 1px}100%{translate:0 0}}
