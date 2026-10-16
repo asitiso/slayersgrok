@@ -1148,3 +1148,19 @@ const ui=()=>{const bt=document.getElementById('battle');if(!bt)return;let w=doc
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{ui()}catch(_){}return r};
 G.potCd=()=>[cdH,cdM];
 })();
+;(()=>{// v62 절전 모드 (화면 끄고 방치 · 획득량 표시 · 길게 눌러 해제)
+let on=null,el=null,tm=null,hold=null;
+const snap=()=>{const s=C.S();return{t:Date.now(),g:s.gold,x:s.exp,lv:s.lv,k:s.kills||0,o:s.orbs,st:s.stone||0,si:s.maxSi}};
+const fmtT=ms=>{const s=Math.floor(ms/1000);return `${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s/60)%60).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`};
+const draw=()=>{if(!on||!el)return;const s=C.S(),n=Date.now();el.querySelector('.svt').textContent=fmtT(n-on.t);el.querySelector('.svc').textContent=new Date().toTimeString().slice(0,5);
+ el.querySelector('.svg').innerHTML=[['it2_gold.png','골드',fmt(Math.max(0,s.gold-on.g))],['it2_exp.png','마정구',fmt(Math.max(0,s.orbs-on.o))],['it2_stone.png','강화석',fmt(Math.max(0,(s.stone||0)-on.st))],['','처치',fmt((s.kills||0)-on.k)],['','레벨',s.lv>on.lv?`Lv.${on.lv} → ${s.lv}`:`Lv.${s.lv}`],['','최고 스테이지',C.stageName(s.maxSi)+(s.maxSi>on.si?' ▲':'')]].map(r=>`<div>${r[0]?`<img src="assets/${r[0]}">`:'<i></i>'}<span>${r[1]}</span><b>${r[2]}</b></div>`).join('')};
+G.saverOn=()=>{if(on)return;on=snap();el=document.createElement('div');el.id='saver';el.innerHTML=`<div class=svc></div><div class=svh>절전 모드</div><small class=svs>전투는 계속 진행됩니다</small><div class=svt></div><div class=svg></div><div class=svu><span><i></i></span>화면을 길게 눌러 해제</div>`;document.body.appendChild(el);document.body.classList.add('saving');draw();tm=setInterval(draw,1000);
+ const bar=el.querySelector('.svu i');const st=e=>{e.preventDefault();bar.style.transition='width 1s linear';bar.style.width='100%';hold=setTimeout(G.saverOff,1000)};const en=()=>{clearTimeout(hold);bar.style.transition='width .2s';bar.style.width='0'};
+ el.addEventListener('pointerdown',st);el.addEventListener('pointerup',en);el.addEventListener('pointerleave',en)};
+G.saverOff=()=>{if(!on)return;const s=C.S(),g=s.gold-on.g,ms=Date.now()-on.t;clearInterval(tm);el.classList.add('out');const e=el;setTimeout(()=>e.remove(),300);el=null;on=null;document.body.classList.remove('saving');if(ms>5000)toast(`절전 모드 해제 · ${fmtT(ms)} 동안 골드 +${fmt(Math.max(0,g))}`)};
+G.saverState=()=>on;
+{const rf=R.frame;R.frame=function(dt){if(on)return;return rf.apply(this,arguments)}}
+const btn=()=>{const bt=document.getElementById('battle');if(!bt||document.getElementById('svBtn'))return;const b=document.createElement('span');b.id='svBtn';b.className='pill';b.textContent='🌙';b.title='절전 모드';b.onclick=()=>G.saverOn();bt.appendChild(b)};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{btn()}catch(_){}return r};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='settings'){const el2=$('#screen'),nk=el2.querySelector('#nkRow');if(nk&&!el2.querySelector('#svRow')){nk.insertAdjacentHTML('afterend',`<div class="card row" id=svRow><div class=f><b>절전 모드</b><small style="display:block;opacity:.7">화면을 끄고 방치 사냥 · 배터리 절약</small></div><span class="pill" id=svGo>🌙 켜기</span></div>`);el2.querySelector('#svGo').onclick=()=>{closeScreen();G.saverOn()}}}}catch(_){}return r};
+})();

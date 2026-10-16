@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(3500);await ev(()=>{const k=document.querySelector('.stsk');k&&k.click()});await sl(800);await sh('683-saver-button');
+await ev(()=>openScreen('settings'));await sl(600);await sh('684-settings-saver');
+await ev(()=>document.getElementById('svGo').click());await sl(800);const k0=await ev(()=>G.S().kills);await sl(8000);const k1=await ev(()=>G.S().kills);await sh('685-saver-mode');
+const box=await p.evaluate(()=>{const r=document.getElementById('saver').getBoundingClientRect();return [r.width/2,r.height/2]});await p.mouse.move(box[0],box[1]);await p.mouse.down();await sl(400);await p.mouse.up();await sl(300);const still=await ev(()=>!!G.saverState());
+await p.mouse.down();await sl(1300);await p.mouse.up();await sl(600);await sh('686-saver-off');
+console.log('kills',k0,k1,'shortStill',still,'off',!(await ev(()=>G.saverState())));
+const fps=await ev(()=>new Promise(r=>{let n=0,t0=performance.now();const f=()=>{n++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(n/2)};requestAnimationFrame(f)}));console.log('fps',fps);stop();console.log('ERR',errs);await b.close()})();
