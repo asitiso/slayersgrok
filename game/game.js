@@ -1228,7 +1228,7 @@ const st=()=>{const s=C.S();if(!s.unl){s.unl={};for(const k in U)if(ms()>=U[k])s
 const om=menuGo;menuGo=function(k){if(k in U&&!G.isOpen(k)){toast(`🔒 ${NM[k]}: ${C.stageName(U[k])} 도달 시 개방`);return}return om.apply(this,arguments)};
 const mark=()=>{document.querySelectorAll('#mgrid a,.side a').forEach(a=>{const k=a.dataset.s;const lk=k in U&&!G.isOpen(k);a.classList.toggle('lk',lk);let t=a.querySelector('.lkt');if(lk&&!t){t=document.createElement('span');t.className='lkt';t.textContent='🔒 '+C.stageName(U[k]);a.appendChild(t)}else if(!lk&&t)t.remove();if(lk){const d=a.querySelector('.dot');if(d)d.style.display='none'}})};
 let q=[],busyT=0;
-const pop=()=>{if(!q.length)return;if(G.storyOn||G.screen||document.querySelector('.modal,.rwpop,.vic:not(.out),.chap,.sty')||C.B.boss)return setTimeout(pop,700);const ks=[...new Set(q.splice(0))],k=ks[0];const d=document.createElement('div');d.className='unl';d.innerHTML=ks.length==1?`<div class=unb><small>NEW · 콘텐츠 개방</small><img src="${A}${IC[k]||'ic3_chest.png'}"><b>${NM[k]}</b><span class=ung>바로 가기 ▶</span></div>`:`<div class=unb><small>NEW · 콘텐츠 ${ks.length}개 개방</small><div class=unm>${ks.map(x=>`<span data-k=${x}><img src="${A}${IC[x]||'ic3_chest.png'}"><em>${NM[x]}</em></span>`).join('')}</div><span class=ung>확인</span></div>`;document.body.appendChild(d);const close=()=>{d.classList.add('out');setTimeout(()=>{d.remove();pop()},250)};d.onclick=e=>{const t=e.target.closest('[data-k]');close();if(t)setTimeout(()=>menuGo(t.dataset.k),260);else if(ks.length==1&&e.target.classList.contains('ung'))setTimeout(()=>menuGo(k),260)};setTimeout(()=>d.isConnected&&close(),4500)};
+const pop=()=>{if(!q.length)return;if(G.storyOn||G.screen||document.querySelector('.modal,.rwpop,.vic:not(.out),.chap,.sty')||C.B.boss)return setTimeout(pop,700);const ks=[...new Set(q.splice(0))],k=ks[0];const d=document.createElement('div');d.className='unl';d.innerHTML=ks.length==1?`<div class=unb><small>NEW · 콘텐츠 개방</small><img src="${A}${IC[k]||'ic3_chest.png'}"><b>${NM[k]}</b><span class=ung>바로 가기 ▶</span></div>`:`<div class=unb><small>NEW · 콘텐츠 ${ks.length}개 개방</small><div class=unm>${ks.map(x=>`<span data-k=${x}><img src="${A}${IC[x]||'ic3_chest.png'}"><em>${NM[x]}</em></span>`).join('')}</div><span class=ung>확인</span></div>`;document.body.appendChild(d);const close=()=>{d.classList.add('out');setTimeout(()=>{d.remove();pop()},250)};d.onclick=e=>{const t=e.target.closest('[data-k]');close();if(t)setTimeout(()=>menuGo(t.dataset.k),260);else if(ks.length==1&&e.target.classList.contains('ung'))setTimeout(()=>menuGo(k),260)};};
 const chk=()=>{const u=st();let n=0;for(const k in U)if(!u[k]&&ms()>=U[k]){u[k]=1;if(!q.includes(k))q.push(k);n++}if(n)setTimeout(pop,600)};
 G.unlockQ=()=>q;G.UNL=U;
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{chk();mark()}catch(_){}return r};
@@ -1252,11 +1252,11 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#ch
 if(C.ev){const ok=C.ev.kill;C.ev.kill=function(e){const r=ok&&ok.apply(this,arguments);try{if(e&&e.boss&&!e.wb)G.chatSys(`${G.nick?G.nick():'나'}님이 ${e.n||'보스'}을(를) 처치했습니다!`)}catch(_){}return r}}
 })();
 ;(()=>{// v69 공지 · 이벤트 배너 팝업 (접속 시 · 오늘 하루 보지 않기)
-const P=[{img:'chap/ch1.jpg',tag:'EVENT',t:'신규 7일 성장 이벤트',d:'매일 3개의 성장 과제를 달성하고 보상을 받으세요!',go:()=>G.nbOpen&&G.nbOpen()},
- {img:'chap/ch3.jpg',tag:'NEW',t:'접속 보상 · 친구 시스템',d:'플레이 시간에 따라 상자 획득 · 친구와 하트를 주고받으세요.',go:()=>menuGo('friend')},
- {img:'chap/ch5.jpg',tag:'UPDATE',t:'장비 세트 · 장비 도감',d:'같은 등급으로 8부위를 맞추면 세트 효과 발동!',go:()=>openSheet('gear')}];
+const P=[{img:'notice/nb7day.jpg',tag:'EVENT',t:'신규 7일 성장 이벤트',d:'매일 3개의 성장 과제를 달성하고 보상을 받으세요!',go:()=>G.nbOpen&&G.nbOpen()},
+ {img:'notice/nbfriend.jpg',tag:'NEW',t:'접속 보상 · 친구 시스템',d:'플레이 시간에 따라 상자 획득 · 친구와 하트를 주고받으세요.',go:()=>menuGo('friend')},
+ {img:'notice/nbgearset.jpg',tag:'UPDATE',t:'장비 세트 · 장비 도감',d:'같은 등급으로 8부위를 맞추면 세트 효과 발동!',go:()=>openSheet('gear')}];
 let i=0,el=null;
-const draw=()=>{const p=P[i];el.querySelector('.ntb').style.backgroundImage=`linear-gradient(transparent 40%,rgba(0,0,0,.85)),url(assets/${p.img})`;el.querySelector('.ntg').textContent=p.tag;el.querySelector('.ntt').textContent=p.t;el.querySelector('.ntd').textContent=p.d;el.querySelectorAll('.ntdot i').forEach((d,j)=>d.classList.toggle('on',j==i))};
+const draw=()=>{const p=P[i];el.querySelector('.ntb').style.backgroundImage=`linear-gradient(transparent 25%,rgba(0,0,0,.55) 55%,rgba(0,0,0,.92)),url(assets/${p.img})`;el.querySelector('.ntg').textContent=p.tag;el.querySelector('.ntt').textContent=p.t;el.querySelector('.ntd').textContent=p.d;el.querySelectorAll('.ntdot i').forEach((d,j)=>d.classList.toggle('on',j==i))};
 G.noticeOpen=()=>{if(el)return;i=0;el=document.createElement('div');el.id='notice';el.innerHTML=`<div class=ntc><div class=nth>공지사항 <span class=ntx>✕</span></div><div class=ntb><em class=ntg></em><b class=ntt></b><small class=ntd></small><span class="ntar l">‹</span><span class="ntar r">›</span></div><div class=ntdot>${P.map(()=>'<i></i>').join('')}</div><span class=ntgo>바로 가기 ▶</span><label class=ntn><input type=checkbox id=ntToday> 오늘 하루 보지 않기</label></div>`;document.body.appendChild(el);
  const close=()=>{if(el.querySelector('#ntToday').checked)localStorage.setItem('slayers_notice',C.today());el.classList.add('out');const e=el;setTimeout(()=>e.remove(),220);el=null};
  el.querySelector('.ntx').onclick=close;el.querySelector('.l').onclick=()=>{i=(i+P.length-1)%P.length;draw()};el.querySelector('.r').onclick=()=>{i=(i+1)%P.length;draw()};el.querySelector('.ntgo').onclick=()=>{const g=P[i].go;close();setTimeout(g,250)};
@@ -1290,4 +1290,17 @@ const H={map:['지도','클리어한 스테이지를 골라 다시 사냥할 수
  event:['출석','매일 접속해 출석 보상을 받아요. 28일 주기.']};
 G.help=k=>{const h=H[k];if(!h)return;modal(`<div class=ttl style="justify-content:center;font-size:18px">❓ ${h[0]} 도움말</div><ul class=hlp>${h.slice(1).map(x=>`<li>${x}</li>`).join('')}</ul>`)};G.HELP=H;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{const k=G.screen,hd=document.querySelector('#screen .shead');if(hd&&H[k]&&!hd.querySelector('.hlpb')){const b=document.createElement('span');b.className='hlpb';b.textContent='?';b.onclick=()=>G.help(k);const t=hd.querySelector('b');t?t.after(b):hd.appendChild(b)}}catch(_){}return r};
+})();
+;(()=>{// v71 보스 정보 (스테이지 바 보스 아이콘 탭)
+const FN={light:'빛',chaos:'혼돈',human:'인간',wild:'야수',nature:'자연'};
+G.bossInfo=()=>{const s=C.S(),i=s.si,pl=D.BOSSPLAN[Math.floor(i/7)]||D.BOSSPLAN[0],b=D.BOSSES[pl[i%7==6?1:0]],req=C.stageReq(i),pw=C.POW(),r=pw/req;
+ const adv=Object.keys(D.COUNTER).find(k=>D.COUNTER[k]==b.fac),good=D.COMPS.filter(c=>c.fac==adv&&s.comps[c.k]);
+ modal(`<div class=bih><img src="${A}${b.img}"><div><small>${i%7==6?'챕터 보스':'스테이지 보스'} · ${C.stageName(i)}</small><b>${b.n}</b>${b.q?`<em>「${b.q}」</em>`:''}</div></div>
+ <div class=bir><span>권장 전투력</span><b class="${r>=1?'up':'dn'}">${fmt(req)}</b></div><div class=bir><span>내 전투력</span><b>${fmt(pw)} <small>(${Math.round(r*100)}%)</small></b></div>
+ <div class=bir><span>진영</span><b>${FN[b.fac]||b.fac}</b></div><div class=bir><span>유리한 진영</span><b>${adv?FN[adv]+' (피해 증가)':'없음'}</b></div>
+ ${adv?`<div class=bic>${good.length?good.map(c=>`<span><img src="${A}${c.img}">${c.n}</span>`).join(''):'<small>보유한 유리 진영 동료가 없습니다</small>'}</div>`:''}
+ <div class=bip><b>보스 패턴</b><ul><li>⚠️ 붉은 장판 공격 — 빠른 동료는 회피 확률 증가</li><li>💥 브레이크 게이지를 채우면 그로기(피해 +50%)</li><li>⏱ 제한 시간 안에 처치하지 못하면 실패</li></ul></div>
+ <span class="pill ${r>=1?'green':''} wide" id=biGo style="justify-content:center;margin-top:8px">${r>=1?'⚔ 보스 도전':'💪 성장하러 가기'}</span>`);
+ document.getElementById('biGo').onclick=()=>{document.querySelectorAll('.modal').forEach(m=>m.remove());if(r>=1){if(s.wave>=3&&!C.B.boss){s.failPow=0;C.startBoss()}else toast('웨이브를 모두 처치하면 보스가 등장해요')}else G.powOpen?G.powOpen():openSheet('train')}};
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#stagebar .sboss')&&!G.screen){e.stopPropagation();G.bossInfo()}},true);
 })();
