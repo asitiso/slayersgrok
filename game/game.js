@@ -1350,3 +1350,28 @@ setInterval(sync,500);sync();G.skOffSync=sync;
  ttl.insertAdjacentHTML('afterend',`<div class=csort>${SO.map(([k,n])=>`<span class="cso ${o.k==k?'on':''}" data-so=${k}>${n}</span>`).join('')}<span class="cso own ${o.own?'on':''}" data-own=1>${o.own?'☑':'☐'} 보유만</span></div>`);
  cards.sort(cmp).forEach(c=>{box.appendChild(c);c.style.display=o.own&&!s.comps[c.dataset.c]?'none':''});
  box.querySelectorAll('.cso').forEach(b=>b.onclick=()=>{if(b.dataset.own)o.own=o.own?0:1;else o.k=b.dataset.so;renderScreen()})}}catch(_){}return r}})();
+/* v77 필드별 날씨/환경 파티클 */
+(()=>{const C=G.C,P=[];let cur='',acc=0;const rnd=(a,b)=>a+Math.random()*(b-a);
+const W={meadow:{n:14,mk:(w,h)=>({x:rnd(-20,w),y:-10,vx:rnd(18,40),vy:rnd(22,40),r:rnd(3,5),c:Math.random()<.5?'#ffd0e6':'#fff4f8',rot:rnd(0,6),vr:rnd(-3,3),k:'petal'})},
+ forest:{n:12,mk:(w,h)=>({x:rnd(0,w),y:rnd(h*.3,h),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(1.5,3),c:'#f6ffb0',k:'mote',ph:rnd(0,6)})},
+ darkwood:{n:16,mk:(w,h)=>({x:rnd(0,w),y:rnd(h*.3,h),vx:rnd(-10,10),vy:rnd(-10,4),r:rnd(1.8,3.2),c:'#b8ff7a',k:'mote',ph:rnd(0,6)})},
+ town:{n:8,mk:(w,h)=>({x:rnd(0,w),y:rnd(h*.2,h),vx:rnd(6,16),vy:rnd(-6,2),r:rnd(1,2),c:'#fff3d0',k:'mote',ph:rnd(0,6)})},
+ autumn:{n:14,mk:(w,h)=>({x:rnd(-20,w),y:-10,vx:rnd(-30,10),vy:rnd(30,55),r:rnd(4,6),c:['#ff9a3a','#e8602a','#ffc24a'][Math.random()*3|0],rot:rnd(0,6),vr:rnd(-4,4),k:'leaf'})},
+ beach:{n:10,mk:(w,h)=>({x:rnd(0,w),y:rnd(h*.2,h*.9),vx:0,vy:0,r:rnd(1.5,3),c:'#ffffff',k:'glint',ph:rnd(0,6)})},
+ desert:{n:22,mk:(w,h)=>({x:-20,y:rnd(h*.25,h),vx:rnd(140,220),vy:rnd(-6,6),r:rnd(1,2),c:'#f3d29a',k:'sand'})},
+ snow:{n:48,mk:(w,h)=>({x:rnd(-20,w+20),y:-8,vx:rnd(-14,6),vy:rnd(28,55),r:rnd(1.5,3.5),c:'#ffffff',k:'snow',ph:rnd(0,6)})},
+ ice:{n:30,mk:(w,h)=>({x:rnd(-20,w+20),y:-8,vx:rnd(-30,-10),vy:rnd(30,60),r:rnd(1.2,3),c:'#e6f6ff',k:'snow',ph:rnd(0,6)})},
+ volcano:{n:30,mk:(w,h)=>(Math.random()<.6?{x:rnd(0,w),y:h+6,vx:rnd(-12,12),vy:rnd(-70,-35),r:rnd(2,3.8),c:'#fff2a8',k:'ember',ph:rnd(0,6)}:{x:rnd(-20,w),y:-8,vx:rnd(-6,10),vy:rnd(18,30),r:rnd(1.5,3),c:'#4a3f3a',k:'ash',ph:rnd(0,6)})}};
+G.weather=()=>cur;
+const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||(G.saverState&&G.saverState())||(R.opt&&!R.opt.fx)){P.length=0;return}const c=document.querySelector('#battle canvas');if(!c)return;const w=c.clientWidth,h=c.clientHeight,f=R.bgOv?'':D.FIELDS[C.S().si%D.FIELDS.length],cf=W[f];if(f!==cur){cur=f;P.length=0;if(cf)for(let i=0;i<cf.n;i++){const q=cf.mk(w,h);q.x=rnd(0,w);if(q.k!='ember')q.y=rnd(0,h);q.life=rnd(0,1);P.push(q)}}if(!cf)return;
+ const rt=R.hsRealDt||dt;acc+=rt*cf.n/4;while(acc>1&&P.length<cf.n){acc--;const q=cf.mk(w,h);q.life=0;P.push(q)}if(P.length>=cf.n)acc=0;
+ const ctx=c.getContext('2d'),sc=c.width/w,T=performance.now()/1000;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
+ for(let i=P.length-1;i>=0;i--){const q=P[i];q.life+=rt*.25;q.x+=q.vx*rt;q.y+=q.vy*rt;if(q.k=='snow'||q.k=='ash')q.x+=Math.sin(T*1.5+q.ph)*12*rt;if(q.k=='mote'){q.x+=Math.sin(T*.9+q.ph)*10*rt}if(q.rot!=null)q.rot+=q.vr*rt;
+  if(q.x<-30||q.x>w+30||q.y>h+20||q.y<-30||q.life>1.6){P.splice(i,1);continue}
+  const fa=Math.min(1,q.life*4)*Math.min(1,(1.6-q.life)*3);ctx.fillStyle=q.c;
+  if(q.k=='petal'||q.k=='leaf'){ctx.globalAlpha=.75*fa;ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.rot);ctx.scale(1,Math.abs(Math.cos(q.rot*1.3))*.7+.3);ctx.beginPath();ctx.ellipse(0,0,q.r,q.r*.55,0,0,7);ctx.fill();ctx.restore()}
+  else if(q.k=='sand'){ctx.globalAlpha=.45*fa;ctx.fillRect(q.x,q.y,q.r*9,q.r*.8)}
+  else if(q.k=='glint'){const tw=Math.max(0,Math.sin(T*3+q.ph));ctx.globalAlpha=.8*tw*fa;ctx.fillRect(q.x-q.r*2,q.y-.6,q.r*4,1.2);ctx.fillRect(q.x-.6,q.y-q.r*2,1.2,q.r*4)}
+  else{const glow=q.k=='mote'||q.k=='ember';ctx.globalAlpha=(glow?.55+.4*Math.sin(T*3+q.ph):q.k=='ash'?.5:.85)*fa;if(glow){ctx.globalCompositeOperation='lighter';const a0=ctx.globalAlpha;ctx.globalAlpha=a0*.3;ctx.beginPath();ctx.arc(q.x,q.y,q.r*2.6,0,7);ctx.fill();ctx.globalAlpha=a0}if(q.k=='snow'){ctx.fillStyle='rgba(90,110,150,.35)';ctx.beginPath();ctx.arc(q.x+.6,q.y+.8,q.r+.9,0,7);ctx.fill();ctx.fillStyle=q.c}if(q.k=='ember'){const a0=ctx.globalAlpha;ctx.fillStyle='#ff5a10';ctx.globalAlpha=a0*.6;ctx.beginPath();ctx.arc(q.x,q.y,q.r*1.7,0,7);ctx.fill();ctx.globalAlpha=a0;ctx.fillStyle=q.c}ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,7);ctx.fill();if(glow)ctx.globalCompositeOperation='source-over'}}
+ ctx.restore()}catch(_){}};
+})();

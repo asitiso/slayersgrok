@@ -1,0 +1,10 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(3000);await ev(()=>{const u=document.querySelector('.unl .ung');u&&u.click();document.querySelectorAll('#notice,.modal,.sty').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});
+let n=726;for(const [si,nm] of [[15,'snow'],[4,'autumn'],[23,'volcano'],[18,'desert'],[0,'meadow'],[8,'darkwood']]){await ev(si=>{const s=G.S();s.maxSi=Math.max(s.maxSi,si);s.si=si;document.querySelectorAll('#notice,.modal,.sty,.unl').forEach(x=>x.remove());G.storyOn=0},si);await sl(4500);await ev(()=>document.querySelectorAll('#notice,.modal,.sty,.unl,.chcard,.chap').forEach(x=>x.remove()));await sh(`${n++}-weather-${nm}`)}
+const fps=await ev(()=>new Promise(r=>{let k=0;const t0=performance.now();const f=()=>{k++;if(performance.now()-t0<2000)requestAnimationFrame(f);else r(k/2)};requestAnimationFrame(f)}));console.log('FPS',fps,'W',await ev(()=>G.weather()));
+stop();console.log('ERR',errs);await b.close()})();
