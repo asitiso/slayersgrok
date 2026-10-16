@@ -2235,3 +2235,28 @@ function deco(){const el=$('#screen');if(el.querySelector('.acst'))return;const 
  hd.parentNode.insertBefore(d,hd);const t=hd.querySelector('.ttl');if(t)t.style.display='none';
  el.querySelectorAll('.achr').forEach(r=>{if(r.classList.contains('can'))r.insertAdjacentHTML('afterbegin',`<img class=amd src="${A}ac_medal.png">`);if(r.classList.contains('done')){const sm=[...r.children].pop();if(sm&&sm.tagName=='SMALL')sm.outerHTML=`<img class=adn src="${A}ac_done.png">`}})}
 })();
+;(()=>{/* v145 랭킹 시상대 */
+const st=document.createElement('style');st.textContent=`.rkst{position:relative;height:290px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+.rkst>.rbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.rkst .rttl{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:3;background:#000a;border:1px solid #ffd77a88;border-radius:12px;padding:3px 12px;font-size:12px;font-weight:900;color:#ffe08a;white-space:nowrap}
+.rkp{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;transform:translateX(-50%)}
+.rkp .rav{position:relative}.rkp .rav>img{height:var(--h);filter:drop-shadow(0 5px 4px #000a)}
+.rkp .rlr{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);height:46px;z-index:-1;opacity:.95}
+.rkp .rnm{margin-top:2px;background:linear-gradient(#2a1c48f0,#140c28f0);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px var(--c);border-radius:10px;padding:2px 8px;text-align:center;white-space:nowrap;color:#fff}
+.rkp .rnm b{font-size:11px;display:block}.rkp .rnm small{font-size:10px;color:#ffe08a;font-weight:800}
+.rkp .rno{position:absolute;top:-10px;left:-8px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;color:#3a2000;background:var(--c);border:2px solid #0b0d0f;z-index:3}
+.rkrow{display:flex;align-items:center;gap:8px;padding:6px 8px;margin:4px 0;border-radius:10px;background:linear-gradient(#2c3346,#1c2130);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #5a6a8a88}
+.rkrow.me{background:linear-gradient(#6a4a14,#3a2808);box-shadow:inset 0 0 0 2px #ffd25a,0 0 10px #ffb03a77}
+.rkrow .rn{width:26px;text-align:center;font-weight:900;font-size:16px;color:#cfd8ff}.rkrow .f{flex:1}.rkrow .f b{font-size:13px}.rkrow .f small{font-size:10px;opacity:.8}
+.rkrow .rp{font-weight:900;color:#ffe08a}.rkrow .ra{height:16px;margin-left:4px}.rkrow .rav2{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 2px #000a)}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='rank')deco()}catch(e){console.warn(e)}return r};
+const hsh=s=>[...s].reduce((a,c)=>a*31+c.charCodeAt(0)|0,7);
+function deco(){const el=$('#screen');if(el.querySelector('.rkst'))return;const cards=el.querySelectorAll('.sbody>.card,.card');if(cards.length<2)return;const hd=cards[0],lc=cards[1];
+ const rows=[...lc.querySelectorAll('.row')].map(r=>{const bs=r.querySelectorAll('b');return{n:bs[1].textContent,lv:r.querySelector('small').textContent,p:bs[2].textContent,me:!!r.getAttribute('style')}});if(rows.length<3)return;
+ const imgs=D.COMPS.map(c=>c.img),av=(x,i)=>x.me?'hero_lina.png':imgs[(i*3+1)%imgs.length];
+ const pos=[[50,32,92,'#ffd66a'],[24,96,76,'#dfe6f0'],[76,96,76,'#e8a060']];
+ let h=`<img class=rbg src="${A}bg_rank_podium.jpg"><span class=rttl>전투력 랭킹 · 시즌 1</span>`;
+ rows.slice(0,3).forEach((x,i)=>{const [l,t,hh,c]=pos[i];h+=`<div class=rkp style="left:${l}%;top:${t}px;--h:${hh}px;--c:${c}"><div class=rav><i class=rno>${i+1}</i>${i==0?`<img class=rlr src="${A}rk_laurel.png" style="height:${hh+10}px;bottom:-14px">`:''}<img src="${A}${av(x,i)}"></div><div class=rnm><b>${x.n}</b><small>${x.p}</small></div></div>`});
+ const d=document.createElement('div');d.className='rkst';d.innerHTML=h;hd.parentNode.insertBefore(d,hd);hd.querySelector('img').style.display='none';const t=hd.querySelector('.ttl');if(t)t.style.display='none';
+ lc.innerHTML=rows.map((x,i)=>{const m=hsh(x.n+'w')%3;return `<div class="rkrow ${x.me?'me':''}"><b class=rn>${i+1}</b><img class=rav2 src="${A}${av(x,i)}"><div class=f><b>${x.n}</b><br><small>${x.lv}</small></div><b class=rp>${x.p}</b>${m==1?`<img class=ra src="${A}rk_up.png">`:m==2?`<img class=ra src="${A}rk_down.png">`:'<span class=ra style="width:16px;text-align:center;opacity:.6">-</span>'}</div>`}).join('')}
+})();
