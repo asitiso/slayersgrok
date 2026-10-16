@@ -5,10 +5,10 @@ await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500
 await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
 await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
 const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
-await ev(()=>{G.S().gear=G.S().gear||{};openSheet('gear')});await sl(900);await sh('994-gear-room-bg');await ev(()=>openSheet('gear'));
-await clr();await ev(()=>menuGo('menu'));await sl(700);await clr();await ev(()=>menuGo('menu'));await sh('995-menu-town-entry');
-await ev(()=>menuGo('town'));await sl(1200);await clr();await sh('996-town-hub');
-await ev(()=>document.querySelector('.town').scrollLeft=0);await sl(400);await sh('997-town-hub-left');
-await ev(()=>document.querySelector('.town').scrollLeft=9999);await sl(400);await sh('998-town-hub-right');
+await ev(()=>{G.S().gear=G.S().gear||{};openSheet('gear')});await sl(900);await sh('s223a');await ev(()=>openSheet('gear'));
+await clr();await ev(()=>menuGo('menu'));await sl(700);await clr();await ev(()=>menuGo('menu'));await sh('s223c');
+await ev(()=>menuGo('town'));await sl(1200);await clr();await ev(()=>document.querySelector('.town').scrollLeft=420);await sl(300);await sh('s223d');
+await ev(()=>document.querySelector('.town').scrollLeft=0);await sl(400);await sh('s223b');
+await ev(()=>{document.querySelector('.town').scrollLeft=9999;document.querySelectorAll('.tnpc').forEach(x=>{x.classList.add('say');x.querySelector('.tbub').textContent='좋은 물건 들어왔어요!'})});await sl(400);await sh('1002-town-npc-fixed');
 await ev(()=>document.querySelector('[data-go=guild]').click());await sl(900);console.log('scr',await ev(()=>G.screen));
 console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();

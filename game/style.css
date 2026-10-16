@@ -1037,3 +1037,10 @@ body:has(#sheet.on) .cmbx,body:has(#screen.on) .cmbx{display:none}
 .thint{position:absolute;left:10px;bottom:16px;z-index:3;color:#fff;font-size:11px;background:#0008;padding:2px 8px;border-radius:8px}
 .town{height:700px}.tpan{width:1244px;height:700px}.tlina{top:640px;height:170px}
 body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:has(#screen.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg){display:none!important}
+.tnpc{position:absolute;transform:translate(-50%,-100%);cursor:pointer;animation:tnB 2.2s ease-in-out infinite}
+.tnpc:nth-of-type(2n){animation-delay:-1.1s}
+.tnpc img{height:165px;filter:drop-shadow(0 4px 3px #0008)}
+@keyframes tnB{50%{transform:translate(-50%,calc(-100% - 5px))}}
+.tbub{position:absolute;left:50%;bottom:100%;transform:translateX(-50%) scale(.6);opacity:0;white-space:nowrap;padding:5px 10px;border-radius:12px;background:#fff;color:#3a2a10;font:800 12px Maplestory,sans-serif;box-shadow:0 2px 6px #0007;transition:.25s;pointer-events:none}
+.tbub::after{content:'';position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top-color:#fff}
+.tnpc.say .tbub{opacity:1;transform:translateX(-50%) scale(1)}
