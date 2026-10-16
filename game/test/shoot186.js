@@ -6,6 +6,6 @@ await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500
 await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,noel:1,amelia:1};s.party=['gourry','noel','amelia'];G.C.buildAllies()});
 await sl(2000);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.bcut').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
 await until(()=>C.alive().some(e=>e.boss&&R._ES().get(e)),90000);await sl(2500);await ev(()=>{const e=C.alive().find(e=>e.boss);e.hp=Math.min(e.hp,1)});
-await until(()=>document.querySelector('.bsht'),20000);await sl(380);await clr();await sh('877-boss-crack');await sl(500);await sh('878-boss-shatter');await sl(450);await sh('879-boss-after');
+await until(()=>document.querySelector('.bsht'),20000);await sl(380);await clr();await sh('886-boss-crack');await sl(500);await sh('887-boss-shatter');await sl(450);await sh('888-boss-after');
 console.log('vic',await ev(()=>!!document.querySelector('.vic')));
 stop();console.log('ERR',errs);await b.close()})();
