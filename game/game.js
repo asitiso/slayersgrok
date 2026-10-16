@@ -2932,3 +2932,12 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
 .stmv .pth{display:none!important}
 .stmv h4{font-size:14px!important;margin:0!important}
 .stmv p{margin:0!important;font-size:10px!important;opacity:.8}`;document.head.appendChild(st)})();
+
+/* v190: centre-lane queue — one centre banner at a time; later ones wait and then play their full animation (nothing removed or shortened) */
+(()=>{const SEL='.wvb,.fevban,.stban,.tdmg,.mkb,.enrb';let act=null,actEnd=0;const Q=[];
+const dur=el=>{const cs=getComputedStyle(el);const p=s=>s.split(',').map(x=>parseFloat(x)*(x.includes('ms')?1:1000)||0);const d=p(cs.animationDuration),dl=p(cs.animationDelay);let m=0;d.forEach((v,i)=>m=Math.max(m,v+(dl[i]||0)));return Math.max(600,m)};
+const start=(el,par,clone)=>{if(clone){(par&&par.isConnected?par:document.querySelector('#battle')||document.body).appendChild(el)}const d=dur(el);act=el;actEnd=performance.now()+d+60;if(clone)setTimeout(()=>{if(el.isConnected)el.remove()},d+60)};
+const pump=()=>{if(act&&(act.isConnected&&performance.now()<actEnd))return;act=null;const n=Q.shift();if(n){start(n.el,n.par,true);}};
+setInterval(pump,80);
+new MutationObserver(ms=>{for(const m of ms)for(const el of m.addedNodes){if(!(el instanceof HTMLElement)||!el.matches(SEL)||el._q)continue;el._q=1;
+ if(act&&act.isConnected&&performance.now()<actEnd){const c=el.cloneNode(true);c._q=1;const par=el.parentNode;el.style.visibility='hidden';el.remove();Q.push({el:c,par})}else start(el,el.parentNode,false)}}).observe(document.body,{childList:true,subtree:true})})();
