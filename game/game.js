@@ -1488,7 +1488,15 @@ const PT=[];const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||(G.saverState&
  ctx.globalAlpha=1;ctx.restore()}catch(_){}}})();
 /* v94 elite treasure chest drop */
 (()=>{const C=G.C;let live=0;
-const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
+const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=G._echG!=null?G._echG:Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
  const w=document.createElement('div');w.className='ech'+(gold?' gold':'');w.style.left=Math.max(90,Math.min(265,q.x))+'px';w.style.top=(q.y-20)+'px';
  w.innerHTML=`<div class="echb"></div><img src="assets/ic3_chest.png"><div class="echt">${gold?'황금 보물상자!':'보물상자'}<br><b><img src="assets/it2_gem.png">${gm} <img src="assets/it2_stone.png">${st}</b></div>`;b.appendChild(w);
  setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000)}}}catch(_){}return ok(e,...a)}})();
+/* v95 breakable field crates */
+(()=>{const C=G.C;let cd=12,el=null;
+function brk(byTap){if(!el)return;const w=el,s=C.S(),g=Math.round(C.goldKill(s.si||0)*(byTap?25:20));C.addGold(g);el=null;w.classList.add('brk');
+ const b=document.getElementById('battle');for(let i=0;i<9;i++){const p=document.createElement('i');p.className='crp';p.style.setProperty('--dx',(Math.random()-.5)*140+'px');p.style.setProperty('--dy',(-40-Math.random()*90)+'px');p.style.setProperty('--r',(Math.random()*720-360)+'deg');w.appendChild(p)}
+ const t=document.createElement('div');t.className='crt';t.innerHTML=`<img src="assets/it2_gold.png">+${R.fmt(g)}`;w.appendChild(t);setTimeout(()=>w.remove(),1300)}
+function spawn(){const b=document.getElementById('battle');if(!b)return;el=document.createElement('div');el.className='crate';el.style.left=(235+Math.random()*35)+'px';el.style.top=(455+Math.random()*30)+'px';el.innerHTML='<img src="assets/prop_crate.png"><div class="crhp"><b></b></div>';el.dataset.h=4;b.appendChild(el);
+ el.addEventListener('pointerdown',ev=>{ev.stopPropagation();brk(1)});el._t=0}
+const ot=C.tick;C.tick=(dt,...a)=>{const r=ot(dt,...a);try{if(G.screen=='sim'||G.screen)return r;const B=C.B;if(!el){if(B&&!B.enemies.some(e=>e.boss)&&(cd-=dt)<=0){cd=20+Math.random()*15;spawn()}}else if(B&&B.enemies.some(e=>e.boss)){el.remove();el=null}else{el._t+=dt;if(el._t>.9){el._t=0;const h=+el.dataset.h-1;el.dataset.h=h;el.querySelector('b').style.width=(h*25)+'%';const im=el.querySelector('img');im.classList.remove('hit');void im.offsetWidth;im.classList.add('hit');if(h<=0)brk(0)}}}catch(_){}return r}})();

@@ -870,3 +870,19 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .echt b img{width:18px;vertical-align:-4px}.echt b{font-size:14px}
 .open .echt{opacity:1;transform:translateY(-8px)}
 .ech.out{transition:opacity .45s;opacity:0}
+/* v95 crates */
+.crate{position:absolute;width:0;height:0;z-index:5;pointer-events:auto}
+.crate>img{position:absolute;width:52px;left:-26px;top:-52px;filter:drop-shadow(0 4px 2px rgba(0,0,0,.4));animation:crIn .5s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes crIn{0%{transform:translateY(-60px);opacity:0}100%{transform:none;opacity:1}}
+.crate>img.hit{animation:crHit .25s}
+@keyframes crHit{0%{transform:translateX(0);filter:brightness(2.2)}30%{transform:translateX(-4px) rotate(-6deg)}60%{transform:translateX(4px) rotate(5deg)}100%{transform:none}}
+.crhp{position:absolute;left:-22px;top:-62px;width:44px;height:5px;background:#000a;border-radius:3px;overflow:hidden}.crhp b{display:block;height:100%;width:100%;background:#ffcf4a;transition:width .2s}
+.crate.brk>img,.crate.brk>.crhp{animation:crBk .25s forwards}
+@keyframes crBk{to{transform:scale(1.5);opacity:0}}
+.crp{position:absolute;left:-6px;top:-30px;width:12px;height:6px;background:#9a5c2c;border:1px solid #4a2810;animation:crP .9s ease-out forwards}
+@keyframes crP{to{transform:translate(var(--dx),calc(var(--dy) + 120px)) rotate(var(--r));opacity:0}}
+.crt{position:absolute;left:-50px;width:100px;top:-80px;text-align:center;font:900 16px sans-serif;color:#ffe066;text-shadow:0 0 3px #000,0 2px 3px #000;animation:crT 1.2s ease-out forwards}.crt img{width:20px;vertical-align:-4px}
+@keyframes crT{0%{transform:translateY(10px) scale(.6);opacity:0}25%{transform:none;opacity:1}100%{transform:translateY(-30px);opacity:0}}
+.crate.brk::before{content:'';position:absolute;left:-50px;top:-80px;width:100px;height:100px;border-radius:50%;background:radial-gradient(#fff8,#ffd24a66 40%,#0000 70%);animation:crF .45s ease-out forwards}
+@keyframes crF{0%{transform:scale(.3);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.crp{width:16px;height:8px}.crt{font-size:19px}
