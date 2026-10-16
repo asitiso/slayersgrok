@@ -928,3 +928,8 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .shc:not(.lock) img{animation:shHue 2.4s linear infinite;filter:drop-shadow(0 0 4px #fff)}
 .shc:not(.lock){background:linear-gradient(135deg,#ff6a8a33,#ffd24a33,#7aff9a33,#6ad0ff33,#c08aff33)!important;border-color:#ffe27a!important}
 @keyframes shHue{from{filter:hue-rotate(0) drop-shadow(0 0 4px #fff)}to{filter:hue-rotate(360deg) drop-shadow(0 0 4px #fff)}}
+/* v100 boss shatter */
+.bsht{position:absolute;left:0;right:0;text-align:center;z-index:11;pointer-events:none;animation:bsht 1.7s ease-out forwards;animation-delay:.7s;opacity:0}
+.bsht b{display:block;font:italic 900 56px Maplestory,"Noto Sans KR",sans-serif;color:#ffe066;-webkit-text-stroke:2px #5a1a00;text-shadow:0 0 18px #ff8a1a,0 4px 0 #5a1a00;letter-spacing:4px}
+.bsht small{font:900 15px "Noto Sans KR",sans-serif;color:#fff;text-shadow:0 0 4px #000,0 2px 2px #000}
+@keyframes bsht{0%{opacity:0;transform:scale(2.6) rotate(-8deg)}12%{opacity:1;transform:scale(.92) rotate(-4deg)}20%{transform:scale(1) rotate(-4deg)}75%{opacity:1}100%{opacity:0;transform:scale(1.05) rotate(-4deg)}}
