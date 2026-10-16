@@ -2772,3 +2772,15 @@ ${CX.map((x,i)=>`#skills.skills>.sk:nth-child(${i+1}){left:${x-21}px!important}`
 #battle>.hud #cGold,#battle>.hud #cGem{background:none!important;border:none!important;box-shadow:none!important;text-shadow:0 1px 2px #000}
 #battle>.hud .cur{transform:translateY(16px)}#battle>.hud #menuBtn{transform:translateY(-16px);background:none!important;border:none!important;box-shadow:none!important}
 #stName{z-index:2;color:#fff0c8!important;text-shadow:0 0 3px #000,0 1px 2px #000,0 0 6px #000!important}#stagebar::before{top:-3px!important}.side a em{background:url(assets/side_tab.png) center/100% 100% no-repeat!important;padding:3px 7px 1px!important;min-width:34px;box-sizing:border-box;text-align:center;font-size:9.5px!important;line-height:12px;color:#ffe8b0!important;text-shadow:0 1px 1px #000!important;margin-left:auto;margin-right:auto;width:max-content}`;document.head.appendChild(st)})();
+
+/* v171 bottom nav bar + header fixes */
+(function(){const st=document.createElement('style');st.textContent=`
+#nav.nav{background:url(assets/nav_bar.png) 0 0/390px 76px no-repeat,#140c08!important;border-top:none!important;box-shadow:0 -3px 8px #000a!important}
+#nav.nav>a:not(#navroll){background:none!important}
+#nav.nav>a:not(#navroll) em{color:#e8d0a0!important;text-shadow:0 1px 2px #000,0 0 3px #000!important;font-size:10.5px!important}
+#nav.nav>a.on:not(#navroll){background:radial-gradient(ellipse 60% 55% at 50% 45%,#ffcf6a66,#ff8a2a22 60%,#0000 75%)!important}
+#nav.nav>a.on:not(#navroll) img{filter:drop-shadow(0 0 6px #ffc94a)!important;box-shadow:none!important}
+#nav.nav>a.on:not(#navroll)::after{content:'';position:absolute;left:10px;right:10px;bottom:1px;height:2px;border-radius:2px;background:linear-gradient(90deg,#0000,#ffd77a,#0000);box-shadow:0 0 6px #ffc94a}
+#nav.nav>a.on em{color:#ffe08a!important}
+
+#battle>.hud #menuBtn{transform:translate(-13px,-16px)!important;width:16px!important;min-width:0!important;padding:0!important;font-size:11px!important;overflow:visible}`;document.head.appendChild(st)})();
