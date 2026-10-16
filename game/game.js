@@ -2875,3 +2875,16 @@ setInterval(()=>{const B=C.B;if(!B||!B.allies)return;const pp=document.querySele
 #notice .ntdot i{background:#6a5440}#notice .ntdot i.on{background:#ffd75a}
 #notice .ntgo{border:2px solid #e8c47a;box-shadow:0 2px 0 #1e5a2a,0 3px 6px #0008}
 #notice .ntn{color:#e8d8c0}`;document.head.appendChild(st)})();
+
+/* v179: chat panel in shared bronze sheet style (visual only) */
+(()=>{const st=document.createElement('style');st.textContent=`
+#chatP .chb{background:none!important;border-style:solid!important;border-width:12px 12px 0!important;border-image:url(assets/ui_panel.png) 30 30 0 fill stretch!important;border-radius:0!important;box-shadow:0 -4px 16px #000c!important;overflow:visible}
+#chatP .chb::before{content:'';position:absolute;left:-12px;right:-12px;top:-15px;height:7px;border-radius:6px 6px 0 0;background:linear-gradient(#f2d080,#a8782e 45%,#5a3a14);box-shadow:0 1px 0 #2a1808,0 -1px 3px #000a;pointer-events:none;z-index:2}
+#chatP .chb::after{content:'';position:absolute;left:50%;top:-19px;width:54px;height:11px;margin-left:-27px;border-radius:7px;background:linear-gradient(#5a3a14,#2a1808);border:1.5px solid #e0b860;box-shadow:inset 0 2px 3px #000a,0 2px 3px #000a;pointer-events:none;z-index:3}
+#chatP .cht span{background:linear-gradient(#4a321a,#22140a);border:1.5px solid #8a6a3a;color:#e8d8c0}
+#chatP .cht span.on{background:linear-gradient(#ffe08a,#c8902e);border-color:#fff0b0;color:#3a2000}
+#chatP .chx{width:26px;height:26px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff3d6;background:radial-gradient(circle at 40% 35%,#a8423a,#5a1712);border:2px solid #d9a85a}
+#chatP .chl{background:rgba(24,12,6,.5);border:1px solid #6a4a24;border-radius:8px;margin:2px 4px}
+#chatP .chl span{color:#f0e4d0}
+#chatP .chi input{background:#1a0e06;border:1.5px solid #8a6a3a;color:#ffeccc}
+#chatP #chGo{border:2px solid #e8c47a}`;document.head.appendChild(st)})();
