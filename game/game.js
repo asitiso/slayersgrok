@@ -2806,3 +2806,19 @@ new MutationObserver(mark).observe(document.getElementById('screen'),{childList:
 .modal .card:not(.ppx):not(.rpf)>.ttl:first-child{position:relative;margin:-50px -6px 8px!important;height:58px;display:flex!important;align-items:center;justify-content:center;padding:10px 20px 0!important;background:url(assets/ui_ribbon.png) center/100% 100% no-repeat!important;color:#ffe6b0!important;text-shadow:0 1px 2px #000,0 0 6px #000!important;font-size:16px!important}
 .modal .card:not(.ppx):not(.rpf) small{color:#e8d8c0}
 .toast{background:linear-gradient(#4a321a,#22140a)!important;border:1.5px solid #d8b060!important;border-radius:20px!important;box-shadow:inset 0 1px 0 #fff4,inset 0 -2px 0 #0007,0 0 0 2px #2a1808,0 4px 10px #000a!important;color:#ffeccc!important;text-shadow:0 1px 1px #000!important}`;document.head.appendChild(st)})();
+
+/* v174 menu grid + bottom sheets: panel frame, ribbon head, CSS bronze rim with grab notch, frameless icons with press glow */
+(function(){const st=document.createElement('style');st.textContent=`
+#menuPop .mbox,#sheet{background:none!important;border-style:solid!important;border-width:12px!important;border-image:url(assets/ui_panel.png) 30 fill stretch!important;border-radius:0!important;box-shadow:0 -4px 16px #000c!important;overflow:visible!important}
+#menuPop .mbox::before,#sheet::before{content:'';position:absolute;left:-12px;right:-12px;top:-15px;height:7px;border-radius:6px 6px 0 0;background:linear-gradient(#f2d080,#a8782e 45%,#5a3a14);box-shadow:0 1px 0 #2a1808,0 -1px 3px #000a;pointer-events:none;z-index:2}
+#menuPop .mbox::after,#sheet::after{content:'';position:absolute;left:50%;top:-19px;width:54px;height:11px;margin-left:-27px;border-radius:7px;background:linear-gradient(#5a3a14,#2a1808);border:1.5px solid #e0b860;box-shadow:inset 0 2px 3px #000a,0 2px 3px #000a;pointer-events:none;z-index:3}
+#menuPop .sheethead,#sheet .sheethead{background:url(assets/ui_ribbon.png) center/200px 100% no-repeat!important;border:none!important;box-shadow:none!important;height:46px;margin:-4px 0 6px!important;display:flex;align-items:center;justify-content:center;position:relative}
+#menuPop .sheethead b,#sheet .sheethead b{color:#ffe6b0!important;text-shadow:0 1px 2px #000,0 0 6px #000!important;font-size:15px!important;padding-top:4px}
+#menuPop .xbtn,#sheet .xbtn{position:absolute!important;right:2px;top:8px}
+#sheet .card,#sheet .row{background:rgba(24,12,6,.5)!important;border-color:#6a4a24!important}#todoBar{background:rgba(24,12,6,.55)!important;border:1px solid #6a4a24!important;border-radius:8px!important}
+#todoBar .tdc{background:linear-gradient(#4a321a,#22140a)!important;border:1.5px solid #d8b060!important;color:#ffeccc!important;box-shadow:inset 0 1px 0 #fff3,0 1px 2px #000a!important}
+#mgrid a{background:none!important;border:none!important;box-shadow:none!important;transition:transform .08s}
+#mgrid a img{transition:filter .12s,transform .08s}
+#mgrid a:active img,#mgrid a.prs img{transform:scale(.92);filter:drop-shadow(0 0 7px #ffc94a) brightness(1.12)}
+#mgrid a em{color:#ffe6b0!important;text-shadow:0 1px 2px #000!important}`;document.head.appendChild(st);
+document.addEventListener('pointerdown',e=>{const a=e.target.closest&&e.target.closest('#mgrid a');if(a){a.classList.add('prs');setTimeout(()=>a.classList.remove('prs'),180)}},true)})();
