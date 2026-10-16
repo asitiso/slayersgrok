@@ -2527,3 +2527,21 @@ const body=sb.querySelector('.sbody');if(body&&!body.querySelector('.bghero')){c
 const cards=sb.querySelectorAll('.card');const tt=cards[0]&&cards[0].querySelector('.ttl');if(tt&&!tt.querySelector('img'))tt.insertAdjacentHTML('afterbegin',`<img src="${A}bg_pouch.png">`);
 const t2=cards[1]&&cards[1].querySelector('.ttl');if(t2&&!t2.querySelector('img'))t2.insertAdjacentHTML('afterbegin',`<img src="${A}bg_slot.png">`);
 cards.forEach((c,ci)=>c.querySelectorAll('.bagg .bi').forEach(b=>{if(b.querySelector('.sf'))return;const col=ci==1?b.style.borderColor:'';if(ci==1)b.classList.add('gear');const f=document.createElement('img');f.className='sf';f.src=A+'bg_slot.png';if(col)f.style.filter=`drop-shadow(0 0 3px ${col}) drop-shadow(0 0 2px ${col})`;b.appendChild(f)}))}else $('#screen').classList.remove('bgx')}catch(_){}return r}})();
+/* v159 칭호: hall of honours */
+(function(){const st=document.createElement('style');st.textContent=`
+.ttx .shade{background:rgba(8,6,14,.55)!important}
+.ttx .ttlr{position:relative;min-height:78px;background:none!important;border:none!important;padding:12px 26px 12px 30px!important;margin:6px 0!important;display:flex;align-items:center;gap:8px;isolation:isolate}
+.ttx .ttlr>.tpl{position:absolute;inset:0;width:100%;height:100%;z-index:-1;object-fit:fill;filter:var(--tf) drop-shadow(0 3px 5px #000)}
+.ttx .ttlr .f small{color:#1e1a26!important;font-weight:700;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.ttx .ttlr .tbadge{flex:none}
+.ttx .ttlr.lock{opacity:1!important;filter:none!important}.ttx .ttlr.lock .f small{color:#f3dfb8!important;text-shadow:0 1px 2px #000}
+.ttx .ttlr.lock .tlk{display:block;color:#ffd98a!important;font-size:11px;font-weight:800}
+.ttx .ttlr.lock>small{display:none}.ttx .ttlr>.tlki{height:34px;flex:none;filter:drop-shadow(0 2px 3px #000)}
+.ttx .ttlr.on{min-height:86px}.ttx .ttlr.on>.tla{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:120%;z-index:-2;opacity:.85;filter:drop-shadow(0 0 10px #ffd24a)}
+.ttx .ttlr.on>.tcr{position:absolute;left:50%;top:-14px;transform:translateX(-50%);height:28px;z-index:2;filter:drop-shadow(0 0 6px #ffd24a)}
+.ttx .ttlr.on .teq{background:linear-gradient(#ffe08a,#c08a20);color:#3a2400!important;padding:3px 8px;border-radius:10px;font-weight:800}`;document.head.appendChild(st);
+const TF={1:'sepia(.8) saturate(2.2) hue-rotate(60deg)',2:'sepia(.8) saturate(2.4) hue-rotate(170deg)',3:'sepia(.8) saturate(2.4) hue-rotate(225deg)',4:'sepia(.9) saturate(3)',5:'sepia(.9) saturate(3.5) hue-rotate(-40deg)'};
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{const sb=$('#screen');if(G.screen=='title'){sb.classList.add('ttx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_ach_hall.jpg';
+sb.querySelectorAll('.ttlr').forEach((row,i)=>{if(row.querySelector('.tpl'))return;const t=D.TITLES[i];if(!t)return;const lk=row.classList.contains('lock');const p=document.createElement('img');p.className='tpl';p.src=A+'tt_plate.png';row.style.setProperty('--tf',lk?'sepia(1) saturate(1.6) brightness(.55) contrast(1.1)':(TF[t.r]||'none'));row.prepend(p);if(lk)row.insertAdjacentHTML('beforeend',`<img class=tlki src="${A}tt_locked.png">`);
+if(lk){const f=row.querySelector('.f');f&&f.insertAdjacentHTML('beforeend',`<small class=tlk>🔒 해금 조건: ${t.d}</small>`);const d=f&&f.querySelector('small');if(d)d.style.display='none'}
+if(row.classList.contains('on')){row.insertAdjacentHTML('afterbegin',`<img class=tla src="${A}rk_laurel.png"><img class=tcr src="${A}tt_crown.png">`)}})}else sb.classList.remove('ttx')}catch(_){}return r}})();
