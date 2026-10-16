@@ -764,3 +764,4 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .psl.on{border-color:#ffd77a;box-shadow:0 0 8px #ffd77a66}.psl>b{position:absolute;left:6px;top:3px;font-size:11px;color:#ffd77a}
 .psi{display:flex;justify-content:center;gap:1px;margin-top:12px;min-height:30px;align-items:center}.psi img{width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:top;background:#0006}
 .psl.emp .psi{opacity:.55}.pss{position:absolute;right:4px;top:2px;font-size:13px;padding:1px 2px}
+.csort{display:flex;gap:5px;margin:2px 0 8px;flex-wrap:wrap}.cso{font-size:12px;padding:3px 10px;border-radius:12px;background:#0005;border:1px solid #ffffff2a;color:#cfd3d8}.cso.on{background:#ffd77a;color:#3a2600;border-color:#ffd77a;font-weight:800}.cso.own{margin-left:auto}.cso.own.on{background:#2a8a4a;color:#fff;border-color:#6aff8a}

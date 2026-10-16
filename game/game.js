@@ -1342,3 +1342,11 @@ setInterval(sync,500);sync();G.skOffSync=sync;
  const h=`<div class="card pset"><div class=ttl>편성 프리셋 <small>탭: 불러오기 · 💾: 현재 편성 저장</small></div><div class=psr>${P.map((p,i)=>{const on=p&&p.join()==cur;return `<div class="psl ${p?'':'emp'} ${on?'on':''}" data-pi=${i}><b>${i+1}</b><div class=psi>${p?(p.length?p.map(k=>{const c=D.COMPS.find(x=>x.k==k);return c?`<img src="${A}${c.img}">`:''}).join(''):'<small>리나 단독</small>'):'<small>비어 있음</small>'}</div><span class=pss data-ps=${i}>💾</span></div>`}).join('')}</div></div>`;
  c1.insertAdjacentHTML('afterend',h);
  sb.querySelectorAll('.psl').forEach(el=>el.onclick=e=>{const i=+el.dataset.pi;if(e.target.closest('.pss')){P[i]=s.party.slice();toast(`프리셋 ${i+1}에 저장했습니다`);G.save&&G.save();renderScreen();return}const p=P[i];if(!p)return toast('먼저 💾로 현재 편성을 저장하세요');const q=p.filter(k=>s.comps[k]).slice(0,4);s.party=q;C.buildAllies();C.refreshMax();toast(`프리셋 ${i+1} 편성 적용 · 전투력 ${fmt(C.POW())}`);renderScreen()})}}}catch(_){}return r}})();
+/* v76 보유 동료 정렬/필터 */
+(()=>{const C=G.C,SO=[['def','기본'],['rar','등급'],['lv','레벨'],['fac','세력']];const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='party'){const cards=[...document.querySelectorAll('#screen .rcard[data-c]')];if(!cards.length||document.querySelector('#screen .csort'))return r;const s=C.S(),o=s.csort=s.csort||{k:'def',own:0},box=cards[0].parentNode,ttl=box.querySelector('.ttl');
+ const ri=c=>Object.keys(D.RAR).indexOf(String(c.g)),fi=c=>Object.keys(D.FACTIONS).indexOf(c.fac);
+ const key=k=>{const c=D.COMPS.find(x=>x.k==k),lv=s.comps[k]||0,inP=s.party.includes(k)?1:0;return [lv?0:1,o.k=='rar'?-ri(c):o.k=='lv'?-lv:o.k=='fac'?fi(c):0,-inP,D.COMPS.indexOf(c)]};
+ const cmp=(a,b)=>{const x=key(a.dataset.c),y=key(b.dataset.c);for(let i=0;i<x.length;i++)if(x[i]!=y[i])return x[i]-y[i];return 0};
+ ttl.insertAdjacentHTML('afterend',`<div class=csort>${SO.map(([k,n])=>`<span class="cso ${o.k==k?'on':''}" data-so=${k}>${n}</span>`).join('')}<span class="cso own ${o.own?'on':''}" data-own=1>${o.own?'☑':'☐'} 보유만</span></div>`);
+ cards.sort(cmp).forEach(c=>{box.appendChild(c);c.style.display=o.own&&!s.comps[c.dataset.c]?'none':''});
+ box.querySelectorAll('.cso').forEach(b=>b.onclick=()=>{if(b.dataset.own)o.own=o.own?0:1;else o.k=b.dataset.so;renderScreen()})}}catch(_){}return r}})();
