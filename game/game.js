@@ -1026,3 +1026,13 @@ const place=()=>{const b=document.getElementById('bufBtn');if(b&&!document.getEl
 const refresh=()=>{place();const s=st();const gone=s.fin&&allC();btn.style.display=gone?'none':'';btn.classList.toggle('rd',nReady()>0)};
 setInterval(refresh,700);refresh();G.nbState=()=>({day:day(),ready:nReady(),c:Object.keys(st().c).length,fin:st().fin});
 })();
+;(()=>{// v54 장비 세트 효과 (등급 세트 + 강화 합계 세트)
+const RS=[{r:1,a:5,h:5},{r:2,a:10,h:10},{r:3,a:20,h:20},{r:4,a:35,h:35},{r:5,a:60,h:60}],ES=[{n:24,a:3},{n:48,a:6},{n:80,a:10},{n:120,a:15}],NS=D.SLOTS.length;
+const st=()=>{const s=C.S(),g=Object.values(s.gear||{}).filter(Boolean);const cnt=r=>g.filter(x=>x.r>=r).length;let rt=null;RS.forEach(t=>{if(cnt(t.r)>=NS)rt=t});const en=g.reduce((a,x)=>a+(x.en||0),0);let et=null;ES.forEach(t=>{if(en>=t.n)et=t});return{cnt,rt,en,et}};
+C.gearSet=()=>{const x=st();return{atk:((x.rt?x.rt.a:0)+(x.et?x.et.a:0))/100,hp:(x.rt?x.rt.h:0)/100,x}};
+{const oa=C.atkPct;C.atkPct=()=>oa()+C.gearSet().atk;const oh=C.MAXHP;C.MAXHP=()=>oh()*(1+C.gearSet().hp)}
+let last=null;const key=()=>{const x=st();return (x.rt?x.rt.r:0)+'_'+(x.et?x.et.n:0)};
+G.gsCard=()=>{const x=st();return `<div class="card gsc"><div class=ttl>장비 세트 효과 <small>${NS}부위 모두 충족 시</small></div>${RS.map(t=>{const c=Math.min(NS,x.cnt(t.r)),ok=c>=NS;return `<div class="row gsr ${ok?'on':''}"><i style="background:${D.RAR[t.r].c}"></i><div class=f><b style="color:${D.RAR[t.r].c}">${D.RAR[t.r].n}+ 세트</b> <small>공격력 +${t.a}% · 체력 +${t.h}%</small><div class=bar><i style="width:${c/NS*100}%;background:${D.RAR[t.r].c}"></i></div></div><span class="pill ${ok?'green':'off'}">${ok?'적용 중':c+'/'+NS}</span></div>`}).join('')}<div class=ttl style="margin-top:6px">강화 합계 <small>현재 +${x.en}</small></div>${ES.map(t=>{const ok=x.en>=t.n;return `<div class="row gsr ${ok?'on':''}"><div class=f><b>강화 +${t.n}</b> <small>공격력 +${t.a}%</small><div class=bar><i style="width:${Math.min(1,x.en/t.n)*100}%"></i></div></div><span class="pill ${ok?'green':'off'}">${ok?'적용 중':x.en+'/'+t.n}</span></div>`}).join('')}</div>`};
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab=='gear'){const p=document.querySelector('#panel .pbody')||document.querySelector('#panel');if(p&&!p.querySelector('.gsc'))p.insertAdjacentHTML('beforeend',G.gsCard())}}catch(e){}return r};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const k=key();if(last!==null&&k!==last){const x=st();const [a,b]=last.split('_').map(Number);if((x.rt?x.rt.r:0)>a)toast(`✨ ${D.RAR[x.rt.r].n}+ 세트 효과 발동! 공격력·체력 +${x.rt.a}%`);else if((x.et?x.et.n:0)>b)toast(`✨ 강화 합계 +${x.et.n} 세트 발동! 공격력 +${x.et.a}%`)}last=k}catch(e){}return r};
+})();

@@ -669,3 +669,5 @@ body.sheeton .combo{display:none}
 .nblk{text-align:center;padding:30px 0;color:#cbb;font-weight:900}
 #nbBtn{position:absolute!important;left:126px;top:172px;height:22px;z-index:6;font-size:11px}
 #nbBtn{height:22px!important;min-height:0!important;padding:0 8px!important;border-radius:11px!important;font-size:11px!important;line-height:22px!important}
+.gsc .gsr{gap:8px}.gsc .gsr>i{width:8px;height:28px;border-radius:4px;flex:none}.gsc .gsr .bar{margin-top:4px}.gsc .gsr.on{background:rgba(120,220,120,.12);border-radius:8px}
+.gsc .gsr{width:100%;box-sizing:border-box;margin-left:0;margin-right:0}.gsc .gsr .f{flex:1}

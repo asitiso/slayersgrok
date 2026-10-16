@@ -1,0 +1,16 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+const mk=(r,en)=>{const s=G.S();s.gear={};D.SLOTS.forEach(sl=>{s.gear[sl.k]={slot:sl.k,name:sl.n,r,lv:20,st:sl.st,v:50,en}})};
+await ev(()=>{const s=G.S();s.gear={};['staff','cape','ring'].forEach(k=>{const sl=D.SLOTS.find(x=>x.k==k);s.gear[k]={slot:k,name:sl.n,r:2,lv:20,st:sl.st,v:50,en:2}})});
+await ev(()=>{openSheet("gear")});await sl(800);
+await ev(()=>{const c=document.querySelector('.gsc');c&&c.scrollIntoView()});await sl(400);await sh('652-gearset-partial');
+const p0=await ev(()=>C.POW());
+await ev(()=>{const s=G.S();s.gear={};D.SLOTS.forEach(sl=>{s.gear[sl.k]={slot:sl.k,name:sl.n,r:3,lv:20,st:sl.st,v:50,en:6}});C.refreshMax();updateHud()});await sl(300);
+await ev(()=>{renderPanel();});
+await ev(()=>{const c=document.querySelector('.gsc');c&&c.scrollIntoView()});await sl(500);await sh('653-gearset-hero-active');
+console.log('set',JSON.stringify(await ev(()=>{const g=C.gearSet();return{atk:g.atk,hp:g.hp}})),'pow',p0,await ev(()=>C.POW()));
+stop();console.log('ERR',errs);await b.close()})();
