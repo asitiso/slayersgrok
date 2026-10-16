@@ -754,3 +754,5 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .bir{display:flex;justify-content:space-between;font-size:13px;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.07)}.bir b.dn{color:#ff8a7a}.bir small{opacity:.7}
 .bic{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.bic span{display:flex;align-items:center;gap:4px;font-size:11px;background:rgba(120,220,120,.12);padding:2px 8px 2px 2px;border-radius:12px}.bic img{width:24px;height:24px;border-radius:50%;object-fit:cover;object-position:top}
 .bip{margin-top:8px;font-size:12px;text-align:left}.bip ul{margin:4px 0 0;padding-left:16px;line-height:1.6}
+.nrec{position:absolute;top:-34px;left:50%;transform:translateX(-50%);white-space:nowrap;background:linear-gradient(#ffe27a,#f0a930);color:#5a2a00;font-weight:900;font-size:14px;padding:4px 14px;border-radius:14px;box-shadow:0 2px 8px #0008;animation:nrec .5s ease-out}
+@keyframes nrec{from{transform:translateX(-50%) scale(1.6);opacity:0}}
