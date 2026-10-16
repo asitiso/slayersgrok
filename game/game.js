@@ -2545,3 +2545,24 @@ const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try
 sb.querySelectorAll('.ttlr').forEach((row,i)=>{if(row.querySelector('.tpl'))return;const t=D.TITLES[i];if(!t)return;const lk=row.classList.contains('lock');const p=document.createElement('img');p.className='tpl';p.src=A+'tt_plate.png';row.style.setProperty('--tf',lk?'sepia(1) saturate(1.6) brightness(.55) contrast(1.1)':(TF[t.r]||'none'));row.prepend(p);if(lk)row.insertAdjacentHTML('beforeend',`<img class=tlki src="${A}tt_locked.png">`);
 if(lk){const f=row.querySelector('.f');f&&f.insertAdjacentHTML('beforeend',`<small class=tlk>🔒 해금 조건: ${t.d}</small>`);const d=f&&f.querySelector('small');if(d)d.style.display='none'}
 if(row.classList.contains('on')){row.insertAdjacentHTML('afterbegin',`<img class=tla src="${A}rk_laurel.png"><img class=tcr src="${A}tt_crown.png">`)}})}else sb.classList.remove('ttx')}catch(_){}return r}})();
+/* v160 칭호 wrap/laurel fix + 스킬 편성 마법진 */
+(function(){const st=document.createElement('style');st.textContent=`
+.ttx .ttlr .f small{word-break:keep-all}.ttx .ttlr .tlk{white-space:nowrap;font-size:10.5px!important}
+.ttx .ttlr.on>.tla{height:150%!important;opacity:1!important;filter:sepia(1) saturate(3) brightness(1.2) drop-shadow(0 0 8px #ffd24a) drop-shadow(0 0 16px #ffb000)!important;animation:tlaG 1.8s ease-in-out infinite alternate}
+@keyframes tlaG{to{filter:sepia(1) saturate(3) brightness(1.45) drop-shadow(0 0 12px #ffe27a) drop-shadow(0 0 24px #ffb000)}}
+.skx .card{background:rgba(14,10,30,.78)!important;border:1px solid #6a5ab0!important}
+.skx .skpick .skp{position:relative;background:none!important;border:none!important;box-shadow:none!important;padding:2px 0 0!important;display:flex;flex-direction:column;align-items:center}
+.skx .skp .skw{position:relative;width:72px;height:72px;display:grid;place-items:center}
+.skx .skp .skw>img.sic{width:46px;height:46px;border-radius:50%;object-fit:cover}
+.skx .skp .skw>img.srg{position:absolute;inset:0;width:100%;height:100%;filter:var(--sf)}
+.skx .skp.on .skw>img.srg{filter:var(--sf) drop-shadow(0 0 6px var(--sc)) drop-shadow(0 0 10px var(--sc))}
+.skx .skp.lock .skw>img.sic{filter:grayscale(1) brightness(.4)}
+.skx .skp>b{font-size:11px;color:#fff;text-shadow:0 1px 2px #000;margin-top:2px}
+.skx .skp>small{display:none}
+.skx .skpick{grid-template-columns:repeat(3,minmax(0,1fr))!important}.skx .skp{min-width:0}.skx .skp.lock{opacity:.85!important}.skx .skp .stg{max-width:100%;box-sizing:border-box;flex-wrap:wrap;justify-content:center;white-space:normal!important;text-align:center;line-height:12px;display:flex;align-items:center;gap:3px;margin-top:2px;background:linear-gradient(#efe0bc,#c9b07c);color:#3a2610;border-radius:4px;padding:1px 5px 1px 2px;font-size:9.5px;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px #000}
+.skx .skp .stg img{height:16px}.skx .skp.lock .stg{background:linear-gradient(#777,#444);color:#eee}
+.skx .skp.on::after{content:'편성';position:absolute;top:0;right:4px;background:#ffd24a;color:#3a2400;font-size:9px;font-weight:900;border-radius:6px;padding:0 4px}`;document.head.appendChild(st);
+const EL={fire:['sepia(1) saturate(4) hue-rotate(-20deg)','#ff5a2a'],ice:['sepia(1) saturate(3) hue-rotate(160deg)','#5ad0ff'],heal:['sepia(1) saturate(3) hue-rotate(60deg)','#5aff8a'],bolt:['sepia(1) saturate(4) hue-rotate(15deg)','#ffe24a'],poison:['sepia(1) saturate(3) hue-rotate(240deg)','#c05aff'],charm:['sepia(1) saturate(3) hue-rotate(290deg)','#ff7ad0'],ragna:['sepia(1) saturate(5) hue-rotate(-35deg)','#ff2a2a'],bash:['sepia(1) saturate(3)','#ffa03a'],dark:['sepia(1) saturate(3) hue-rotate(220deg) brightness(.8)','#8a4aff'],holy:['sepia(.6) saturate(2) brightness(1.2)','#fff3a0'],ds:['sepia(1) saturate(4) hue-rotate(-40deg) brightness(.75)','#c0102a'],giga:['sepia(1) saturate(5) hue-rotate(-30deg) brightness(.9)','#ff3a3a']};
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{const sb=$('#screen');if(G.screen=='enhance'&&G.enTab=='skill'){sb.classList.add('skx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_skill_circle.jpg';const s=C.S();
+sb.querySelectorAll('.skp').forEach(p=>{if(p.querySelector('.skw'))return;const sp=D.SPELLS.find(x=>x.k==p.dataset.sl);if(!sp)return;const lk=p.classList.contains('lock');const im=p.querySelector('img');im.className='sic';const w=document.createElement('div');w.className='skw';im.replaceWith(w);w.appendChild(im);const e=EL[sp.k];w.insertAdjacentHTML('beforeend',`<img class=srg src="${A}${lk?'sk_empty':'sk_ring'}.png">`);if(!lk&&e){p.style.setProperty('--sf',e[0]);p.style.setProperty('--sc',e[1])}
+const pw=sp.heal?`회복 ${Math.round(sp.heal*100)}%`:sp.mul?`×${sp.mul}${sp.aoe?' 광역':''}`:'';p.insertAdjacentHTML('beforeend',`<span class=stg><img src="${A}sk_tag.png">${lk?C.stageName(sp.unlock)+' 해금':`쿨 ${sp.cd}초${pw?' · '+pw:''}`}</span>`)})}else sb.classList.remove('skx')}catch(_){}return r}})();
