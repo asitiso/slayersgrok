@@ -1698,7 +1698,7 @@ const css=document.createElement('style');css.textContent=`
 @keyframes fhot{to{transform:scale(1.06)}}
 .fcol{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.fcc{text-align:center;border:2px solid var(--c);border-radius:10px;background:#1a2030;padding:4px 0}.fcc .i{width:44px;height:44px;object-fit:contain;display:block;margin:0 auto}.fcc.lock .i{filter:brightness(0) opacity(.5)}.fcc b{font-size:10px;color:#fff;display:block}.fcc small{font-size:9px;color:#ffd77a}.fcc.lock{filter:grayscale(1);opacity:.4}`;document.head.appendChild(css);
 const draw=()=>{const el=$('#screen'),f=st(),left=LIM-f.n;
- el.innerHTML=shell('낚시터','bg_f_beach.jpg',`<div class="fsh f${ph}" id=fsh><div class=wt></div><div class=rod></div><div class=ln></div><div class=rip></div><div class=bob></div><div class=ex>!</div>
+ el.innerHTML=shell('낚시터','bg_fish_dock.jpg',`<div class="fsh f${ph}" id=fsh><div class=wt></div><div class=rod></div><div class=ln></div><div class=rip></div><div class=bob></div><div class=ex>!</div>
  <div class=msg id=fmsg>${ph=='idle'?`찌를 던지고 입질이 오면 재빨리 챔질하세요! · 오늘 ${left}/${LIM}회`:ph=='cast'?'입질을 기다리는 중…':ph=='bite'?'지금이에요! 챔질!':''}</div>
  ${res?res.x?`<div class=catch style="--c:${res.x.c}"><img class=i src="${A}${res.x.img}"><b>${res.x.n}</b><small>${res.sz}cm${res.rec?' · 최고 기록!':''}</small></div>`:`<div class=catch style="--c:#888"><span class=i>💨</span><b>놓쳤다…</b><small>타이밍이 늦었어요</small></div>`:''}</div>
  <span class="fbtn ${ph=='bite'?'hot':''} ${ph=='cast'||(ph=='idle'&&left<=0)?'off':''}" id=fgo>${ph=='bite'?'챔질!':ph=='cast'?'기다리는 중…':left>0?'던지기 🎣':'내일 다시 (05:00)'}</span>
@@ -2652,3 +2652,31 @@ new MutationObserver(ms=>ms.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType==1
 .bdsel .bdc.on .bdm{filter:drop-shadow(0 0 6px #ff7aa8)}
 .bdsel .bdc b{color:#fff;text-shadow:0 1px 2px #000}
 #screen .card.bdcard,#screen .bdcard~.card{background:rgba(40,18,28,.82)!important;border:1px solid #c88a8a!important}`;document.head.appendChild(st)})();
+
+/* v165 낚시터: lakeside dock */
+(function(){const st=document.createElement('style');st.textContent=`
+.fsx .fsh{background:url(assets/bg_fish_dock.jpg) center 60%/cover!important;border:2px solid #c8a060!important;box-shadow:0 6px 14px #0008}
+.fsx .fsh .wt{background:linear-gradient(#5ac8f022,#1a6aa055)!important;border-top:1px solid #fff6!important}
+.fsx .fsh .bob{background:url(assets/fs_bobber.png) center/contain no-repeat!important;border:none!important;border-radius:0!important;width:22px!important;height:30px!important;top:170px!important}
+.fsx .fsh .msg{background:rgba(40,24,10,.75)!important;border:1px solid #c8a060}
+.fsx .fgauge{margin:8px auto 0;width:300px;display:flex;align-items:center;gap:6px}
+.fsx .fgauge .rl{flex:0 0 34px;height:34px;border-radius:50%;background:radial-gradient(circle,#fff3c0 0 18%,#c89a3a 20% 46%,#6a4a1a 48% 52%,#e0b860 54% 72%,#7a5418 74%);box-shadow:0 2px 4px #0008,inset 0 0 0 2px #3a2408}
+.fsx .fgauge .ch{flex:1;position:relative;height:22px;border-radius:11px;background:repeating-linear-gradient(90deg,#7a4a1e 0 9px,#6a3e18 9px 11px);border:3px solid #c8a04a;box-shadow:inset 0 2px 4px #0009,0 2px 0 #5a3a10}
+.fsx .fgauge .ch i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:linear-gradient(#ffe8a0,#d8a030 55%,#a87010);box-shadow:inset 0 1px 0 #fff8}
+.fsx .fgauge .ch span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;font:900 11px 'Noto Sans KR',sans-serif;color:#fff;text-shadow:0 1px 2px #000}
+.fsx .fgauge .ch span img{height:16px}.fsx .fgauge .ch span img.u{filter:grayscale(1) brightness(.5)}
+.fsx .card{background:rgba(46,30,14,.85)!important;border:1px solid #a8803a!important}
+.fsx .fcc{position:relative;background:none!important;border:none!important;padding:2px 0!important}
+.fsx .fcc .fpw{position:relative;width:58px;height:58px;margin:0 auto}
+.fsx .fcc .fpw .i{position:absolute!important;left:10px;top:10px;width:38px!important;height:38px!important;border-radius:50%;background:radial-gradient(#e0f4ff,#5aa0c8)}
+.fsx .fcc .fpw .pq{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 3px var(--c))}
+.fsx .fcc.lock{filter:none!important;opacity:1!important}.fsx .fcc.lock .fpw .i{background:#2a2a30}.fsx .fcc.lock .pq{filter:grayscale(.7) brightness(.6)!important}
+.fsx .ckr .di{background:url(assets/fs_board.png) center/contain no-repeat!important;border:none!important;border-radius:0!important}
+.fsx .ttl .fbd{height:22px;vertical-align:middle;margin-right:3px}`;document.head.appendChild(st);
+const LIM=5;
+const dec=()=>{const sb=$('#screen');if(G.screen!='fish'){sb.classList.remove('fsx');return}sb.classList.add('fsx');const f=C.S().fish||{n:0};const go=sb.querySelector('#fgo');
+ if(go&&!sb.querySelector('.fgauge')){const left=Math.max(0,LIM-(f.n||0));go.insertAdjacentHTML('afterend',`<div class=fgauge><span class=rl></span><div class=ch><i style="width:${left/LIM*100}%"></i><span>${[0,1,2,3,4].map(i=>`<img class="${i<left?'':'u'}" src="${A}fs_bobber.png">`).join('')} 오늘 ${left}/${LIM}회</span></div></div>`)}
+ sb.querySelectorAll('.fcc').forEach(c=>{if(c.querySelector('.fpw'))return;const im=c.querySelector('.i');if(!im)return;const w=document.createElement('div');w.className='fpw';im.replaceWith(w);w.appendChild(im);w.insertAdjacentHTML('beforeend',`<img class=pq src="${A}fs_plaque.png">`)});
+ sb.querySelectorAll('.ttl').forEach(t=>{if(t.textContent.includes('요리')&&!t.querySelector('.fbd'))t.insertAdjacentHTML('afterbegin',`<img class=fbd src="${A}fs_board.png">`)})};
+let busy=0;new MutationObserver(()=>{if(busy)return;busy=1;try{dec()}catch(_){}busy=0}).observe(document.getElementById('screen')||document.body,{childList:true});
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
