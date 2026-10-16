@@ -2566,3 +2566,31 @@ const EL={fire:['sepia(1) saturate(4) hue-rotate(-20deg)','#ff5a2a'],ice:['sepia
 const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{const sb=$('#screen');if(G.screen=='enhance'&&G.enTab=='skill'){sb.classList.add('skx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_skill_circle.jpg';const s=C.S();
 {const tt=sb.querySelector('.ttl small');if(tt&&!tt.dataset.c){tt.dataset.c=1;tt.textContent=`편성 ${sb.querySelectorAll('.skp.on:not(.lock)').length}/6 · 전투 하단 바에 표시`}}sb.querySelectorAll('.skp').forEach(p=>{if(p.querySelector('.skw'))return;const sp=D.SPELLS.find(x=>x.k==p.dataset.sl);if(!sp)return;const lk=p.classList.contains('lock');const im=p.querySelector('img');im.className='sic';const w=document.createElement('div');w.className='skw';im.replaceWith(w);w.appendChild(im);const e=EL[sp.k];w.insertAdjacentHTML('beforeend',`<img class=srg src="${A}${lk?'sk_empty':'sk_ring'}.png">`);if(!lk&&e){p.style.setProperty('--sf',e[0]);p.style.setProperty('--sc',e[1])}
 const pw=sp.heal?`회복 ${Math.round(sp.heal*100)}%`:sp.mul?`×${sp.mul}${sp.aoe?' 광역':''}`:'';p.insertAdjacentHTML('beforeend',`<span class=stg><img src="${A}sk_tag.png">${lk?C.stageName(sp.unlock)+' 해금':`쿨 ${sp.cd}초${pw?' · '+pw:''}`}</span>`)})}else sb.classList.remove('skx')}catch(_){}return r}})();
+/* v161 동료 승급: star shrine */
+(function(){const st=document.createElement('style');st.textContent=`
+.stx .shade{background:linear-gradient(rgba(6,8,24,.35),rgba(6,8,24,.7))!important}
+.stx .stlist{display:flex!important;gap:8px;overflow-x:auto;padding:6px 4px 8px;margin:0 0 6px;height:auto!important}
+.stx .stlist .stc{position:relative!important;right:auto!important;bottom:auto!important;opacity:1!important;flex:0 0 62px;width:62px;font-size:inherit;background:radial-gradient(circle at 50% 30%,rgba(80,70,140,.9),rgba(16,14,40,.95))!important;border:2px solid var(--rc)!important;border-radius:12px!important;padding:4px 2px!important;display:flex!important;flex-direction:column;align-items:center}
+.stx .stlist .stc.on{box-shadow:0 0 0 2px #ffe27a,0 0 14px #ffc83a!important}
+.stx .stlist .stc img{height:50px;width:100%;object-fit:contain}
+.stx .card{background:rgba(14,16,44,.82)!important;border:1px solid #7a6ac8!important}
+.stx .sthero{position:relative;overflow:hidden}
+.stx .xsk{display:flex;gap:3px;margin:2px 0}.stx .xsk i{position:relative;width:26px;height:26px;display:block}
+.stx .xsk i img{position:absolute;inset:0;width:100%;height:100%}.stx .xsk i .fl{inset:3px;width:20px;height:20px;filter:drop-shadow(0 0 3px #ffd24a)}
+.stx .xsk i.off .xso{filter:grayscale(.6) brightness(.55)}
+.stx .stv{display:none}
+.stx .bar.xsb{position:relative;margin-left:16px;height:14px!important;border-radius:7px}.stx .bar.xsb>img{position:absolute;left:-18px;top:50%;transform:translateY(-50%);height:30px;z-index:2}
+.stx .bar.xsb i{background:linear-gradient(90deg,#ffe27a,#ffb000)!important}
+.stx #stUp,.stx #stAw{position:relative;padding-left:40px!important;background:linear-gradient(#ffe68a,#d79a20)!important;color:#3a2400!important;font-weight:900;border:1px solid #fff2b0}
+.stx #stUp.off,.stx #stAw.off{background:linear-gradient(#777,#444)!important;color:#ddd!important}
+.stx #stUp>img.ar,.stx #stAw>img.ar{position:absolute;left:10px;top:50%;transform:translateY(-50%);height:34px}
+.stx .xsburst{position:absolute;left:62%;top:30%;width:10px;height:10px;pointer-events:none;z-index:5}
+.stx .xsburst img{position:absolute;width:30px;height:30px;left:-15px;top:-15px;animation:stb 1s ease-out forwards}
+@keyframes stb{0%{transform:translate(0,0) scale(.3);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1) rotate(180deg);opacity:0}}
+.stx .sthero.stfx{animation:stfl .8s ease-out}@keyframes stfl{0%{box-shadow:0 0 0 2px #fff,0 0 40px #ffe27a}100%{}}`;document.head.appendChild(st);
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{const sb=$('#screen');if(G.screen=='star'){sb.classList.add('stx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_star_shrine.jpg';const s=C.S(),k=G.stSel;
+const v=sb.querySelector('.sthero .stv');if(v&&!sb.querySelector('.xsk')){const n=Math.min(s.comps[k]||0,6);v.insertAdjacentHTML('afterend',`<div class=xsk>${[0,1,2,3,4,5].map(i=>`<i class="${i<n?'':'off'}"><img class=xso src="${A}st_socket.png">${i<n?`<img class=fl src="${A}st_frag.png">`:''}</i>`).join('')}</div>`)}
+const bar=sb.querySelector('.card .bar');if(bar&&!bar.classList.contains('xsb')){bar.classList.add('xsb');bar.insertAdjacentHTML('afterbegin',`<img src="${A}st_frag.png">`)}
+['#stUp','#stAw'].forEach(q=>{const b=sb.querySelector(q);if(b&&!b.querySelector('.ar'))b.insertAdjacentHTML('afterbegin',`<img class=ar src="${A}st_arrow.png">`)});
+const h=sb.querySelector('.sthero');if(h&&G._stBurst&&Date.now()-G._stBurst<500){G._stBurst=0;const bz=document.createElement('div');bz.className='xsburst';bz.innerHTML=[...Array(10)].map((_,i)=>{const a=i/10*6.283;return `<img src="${A}st_frag.png" style="--x:${Math.cos(a)*90}px;--y:${Math.sin(a)*70}px;animation-delay:${i*20}ms">`}).join('');h.appendChild(bz);setTimeout(()=>bz.remove(),1300)}}else sb.classList.remove('stx')}catch(_){}return r};
+const su=C.starUp;C.starUp=function(){const r=su.apply(this,arguments);if(r=='ok')G._stBurst=Date.now();return r};const aw=C.awake;C.awake=function(){const r=aw.apply(this,arguments);if(r=='ok')G._stBurst=Date.now();return r}})();
