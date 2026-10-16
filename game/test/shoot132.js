@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(3500);await ev(()=>{const k=document.querySelector('.stsk');k&&k.click()});await sl(400);
+await ev(()=>{const s=G.S();s.maxSi=1;s.unl={};G.unlockQ().length=0;updateHud()});await sl(300);
+await ev(()=>menuGo('menu'));await sl(600);await sh('700-menu-locked');
+await ev(()=>menuGo('arena'));await sl(400);await sh('701-locked-toast');
+await ev(()=>{$('#menuPop').classList.remove('on');const s=G.S();s.maxSi=7;updateHud()});await sl(1500);await sh('702-unlock-popup');
+const q=await ev(()=>G.unlockQ().slice());await ev(()=>document.querySelector('.unm [data-k=arena]').click());await sl(900);await sh('703-unlock-go');
+console.log('q',JSON.stringify(q),'scr',await ev(()=>G.screen),'open arena',await ev(()=>G.isOpen('arena')),'tower',await ev(()=>G.isOpen('tower')));stop();console.log('ERR',errs);await b.close()})();

@@ -1218,3 +1218,20 @@ const st=G.loadSet();['bubble','powpop','story'].forEach(k=>{if(st[k]==null)st[k
 const sync=()=>document.body.classList.toggle('nopow',!G.loadSet().powpop);sync();
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{sync();if(G.screen=='settings'){const el=$('#screen'),dm=el.querySelector('[data-set="dmg"]'),row=dm&&dm.closest('.row');if(row&&!el.querySelector('[data-set="bubble"]')){row.insertAdjacentHTML('afterend',[['bubble','전투 말풍선'],['powpop','전투력 변화 알림'],['story','스토리 대화']].map(([k,n])=>`<div class=row><div class=f><b>${n}</b></div><span class="tog ${G.set[k]?'on':''}" data-set=${k}><i></i></span></div>`).join(''));el.querySelectorAll('[data-set=bubble],[data-set=powpop],[data-set=story]').forEach(b=>b.onclick=()=>{G.set[b.dataset.set]^=1;G.applySet();renderScreen()})}}}catch(_){}return r};
 })();
+;(()=>{// v67 콘텐츠 개방 (스테이지 진행에 따라 기능 해금 · 잠금 표시 · 개방 연출)
+const U={ach:2,pass:3,explore:3,friend:4,base:5,codex:6,arena:7,rank:7,star:8,dungeon:9,guild:10,relic:12,tower:14,wboss:16,pet:18,skin:20};
+const NM={ach:'업적',pass:'마도 패스',explore:'탐험',friend:'친구',base:'영지',codex:'도감',arena:'투기장',rank:'랭킹',star:'승급',dungeon:'도전 던전',guild:'협회',relic:'기보',tower:'무한의 탑',wboss:'월드보스',pet:'펫',skin:'코스튬'};
+const IC={};MENU.forEach(m=>IC[m[0]]=m[2]);
+const ms=()=>C.S().maxSi||0;
+G.isOpen=k=>!(k in U)||ms()>=U[k]||!!(C.S().unl&&C.S().unl[k]);
+const st=()=>{const s=C.S();if(!s.unl){s.unl={};for(const k in U)if(ms()>=U[k])s.unl[k]=1}return s.unl};st();
+const om=menuGo;menuGo=function(k){if(k in U&&!G.isOpen(k)){toast(`🔒 ${NM[k]}: ${C.stageName(U[k])} 도달 시 개방`);return}return om.apply(this,arguments)};
+const mark=()=>{document.querySelectorAll('#mgrid a,.side a').forEach(a=>{const k=a.dataset.s;const lk=k in U&&!G.isOpen(k);a.classList.toggle('lk',lk);let t=a.querySelector('.lkt');if(lk&&!t){t=document.createElement('span');t.className='lkt';t.textContent='🔒 '+C.stageName(U[k]);a.appendChild(t)}else if(!lk&&t)t.remove();if(lk){const d=a.querySelector('.dot');if(d)d.style.display='none'}})};
+let q=[],busyT=0;
+const pop=()=>{if(!q.length)return;if(G.storyOn||G.screen||document.querySelector('.modal,.rwpop,.vic:not(.out),.chap,.sty')||C.B.boss)return setTimeout(pop,700);const ks=[...new Set(q.splice(0))],k=ks[0];const d=document.createElement('div');d.className='unl';d.innerHTML=ks.length==1?`<div class=unb><small>NEW · 콘텐츠 개방</small><img src="${A}${IC[k]||'ic3_chest.png'}"><b>${NM[k]}</b><span class=ung>바로 가기 ▶</span></div>`:`<div class=unb><small>NEW · 콘텐츠 ${ks.length}개 개방</small><div class=unm>${ks.map(x=>`<span data-k=${x}><img src="${A}${IC[x]||'ic3_chest.png'}"><em>${NM[x]}</em></span>`).join('')}</div><span class=ung>확인</span></div>`;document.body.appendChild(d);const close=()=>{d.classList.add('out');setTimeout(()=>{d.remove();pop()},250)};d.onclick=e=>{const t=e.target.closest('[data-k]');close();if(t)setTimeout(()=>menuGo(t.dataset.k),260);else if(ks.length==1&&e.target.classList.contains('ung'))setTimeout(()=>menuGo(k),260)};setTimeout(()=>d.isConnected&&close(),4500)};
+const chk=()=>{const u=st();let n=0;for(const k in U)if(!u[k]&&ms()>=U[k]){u[k]=1;if(!q.includes(k))q.push(k);n++}if(n)setTimeout(pop,600)};
+G.unlockQ=()=>q;G.UNL=U;
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{chk();mark()}catch(_){}return r};
+if(G.todoList){const tl=G.todoList;G.todoList=()=>tl().filter(k=>G.isOpen(k))}
+const om2=menuGo;menuGo=function(k){const r=om2.apply(this,arguments);try{if(k=='menu'){mark();const t=document.getElementById('todoBar');if(t){t.querySelectorAll('.tdc').forEach(c=>{if(!G.isOpen(c.dataset.k))c.remove()});const n=t.querySelectorAll('.tdc').length,sm=t.querySelector('.tdh small');if(sm)sm.textContent=n?n+'개':'모두 완료!'}}}catch(_){}return r};
+})();
