@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s247');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await ev(()=>{const s=G.S();s.lv=30});
+await ev(()=>G.open('friend'));await sl(1200);await ev(()=>document.querySelectorAll('#notice,.modal,.unl,.chap,.banner,.tut').forEach(x=>x.remove()));await sh('1100-friend-tavern');
+await ev(()=>{const r=document.querySelectorAll('.frr [data-s]');r[0].click()});await sl(600);await ev(()=>document.querySelector('.frr').scrollIntoView({block:'center'}));await sl(300);await sh('1101-friend-heart-sent');
+await ev(()=>document.querySelector('#frGA').click());await sl(600);await ev(()=>{const v=[...document.querySelectorAll('.frr .frx')].pop();v.click()});await sl(300);await sh('1102-friend-visit');
+await ev(()=>{G.S().pass=G.S().pass;G.C.bp().xp=850;G.C.bpBuy();closeScreen();G.open('pass')});await sl(1000);await ev(()=>document.querySelectorAll('#notice,.modal,.unl,.chap,.banner,.tut').forEach(x=>x.remove()));await ev(()=>document.querySelector('.pld').scrollIntoView());await sl(400);await sh('1103-pass-premium-icon');
+console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();

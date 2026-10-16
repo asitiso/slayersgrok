@@ -2330,3 +2330,28 @@ function deco(){const el=$('#screen'),g=el.querySelector('.bpg');if(!g||el.query
  d.querySelectorAll('.plc.can').forEach(x=>x.onclick=()=>{const c=cells[+x.dataset.px];if(c)c.click()});
  const L=d.querySelector('.pll'),cu=d.querySelector('.plr.cur');if(cu)requestAnimationFrame(()=>{L.scrollTop=Math.max(0,cu.offsetTop-L.clientHeight/2+30)})}
 })();
+;(()=>{/* v149 친구 선술집 */
+const st=document.createElement('style');st.textContent=`.frst{position:relative;height:200px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f}
+.frst>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:45% 60%}.frst:after{content:'';position:absolute;inset:0;background:linear-gradient(#0000 50%,#1a0e06e0)}
+.frst .ftp{position:absolute;left:12px;bottom:10px;z-index:2;display:flex;align-items:center;gap:8px;color:#fff}.frst .ftp img{height:40px;filter:drop-shadow(0 2px 3px #000)}.frst .ftp b{font-size:20px;color:#ffd0e0;text-shadow:0 2px 0 #000}.frst .ftp small{display:block;font-size:10px;font-weight:800;color:#ffe8c0}
+.frst .fcnt{position:absolute;right:10px;top:10px;z-index:2;background:#000a;border:1px solid #ffd77a77;border-radius:10px;padding:3px 9px;font-size:11px;font-weight:800;color:#fff}
+.frtv .frh{display:none}.frtv .frb{display:flex;gap:8px;background:none!important;box-shadow:none!important;border:0!important;padding:0!important}.frtv .frb .pill{flex:1;display:flex;align-items:center;justify-content:center;gap:4px}.frtv .frb .pill img{height:20px}
+.frtv .frr{position:relative;gap:8px!important;padding:6px 8px!important;margin:6px 0;border-radius:12px;background:linear-gradient(#5a3a1e,#3a2410)!important;border:2px solid #0b0d0f!important;box-shadow:inset 0 0 0 1px #d0a060aa,0 3px 6px #0007!important}
+.frtv .frr>img:first-child{width:52px!important;height:52px!important;object-fit:contain;background:radial-gradient(#ffe8b0,#b07838);border-radius:50%;border:2px solid #0b0d0f;box-shadow:0 0 0 2px #e0b060}
+.frtv .frr .flv{position:absolute;left:44px;top:42px;background:#2a1a08;border:1px solid #e0b060;border-radius:7px;font-size:9px;font-weight:900;color:#ffe08a;padding:0 4px}
+.frtv .frr .f b{color:#fff3d8}.frtv .frr .f small{color:#ffe0b0}
+.frtv .frx{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:0!important;background:linear-gradient(#7a5a3a,#4a3018);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #e0b06088;position:relative}
+.frtv .frx img{height:28px!important;width:auto!important;max-width:34px;border-radius:0!important;background:none!important;border:0!important;box-shadow:none!important;object-fit:contain!important}.frtv .frx.frv{background:linear-gradient(#5aa0e0,#2a5a9a)}.frtv .frx.frv img{height:32px;filter:drop-shadow(0 1px 1px #000)}.frtv .frx.off{filter:grayscale(.8) brightness(.7)}.frtv .frx.on{box-shadow:inset 0 0 0 2px #fff,0 0 12px #ffb0d0;animation:fxg 1s ease-in-out infinite}@keyframes fxg{50%{transform:scale(1.08)}}
+.frtv .frx .fok{position:absolute;right:-4px;bottom:-4px;font-size:11px;background:#2fbf3a;color:#fff;border-radius:50%;width:16px;height:16px;display:grid;place-items:center;border:1px solid #0b0d0f}`;document.head.appendChild(st);
+const deco=()=>{const el=$('#screen');if(G.screen!='friend'||el.querySelector('.frst'))return;const h=el.querySelector('.frh'),body=h&&h.parentNode;if(!body)return;body.classList.add('frtv');
+ const pt=(h.querySelector('b')||{}).textContent||'',rows=el.querySelectorAll('.frr');
+ const d=document.createElement('div');d.className='frst';d.innerHTML=`<img src="${A}bg_friend_tavern.jpg"><span class=fcnt>친구 ${rows.length}/30</span><div class=ftp><img src="${A}fr_heart_send.png"><div><small>모험가의 선술집</small><b>${pt.replace('우정 포인트','💗')}</b></div></div>`;body.insertBefore(d,h);
+ const sa=el.querySelector('#frSA'),ga=el.querySelector('#frGA');if(sa)sa.innerHTML=`<img src="${A}fr_heart_send.png">모두 보내기`;if(ga)ga.innerHTML=`<img src="${A}fr_gift.png">모두 받기`;
+ rows.forEach(r=>{const sm=r.querySelector('.f small'),lv=(sm&&sm.textContent.match(/Lv\.\d+/)||[''])[0];if(lv)r.insertAdjacentHTML('beforeend',`<i class=flv>${lv}</i>`);
+  const s=r.querySelector('[data-s]'),g=r.querySelector('[data-g]');
+  if(s){const done=s.classList.contains('off');s.innerHTML=`<img src="${A}fr_heart_send.png">${done?'<i class=fok>✔</i>':''}`;if(!done)s.classList.add('on')}
+  if(g){const can=g.classList.contains('on'),got=g.textContent.includes('✔');g.innerHTML=`<img src="${A}fr_gift.png">${got?'<i class=fok>✔</i>':''}`}
+  const nm=(r.querySelector('.f b')||{}).textContent||'',v=document.createElement('span');v.className='frx frv';v.innerHTML=`<img src="${A}fr_visit.png">`;v.onclick=()=>toast(`${nm}의 영지 방문 · ${sm?sm.textContent:''}`);r.appendChild(v)})};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
+new MutationObserver(()=>{try{deco()}catch(e){}}).observe(document.querySelector('#screen')||document.body,{childList:true,subtree:false});
+})();
