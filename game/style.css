@@ -1157,3 +1157,21 @@ body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:h
 .dgfr{display:flex;align-items:center;gap:6px;padding:4px 8px;margin-bottom:8px;border-radius:10px;background:#1a1428d8;border:1.5px solid #4a4466}.dgfr img{width:24px}.dgfr b{font-size:12px;color:#fff}.dgfr small{flex:1;font-size:10px;color:#cfc8e8}.dgfr em{font-style:normal;font-size:11px;font-weight:900;color:#fff}
 .dgfr.on,.dgfr[data-dk2]:active{border-color:var(--dc)}
 .dunh .dgsw{margin-top:6px;align-self:flex-start;background:linear-gradient(#ffd25a,#d08a10);color:#3a2000;font-weight:900}
+/* v133 base */
+#screen.base2 .sbg{display:none}#screen.base2 .shade{background:linear-gradient(#2a3a1a,#18200f);opacity:1}
+.bpanw{position:relative;margin:0 -10px 6px;height:360px}.bscr{height:360px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.bscr::-webkit-scrollbar{display:none}
+.bpan{position:relative;width:640px;height:360px}.bpan>img{width:640px;height:360px;display:block}
+.bhs{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;cursor:pointer;min-width:64px;min-height:54px;justify-content:flex-end}
+.bhs .blv{padding:1px 7px;border-radius:9px;background:linear-gradient(#5a3a10,#2a1a05);border:1.5px solid #ffd77a;color:#ffe9a8;font-size:11px;font-weight:900}
+.bhs em{font-style:normal;margin-top:2px;padding:1px 7px;border-radius:8px;background:#000b;color:#fff;font-size:11px;font-weight:900;white-space:nowrap}
+.bhs.on .blv{background:linear-gradient(#ffd25a,#d08a10);color:#3a2000;box-shadow:0 0 10px #ffd25a}
+.bhs.lock{opacity:.8}.bhs.lock .blv{border-color:#888;color:#ddd;background:#333}
+.bhs .bhb{position:absolute;top:-30px;width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #ffd77a;box-shadow:0 3px 6px #0008;display:flex;align-items:center;justify-content:center;animation:bhbob 1.2s ease-in-out infinite}
+.bhs .bhb img{width:24px;height:24px}
+.bhs .bhu{position:absolute;top:-18px;right:2px;font-style:normal;font-size:14px}
+@keyframes bhbob{50%{margin-top:-6px}}
+.bcall{position:absolute!important;right:10px;bottom:16px;background:linear-gradient(#7ae07a,#2a9a3a)!important;color:#fff;font-weight:900}
+.bupc{margin-top:0}
+.bpanw,.bscr{height:296px}.bpan,.bpan>img{width:520px;height:293px}
+.bupc .ttl small:first-of-type{margin-left:4px}
+.bupc .f small{display:block}
