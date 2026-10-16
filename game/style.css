@@ -924,3 +924,7 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .shk span{font:900 14px sans-serif;color:#fff;text-shadow:0 0 3px #000,0 2px 2px #000}.shk span img{width:18px;vertical-align:-4px}
 .shk em{display:block;font:900 12px sans-serif;font-style:normal;color:#ffe27a;text-shadow:0 0 3px #000}
 @keyframes shk{0%{transform:scale(.4);opacity:0}12%{transform:scale(1.15);opacity:1}20%{transform:none}80%{opacity:1}100%{transform:translateY(-30px);opacity:0}}
+.shtip{font-size:11px;color:#cfc6e8;margin:2px 0 8px}
+.shc:not(.lock) img{animation:shHue 2.4s linear infinite;filter:drop-shadow(0 0 4px #fff)}
+.shc:not(.lock){background:linear-gradient(135deg,#ff6a8a33,#ffd24a33,#7aff9a33,#6ad0ff33,#c08aff33)!important;border-color:#ffe27a!important}
+@keyframes shHue{from{filter:hue-rotate(0) drop-shadow(0 0 4px #fff)}to{filter:hue-rotate(360deg) drop-shadow(0 0 4px #fff)}}
