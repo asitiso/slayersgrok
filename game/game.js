@@ -1074,7 +1074,7 @@ const rs=renderScreen;renderScreen=function(){if(G.screen=='friend'){scr0();retu
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const a=document.querySelector('#mgrid a[data-s=friend]');if(a){let d=a.querySelector('.dot');if(!d){d=document.createElement('span');d.className='dot';a.appendChild(d)}const on=C.frRed();d.style.display=on?'':'none';if(on){const m=document.querySelector('#sidemenu .dot');if(m)m.style.display=''}}}catch(_){}return r};
 })();
 ;(()=>{// v57 접속 보상 (일일 플레이 시간 상자)
-const T=[{m:5,w:{gold:1},n:'골드'},{m:10,w:{orbs:5},n:'마정구 ×5'},{m:20,w:{stone:10},n:'강화석 ×10'},{m:30,w:{gems:30},n:'다이아 ×30'},{m:60,w:{tk:1},n:'소환권 ×1'}];
+const T=[{m:5,w:{gold:1},n:'골드'},{m:10,w:{orbs:5},n:'마정구 ×5'},{m:20,w:{stone:10},n:'강화석 ×10'},{m:30,w:{gems:20},n:'다이아 ×20'},{m:60,w:{stone:15},n:'강화석 ×15'}];
 const st=()=>{const s=C.S();if(!s.ol||s.ol.day!=C.today())s.ol={day:C.today(),sec:0,c:{}};return s.ol};
 const gl=()=>Math.round(C.goldKill(Math.max(0,C.S().maxSi))*120);
 const give=w=>{const s=C.S();const g=w.gold?gl():0;if(g)C.addGold(g);s.orbs+=w.orbs||0;s.stone=(s.stone||0)+(w.stone||0);s.gems+=w.gems||0;s.tickets=(s.tickets||0)+(w.tk||0);return g};
