@@ -1615,7 +1615,7 @@ const css=document.createElement('style');css.textContent=`
 .bdln{font-size:12px;padding:5px 0;border-bottom:1px solid #fff2}.bdln.lock{color:#888}
 .bdpop{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:linear-gradient(#ff7aa8,#c24a7a);color:#fff;font-weight:900;font-size:22px;padding:10px 22px;border-radius:14px;border:2px solid #fff;box-shadow:0 0 24px #ff5a90;animation:bdpp 1.6s ease forwards;pointer-events:none;z-index:5;white-space:nowrap}
 @keyframes bdpp{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}`;document.head.appendChild(css);
-const CUT={amelia:1,borin:1,gourry:1,noel:1,sera:1,xellos:1,zelgadis:1};
+const CUT={amelia:1,borin:1,gourry:1,noel:1,sera:1,zelgadis:1};
 const draw=up=>{const el=$('#screen'),s=C.S(),b=st();const own=D.COMPS.filter(c=>s.comps[c.k]);
  if(!own.length){el.innerHTML=shell('인연','bg_lobby.jpg','<div class=card style="text-align:center">동료를 소환하면 인연을 쌓을 수 있어요</div>');}
  else{if(!s.comps[b.sel])b.sel=own[0].k;const c=D.COMPS.find(x=>x.k==b.sel),l=lv(c.k),x=b.x[c.k]||0,nx=TH[Math.min(MX,l+1)],pv=TH[l],pct=l>=MX?100:Math.round((x-pv)/(nx-pv)*100),F=D.FACTIONS[c.fac];
@@ -1628,6 +1628,6 @@ const draw=up=>{const el=$('#screen'),s=C.S(),b=st();const own=D.COMPS.filter(c=
  const bk=el.querySelector('#sBack');if(bk)bk.onclick=()=>closeScreen();
  el.querySelectorAll('[data-bk]').forEach(e=>e.onclick=()=>{st().sel=e.dataset.bk;draw()});
  el.querySelectorAll('[data-gf]').forEach(e=>e.onclick=()=>{const r=G.bondGive(st().sel,e.dataset.gf);if(r==-1)return toast('인연이 최대예요');if(r==-2)return toast('오늘은 더 선물할 수 없어요');if(r==-3)return toast('재화가 부족해요');if(r){updateHud();draw(r.up)}})};
-if(!MENU.some(m=>m[0]=='bond')){const i=MENU.findIndex(m=>m[0]=='party');MENU.splice(i+1,0,['bond','인연','ic3_friend.png'])}try{renderHub()}catch(_){}
+if(!MENU.some(m=>m[0]=='bond')){const i=MENU.findIndex(m=>m[0]=='party');MENU.splice(i+1,0,['bond','인연','ic3_bond.png'])}try{renderHub()}catch(_){}
 const rs=renderScreen;renderScreen=function(){if(G.screen=='bond')return draw();return rs.apply(this,arguments)};
 })();
