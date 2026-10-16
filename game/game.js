@@ -2937,7 +2937,13 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
 (()=>{const SEL='.wvb,.fevban,.stban,.tdmg,.mkb,.enrb';let act=null,actEnd=0;const Q=[];
 const dur=el=>{const cs=getComputedStyle(el);const p=s=>s.split(',').map(x=>parseFloat(x)*(x.includes('ms')?1:1000)||0);const d=p(cs.animationDuration),dl=p(cs.animationDelay);let m=0;d.forEach((v,i)=>m=Math.max(m,v+(dl[i]||0)));return Math.max(600,m)};
 const start=(el,par,clone)=>{if(clone){(par&&par.isConnected?par:document.querySelector('#battle')||document.body).appendChild(el)}const d=dur(el);act=el;actEnd=performance.now()+d+60;if(clone)setTimeout(()=>{if(el.isConnected)el.remove()},d+60)};
-const pump=()=>{if(act&&(act.isConnected&&performance.now()<actEnd))return;act=null;const n=Q.shift();if(n){start(n.el,n.par,true);}};
-setInterval(pump,80);
+const pump=()=>{if(act&&(act.isConnected&&performance.now()<actEnd))return;act=null;const n=Q.shift();if(n){if(performance.now()-n.t0>3000){let c=0;for(let j=Q.length-1;j>=0;j--)if(Q[j].k===n.k){Q.splice(j,1);c++}if(c){const b=n.el.querySelector('b')||n.el;b.insertAdjacentHTML('beforeend',`<em class=qx>×${c+1}</em>`)}}start(n.el,n.par,true);}};
+setInterval(pump,80);G._cBusy=()=>!!(act&&act.isConnected&&performance.now()<actEnd)||Q.length>0;{const st=document.createElement('style');st.textContent='.qx{font-style:normal;font-size:.6em;margin-left:6px;color:#ffe08a;vertical-align:middle}';document.head.appendChild(st)}
 new MutationObserver(ms=>{for(const m of ms)for(const el of m.addedNodes){if(!(el instanceof HTMLElement)||!el.matches(SEL)||el._q)continue;el._q=1;
- if(act&&act.isConnected&&performance.now()<actEnd){const c=el.cloneNode(true);c._q=1;const par=el.parentNode;el.style.visibility='hidden';el.remove();Q.push({el:c,par})}else start(el,el.parentNode,false)}}).observe(document.body,{childList:true,subtree:true})})();
+ if(act&&act.isConnected&&performance.now()<actEnd){const c=el.cloneNode(true);c._q=1;const par=el.parentNode;el.style.visibility='hidden';el.remove();Q.push({el:c,par,t0:performance.now(),k:SEL.split(',').find(x=>el.matches(x))})}else start(el,el.parentNode,false)}}).observe(document.body,{childList:true,subtree:true})})();
+
+/* v191: slot under the centre lane for WAVE CLEAR text; waits (max 1.5s) while a centre banner shows */
+(()=>{new MutationObserver(ms=>{for(const m of ms)for(const el of m.addedNodes){if(!(el instanceof HTMLElement)||!el.classList.contains('wclr')||el._s)continue;el._s=1;const b=el.querySelector('b');if(!b)continue;
+ const par=el.parentNode;const tb=b.cloneNode(true);b.remove();tb.className='wcs';const show=()=>{const h=document.createElement('div');h.className='wcsl';h.appendChild(tb);(par&&par.isConnected?par:document.querySelector('#battle')).appendChild(h);setTimeout(()=>h.remove(),1000)};
+ let w=0;const go=()=>{if(((R.slotBusy&&R.slotBusy('wc',w/1000))||document.querySelector('.wcsl'))&&w<6000){w+=100;setTimeout(go,100)}else show()};go()}}).observe(document.body,{childList:true,subtree:true});
+ const st=document.createElement('style');st.textContent=`.wcsl{position:absolute;left:50%;top:392px;transform:translateX(-50%);z-index:7;pointer-events:none}.wcsl .wcs{position:static!important;left:auto!important;transform:none!important;display:block}`;document.head.appendChild(st)})();
