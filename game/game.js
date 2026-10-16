@@ -2855,3 +2855,14 @@ G._phase=q=>{if(G.screen||!fx())return;const pct=q*25;veil('on');if(C.B.tele)ret
  if(R.opt&&R.opt.shake){const c=bt.querySelector('canvas');if(c){c.classList.remove('bdshk');void c.offsetWidth;c.classList.add('bdshk');setTimeout(()=>c.classList.remove('bdshk'),260)}}};
 let vs=0;const og=C.ev.grog;C.ev.grog=(...a)=>{og&&og(...a);if(G.screen||!fx())return;veil('on brk');if(!R.opt||R.opt.cut!==false)vs=.35};
 const of=R.frame;R.frame=dt=>{if(vs>0){vs-=dt;return of(dt*.4)}return of(dt)}})();
+
+/* v177 companion feel: portrait cast flash + skill-name tag when a companion ultimate fires (visual only) */
+(function(){const st=document.createElement('style');st.textContent=`
+@keyframes ppcast{0%{filter:brightness(2.2) drop-shadow(0 0 10px #ffe08a)}100%{filter:none}}
+#partycol .pp.cfl img{animation:ppcast .6s ease-out}
+.pptag{position:absolute;z-index:8;pointer-events:none;font:900 10.5px Maplestory,'Noto Sans KR',sans-serif;color:#fff0c8;padding:2px 9px 2px 7px;white-space:nowrap;background:linear-gradient(90deg,#5a1a10ee,#3a0a08cc 80%,#0000);border-left:2px solid #ffd77a;text-shadow:0 1px 2px #000;animation:pptag 1.4s ease-out forwards}
+@keyframes pptag{0%{opacity:0;transform:translateX(-8px)}12%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0}}`;document.head.appendChild(st);
+const fx=()=>!R.opt||R.opt.fx!==false;const was=new Map();
+setInterval(()=>{const B=C.B;if(!B||!B.allies)return;const pp=document.querySelectorAll('#partycol .pp');B.allies.forEach((a,i)=>{const p=was.get(a.k)||0,u=a._ug||0;was.set(a.k,u);
+ if(p>=1&&u<.05&&!G.screen&&fx()&&pp[i]&&(D.CSKI||{})[a.k]){const el=pp[i];el.classList.remove('cfl');void el.offsetWidth;el.classList.add('cfl');setTimeout(()=>el.classList.remove('cfl'),650);
+  const r=el.getBoundingClientRect(),bt=document.getElementById('battle'),br=bt.getBoundingClientRect();document.querySelectorAll('.pptag').forEach(x=>x.remove());const t=document.createElement('div');t.className='pptag';t.textContent=D.CSKI[a.k][1];t.style.left=(r.right-br.left+4)+'px';t.style.top=(r.top-br.top+r.height/2-9)+'px';bt.appendChild(t);setTimeout(()=>t.remove(),1450)}})},60)})();
