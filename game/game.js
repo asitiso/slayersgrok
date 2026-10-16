@@ -2165,7 +2165,7 @@ function deco(){const el=$('#screen'),T=C.T,t=C.tower(),cur=t.f+1,pw=C.POW(),lis
   if(s=='cur')h+=`<img class=tlina src="${A}hero_lina.png" data-y=${y}>`});
  const rq=T.req(cur);h+=`<span class="tgo ${pw>=rq?'':'hard'}" id=twGo2>${cur}층 도전<small>전투력 ${fmt(pw)} / ${fmt(rq)}</small></span>`;
  const d=document.createElement('div');d.className='twst';d.innerHTML=h;list.parentNode.insertBefore(d,el.querySelector('.twh'));list.style.display='none';
- const cp=d.querySelector('.tfl.cur'),li=d.querySelector('.tlina');if(cp&&li){cp.style.paddingRight='60px';li.style.left=(cp.offsetLeft+cp.offsetWidth-62)+'px';li.style.top=(cp.offsetTop+14)+'px'}
+ const cp=d.querySelector('.tfl.cur'),li=d.querySelector('.tlina');if(cp&&li){cp.style.paddingRight='74px';const pl=()=>{const a=cp.getBoundingClientRect(),b=d.getBoundingClientRect();li.style.left=(a.right-b.left-72)+'px';li.style.top=(a.top-b.top+2)+'px'};pl();requestAnimationFrame(pl);setTimeout(pl,300)}
  d.querySelector('#twGo2').onclick=()=>{const g=el.querySelector('#twGo');if(g)g.click()}}
 })();
 ;(()=>{/* v142 펫 정원 */
@@ -2195,4 +2195,25 @@ function deco(){const el=$('#screen'),p=C.S().pet||{},P=C.PETS,hd=el.querySelect
  hd.parentNode.insertBefore(d,hd);
  el.querySelectorAll('.ptc[data-pk]').forEach(c=>{const l=(p.own||{})[c.dataset.pk];if(l)c.querySelector('small').insertAdjacentHTML('afterend',hearts(l))});
  const hb=el.querySelector('#ptHatch');if(hb){hb.innerHTML=hb.innerHTML.replace('🥚',`<img class=pegi src="${A}pt_egg.png">`);const o=hb.onclick;hb.onclick=e=>{o&&o(e);const m=[...document.querySelectorAll('.pthm')].pop();if(!m)return;const eg=m.querySelector('.egg');if(eg)eg.outerHTML=`<div class=pegg><img src="${A}pt_egg.png"></div>`;const c=m.querySelector('.card');[...c.children].forEach(n=>{if(!n.matches('.pegg,.pthi'))n.classList.add('pthr')})}}}
+})();
+;(()=>{/* v143 도감 서고 */
+const st=document.createElement('style');st.textContent=`.cxst{position:relative;height:250px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+.cxst>.cbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%}
+.cxst:after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#ffe0a033,#0000 50%),linear-gradient(#0000 60%,#1a0e06cc);pointer-events:none}
+.cxst .cpct{position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:2;text-align:center;color:#fff;text-shadow:0 2px 4px #000}
+.cxst .cpct b{display:block;font-size:34px;font-weight:900;color:#ffe08a;line-height:1;text-shadow:0 0 12px #ffb040,0 3px 0 #6a3a00}.cxst .cpct small{font-size:11px;font-weight:800;background:#000a;border-radius:9px;padding:2px 8px;display:inline-block;margin-top:3px}
+.cxst .cbar{position:absolute;left:30px;right:30px;bottom:14px;z-index:2;height:14px;border-radius:8px;background:#0009;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #c9a25a88;overflow:hidden}.cxst .cbar i{display:block;height:100%;background:linear-gradient(#ffe89a,#e0a030);box-shadow:0 0 8px #ffc040}
+.cxst .cct{position:absolute;bottom:34px;z-index:2;display:flex;gap:6px;left:50%;transform:translateX(-50%);white-space:nowrap}.cxst .cct span{background:#000a;border:1px solid #c9a25a88;border-radius:9px;padding:2px 7px;font-size:10px;font-weight:800;color:#fff}
+.cxst .cbk{position:absolute;left:10px;top:10px;height:36px;z-index:2;filter:drop-shadow(0 2px 3px #000)}
+.cdc.cxf{position:relative;background:linear-gradient(#4a3420,#2a1c10)!important;border:2px solid #0b0d0f!important;box-shadow:inset 0 0 0 2px #c9a25a,inset 0 0 12px #000a!important;border-radius:10px}
+.cdc.cxf>img:first-child{filter:drop-shadow(0 3px 3px #000a)}.cdc.cxf b{color:#ffe8b0}
+.cdc .cxs{position:absolute!important;right:-6px;bottom:-6px;left:auto!important;top:auto!important;width:34px!important;height:34px!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;opacity:1!important;transform:rotate(-12deg);filter:drop-shadow(0 2px 2px #000a);z-index:2}
+.cdc.new .cxs{display:none}
+.cdc.cxu{background:linear-gradient(#1c2a4a,#101828)!important;box-shadow:inset 0 0 0 2px #4a6aa0!important;border:2px solid #0b0d0f!important}.cdc.cxu>img:first-child{filter:none!important;opacity:1!important;object-fit:contain}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='codex')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen'),sm=el.querySelector('.cdsum');if(!sm||el.querySelector('.cxst'))return;const s=C.S(),P=C.PETS||[];
+ const oc=D.COMPS.filter(c=>s.comps[c.k]).length,om=D.MONS.filter(m=>(s.seen||{})[m.img]).length,op=P.filter(p=>((s.pet||{}).own||{})[p.k]).length,tot=D.COMPS.length+D.MONS.length+P.length,pc=Math.floor((oc+om+op)/tot*100);
+ const d=document.createElement('div');d.className='cxst';d.innerHTML=`<img class=cbg src="${A}bg_codex_library.jpg"><img class=cbk src="${A}cx_book.png"><div class=cpct><b>${pc}%</b><small>도감 완성도 · ${oc+om+op}/${tot}</small></div><div class=cct><span>동료 ${oc}/${D.COMPS.length}</span><span>몬스터 ${om}/${D.MONS.length}</span><span>펫 ${op}/${P.length}</span></div><div class=cbar><i style="width:${pc}%"></i></div>`;
+ sm.parentNode.insertBefore(d,sm);
+ el.querySelectorAll('.cdc').forEach(c=>{const im=c.querySelector('img');if(c.classList.contains('lock')){c.classList.add('cxu');if(im)im.src=A+'cx_unknown.png'}else{c.classList.add('cxf');if(!c.classList.contains('new'))c.insertAdjacentHTML('beforeend',`<img class=cxs src="${A}cx_seal.png">`)}})}
 })();
