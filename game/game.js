@@ -2355,3 +2355,23 @@ const deco=()=>{const el=$('#screen');if(G.screen!='friend'||el.querySelector('.
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
 new MutationObserver(()=>{try{deco()}catch(e){}}).observe(document.querySelector('#screen')||document.body,{childList:true,subtree:false});
 })();
+;(()=>{/* v150 우정 상점 노점 */
+const st=document.createElement('style');st.textContent=`.fsst{position:relative;height:150px;margin:-4px -4px 6px;border-radius:12px;overflow:hidden;border:2px solid #0b0d0f}
+.fsst>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}.fsst:after{content:'';position:absolute;inset:0;background:linear-gradient(#0000 45%,#2a1606e8)}
+.fsst .fsn{position:absolute;left:10px;bottom:8px;z-index:2;font-size:17px;font-weight:900;color:#fff3d0;text-shadow:0 2px 0 #000}
+.fsst .fstm{position:absolute;right:8px;bottom:8px;z-index:2;display:flex;align-items:center;gap:3px;background:#000b;border:1px solid #ffd77a88;border-radius:10px;padding:2px 8px 2px 3px;font-size:11px;font-weight:900;color:#bfe0ff}.fsst .fstm img{height:22px}
+.fsct .ttl{display:none}.fsct .frs{display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 6px;border-radius:10px;background:linear-gradient(#8a5a2e,#5a361a);border:2px solid #0b0d0f;box-shadow:inset 0 2px 0 #d8a868,inset 0 -3px 0 #3a2008}
+.fsct .frsi{position:relative;display:flex!important;flex-direction:column;align-items:center;padding:6px 2px 4px!important;border-radius:9px!important;background:linear-gradient(#fff3d8,#e8c890)!important;border:2px solid #4a2a10!important;box-shadow:0 3px 0 #2a1606!important;color:#3a2008!important}
+.fsct .frsi>img{height:40px!important;width:auto!important;filter:drop-shadow(0 2px 2px #0006)}.fsct .frsi b{font-size:10px;color:#3a2008!important;text-align:center;line-height:1.15;min-height:24px}
+.fsct .frsi small{display:none}.fsct .fsp{display:flex;align-items:center;gap:2px;margin-top:2px;background:#3a2008;border-radius:8px;padding:1px 6px 1px 2px;font-size:11px;font-weight:900;color:#ffd0e0}.fsct .fsp img{height:15px}
+.fsct .fsl{font-size:9px;font-weight:800;color:#7a4a20;margin-top:1px}.fsct .frsi.off{opacity:1!important;filter:none!important}.fsct .frsi.poor .fsp{color:#ff8a8a}
+.fsct .frsi.sold>*:not(.fss){filter:grayscale(1) brightness(.75)}.fsct .fss{position:absolute;left:50%;top:2px;width:50px;transform:translateX(-50%) rotate(-14deg);filter:drop-shadow(0 2px 2px #000a);pointer-events:none}.fsct .frsi.poor{filter:saturate(.5) brightness(.8)!important}.fsct .fsso{font-style:normal;background:#c0201a;color:#fff;font-size:10px;font-weight:900;padding:0 6px;border-radius:4px;border:1px solid #fff8}`;document.head.appendChild(st);
+const left=()=>{const n=new Date(),t=new Date(n);t.setHours(5,0,0,0);if(t<=n)t.setDate(t.getDate()+1);const s=Math.floor((t-n)/1000),p=x=>String(x).padStart(2,'0');return `${p(Math.floor(s/3600))}:${p(Math.floor(s/60)%60)}:${p(s%60)}`};
+const deco=()=>{const el=$('#screen');if(G.screen!='friend')return;const fs=el.querySelector('.frs'),card=fs&&fs.closest('.card');if(!card||card.querySelector('.fsst'))return;card.classList.add('fsct');
+ const d=document.createElement('div');d.className='fsst';d.innerHTML=`<img src="${A}bg_friend_shop.jpg"><span class=fsn>우정 상점</span><span class=fstm><img src="${A}fs_refresh.png"><i id=fsTm>${left()}</i></span>`;card.insertBefore(d,card.firstChild);
+ fs.querySelectorAll('.frsi').forEach(it=>{const m=(it.querySelector('small')||{}).textContent.match(/(\d+)\s*·\s*(\d+)\/(\d+)/);if(!m)return;const c=+m[1],b=+m[2],l=+m[3],sold=b>=l;
+  it.insertAdjacentHTML('beforeend',`<span class=fsp><img src="${A}fs_coin.png">${c}</span><span class=fsl>${sold?'<em class=fsso>품절</em>':b+'/'+l}</span>${sold?`<img class=fss src="${A}fs_soldout.png">`:''}`);it.classList.add(sold?'sold':it.classList.contains('off')?'poor':'ok')})};
+setInterval(()=>{const t=document.getElementById('fsTm');if(t)t.textContent=left()},1000);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
+new MutationObserver(()=>{try{deco()}catch(e){}}).observe(document.querySelector('#screen')||document.body,{childList:true,subtree:false});
+})();
