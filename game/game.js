@@ -998,7 +998,7 @@ const T=[
  [['stage',18,'3-5 도달',{gems:150}],['lv',40,'레벨 40 달성',{gems:100}],['kills',3000,'몬스터 3,000마리 처치',{tk:3}]],
  [['stage',21,'4-1 도달',{gems:180}],['summon',30,'동료 소환 30회',{tk:5}],['enh',40,'장비 강화 40회',{stone:50}]],
  [['stage',25,'4-5 도달',{gems:250}],['lv',55,'레벨 55 달성',{gems:150}],['kills',8000,'몬스터 8,000마리 처치',{tk:5}]]];
-const FIN={tk:10,gems:300};
+const FIN={tk:5,gems:200};
 const st=()=>{const s=C.S();if(!s.nb)s.nb={t0:C.now(),c:{},fin:0};return s.nb};st();
 const day=()=>Math.min(7,Math.floor((C.now()-st().t0)/864e5)+1);
 const val=k=>{const s=C.S();return k=='stage'?s.maxSi:k=='lv'?s.lv:k=='summon'?(s.mile||0):k=='enh'?((s.ac&&s.ac.enh)||0):k=='kills'?(s.kills||0):k=='rolls'?((s.stats&&s.stats.rolls)||0):0};
@@ -1052,7 +1052,7 @@ document.addEventListener('click',ev=>{const t=ev.target.closest&&ev.target.clos
 })();
 ;(()=>{// v56 친구 · 우정 포인트 (NPC 친구 · 일일 하트 주고받기 · 우정 상점)
 const FR=[['붉은망토리나','ally_amelia.png'],['검사가우리팬','ally_gourry.png'],['키메라젤','ally_zelgadis.png'],['정의의아멜','ally_amelia.png'],['수상한신관','ally_xellos.png'],['사이라그주민','ally_kaede.png'],['드래곤슬레이브','ally_lyra.png'],['세이룬기사','ally_borin.png']].map((f,i)=>({k:'f'+i,n:f[0],img:f[1],m:[1.15,.95,1.05,.85,1.3,.7,1.0,.9][i],lv:[3,-2,1,-4,6,-6,0,-1][i]}));
-const SH=[{k:'tk',n:'동료 소환권',img:'it2_ticket.png',c:100,lim:1,g:s=>s.tickets=(s.tickets||0)+1},{k:'st',n:'강화석 ×10',img:'it2_stone.png',c:40,lim:3,g:s=>s.stone=(s.stone||0)+10},{k:'ob',n:'마정구 ×5',img:'it2_exp.png',c:30,lim:3,g:s=>s.orbs+=5},{k:'gm',n:'다이아 ×20',img:'it2_gem.png',c:60,lim:2,g:s=>s.gems+=20}];
+const SH=[{k:'tk',n:'동료 소환권',img:'it2_ticket.png',c:150,lim:1,g:s=>s.tickets=(s.tickets||0)+1},{k:'st',n:'강화석 ×10',img:'it2_stone.png',c:40,lim:3,g:s=>s.stone=(s.stone||0)+10},{k:'ob',n:'마정구 ×5',img:'it2_exp.png',c:30,lim:3,g:s=>s.orbs+=5},{k:'gm',n:'다이아 ×20',img:'it2_gem.png',c:60,lim:2,g:s=>s.gems+=20}];
 const st=()=>{const s=C.S();if(!s.fr)s.fr={pt:0,day:'',sent:{},got:{},buy:{}};const f=s.fr;if(f.day!=C.today()){f.day=C.today();f.sent={};f.got={};f.buy={}}return f};
 const canGet=f=>!st().got[f.k]&&(+f.k.slice(1)%4!=3);// 일부 친구만 선물 보냄
 C.frRed=()=>{const t=st();return FR.some(f=>!t.sent[f.k]||canGet(f))};
@@ -1107,4 +1107,17 @@ const play=c=>{const L=SC[c];if(!L||st()[c])return pump();on=true;st()[c]=1;let 
 G.storyPlay=c=>{q.push(c);pump()};G.storyLines=SC;
 const occ=chapterCard;chapterCard=function(c,si){const r=occ.apply(this,arguments);if(!st()[c]){q.push(c);setTimeout(pump,800)}return r};
 setTimeout(()=>{const s=C.S();if((s.tut||0)>=9&&!st()[0]&&(s.maxSi||0)<7){q.push(0);pump()}},2500);
+})();
+;(()=>{// v59 장비 도감 (부위 × 등급 수집 · 8종마다 공격력·체력 +1%)
+const NR=D.RAR.length,NS=D.SLOTS.length,TOT=NR*NS,MS=[8,16,24,32,40,48];
+const g=()=>{const s=C.S();if(!s.gcx)s.gcx={};return s.gcx};const mark=it=>{if(it&&it.slot!=null)g()[it.slot+'_'+it.r]=1};
+const seed=()=>{const s=C.S();Object.values(s.gear||{}).forEach(mark);mark(s.bag)};seed();
+{const ro=C.rollOnce;C.rollOnce=function(){const r=ro.apply(this,arguments);try{mark(C.S().bag)}catch(_){}return r}}
+const n=()=>Object.keys(g()).length;const tier=()=>MS.filter(m=>n()>=m).length;
+C.gcxB=()=>tier()*.01;{const oa=C.atkPct;C.atkPct=()=>oa()+C.gcxB();const oh=C.MAXHP;C.MAXHP=()=>oh()*(1+C.gcxB())}
+G.gcxN=n;
+const body=()=>{const c=n(),t=tier(),nx=MS[t];return `<div class="card gcxh"><div class=f><b>장비 도감 ${c}/${TOT}</b><small>공격력·체력 +${t}% 적용 중${nx?` · 다음 ${nx}종: +${(t+1)}%`:' · 완성!'}</small><div class=bar style="margin-top:5px"><i style="width:${c/TOT*100}%"></i></div></div></div>
+<div class="card gcxg"><div class=gcxr><span></span>${D.RAR.map(r=>`<b style="color:${r.c}">${r.n}</b>`).join('')}</div>${D.SLOTS.map(sl=>`<div class=gcxr><span>${sl.n}</span>${D.RAR.map((r,i)=>{const o=g()[sl.k+'_'+i];return `<i class="${o?'o':''}" style="--rc:${r.c}"><img src="${A}${sl.img}" style="${sl.f?'filter:'+sl.f:''}"></i>`}).join('')}</div>`).join('')}</div>
+<div class=card>${MS.map((m,i)=>`<div class=row style="${c>=m?'':'opacity:.55'}"><div class=f><b>${m}종 수집</b> <small>공격력·체력 +${(i+1)}%</small></div><span class="pill ${c>=m?'green':'off'}">${c>=m?'적용 중':c+'/'+m}</span></div>`).join('')}</div>`};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='codex'){seed();const el=$('#screen'),tb=el.querySelector('.entabs');if(tb&&!tb.querySelector('[data-ct=g]')){const sp=document.createElement('span');sp.dataset.ct='g';sp.textContent='장비';if(G.cdT=='g'){tb.querySelectorAll('span').forEach(x=>x.classList.remove('on'));sp.className='on'}sp.onclick=()=>{G.cdT='g';renderScreen()};tb.appendChild(sp);if(G.cdT=='g')tb.insertAdjacentHTML('afterend',body())}}}catch(e){console.warn(e)}return r};
 })();
