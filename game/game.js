@@ -1088,3 +1088,23 @@ G.olOpen=()=>{const o=st();modal(`<div class=ttl style="justify-content:center;f
  const g=document.getElementById('olGo');if(g)g.onclick=()=>{const it=G.olClaimAll();if(!it.length)return;document.querySelectorAll('.modal').forEach(m=>m.remove());updateHud();upd();rewardPop(it,'접속 보상')}};
 let lt=Date.now();setInterval(()=>{const n=Date.now(),d=Math.min(5,(n-lt)/1000);lt=n;if(!document.hidden&&!G.noSave)st().sec+=d;upd()},1000);setTimeout(upd,300);
 })();
+;(()=>{// v58 스토리 대화 (챕터 진입 시 짧은 대화 · 탭으로 진행 · 건너뛰기)
+const P={lina:['리나','hero_lina.png'],gourry:['가우리','ally_gourry.png'],zel:['젤가디스','ally_zelgadis.png'],amelia:['아멜리아','ally_amelia.png'],xel:['젤로스','ally_xellos.png']};
+const SC=[
+ [['lina','세이룬까지 가는 길에 몬스터가 이렇게 많을 리 없는데…'],['gourry','배고프다, 리나. 저 슬라임 먹을 수 있을까?'],['lina','먹지 마! …아무튼 길을 막는 녀석들은 전부 날려 버린다!']],
+ [['zel','이 숲에서 마족의 기척이 느껴진다. 조심해라.'],['lina','흥, 마족이든 뭐든 내 마법 앞에선 똑같아.'],['amelia','정의의 이름으로! 숲의 평화를 되찾겠어요!']],
+ [['xel','후후, 붉은 마왕의 성에 오신 걸 환영합니다.'],['lina','젤로스… 너 또 뭔가 숨기고 있지?'],['xel','그건 비밀입니다~♪'],['lina','좋아, 성째로 날려 버리면 비밀도 사라지겠지!']],
+ [['gourry','으아, 발밑이 뜨거워! 신발 녹는다!'],['zel','염제가 깨어났다는 소문이 사실이었군.'],['lina','불에는 불로! 화염 마법의 진수를 보여 주지!']],
+ [['amelia','추, 추워요… 여기가 얼음 여제의 성채인가요?'],['zel','방심하지 마라. 얼음 속에 무언가 잠들어 있다.'],['lina','겨울이 영원하다고? 내가 봄을 데려다 주지. 가자!']]];
+const st=()=>{const s=C.S();if(!s.story)s.story={};return s.story};
+let q=[],on=false;
+const busy=()=>document.body.classList.contains('chapon')||document.querySelector('.vic:not(.out),.modal,.rwpop,.tut,.chap')||G.screen;
+const pump=()=>{if(on||!q.length)return;if(busy())return setTimeout(pump,400);play(q.shift())};
+const play=c=>{const L=SC[c];if(!L||st()[c])return pump();on=true;st()[c]=1;let i=0;const d=document.createElement('div');d.className='sty';document.body.appendChild(d);
+ const draw=()=>{const [who,t]=L[i],p=P[who],left=who=='lina';d.innerHTML=`<div class=stdim></div><img class="stp ${left?'l':'r'}" src="assets/${p[1]}"><div class=stb><b class="stn ${left?'l':'r'}">${p[0]}</b><div class=stt>${t}</div><small class=stc>CHAPTER ${c+1} · ${D.CH[c]} <i>${i+1}/${L.length}</i> ▼</small></div><span class=stsk>건너뛰기 ▶▶</span>`;d.querySelector('.stsk').onclick=e=>{e.stopPropagation();end()}};
+ const end=()=>{d.classList.add('out');setTimeout(()=>{d.remove();on=false;pump()},300)};
+ d.onclick=()=>{i++;if(i>=L.length)end();else draw()};draw()};
+G.storyPlay=c=>{q.push(c);pump()};G.storyLines=SC;
+const occ=chapterCard;chapterCard=function(c,si){const r=occ.apply(this,arguments);if(!st()[c]){q.push(c);setTimeout(pump,800)}return r};
+setTimeout(()=>{const s=C.S();if((s.tut||0)>=9&&!st()[0]&&(s.maxSi||0)<7){q.push(0);pump()}},2500);
+})();

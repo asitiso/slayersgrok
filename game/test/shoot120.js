@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(3500);const on1=await ev(()=>!!document.querySelector('.sty'));await sh('665-story-ch1-lina');
+await ev(()=>document.querySelector('.sty').click());await sl(500);await sh('666-story-ch1-gourry');
+await ev(()=>document.querySelector('.stsk').click());await sl(600);const gone=await ev(()=>!document.querySelector('.sty'));
+await ev(()=>G.storyPlay(2));await sl(700);await ev(()=>document.querySelector('.sty').click());await sl(500);await sh('667-story-ch3-xellos');
+await ev(()=>document.querySelector('.stsk').click());await sl(600);
+await ev(()=>{const s=G.S();s.maxSi=7;chapterCard(1,7)});await sl(6000);const on2=await ev(()=>!!document.querySelector('.sty'));await sh('668-story-after-chapcard');
+console.log('on1',on1,'gone',gone,'on2',on2,JSON.stringify(await ev(()=>G.S().story)));stop();console.log('ERR',errs);await b.close()})();
