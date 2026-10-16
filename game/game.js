@@ -1631,3 +1631,16 @@ const draw=up=>{const el=$('#screen'),s=C.S(),b=st();const own=D.COMPS.filter(c=
 if(!MENU.some(m=>m[0]=='bond')){const i=MENU.findIndex(m=>m[0]=='party');MENU.splice(i+1,0,['bond','인연','ic3_bond.png'])}try{renderHub()}catch(_){}
 const rs=renderScreen;renderScreen=function(){if(G.screen=='bond')return draw();return rs.apply(this,arguments)};
 })();
+;(()=>{// v104 인연 전투 대사 (인연 Lv1+ 동료가 전투 중 말풍선으로 인연 대사)
+const LN2={gourry:['배고파… 끝나면 밥 먹자!','내 뒤에 있어, 리나!','이 정도쯤이야!'],zelgadis:['…방심하지 마라.','이 검으로 길을 연다.','흥, 나쁘지 않군.'],amelia:['정의의 철퇴를 받아라!','악은 용서 못 해요!','리나 씨, 지금이에요!'],xellos:['그건 비밀입니다♪','후후, 재미있군요.','어머나, 벌써 끝인가요?'],sera:['빛이여, 지켜주소서.','상처는 제가 치료할게요!','조금만 더 힘내요!'],rhea:['용의 분노를 보여주마!','덤벼라!','하찮군!'],lyra:['바람이 길을 알려줘요.','표적 확인!','놓치지 않아요.'],borin:['망치 맛 좀 봐라!','흠! 단단하군!','드워프를 얕보지 마라!'],kaede:['일섬!','마음을 비우고…','이 칼날로 지킵니다.'],pip:['헤헤, 이거 내 거!','보물 냄새가 나요!','언니 최고!'],noel:['…얼어붙어라.','추위는 익숙해요.','당신 곁은 따뜻해요.']};
+const css=document.createElement('style');css.textContent=`.bdsay{position:absolute;z-index:8;transform:translate(-50%,-100%);background:#fffdf7;color:#4a2440;font:800 11px "Noto Sans KR",sans-serif;padding:4px 8px;border-radius:10px;border:1.5px solid #ff8ab0;box-shadow:0 2px 6px #0006;white-space:nowrap;pointer-events:none;animation:bdsy 2.8s ease forwards}
+.bdsay:after{content:'';position:absolute;left:var(--tl,50%);bottom:-7px;margin-left:-6px;border:6px solid transparent;border-top-color:#ff8ab0;border-bottom:0}
+.bdsay i{color:#ff4a86;font-style:normal;margin-right:3px}
+@keyframes bdsy{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.05)}20%{transform:translate(-50%,-100%) scale(1)}82%{opacity:1}100%{opacity:0;transform:translate(-50%,-112%)}}`;document.head.appendChild(css);
+let nx=performance.now()+9000,cur=null;
+const lv=k=>{const x=((C.S().bond||{}).x||{})[k]||0;return [0,30,80,160,280,450].filter(t=>x>=t).length-1};
+G._bdSay=k=>{const bt=document.querySelector('#battle');if(!bt||G.screen||G._fin||document.querySelector('.vic,.bsht,.bwarn,.bossin'))return 0;const al=C.aliveAllies().filter(a=>a.k!='lina'&&LN2[a.k]&&(k?a.k==k:lv(a.k)>=1));if(!al.length)return 0;const a=al[Math.floor(Math.random()*al.length)],s=R._AS().get(a.k);if(!s||s.x>290)return 0;
+ if(cur)cur.el.remove();const L=LN2[a.k],l=lv(a.k);const el=document.createElement('div');el.className='bdsay';el.innerHTML=`<i>♥${Math.max(1,l)}</i>${L[Math.floor(Math.random()*Math.min(L.length,1+l))]}`;bt.appendChild(el);cur={el,k:a.k,t:performance.now()};return 1};
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{const n=performance.now();if(cur){const s=R._AS().get(cur.k);if(!s||n-cur.t>2800){cur.el.remove();cur=null}else if(document.querySelector('.vic,.bsht,.bwarn')||G._fin){cur.el.remove();cur=null}else{const w=cur.el.offsetWidth||80,L=Math.max(70+w/2,Math.min(296-w/2,s.x));cur.el.style.left=L+'px';cur.el.style.setProperty('--tl',Math.max(8,Math.min(w-8,s.x-L+w/2))+'px');cur.el.style.top=(s.y-114)+'px'}}
+ if(n>nx){nx=n+14000+Math.random()*10000;G._bdSay()}}catch(_){}return r};
+})();

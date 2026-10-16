@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s93');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={kaede:1,pip:1,xellos:1};s.party=['kaede','pip','xellos'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+await sl(3000);await clr();
+await ev(()=>{R.ccut={t:0,bust:1,img:'cutc/kaede.png',n:'카에데',sk:(D.CSKI.kaede||[])[1]||'',rc:'#4ab0ff'}});await sl(450);await sh('906-cutin-kaede');
+await sl(2500);await clr();await ev(()=>G._bdSay('kaede'));await sl(700);await sh('907-bond-say-kaede');
+await sl(5000);await clr();console.log('say',await ev(()=>G._bdSay()));await sl(900);await sh('908-bond-say-boss');
+stop();console.log('ERR',errs);await b.close()})();
