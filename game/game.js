@@ -1185,3 +1185,21 @@ hook('grog',()=>say(rnd(),'grog',0,1));hook('tele',()=>say(Math.random()<.6?'lin
 hook('kill',(e)=>{if(e&&e.boss)setTimeout(()=>say(rnd(),'win',0,1),300)});
 G.bubSay=say;
 })();
+;(()=>{// v64 아이템 정보 · 획득처 (가방에서 탭)
+const I={it2_gold:['골드','장비 강화·마력 수련·영지 건설에 쓰이는 기본 재화.',[['train','마력 수련','사용'],['enhance','장비 강화','사용']],[['battle','몬스터 처치'],['idle','방치 보상'],['base','영지 금고']]],
+ it2_gem:['다이아','동료 소환과 상점 구매에 쓰이는 귀한 보석.',[['summon','동료 소환','사용'],['shop','상점','사용']],[['ach','업적'],['mission','일일 지령'],['event','출석'],['pass','마도 패스']]],
+ it2_exp:['마정구','장비를 뽑을 때 쓰는 마력 결정.',[['gear','장비 뽑기','사용']],[['battle','몬스터 처치 (확률)'],['base','영지 연구소'],['dungeon','도전 던전']]],
+ it2_ticket:['동료 소환권','다이아 대신 동료를 1회 소환할 수 있다.',[['summon','동료 소환','사용']],[['mail','우편함'],['friend','우정 상점'],['pass','마도 패스']]],
+ it2_hp:['회복 물약','전투 중 아군 전원의 체력을 40% 회복. 보스전에서 자동 사용 가능.',[['battle','전투 화면','사용']],[['shop','상점'],['mail','우편함']]],
+ it2_mp:['마나 물약','전투 중 모든 스킬의 남은 쿨타임을 60% 단축.',[['battle','전투 화면','사용']],[['shop','상점'],['mail','우편함']]],
+ it2_stone:['강화석','장비를 강화하는 데 필요한 광석.',[['enhance','장비 강화','사용']],[['battle','몬스터 처치·보스'],['idle','방치 보상'],['friend','우정 상점'],['dungeon','도전 던전']]],
+ it3_dungeonkey:['던전 열쇠','도전 던전에 입장할 때 사용.',[['dungeon','도전','사용']],[['dungeon','매일 지급'],['shop','상점']]],
+ it3_guildcoin:['길드 코인','협회 상점에서 쓰는 코인.',[['guild','협회','사용']],[['guild','협회 기부·레이드']]],
+ it3_arenatoken:['투기장 토큰','투기장 상점에서 쓰는 토큰.',[['arena','투기장','사용']],[['arena','투기장 대전']]],
+ it3_mileagestar:['마일리지','동료 소환 시 쌓이며, 일정량 모으면 원하는 동료와 교환.',[['summon','동료 소환','사용']],[['summon','동료 소환 1회당 1']]]};
+const go=k=>{document.querySelectorAll('.modal').forEach(m=>m.remove());if(k=='battle'){if(G.screen)closeScreen();return}if(G.screen)closeScreen();menuGo(k)};
+G.itemInfo=img=>{const d=I[img];if(!d)return;const s=C.S(),own={it2_gold:s.gold,it2_gem:s.gems,it2_exp:s.orbs,it2_ticket:s.tickets||0,it2_hp:s.pot||0,it2_mp:s.mpot||0,it2_stone:s.stone||0,it3_dungeonkey:s.dkey||0,it3_guildcoin:s.gcoin||0,it3_arenatoken:s.atoken||0,it3_mileagestar:s.mile||0}[img]||0;
+ modal(`<div class=iih><img src="${A}${img}.png"><div><b>${d[0]}</b><small>보유 ${fmt(own)}</small></div></div><p class=iid>${d[1]}</p><div class=iis>사용처</div><div class=iig>${d[2].map(x=>`<span class=iigo data-g=${x[0]}>${x[1]} ▶</span>`).join('')}</div><div class=iis>획득처</div><div class=iig>${d[3].map(x=>`<span class=iigo data-g=${x[0]}>${x[1]} ▶</span>`).join('')}</div>`);
+ document.querySelectorAll('.iigo').forEach(e=>e.onclick=()=>go(e.dataset.g))};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='bag'){$('#screen').querySelectorAll('.bagg .bi').forEach(b=>{const im=b.querySelector('img');if(!im)return;const m=(im.getAttribute('src')||'').match(/(it\d_[a-z]+)\.png$/);if(m&&I[m[1]]){b.classList.add('tap');b.onclick=()=>G.itemInfo(m[1])}})}}catch(_){}return r};
+})();
