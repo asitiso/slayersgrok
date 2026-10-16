@@ -187,6 +187,13 @@ C.expSend=(ek,ck)=>{const st=C.expState(),E=D.EXPS.find(x=>x.k==ek);if(st[ek]||!
 C.expReward=ek=>{const E=D.EXPS.find(x=>x.k==ek),m=1+S.maxSi*.35,st=C.expState()[ek];const star=st?(S.comps[st.c]||1):1;return{g:Math.floor(C.goldKill(S.maxSi)*E.g*.25*(1+.1*(star-1))),gem:E.gem,f:Math.floor(E.f*m*.5)+E.f}};
 C.expClaim=ek=>{const st=C.expState(),x=st[ek];if(!x||C.now()<x.end)return null;const r=C.expReward(ek);C.addGold(r.g);S.gems+=r.gem;S.frag=(S.frag||0)+r.f;delete st[ek];return r};
 C.init=d=>{C.load(d);C.daily();C.bUpdate();C.arenaUpdate();C.buildAllies();C.spawn();return S};
+// ---- v108 마도 특성 (talent tree): 1 point per stage cleared, 3 branches × 5 tiers
+C.TAL=[{k:'atk',n:'화염의 길',d:'공격력',c:'#ff6a3a',v:[.01,.01,.02,.02,.04],nm:['불씨','화염 강화','작열','업화','드래곤 블러드']},{k:'hp',n:'수호의 길',d:'체력',c:'#4ab0ff',v:[.01,.01,.02,.02,.04],nm:['인내','강철 피부','수호 결계','불굴','마도 갑주']},{k:'gold',n:'재물의 길',d:'골드 획득',c:'#ffd25a',v:[.01,.01,.02,.02,.04],nm:['동전 감각','상인의 눈','황금 손','보물 사냥꾼','세이룬 금고']}];
+C.TALC=[1,2,3,4,5];
+C.talPts=()=>{const t=S.tal||{};let used=0;C.TAL.forEach(b=>{for(let i=0;i<(t[b.k]||0);i++)used+=C.TALC[i]});return Math.max(0,Math.floor((S.maxSi||0)/3)-used)};
+C.talB=k=>{const b=C.TAL.find(x=>x.k==k),n=((S.tal||{})[k])||0;let v=0;for(let i=0;i<n;i++)v+=b.v[i];return v};
+C.talUp=k=>{S.tal=S.tal||{};const n=S.tal[k]||0;if(n>=5||C.talPts()<C.TALC[n])return false;S.tal[k]=n+1;C.buildAllies&&C.refreshMax&&C.refreshMax();return true};
+{const a=C.ATK;C.ATK=()=>a()*(1+C.talB('atk'));const h=C.MAXHP;C.MAXHP=()=>h()*(1+C.talB('hp'));const g=C.goldKill;C.goldKill=i=>g(i)*(1+C.talB('gold'))}
 if(typeof module!=='undefined')module.exports=C;
 // ---- enhance (anvil)
 C.enCost=it=>{const n=it.en||0;return{g:Math.floor(200*Math.pow(1.4,n)*(1+it.lv*.15)),st:1+Math.floor(n/2)}};

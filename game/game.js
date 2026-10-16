@@ -1725,3 +1725,32 @@ const css=document.createElement('style');css.textContent=`.ckr{display:flex;ali
 G.cookCard=()=>{const f=fs();return `<div class=card style="margin-top:10px"><div class=ttl>🍳 요리 <small>오늘 ${f.ck}/${LIM}회 · 버프 시간 연장 (최대 2시간)</small></div>${RC.map(r=>{const ok=f.ck<LIM&&can(r);return `<div class=ckr><span class=di>${r.ic}</span><div class=f><b>${r.n}</b><small>${r.bf.map(b=>BN[b]).join(' · ')} +${r.min}분</small><div class=nd>${Object.entries(r.need).map(([k,v])=>`<span class="${(f.inv[k]||0)>=v?'':'no'}"><img src="${A}${FI[k]}">${f.inv[k]||0}/${v}</span>`).join('')}</div></div><span class="ckb ${ok?'':'off'}" data-ck=${r.k}>요리</span></div>`}).join('')}</div>`};
 G.cookWire=el=>el.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const f=fs();if(f.ck>=LIM)return toast('오늘은 더 요리할 수 없어요');const r=G.cook(b.dataset.ck);if(!r)return toast('재료가 부족해요');try{updateHud()}catch(_){}renderScreen();const p=document.createElement('div');p.className='ckpop';p.innerHTML=`<span class=di>${r.ic}</span><b>${r.n} 완성!</b><small>${r.bf.map(x=>BN[x]).join(' · ')} +${r.min}분</small>`;document.body.appendChild(p);setTimeout(()=>p.remove(),1800)});
 })();
+;(()=>{// v108 마도 특성 (스테이지 3개 클리어마다 1포인트 · 3계열 × 5단계 트리)
+const IC={atk:'sk/fire.png',hp:'sk/heal.png',gold:'it2_gold.png'};
+const css=document.createElement('style');css.textContent=`
+.tlh{display:flex;align-items:center;gap:10px}.tlh .f b,.tlh .f small{display:block}.tlh .pt{font:900 30px Maplestory,sans-serif;color:#ffe27a;text-shadow:0 2px 0 #7a3a00;min-width:44px;text-align:center}
+.tlt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.tlc{position:relative;border-radius:14px;padding:8px 4px 6px;background:linear-gradient(#24182ecc,#120c1acc);border:2px solid var(--c);text-align:center}
+.tlc>b{display:block;color:var(--c);font-size:13px}.tlc>small{display:block;color:#ddd;font-size:10px;margin-bottom:4px}
+.tln{position:relative;margin:0 auto;width:70px;padding-top:16px}
+.tln:before{content:'';position:absolute;left:50%;top:0;width:4px;height:16px;margin-left:-2px;background:#555;border-radius:2px}.tln:first-of-type{padding-top:4px}.tln:first-of-type:before{display:none}
+.tln.on:before{background:var(--c);box-shadow:0 0 6px var(--c)}
+.tln .o{width:52px;height:52px;margin:0 auto;border-radius:50%;border:3px solid #555;background:#222;display:flex;align-items:center;justify-content:center;filter:grayscale(1) brightness(.6);transition:.2s}
+.tln .o img{width:32px;height:32px;object-fit:contain}
+.tln.on .o{border-color:var(--c);filter:none;background:radial-gradient(#fff8,var(--c) 60%,#0008);box-shadow:0 0 12px var(--c)}
+.tln.nx .o{border-color:#fff;filter:none;background:#3a2a40;animation:tlp 1s ease-in-out infinite alternate}
+@keyframes tlp{to{box-shadow:0 0 14px #fff}}
+.tln em{display:block;font-style:normal;font-size:10px;color:#fff;margin-top:2px;white-space:nowrap}.tln i{display:block;font-style:normal;font-size:10px;color:var(--c);font-weight:800}
+.tln.lock em,.tln.lock i{color:#777}
+.tln .cs{position:absolute;right:-2px;top:12px;background:#000c;color:#ffe27a;font-size:9px;font-weight:900;border-radius:6px;padding:0 4px;border:1px solid #ffe27a}
+.tln.cap .o{width:60px;height:60px}.tlfx{position:absolute;left:50%;top:50%;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;border:3px solid #fff;animation:tlfx .6s ease-out forwards;pointer-events:none}
+@keyframes tlfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}`;document.head.appendChild(css);
+const draw=fx=>{const el=$('#screen'),s=C.S(),t=s.tal||{},P=C.talPts();
+ el.innerHTML=shell('마도 특성','bg_library.jpg',`<div class="card tlh"><span class=pt>${P}</span><div class=f><b>특성 포인트</b><small>스테이지 3개 클리어마다 +1 · 노드를 탭해 습득 (아래 단계부터)</small></div></div>
+ <div class=card><small>공격력 +${Math.round(C.talB('atk')*100)}% · 체력 +${Math.round(C.talB('hp')*100)}% · 골드 +${Math.round(C.talB('gold')*100)}%</small></div>
+ <div class=tlt>${C.TAL.map(b=>{const n=t[b.k]||0;return `<div class=tlc style="--c:${b.c}"><b>${b.n}</b><small>${b.d} 강화</small>${b.v.map((v,i)=>{const on=i<n,nx=i==n,cs=C.TALC[i];return `<div class="tln ${on?'on':nx?'nx':'lock'} ${i==4?'cap':''}" data-tl="${b.k}" data-i=${i}><div class=o><img src="${A}${IC[b.k]}"></div>${!on?`<span class=cs>${cs}P</span>`:''}<em>${b.nm[i]}</em><i>${b.d} +${Math.round(v*100)}%</i>${fx==b.k+i?'<span class=tlfx></span>':''}</div>`}).join('')}</div>`}).join('')}</div>`);
+ el.querySelector('#sBack').onclick=()=>closeScreen();
+ el.querySelectorAll('[data-tl]').forEach(e=>e.onclick=()=>{const k=e.dataset.tl,i=+e.dataset.i,n=(C.S().tal||{})[k]||0;if(i<n)return;if(i>n)return toast('아래 단계를 먼저 습득하세요');if(!C.talUp(k))return toast('특성 포인트가 부족해요');try{updateHud()}catch(_){}draw(k+i);toast((C.TAL.find(b=>b.k==k).nm[i])+' 습득!')})};
+if(!MENU.some(m=>m[0]=='talent')){const i=MENU.findIndex(m=>m[0]=='star');MENU.splice(i+1,0,['talent','특성','sk/fire.png'])}try{renderHub()}catch(_){}
+const rs=renderScreen;renderScreen=function(){if(G.screen=='talent')return draw();return rs.apply(this,arguments)};
+})();

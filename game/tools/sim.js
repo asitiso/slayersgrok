@@ -9,6 +9,7 @@ const reach=[],fails={},flow=[];let lastMax=-1,lastFail=0,gold0=0,orbsGot=0;
 C.ev.fail=()=>{fails[S.si]=(fails[S.si]||0)+1};
 const ORB0={v:S.orbs};
 function policy(){
+  if(C.talUp){for(let g=0;g<20;g++){const o=["atk","hp","gold"].sort((x,y)=>((S.tal||{})[x]||0)-((S.tal||{})[y]||0));if(!o.some(k=>C.talUp(k)))break}}
   C.daily();C.bUpdate();C.arenaUpdate();
   for(const k of ['vault','mine'])if(S.bld[k].acc>=C.bRate(k)*1800)C.bCollect(k);
   for(const m of D.MISSIONS)C.claimMission(m.k);
