@@ -2047,3 +2047,18 @@ if(card){card.classList.add('bupc');const ttl=card.querySelector('.ttl');[...car
 sb.querySelectorAll('[data-bh]').forEach(e=>e.onclick=ev=>{const k=e.dataset.bh;if(ev.target.closest('[data-hv]'))return;if(k=='barracks')return toast('병영은 준비 중입니다');if(k=='castle'){const t=['vault','mine','tower'].map(x=>`${HS.find(h=>h.k==x).n} Lv.${s.bld[x].lv}`).join(' · ');return toast('영주성 · '+t)}G.baseSel=k;renderScreen()});
 sb.querySelectorAll('[data-hv]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();const k=e.dataset.hv,val=C.bCollect(k);if(val)toast((k=='vault'?'<img class=ci src=assets/it2_gold.png> +':'<img class=ci src=assets/it2_exp.png> +')+fmt(val));renderScreen()});
 v.querySelector('#bAll').onclick=()=>{const g=C.bCollect('vault')||0,o=C.bCollect('mine')||0;if(!g&&!o)return toast('수확할 자원이 없습니다');updateHud();renderScreen();rewardPop([g&&['it2_gold.png',g,'골드'],o&&['it2_exp.png',o,'마정구']].filter(Boolean),'영지 전체 수확')}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* v134 화룡전-style 협회 홀: guild level banner, painted hall with stations (게시판=주간 임무, 작전 탁자=토벌, 보물 상자=기부·상자), member portrait grid (existing guild logic) */
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='guild'||!C.S().gj)return r;const sc=document.querySelector('#screen'),sb=sc&&sc.querySelector('.sbody');if(!sb||sb.querySelector('.ghall'))return r;
+const s=C.S(),g=s.guild,cards=[...sb.querySelectorAll(':scope>.card')],find=re=>cards.find(c=>re.test((c.querySelector('.ttl,b')||c).textContent));
+const lvC=find(/협회 Lv\./),raidC=cards.find(c=>c.querySelector('#raid')),donC=find(/일일 기부/),misC=find(/주간 협회 임무/),memC=find(/협회원/);
+sc.classList.add('gld2');const bg=sc.querySelector('.sbg');if(bg)bg.src='assets/bg_guild_hall2.jpg';
+const mOk=D.GMISS.some(m=>!s.gm.c[m.k]&&(s.gm.p[m.k]||0)>=m.goal),rOk=s.raid.tries<BAL.raid.tries,dOk=!g.don.gold||!g.don.gem||C.week()!==s.gchest;
+const st=(cls,x,y,ic,n,ok,tg)=>`<div class="gst ${cls}" style="left:${x}%;top:${y}%" data-gt=${tg}><img src="assets/${ic}">${ok?'<i class=dot></i>':''}<em>${n}</em></div>`;
+const html=`<div class=gbanner><img src="assets/ic3_guild.png"><div class=gbi><b>${s.gj.n}</b><span>Lv.${g.lv}</span><div class=gbb><i style="width:${Math.min(100,g.exp/(100*g.lv)*100)}%"></i></div><small>경험치 ${g.exp}/${100*g.lv} · 오늘 공격력 +${Object.keys(g.don).length*BAL.donate.buff*100}% · 영구 +${(g.lv-1)*2}%</small></div></div>
+<div class=ghall><img class=ghbg src="assets/bg_guild_hall2.jpg">${st('b',20,34,'gd_board.png','주간 임무',mOk,'mis')}${st('t',55,60,'gd_raid.png','황금룡 토벌',rOk,'raid')}${st('c',86,56,'gd_chest.png','기부 · 상자',dOk,'don')}</div>`;
+sb.insertAdjacentHTML('afterbegin',html);if(lvC)lvC.style.display='none';
+const T={mis:misC,raid:raidC,don:donC};if(raidC)raidC.querySelector('.ttl,b')?.insertAdjacentHTML('afterbegin','');
+sb.querySelectorAll('[data-gt]').forEach(e=>e.onclick=()=>{const c=T[e.dataset.gt];if(!c)return;c.scrollIntoView({behavior:'smooth',block:'start'});c.classList.remove('gflash');void c.offsetWidth;c.classList.add('gflash')});
+[[misC,'gd_board.png'],[raidC,'gd_raid.png'],[donC,'gd_chest.png']].forEach(([c,ic])=>{const t=c&&c.querySelector('.ttl');if(t)t.insertAdjacentHTML('afterbegin',`<img class=gti src="assets/${ic}">`)});
+if(memC){const ro=C.gRoster();[...memC.querySelectorAll('.row')].forEach(x=>x.remove());memC.insertAdjacentHTML('beforeend',`<div class=gmem>${ro.map(m=>`<div class="gmc ${m.npc?'':'me'} ${/회장/.test(m.role)?'lead':''}"><img src="${A}${m.img}"><b>${m.n}</b><small>${m.role}</small><em>⚔ ${fmt(m.pow)}</em></div>`).join('')}</div>`)}
+}catch(e){console.warn(e)}return r}})();
