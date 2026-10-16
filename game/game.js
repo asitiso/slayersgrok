@@ -1313,3 +1313,17 @@ const of=C.ev.fail;C.ev.fail=function(){fin(0);return of&&of.apply(this,argument
 G._brPut=()=>{let k=0;const put=()=>{const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop();if(v){v.querySelector('.nrec')||v.insertAdjacentHTML('afterbegin','<div class=nrec>🏆 최단 기록 갱신!</div>');return}if(k++<40)setTimeout(put,100)};put()};
 const ob=G.bossInfo;G.bossInfo=()=>{ob();const o=rec()[C.S().si],m=document.querySelector('.modal .bip');if(!m)return;m.insertAdjacentHTML('beforebegin',`<div class=bir><span>도전 기록</span><b>${o?`${o.w}승 ${o.n-o.w}패${o.t?` · 최단 ${o.t}초`:''}`:'첫 도전'}</b></div>`)};
 })();
+/* v73 동료 전투불능/부활 연출 (시각 전용) */
+(()=>{const C=G.C,DW=new Map(),RV=[];
+const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=document.querySelector('#battle canvas'),AS=R._AS&&R._AS();if(!c||!AS)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,T=performance.now()/1000;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
+for(const a of C.B.allies||[]){const q=AS.get(a.k);if(!q)continue;const w=DW.get(a.k);if(a.dead){if(!w)DW.set(a.k,{t:0});const d=DW.get(a.k);d.t+=dt;const k=Math.min(1,d.t/.6);
+ ctx.globalAlpha=.35*k;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(q.x,q.y+2,30,8,0,0,7);ctx.fill();
+ for(let i=0;i<3;i++){const an=T*3+i*2.09;ctx.globalAlpha=.9*k;ctx.fillStyle='#ffe066';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('★',q.x+Math.cos(an)*18,q.y-62+Math.sin(an)*5)}
+ const u=(d.t*.6)%1;ctx.globalAlpha=k*(1-u)*.6;const g=ctx.createRadialGradient(q.x,q.y-70-u*40,1,q.x,q.y-70-u*40,12);g.addColorStop(0,'#fff');g.addColorStop(1,'rgba(160,200,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(q.x,q.y-70-u*40,12,0,7);ctx.fill();
+ ctx.globalAlpha=k;ctx.font='bold 11px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#000a';ctx.strokeText('전투 불능',q.x,q.y+16);ctx.fillStyle='#ff9a9a';ctx.fillText('전투 불능',q.x,q.y+16)}
+ else if(w){DW.delete(a.k);RV.push({k:a.k,t:0})}}
+for(let i=RV.length-1;i>=0;i--){const r=RV[i],q=AS.get(r.k);r.t+=dt;const k=r.t/.9;if(k>=1||!q){RV.splice(i,1);continue}ctx.globalCompositeOperation='lighter';ctx.globalAlpha=(1-k)*.8;const g=ctx.createLinearGradient(q.x-22,0,q.x+22,0);g.addColorStop(0,'rgba(255,230,120,0)');g.addColorStop(.5,'rgba(255,240,170,1)');g.addColorStop(1,'rgba(255,230,120,0)');ctx.fillStyle=g;ctx.fillRect(q.x-22,q.y-140,44,145);
+ ctx.strokeStyle='#ffe58a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(q.x,q.y,18+k*40,(18+k*40)*.3,0,0,7);ctx.stroke();ctx.globalCompositeOperation='source-over';
+ ctx.globalAlpha=k<.7?1:(1-k)/.3;ctx.font='900 14px sans-serif';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#5a3a00';ctx.strokeText('부활!',q.x,q.y-95-k*14);ctx.fillStyle='#fff3b0';ctx.fillText('부활!',q.x,q.y-95-k*14)}
+ctx.restore()}catch(_){}};
+})();
