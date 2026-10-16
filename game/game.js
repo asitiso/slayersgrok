@@ -2740,10 +2740,24 @@ new MutationObserver(ms=>ms.forEach(r=>r.addedNodes.forEach(n=>{try{deco(n)}catc
 #evrow .dot,#evrow>.rd::after{position:absolute!important;right:-3px!important;top:-4px!important;left:auto!important;width:9px!important;height:9px!important;margin:0!important}
 #battle #evrow>#wntBtn,#battle #evrow>#whlBtn{height:22px!important;min-height:0!important}#evrow>#wntBtn>span{display:flex!important;flex-direction:row!important;gap:2px;align-items:baseline;position:static!important}
 #evrow>#wntBtn small{font-size:9px!important;display:none}#evrow>#wntBtn b{font-size:10px!important;color:#ffe08a!important}
-#bossFr{position:absolute;z-index:4;left:64px;top:206px;width:224px;height:73px;pointer-events:none;display:none;filter:drop-shadow(0 3px 4px #000a)}
+#bossFr{position:absolute;z-index:4;left:64px;top:202px;width:224px;height:73px;pointer-events:none;display:none;filter:drop-shadow(0 3px 4px #000a)}
 body.bfon #bossFr{display:block}
 .banner{translate:0 170px}
 .powup{top:300px!important;bottom:auto!important}`;document.head.appendChild(st);
 const IDS=['bufBtn','nbBtn','olBtn','svBtn','whlBtn','wntBtn'];
 const setup=()=>{const bt=document.getElementById('battle');if(!bt)return setTimeout(setup,300);let r=document.getElementById('evrow');if(!r){r=document.createElement('div');r.id='evrow';bt.appendChild(r)}IDS.forEach(i=>{const e=document.getElementById(i);if(e&&e.parentElement!==r)r.appendChild(e)});if(!document.getElementById('bossFr'))bt.insertAdjacentHTML('beforeend',`<img id=bossFr src="${A}hud_bossbar.png">`)};
 setInterval(()=>{setup();const on=!!(C.B&&C.B.boss&&!G.screen&&C.alive&&C.alive().some(e=>e.boss&&!e.wb));document.body.classList.toggle('bfon',on)},400);setup()})();
+
+/* v169 lower battle dock: socket dock for the skill row, parchment mission strip */
+(function(){const S=.553,CX=[144,265,385,514,635,755].map(c=>Math.round(195+(c-450)*S));const st=document.createElement('style');st.textContent=`
+#skills.skills{bottom:93px!important;left:0!important;right:auto!important;width:390px!important;max-width:none!important;transform:none!important;height:74px!important;display:block!important;gap:0!important;background:url(assets/dock_frame.png) center -52px/497px 168px no-repeat!important;filter:drop-shadow(0 -2px 5px #0009);overflow:visible}
+#skills.skills>.sk{position:absolute!important;top:15px!important;bottom:auto!important;width:42px!important;height:42px!important;margin:0!important;border-radius:50%!important;transform:none!important}
+${CX.map((x,i)=>`#skills.skills>.sk:nth-child(${i+1}){left:${x-21}px!important}`).join('')}
+#skills.skills>.sk.big{box-shadow:0 0 10px #ff6a2a,0 0 0 2px #ffcf6a!important}
+#skills.skills>.sk>img{width:100%!important;height:100%!important}
+#mission.mission{right:98px!important;height:46px!important;box-sizing:border-box;background:url(assets/dock_mission.png) center/100% 100% no-repeat!important;padding:3px 26px 3px 22px!important;color:#3a2408!important;text-shadow:none!important}
+#mission.mission b{color:#7a2a08!important}#mission.mission .f{font-size:11px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#mission.mission .f>*{white-space:nowrap!important}#mission.mission .f,#mission.mission .f *:not(.bar):not(.bar *){color:#3a2408!important;text-shadow:0 1px 0 #f8ecd0!important}
+#mission.mission .morb{flex:none;width:34px!important;height:34px!important}
+#bctl{bottom:169px!important;right:6px!important;opacity:1!important;gap:4px!important}
+#bctl>*{width:42px!important;height:42px!important}
+#chat{z-index:8}`;document.head.appendChild(st)})();
