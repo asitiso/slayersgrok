@@ -6,10 +6,10 @@ await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());co
 await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
 const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
 await sl(1500);await clr();
-await ev(()=>{document.querySelector('#sidemenu').click()});await sl(800);await clr();await ev(()=>{const a=document.querySelector('#mgrid a[data-s=gallery]');if(a)a.scrollIntoView({block:'center'})});await sl(400);await sh('931-menu-gallery-icon');
+await ev(()=>{document.querySelector('#sidemenu').click()});await sl(800);await clr();await ev(()=>{const a=document.querySelector('#mgrid a[data-s=gallery]');if(a)a.scrollIntoView({block:'center'})});await sl(400);
 await ev(()=>document.querySelector('#menuClose').click());
 await until(()=>C.B.boss&&C.B.enemies.some(e=>e.boss&&e.hp>0),60000);await sl(3000);await ev(()=>{C.B.enemies.forEach(e=>{if(e.boss)e.hp=Math.min(e.hp,e.max*.03)})});
-await until(()=>document.querySelector('.bloot'),15000);await sl(500);await sh('932-boss-loot-burst');
-await sl(350);await sh('933-boss-loot-beams');
-await sl(800);await sh('934-boss-loot-vacuum');
+await until(()=>document.querySelector('.bloot'),15000);await sl(500);
+await sl(1150);await sh('935-boss-loot-beams');
+await sl(450);await sh('936-boss-loot-beams-vic');
 stop();console.log('ERR',errs);await b.close()})();
