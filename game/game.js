@@ -2217,3 +2217,21 @@ function deco(){const el=$('#screen'),sm=el.querySelector('.cdsum');if(!sm||el.q
  sm.parentNode.insertBefore(d,sm);
  el.querySelectorAll('.cdc').forEach(c=>{const im=c.querySelector('img');if(c.classList.contains('lock')){c.classList.add('cxu');if(im)im.src=A+'cx_unknown.png'}else{c.classList.add('cxf');if(!c.classList.contains('new'))c.insertAdjacentHTML('beforeend',`<img class=cxs src="${A}cx_seal.png">`)}})}
 })();
+;(()=>{/* v144 업적의 전당 */
+const st=document.createElement('style');st.textContent=`.acst{position:relative;height:250px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+.acst>.abg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.acst:after{content:'';position:absolute;inset:0;background:linear-gradient(#0000 55%,#1a1006d0);pointer-events:none}
+.acst .asc{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:8px;background:linear-gradient(#5a3a10f0,#2a1806f0);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #ffd77a99,0 0 14px #ffc04066;border-radius:14px;padding:5px 14px;white-space:nowrap;color:#fff}
+.acst .asc img{height:34px}.acst .asc b{font-size:22px;color:#ffe08a;text-shadow:0 2px 0 #000}.acst .asc small{display:block;font-size:10px;font-weight:800}
+.acst .ach2{position:absolute;top:10px;z-index:2;display:flex;align-items:center;gap:4px;background:#000a;border:1px solid #ffd77a66;border-radius:10px;padding:3px 8px;font-size:11px;font-weight:800;color:#fff}.acst .ach2 img{height:18px}
+.achr{position:relative;background:linear-gradient(#3a2c1a,#241a0e)!important;border:2px solid #0b0d0f!important;box-shadow:inset 0 0 0 1px #c9a25a88!important;border-radius:12px}
+.achr.can{box-shadow:inset 0 0 0 2px #ffd25a,0 0 12px #ffb03a88!important;background:linear-gradient(#5a4018,#33240c)!important}
+.achr .amd{position:absolute;left:-6px;top:-8px;height:30px;z-index:2;filter:drop-shadow(0 2px 2px #000a);animation:amd 1.2s ease-in-out infinite}@keyframes amd{50%{transform:rotate(-10deg) scale(1.08)}}
+.achr.done{opacity:.8}.achr .adn{height:44px;width:auto!important;margin-right:2px;transform:rotate(-8deg);filter:drop-shadow(0 2px 3px #000a)}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='ach')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen');if(el.querySelector('.acst'))return;const L=C.achList(),hd=el.querySelector('.sbody .card,.card');if(!hd)return;
+ const done=L.filter(a=>a.done).length,can=L.filter(a=>a.can).length;
+ const d=document.createElement('div');d.className='acst';d.innerHTML=`<img class=abg src="${A}bg_ach_hall.jpg"><span class=ach2 style="left:10px"><img src="${A}ac_medal.png">받을 보상 ${can}</span><span class=ach2 style="right:10px"><img src="${A}ac_done.png">완료 ${done}/${L.length}</span><div class=asc><img src="${A}ac_trophy.png"><div><small>업적 점수</small><b>${fmt(C.achScore())}</b></div></div>`;
+ hd.parentNode.insertBefore(d,hd);const t=hd.querySelector('.ttl');if(t)t.style.display='none';
+ el.querySelectorAll('.achr').forEach(r=>{if(r.classList.contains('can'))r.insertAdjacentHTML('afterbegin',`<img class=amd src="${A}ac_medal.png">`);if(r.classList.contains('done')){const sm=[...r.children].pop();if(sm&&sm.tagName=='SMALL')sm.outerHTML=`<img class=adn src="${A}ac_done.png">`}})}
+})();
