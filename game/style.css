@@ -1075,3 +1075,12 @@ body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:h
 .snode.cur,.wpin.cur{display:flex!important;flex-direction:column!important;background:none!important;border:0!important;padding:0!important}
 .wpin.cur span{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;min-width:0!important}.wlina{transform:translate(-50%,-185%)}
 .wlina{margin-top:-62px}
+/* v129 */
+.shh{position:relative;height:150px;margin:2px 0 8px;border-radius:12px;border:2px solid #c9a24a;overflow:hidden;background:linear-gradient(90deg,#0000 30%,#000a),url(assets/bg_lobby_town.jpg) 86% 62%/auto 420px}
+.shnp{position:absolute;left:4px;bottom:-6px;height:150px;filter:drop-shadow(0 3px 3px #000);cursor:pointer;animation:tnB 2.2s ease-in-out infinite;transform-origin:bottom}
+.shnp{animation-name:shnB}@keyframes shnB{50%{transform:translateY(-4px)}}
+.shbb{position:absolute;left:118px;top:16px;right:10px;padding:8px 12px;border-radius:14px;background:#fff;color:#3a2a10;font:800 13px Maplestory,sans-serif;box-shadow:0 2px 6px #0008}
+.shbb::before{content:'';position:absolute;left:-10px;top:12px;border:7px solid transparent;border-right-color:#fff;border-left:0}
+.shbb.pp{animation:scIn .3s}
+.shtb{position:absolute;left:118px;right:8px;bottom:10px;display:flex;gap:5px;flex-wrap:wrap}
+.shtb span{padding:4px 10px;border-radius:12px;border:2px solid #ffd77a;background:linear-gradient(#5a3a1a,#2a1a0a);color:#ffd77a;font:900 12px Maplestory,sans-serif;cursor:pointer}

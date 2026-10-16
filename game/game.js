@@ -1993,3 +1993,10 @@ const draw=()=>{const el=$('#screen'),s=C.S(),cur=Math.floor(s.si/7),mx=Math.flo
  $('#sBack').onclick=()=>{if(G.mapCh>=0||G.mapCh==null)closeScreen();else{G.mapCh=Math.floor(C.S().si/7);draw()}}};
 const os=openScreen;openScreen=function(k){if(k=='map')G.mapCh=null;return os.apply(this,arguments)};
 const rs=renderScreen;renderScreen=function(){if(G.screen=='map')return draw();return rs.apply(this,arguments)};})();
+/* v129 상점 상인 헤더 (상인 NPC · 말풍선 · 섹션 바로가기 탭) */
+;(()=>{const L=['어서 오세요, 리나 님!','오늘의 특가는 05시에 바뀌어요.','강화석이 싸게 들어왔어요!','패키지도 한번 보고 가세요~'];
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='shop'){const b=document.querySelector('#screen .sbody');if(b&&!b.querySelector('.shh')){
+ const secs=[...b.querySelectorAll(':scope > .card, :scope > div')].map(c=>({c,t:(c.querySelector('.ttl')||{}).firstChild})).filter(x=>x.t&&x.t.textContent&&x.t.textContent.trim()).slice(0,4);
+ const h=document.createElement('div');h.className='shh';h.innerHTML=`<img class=shnp src="assets/npc_merchant.png"><div class=shbb>${L[Math.floor(Math.random()*L.length)]}</div><div class=shtb>${secs.map((x,i)=>`<span data-sc=${i}>${x.t.textContent.trim()}</span>`).join('')}</div>`;
+ b.prepend(h);h.querySelectorAll('[data-sc]').forEach(n=>n.onclick=()=>{secs[+n.dataset.sc].c.scrollIntoView({behavior:'smooth',block:'start'})});
+ h.querySelector('.shnp').onclick=()=>{const bb=h.querySelector('.shbb');bb.textContent=L[Math.floor(Math.random()*L.length)];bb.classList.remove('pp');void bb.offsetWidth;bb.classList.add('pp')}}}}catch(e){console.warn(e)}return r}})();
