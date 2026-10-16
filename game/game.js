@@ -1203,3 +1203,12 @@ G.itemInfo=img=>{const d=I[img];if(!d)return;const s=C.S(),own={it2_gold:s.gold,
  document.querySelectorAll('.iigo').forEach(e=>e.onclick=()=>go(e.dataset.g))};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='bag'){$('#screen').querySelectorAll('.bagg .bi').forEach(b=>{const im=b.querySelector('img');if(!im)return;const m=(im.getAttribute('src')||'').match(/(it\d_[a-z]+)\.png$/);if(m&&I[m[1]]){b.classList.add('tap');b.onclick=()=>G.itemInfo(m[1])}})}}catch(_){}return r};
 })();
+;(()=>{// v65 오늘의 할 일 (메뉴 상단 바로가기 · 레드닷 모음)
+const N={mail:'우편 수령',event:'출석 체크',summon:'동료 소환',mission:'지령 보상',base:'영지 수확',arena:'투기장 도전',guild:'협회 기부',dungeon:'던전 도전',explore:'탐험 보상',enhance:'장비 강화',wboss:'월드보스',ach:'업적 보상',pass:'패스 보상',friend:'친구 하트'};
+const list=()=>{const B=G.BD||{},o=[];for(const k in N){const on=k=='friend'?(C.frRed&&C.frRed()):B[k];if(on)o.push(k)}if(G.nbState){try{const s=G.nbState();if(s&&s.ready)o.unshift('nb')}catch(_){}}if(G.olState&&G.olState().ready)o.unshift('ol');return o};
+G.todoList=list;
+const draw=()=>{const p=document.getElementById('mgrid');if(!p)return;let t=document.getElementById('todoBar');if(!t){t=document.createElement('div');t.id='todoBar';p.parentNode.insertBefore(t,p)}const L=list();
+ t.innerHTML=`<div class=tdh>📋 오늘의 할 일 <small>${L.length?L.length+'개':'모두 완료!'}</small></div><div class=tdl>${L.length?L.map(k=>`<span class=tdc data-k=${k}>${k=='nb'?'7일 이벤트':k=='ol'?'접속 보상':N[k]} ▶</span>`).join(''):'<span class=tdd>✔ 할 일을 모두 끝냈어요</span>'}</div>`;
+ t.querySelectorAll('.tdc').forEach(e=>e.onclick=()=>{const k=e.dataset.k;$('#menuPop').classList.remove('on');if(k=='nb')return G.nbOpen&&G.nbOpen();if(k=='ol')return G.olOpen&&G.olOpen();menuGo(k)})};
+const om=menuGo;menuGo=function(k){const r=om.apply(this,arguments);try{if(k=='menu')draw()}catch(_){}return r};
+})();
