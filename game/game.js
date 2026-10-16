@@ -2672,11 +2672,30 @@ new MutationObserver(ms=>ms.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType==1
 .fsx .fcc .fpw .pq{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 3px var(--c))}
 .fsx .fcc.lock{filter:none!important;opacity:1!important}.fsx .fcc.lock .fpw .i{background:#2a2a30}.fsx .fcc.lock .pq{filter:grayscale(.7) brightness(.6)!important}
 .fsx .ckr .di{background:url(assets/fs_board.png) center/contain no-repeat!important;border:none!important;border-radius:0!important}
-.fsx .ttl .fbd{height:22px;vertical-align:middle;margin-right:3px}`;document.head.appendChild(st);
+.fsx .ttl .fbd{height:22px;vertical-align:middle;margin-right:3px}.fsx .ttl.ckt{justify-content:flex-start!important;gap:4px}.fsx .ttl.ckt small{margin-left:auto}.fsx .fcc .fpw::before{content:'';position:absolute;left:10px;top:10px;width:38px;height:38px;border-radius:50%;background:radial-gradient(#e0f4ff,#5aa0c8)}.fsx .fcc .fpw .i{background:none!important}.fsx .fcc.lock .fpw::before{background:#1e2a36}.fsx .fcc.lock .fpw .i{filter:brightness(0) invert(1) opacity(.35)!important}`;document.head.appendChild(st);
 const LIM=5;
 const dec=()=>{const sb=$('#screen');if(G.screen!='fish'){sb.classList.remove('fsx');return}sb.classList.add('fsx');const f=C.S().fish||{n:0};const go=sb.querySelector('#fgo');
  if(go&&!sb.querySelector('.fgauge')){const left=Math.max(0,LIM-(f.n||0));go.insertAdjacentHTML('afterend',`<div class=fgauge><span class=rl></span><div class=ch><i style="width:${left/LIM*100}%"></i><span>${[0,1,2,3,4].map(i=>`<img class="${i<left?'':'u'}" src="${A}fs_bobber.png">`).join('')} 오늘 ${left}/${LIM}회</span></div></div>`)}
  sb.querySelectorAll('.fcc').forEach(c=>{if(c.querySelector('.fpw'))return;const im=c.querySelector('.i');if(!im)return;const w=document.createElement('div');w.className='fpw';im.replaceWith(w);w.appendChild(im);w.insertAdjacentHTML('beforeend',`<img class=pq src="${A}fs_plaque.png">`)});
- sb.querySelectorAll('.ttl').forEach(t=>{if(t.textContent.includes('요리')&&!t.querySelector('.fbd'))t.insertAdjacentHTML('afterbegin',`<img class=fbd src="${A}fs_board.png">`)})};
+ sb.querySelectorAll('.ttl').forEach(t=>{if(t.textContent.includes('요리')&&!t.querySelector('.fbd')){t.classList.add('ckt');t.innerHTML=t.innerHTML.replace('🍳 ','');t.insertAdjacentHTML('afterbegin',`<img class=fbd src="${A}fs_board.png">`)}})};
 let busy=0;new MutationObserver(()=>{if(busy)return;busy=1;try{dec()}catch(_){}busy=0}).observe(document.getElementById('screen')||document.body,{childList:true});
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
+
+/* v166 파티 편성 lower half: war room */
+(function(){const st=document.createElement('style');st.textContent=`
+.ptx .card:not(.pstage){background:rgba(34,22,12,.84)!important;border:1px solid #a8803a!important}
+.ptx .psl{position:relative;background:none!important;border:none!important;min-height:86px}
+.ptx .psl>.ppd{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:84%;z-index:0;filter:drop-shadow(0 3px 4px #000)}
+.ptx .psl>*:not(.ppd){position:relative;z-index:1}
+.ptx .psl.emp .psi small{color:#e8dcc0!important;text-shadow:0 1px 2px #000}
+.ptx .psl:not(.emp)>.ppf{position:absolute;right:20px;top:-6px;height:30px;z-index:2;filter:drop-shadow(0 2px 2px #000)}
+.ptx .fxr{position:relative;background:url(assets/gl_plate.png) center/100% 100% no-repeat!important;border:none!important;color:#3a2408!important;padding:8px 18px!important;margin:4px 0!important}
+.ptx .fxr .fac{background:#2a1a0cdd!important}.ptx .fxr small{color:#3a2408!important;font-weight:800}.ptx .fxr *{opacity:1!important}.ptx .fxr>b{background:#f3dc9ccc;border-radius:8px;padding:1px 7px;mix-blend-mode:normal!important}.ptx .fxr>b,.ptx .fxr b{color:#4a3018!important;font-weight:900;text-shadow:0 1px 0 #f3d890!important;filter:none!important}.ptx .psl.emp .psi small{background:#0008;border-radius:6px;padding:1px 6px}.ptx .fxr.on b{color:#1a7a2a!important}
+.ptx .fxr.on::after{content:'';position:absolute;right:-4px;top:-10px;width:26px;height:34px;background:url(assets/pt_flag.png) center/contain no-repeat;filter:drop-shadow(0 2px 2px #000)}
+.ptx .rcard.in>.ck{display:none!important}
+.ptx .rcard.in>.pfl{position:absolute;right:2px;top:26px;height:30px;z-index:3;filter:drop-shadow(0 2px 2px #000)}`;document.head.appendChild(st);
+const dec=()=>{const sb=$('#screen');if(G.screen!='party'){sb.classList.remove('ptx');return}sb.classList.add('ptx');const bg=sb.querySelector('.sbg');if(bg&&!/bg_war_room/.test(bg.src))bg.src=A+'bg_war_room.jpg';
+ sb.querySelectorAll('.psl').forEach(p=>{if(!p.querySelector('.ppd'))p.insertAdjacentHTML('afterbegin',`<img class=ppd src="${A}pt_pedestal.png">`);if(!p.classList.contains('emp')&&!p.querySelector('.ppf'))p.insertAdjacentHTML('beforeend',`<img class=ppf src="${A}pt_flag.png">`)});
+ sb.querySelectorAll('.card').forEach(c=>{const t=c.querySelector('.ttl');if(!t||!t.textContent.startsWith('세력 효과'))return;c.querySelectorAll('.row').forEach(r=>{if(r.classList.contains('fxr'))return;r.classList.add('fxr');const b=r.querySelector(':scope>b');if(b&&b.textContent=='발동')r.classList.add('on')})});
+ sb.querySelectorAll('.rcard.in').forEach(r=>{if(!r.querySelector('.pfl'))r.insertAdjacentHTML('beforeend',`<img class=pfl src="${A}pt_flag.png">`)})};
 const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
