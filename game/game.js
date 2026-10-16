@@ -1971,7 +1971,7 @@ const NP=[[26,80],[68,72],[28,62],[70,52],[30,43],[70,35],[46,25]];// stage node
 const WW=1244,WH=700;
 // per-chapter art (cover crop centred); node positions follow the painted path. Missing art → world-map crop.
 // add a chapter index here when assets/map_chN.jpg is added (avoids 404 probing)
-const MAPART=[0];const NPC2={0:[[38,80],[64,74],[42,63],[70,53],[38,43],[64,33],[50,22]]};G.mapArt=G.mapArt||{};MAPART.forEach(i=>G.mapArt[i]=1);
+const MAPART=[0,1,2,3,4,5,6];const NPC2={0:[[38,80],[64,74],[42,63],[70,53],[38,43],[64,33],[50,22]],1:[[42,82],[36,72],[48,62],[38,52],[50,43],[38,34],[50,24]],2:[[40,82],[60,73],[42,63],[60,54],[42,45],[58,36],[50,24]],3:[[44,82],[58,72],[68,62],[56,52],[44,43],[30,34],[40,24]],4:[[40,82],[52,73],[30,63],[50,54],[66,45],[46,36],[50,25]],5:[[46,82],[22,70],[62,62],[28,52],[72,44],[40,34],[50,23]],6:[[50,82],[40,72],[34,62],[60,54],[40,45],[62,37],[56,25]]};G.mapArt=G.mapArt||{};MAPART.forEach(i=>G.mapArt[i]=1);
 
 const draw=()=>{const el=$('#screen'),s=C.S(),cur=Math.floor(s.si/7),mx=Math.floor(Math.min(s.maxSi,D.FIELDS.length-1)/7);if(G.mapCh==null)G.mapCh=cur;const ch=G.mapCh;
  const head=`<div class=shead><span class=back id=sBack>‹</span><b>${ch<0?'월드맵':'제'+(ch+1)+'장 · '+D.CH[ch]}</b><span class=chip><img class=ci src=assets/it2_gold.png> ${fmt(s.gold)}</span></div>`;
@@ -1996,7 +1996,7 @@ const rs=renderScreen;renderScreen=function(){if(G.screen=='map')return draw();r
 /* v129 상점 상인 헤더 (상인 NPC · 말풍선 · 섹션 바로가기 탭) */
 ;(()=>{const L=['어서 오세요, 리나 님!','오늘의 특가는 05시에 바뀌어요.','강화석이 싸게 들어왔어요!','패키지도 한번 보고 가세요~'];
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='shop'){const b=document.querySelector('#screen .sbody');if(b&&!b.querySelector('.shh')){
- const secs=[...b.querySelectorAll(':scope > .card, :scope > div')].map(c=>({c,t:(c.querySelector('.ttl')||{}).firstChild})).filter(x=>x.t&&x.t.textContent&&x.t.textContent.trim()).slice(0,4);
+ const secs=[...b.querySelectorAll(':scope > .card, :scope > div')].map(c=>({c,t:(c.matches('.ttl')?c:(c.querySelector('.ttl')||{})).firstChild})).filter(x=>x.t&&x.t.textContent&&x.t.textContent.trim()).slice(0,4);
  const h=document.createElement('div');h.className='shh';h.innerHTML=`<img class=shnp src="assets/npc_merchant.png"><div class=shbb>${L[Math.floor(Math.random()*L.length)]}</div><div class=shtb>${secs.map((x,i)=>`<span data-sc=${i}>${x.t.textContent.trim()}</span>`).join('')}</div>`;
  b.prepend(h);h.querySelectorAll('[data-sc]').forEach(n=>n.onclick=()=>{secs[+n.dataset.sc].c.scrollIntoView({behavior:'smooth',block:'start'})});
  h.querySelector('.shnp').onclick=()=>{const bb=h.querySelector('.shbb');bb.textContent=L[Math.floor(Math.random()*L.length)];bb.classList.remove('pp');void bb.offsetWidth;bb.classList.add('pp')}}}}catch(e){console.warn(e)}return r}})();

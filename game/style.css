@@ -1084,3 +1084,4 @@ body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:h
 .shbb.pp{animation:scIn .3s}
 .shtb{position:absolute;left:118px;right:8px;bottom:10px;display:flex;gap:5px;flex-wrap:wrap}
 .shtb span{padding:4px 10px;border-radius:12px;border:2px solid #ffd77a;background:linear-gradient(#5a3a1a,#2a1a0a);color:#ffd77a;font:900 12px Maplestory,sans-serif;cursor:pointer}
+.snode.bs em{position:absolute;left:100%;top:14px;margin-left:2px}
