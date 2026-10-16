@@ -1486,3 +1486,9 @@ const PT=[];const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||(G.saverState&
   else if(a.k=='venom'){ctx.strokeStyle=a.c[1];ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(p.x+Math.sin(T*3+p.ph)*4,p.y,2+k*4,0,6.283);ctx.stroke()}
   else{ctx.fillStyle=a.c[1];ctx.fillRect(p.x-1,p.y-3,2,6)}}
  ctx.globalAlpha=1;ctx.restore()}catch(_){}}})();
+/* v94 elite treasure chest drop */
+(()=>{const C=G.C;let live=0;
+const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
+ const w=document.createElement('div');w.className='ech'+(gold?' gold':'');w.style.left=Math.max(90,Math.min(265,q.x))+'px';w.style.top=(q.y-20)+'px';
+ w.innerHTML=`<div class="echb"></div><img src="assets/ic3_chest.png"><div class="echt">${gold?'황금 보물상자!':'보물상자'}<br><b><img src="assets/it2_gem.png">${gm} <img src="assets/it2_stone.png">${st}</b></div>`;b.appendChild(w);
+ setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000)}}}catch(_){}return ok(e,...a)}})();
