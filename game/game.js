@@ -2761,3 +2761,14 @@ ${CX.map((x,i)=>`#skills.skills>.sk:nth-child(${i+1}){left:${x-21}px!important}`
 #bctl{bottom:169px!important;right:6px!important;opacity:1!important;gap:4px!important}
 #bctl>*{width:42px!important;height:42px!important}
 #chat{z-index:8}`;document.head.appendChild(st)})();
+
+/* v170 battle header bar + side-column label tabs */
+(function(){const st=document.createElement('style');st.textContent=`
+#battle>.hud{background:none!important;isolation:isolate}
+#battle>.hud::before{content:'';position:absolute;left:-12px;top:-8px;width:404px;height:82px;background:url(assets/hdr_bar.png) 0 0/100% 100% no-repeat;z-index:-1;pointer-events:none;filter:drop-shadow(0 3px 5px #000a)}
+#battle>.hud::after{content:'';position:absolute;left:-12px;top:-8px;width:83.5px;height:82px;background:url(assets/hdr_ring.png) 0 0/100% 100% no-repeat;z-index:3;pointer-events:none}
+#battle>.hud .av{border-radius:50%!important;border:none!important;box-shadow:none!important;background:radial-gradient(#5a1a24,#1a0610)!important}
+#battle>.hud .prof,#battle>.hud .pinfo{background:none!important;border:none!important;box-shadow:none!important}
+#battle>.hud #cGold,#battle>.hud #cGem{background:none!important;border:none!important;box-shadow:none!important;text-shadow:0 1px 2px #000}
+#battle>.hud .cur{transform:translateY(16px)}#battle>.hud #menuBtn{transform:translateY(-16px);background:none!important;border:none!important;box-shadow:none!important}
+#stName{z-index:2;color:#fff0c8!important;text-shadow:0 0 3px #000,0 1px 2px #000,0 0 6px #000!important}#stagebar::before{top:-3px!important}.side a em{background:url(assets/side_tab.png) center/100% 100% no-repeat!important;padding:3px 7px 1px!important;min-width:34px;box-sizing:border-box;text-align:center;font-size:9.5px!important;line-height:12px;color:#ffe8b0!important;text-shadow:0 1px 1px #000!important;margin-left:auto;margin-right:auto;width:max-content}`;document.head.appendChild(st)})();
