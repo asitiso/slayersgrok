@@ -2510,3 +2510,20 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
   if(ri){ri.style.filter='';ri.innerHTML=`<img src="${A}rl_tome.png" style="filter:sepia(.9) saturate(2.4) hue-rotate(${(i*37)%360}deg) ${lv?'':'grayscale(.8) brightness(.55)'} drop-shadow(0 3px 3px #000a)">`}
   const p=el.querySelector('[data-rel]');if(p){p.insertAdjacentHTML('beforebegin',`<div class=rlfb><img src="${A}rl_fragment.png"><div><i class="${fr>=c.f?'ok':''}" style="width:${Math.min(100,fr/c.f*100)}%"></i><span>${fr} / ${c.f}</span></div></div>`);p.insertAdjacentHTML('afterbegin',`<img class=rlr src="${A}rl_restore.png">`)}})}catch(e){console.warn(e)}return r};
 })();
+/* v158 가방: adventurer's storeroom */
+(function(){const st=document.createElement('style');st.textContent=`
+.bgx .bghero{display:flex;align-items:center;gap:10px;margin:2px 4px 8px;padding:8px 10px;border-radius:12px;background:linear-gradient(90deg,rgba(40,24,10,.85),rgba(40,24,10,.2));border:1px solid #a87a3a}
+.bgx .bghero img{height:64px;filter:drop-shadow(0 3px 6px #000)}.bgx .bghero b{font-size:18px;color:#ffd98a;text-shadow:0 2px 3px #000}.bgx .bghero small{display:block;color:#e8d6b8;font-size:11px}
+.bgx .card{background:linear-gradient(180deg,rgba(52,34,18,.92),rgba(30,20,12,.92))!important;border:1px solid #8a6232!important}
+.bgx .ttl img{height:26px;vertical-align:middle;margin-right:4px}
+.bgx .bagg .bi{position:relative;background:radial-gradient(circle,rgba(70,48,24,.9),rgba(25,16,8,.95))!important;border:none!important;border-radius:6px;padding:8px 4px 6px!important;overflow:visible}
+.bgx .bagg .bi>.sf{position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);pointer-events:none;z-index:2}
+.bgx .bagg .bi>img:not(.sf){position:relative;z-index:1}
+.bgx .bagg .bi>b{position:absolute;top:4px;right:4px;z-index:3;background:rgba(0,0,0,.75);border:1px solid #d9a648;border-radius:8px;padding:0 5px;font-size:10px;color:#fff;line-height:15px}
+.bgx .bagg .bi>small{position:relative;z-index:3;display:block;margin-top:2px;color:#f0dfc0}
+.bgx .bagg .bi.gear>b{left:4px;right:auto}`;document.head.appendChild(st);
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{if(G.screen=='bag'){const sb=$('#screen');sb.classList.add('bgx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_bag_store.jpg';
+const body=sb.querySelector('.sbody');if(body&&!body.querySelector('.bghero')){const h=document.createElement('div');h.className='bghero';h.innerHTML=`<img src="${A}bg_backpack.png"><div><b>모험가의 창고</b><small>아이템을 눌러 정보 확인</small></div>`;body.prepend(h)}
+const cards=sb.querySelectorAll('.card');const tt=cards[0]&&cards[0].querySelector('.ttl');if(tt&&!tt.querySelector('img'))tt.insertAdjacentHTML('afterbegin',`<img src="${A}bg_pouch.png">`);
+const t2=cards[1]&&cards[1].querySelector('.ttl');if(t2&&!t2.querySelector('img'))t2.insertAdjacentHTML('afterbegin',`<img src="${A}bg_slot.png">`);
+cards.forEach((c,ci)=>c.querySelectorAll('.bagg .bi').forEach(b=>{if(b.querySelector('.sf'))return;const col=ci==1?b.style.borderColor:'';if(ci==1)b.classList.add('gear');const f=document.createElement('img');f.className='sf';f.src=A+'bg_slot.png';if(col)f.style.filter=`drop-shadow(0 0 3px ${col}) drop-shadow(0 0 2px ${col})`;b.appendChild(f)}))}else $('#screen').classList.remove('bgx')}catch(_){}return r}})();
