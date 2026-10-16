@@ -1777,7 +1777,7 @@ const view=i=>{const L=items().filter(x=>x.own);if(!L.length)return;i=(i+L.lengt
  v.onclick=e=>{if(e.target.dataset.p!=null)return view(i-1);if(e.target.dataset.n!=null)return view(i+1);v.remove()};document.body.appendChild(v)};
 G._glView=view;
 const draw=()=>{const el=$('#screen'),L=items(),own=L.filter(x=>x.own);
- el.innerHTML=shell('갤러리','bg_lobby.jpg',`<div class=entabs>${[['c','동료'],['b','보스'],['s','코스튬']].map(([k,n])=>`<span class="${tab==k?'on':''}" data-gt=${k}>${n}</span>`).join('')}</div>
+ el.innerHTML=shell('갤러리','bg_gallery_hall.jpg',`<div class=entabs>${[['c','동료'],['b','보스'],['s','코스튬']].map(([k,n])=>`<span class="${tab==k?'on':''}" data-gt=${k}>${n}</span>`).join('')}</div>
  <div class=card><div class=ttl>수집한 일러스트 ${own.length}/${L.length} <small>탭하면 크게 감상</small></div><div class=glt>${L.map(x=>`<div class="glc ${x.own?'':'lock'} ${x.bs?'bs':''}" style="--c:${x.c}" ${x.own?`data-gv=${own.indexOf(x)}`:''}><img src="${A}${x.img}"><b>${x.own?x.n:'???'}</b></div>`).join('')}</div></div>`);
  el.querySelector('#sBack').onclick=()=>closeScreen();
  el.querySelectorAll('[data-gt]').forEach(b=>b.onclick=()=>{tab=b.dataset.gt;draw()});el.querySelectorAll('[data-gv]').forEach(b=>b.onclick=()=>view(+b.dataset.gv))};
@@ -2594,3 +2594,22 @@ const bar=sb.querySelector('.card .bar');if(bar&&!bar.classList.contains('xsb'))
 ['#stUp','#stAw'].forEach(q=>{const b=sb.querySelector(q);if(b&&!b.querySelector('.ar'))b.insertAdjacentHTML('afterbegin',`<img class=ar src="${A}st_arrow.png">`)});
 const h=sb.querySelector('.sthero');if(h&&G._stBurst&&Date.now()-G._stBurst<500){G._stBurst=0;const bz=document.createElement('div');bz.className='xsburst';bz.innerHTML=[...Array(10)].map((_,i)=>{const a=i/10*6.283;return `<img src="${A}st_frag.png" style="--x:${Math.cos(a)*90}px;--y:${Math.sin(a)*70}px;animation-delay:${i*20}ms">`}).join('');h.appendChild(bz);setTimeout(()=>bz.remove(),1300)}}else sb.classList.remove('stx')}catch(_){}return r};
 const su=C.starUp;C.starUp=function(){const r=su.apply(this,arguments);if(r=='ok')G._stBurst=Date.now();return r};const aw=C.awake;C.awake=function(){const r=aw.apply(this,arguments);if(r=='ok')G._stBurst=Date.now();return r}})();
+/* v162 갤러리: gallery hall */
+(function(){const st=document.createElement('style');st.textContent=`
+.glx .shade{background:linear-gradient(rgba(20,6,10,.25),rgba(20,6,10,.6))!important}
+.glx .card{background:rgba(30,10,16,.78)!important;border:1px solid #a8803a!important}
+.glx .glt{gap:10px 8px!important}
+.glx .glt .glc{position:relative;aspect-ratio:3/4.2!important;background:none!important;border:none!important;border-radius:0!important;padding:0!important;overflow:visible!important}
+.glx .glt .glc::before{content:'';position:absolute;left:8%;right:8%;top:7%;bottom:22%;background:radial-gradient(circle at 50% 45%,#5a3038,#1a0c10);z-index:0}
+.glx .glt .glc>img:not(.gfr):not(.gvl){position:absolute!important;left:10%!important;width:80%!important;top:8%!important;height:68%!important;bottom:auto!important;transform:none!important;object-fit:contain!important;max-width:none;z-index:1;overflow:hidden}
+.glx .glt .glc>.gfr,.glx .glt .glc>.gvl{filter:drop-shadow(0 2px 3px #000)!important;transform:none!important;max-width:none!important;bottom:auto!important}.glx .glt .glc>.gfr{position:absolute;left:0!important;top:0;width:100%;height:80%;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 4px #000)}
+.glx .glt .glc>b{position:absolute!important;left:-2%!important;right:-2%!important;bottom:0!important;z-index:4;background:url(assets/gl_plate.png) center/100% 100% no-repeat!important;color:#3a2408!important;font-size:9.5px!important;font-weight:900;padding:5px 6px!important;text-shadow:0 1px 0 #f3d890;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.glx .glt .glc.lock>img:not(.gfr):not(.gvl){visibility:hidden}
+.glx .glt .glc.lock>.gvl{position:absolute;left:7%!important;top:5%;width:86%;height:72%;z-index:2;object-fit:fill}
+.glx .glt .glc.lock>b{font-size:8.5px!important}`;document.head.appendChild(st);
+const CND={c:'소환으로 획득',b:'보스 처치 시 해금',s:'코스튬 보유 시 해금'};
+const dec=()=>{const sb=$('#screen');if(G.screen!='gallery'){sb.classList.remove('glx');return}sb.classList.add('glx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_gallery_hall.jpg';
+ const tb=(sb.querySelector('[data-gt].on')||{}).dataset;const t=tb?tb.gt:'c';
+ sb.querySelectorAll('.glc').forEach(c=>{if(c.querySelector('.gfr'))return;c.insertAdjacentHTML('beforeend',`<img class=gfr src="${A}gl_frame.png">`);if(c.classList.contains('lock')){c.insertAdjacentHTML('afterbegin',`<img class=gvl src="${A}gl_veil.png">`);const b=c.querySelector('b');if(b)b.textContent='🔒 '+CND[t]}});
+ sb.querySelectorAll('[data-gt]').forEach(b=>b.addEventListener('click',()=>setTimeout(dec,0)))};
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
