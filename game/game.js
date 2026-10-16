@@ -1953,3 +1953,6 @@ function deco(){const el=$('#screen'),s=C.S(),f0=el.querySelector('.slotrow');if
  const sk=(D.CSKI||{})[k],st=document.createElement('div');st.className='cxs';
  st.innerHTML=bar('공격',C.compMul(k),2.5,'linear-gradient(90deg,#ff7a3d,#ffd25a)')+bar('체력',c.hp||1,1.5,'linear-gradient(90deg,#3ad07a,#b4ff6a)')+bar('속도',c.spd||1,1.5,'linear-gradient(90deg,#3a9bff,#7ae8ff)')+(sk?`<div class=cxk><img src="${A}${sk[0]}"><div><b>${sk[1]}</b><small>${c.d}</small></div></div>`:'');
  const st0=im.parentNode.querySelector('.stars');(st0||im).after(st)}catch(e){console.warn(e)}return r}})();
+/* v126 화룡전식 장비 인형 (리나 전신 중앙 + 좌우 4부위 슬롯) · 시트 열림 시 콤보 숨김 */
+;(()=>{const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab=='gear'){const g=document.querySelector('#panel .eqgrid');if(g&&!g.classList.contains('doll')){g.classList.add('doll');const s=C.S(),n=Object.values(s.gear||{}).filter(Boolean).length;
+ const c=document.createElement('div');c.className='dollc';c.innerHTML=`<i class=dr></i><img src="${A}hero_lina.png"><div class=dp><small>전투력</small><b>${fmt(C.POW())}</b></div><span class=dn>리나 Lv.${s.lv} · 장착 ${n}/8</span>`;g.appendChild(c)}}}catch(e){console.warn(e)}return r}})();
