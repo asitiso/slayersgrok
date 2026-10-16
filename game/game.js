@@ -2865,3 +2865,13 @@ const of=R.frame;R.frame=dt=>{if(vs>0){vs-=dt;return of(dt*.4)}return of(dt)}})(
 const fx=()=>!R.opt||R.opt.fx!==false;const was=new Map();
 setInterval(()=>{const B=C.B;if(!B||!B.allies)return;const pp=document.querySelectorAll('#partycol .pp');B.allies.forEach((a,i)=>{const p=was.get(a.k)||0,u=a._ug||0;was.set(a.k,u);
  if(p>=1&&u<.05&&!G.screen&&fx()&&pp[i]&&(D.CSKI||{})[a.k]){const el=pp[i];el.classList.remove('cfl');void el.offsetWidth;el.classList.add('cfl');setTimeout(()=>el.classList.remove('cfl'),650)}})},60)})();
+
+/* v178: notice popup uses shared bronze panel + ribbon (visual only) */
+(()=>{const st=document.createElement('style');st.textContent=`
+#notice .ntc{background:none!important;border-style:solid!important;border-width:12px!important;border-image:url(assets/ui_panel.png) 30 fill stretch!important;border-radius:0!important;box-shadow:0 10px 30px #000c!important;padding:30px 10px 8px!important;width:350px}
+#notice .nth{margin:-50px -4px 8px;height:58px;display:flex;align-items:center;justify-content:center;padding-top:10px;background:url(assets/ui_ribbon.png) center/100% 100% no-repeat;color:#ffe6b0;text-shadow:0 1px 2px #000,0 0 6px #000}
+#notice .ntx{position:absolute;right:-14px;top:-4px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff3d6;background:radial-gradient(circle at 40% 35%,#a8423a,#5a1712);border:2px solid #d9a85a;box-shadow:0 2px 4px #000a}
+#notice .ntb{border:2px solid #b8894a;box-shadow:inset 0 0 0 1px #3a2210,0 2px 6px #0008}
+#notice .ntdot i{background:#6a5440}#notice .ntdot i.on{background:#ffd75a}
+#notice .ntgo{border:2px solid #e8c47a;box-shadow:0 2px 0 #1e5a2a,0 3px 6px #0008}
+#notice .ntn{color:#e8d8c0}`;document.head.appendChild(st)})();
