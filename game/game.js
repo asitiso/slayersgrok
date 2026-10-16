@@ -111,8 +111,8 @@ function renderPanel(){const p=$('#panel'),t=G.tab,s=C.S();C.daily();
 function summon(n){const got=C.summon(n);if(!got)return toast('보석이 부족합니다');if(G.screen=='summon')renderScreen();modal(`<div class=ttl style="justify-content:center;font-size:18px">소환 결과</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">${got.map((k,gi)=>{const c=D.COMPS.find(x=>x.k==k);return `<div class="sumcard ${c.g>=3?'hi':''}" style="--rc:${D.RAR[c.g].c};animation-delay:${.15+gi*.16}s"><img src="${A}${c.img}" style="height:${n>1?66:170}px"><span class=gr>${D.RAR[c.g].n}</span><b>${c.n}</b><small>★${C.S().comps[k]}</small>${(C.lastNew||{})[k]&&got.indexOf(k)==gi?'<em class=snew>NEW</em>':`<small class=sdup>조각 +${C.SHV[c.g]||5}</small>`}${k==C.RU?'<em class=snew style="left:-6px;right:auto;background:linear-gradient(#ffb03a,#d65a00)">UP</em>':''}</div>`}).join('')}</div>`).id='sumModal';renderPanel()}
 // ---------- full screens
 function shell(title,bg,body,pos='center'){return `<img class=sbg src="${A}${bg}" style="object-position:${pos}"><div class=shade></div><div class=shead><span class=back id=sBack>‹</span><b>${title}</b><span class=chip><img class=ci src=assets/it2_gold.png> ${fmt(C.S().gold)}</span><span class=chip><img class=ci src=assets/it2_gem.png> ${fmt(C.S().gems)}</span></div><div class=sbody>${body}</div>`}
-function openScreen(k){G.screen=k;$('#screen').classList.add('on');renderNav();renderScreen(true)}
-function closeScreen(){G.screen=null;$('#screen').classList.remove('on');$('#screen').innerHTML='';renderNav();updateHud()}
+function openScreen(k){G.screen=k;$('#screen').className='on';renderNav();renderScreen(true)}
+function closeScreen(){G.screen=null;$('#screen').className='';$('#screen').innerHTML='';renderNav();updateHud()}
 function renderScreen(first){const k=G.screen,el=$('#screen'),s=C.S();if(!k)return;C.daily();el.classList.remove('gld','pass');
  if(k=='map'){const Hh=el.clientHeight-58||714,mw=Hh*16/9;
   el.innerHTML=`<img class=sbg src="${A}bg_map.jpg" style="filter:blur(6px) brightness(.4)"><div class=shead><span class=back id=sBack>‹</span><b>모험 지도</b>${D.CH.map((c,i)=>`<span class="chip ${Math.floor(s.si/7)==i?'on':''}" data-ch=${i}>${i+1}장</span>`).join('')}</div>${(()=>{const ci=Math.floor(s.si/7),done=Math.max(0,Math.min(7,s.maxSi-ci*7+(s.done?1:0)));return `<div class=mapch style="--art:url(${A}chap/ch${ci+1}.jpg)"><div><small>CHAPTER ${ci+1}</small><b>${D.CH[ci]}</b></div><div class=mp><i style="width:${done/7*100}%"></i></div><span>${done}/7</span></div>`})()}
@@ -2799,3 +2799,10 @@ st.textContent=`
 #screen${TH} .entabs span.on,#screen${TH} .duntabs span.on{background:linear-gradient(#f2d080,#b07a2a)!important;border-color:#ffe9a8!important;color:#2a1600!important;box-shadow:0 0 8px #ffc94a88,inset 0 1px 0 #fff8!important}`;document.head.appendChild(st);
 const mark=()=>{const s=document.getElementById('screen');if(s&&s.dataset.scr!==(G.screen||''))s.dataset.scr=G.screen||''};setInterval(mark,150);
 new MutationObserver(mark).observe(document.getElementById('screen'),{childList:true})})();
+
+/* v173 generic popup base (panel frame + ribbon) and bronze toast capsule */
+(function(){const st=document.createElement('style');st.textContent=`
+.modal .card:not(.ppx):not(.rpf){background:none!important;border-style:solid!important;border-width:12px!important;border-image:url(assets/ui_panel.png) 30 fill stretch!important;border-radius:0!important;box-shadow:0 10px 30px #000c!important;padding:30px 12px 10px!important;position:relative}
+.modal .card:not(.ppx):not(.rpf)>.ttl:first-child{position:relative;margin:-50px -6px 8px!important;height:58px;display:flex!important;align-items:center;justify-content:center;padding:10px 20px 0!important;background:url(assets/ui_ribbon.png) center/100% 100% no-repeat!important;color:#ffe6b0!important;text-shadow:0 1px 2px #000,0 0 6px #000!important;font-size:16px!important}
+.modal .card:not(.ppx):not(.rpf) small{color:#e8d8c0}
+.toast{background:linear-gradient(#4a321a,#22140a)!important;border:1.5px solid #d8b060!important;border-radius:20px!important;box-shadow:inset 0 1px 0 #fff4,inset 0 -2px 0 #0007,0 0 0 2px #2a1808,0 4px 10px #000a!important;color:#ffeccc!important;text-shadow:0 1px 1px #000!important}`;document.head.appendChild(st)})();
