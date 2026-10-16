@@ -1576,3 +1576,58 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||!BO.length)return;const c=
   for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1],k=(T*.8+i*.37)%1;ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(a.x+(b.x-a.x)*k,a.y-2+(b.y-a.y)*k,3.2,0,6.283);ctx.fill()}
   ctx.shadowBlur=0;{const m=P[Math.floor(P.length/2)],n=P[Math.floor(P.length/2)-1]||m,mx=Math.max(120,Math.min(260,(m.x+n.x)/2)),my=(m.y+n.y)/2+16;ctx.globalAlpha=.95;ctx.font='900 11px "Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#000a';const tx=((D.FACTIONS[sy.f]||{}).n||'')+' 공명 ×'+P.length;ctx.strokeText(tx,mx,my);ctx.fillStyle=col;ctx.fillText(tx,mx,my)}ctx.globalAlpha=.95;P.forEach(p=>{const y=p.y-104+Math.sin(T*2+p.x)*2;ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(p.x,y-6);ctx.lineTo(p.x+5,y);ctx.lineTo(p.x,y+6);ctx.lineTo(p.x-5,y);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke()})});
  ctx.globalAlpha=1;ctx.restore()}catch(_){}}})();
+;(()=>{// v103 동료 인연 (호감도 · 선물 · 인연 대사 해금)
+const LN={gourry:['어, 리나! 배고프지 않아? 나는 항상 배고파.','검은 내가 맡을게. 넌 뒤에서 마음껏 터뜨려.','네 옆이라면 어디든 따라갈 거야. 그게 내 일이니까.'],
+zelgadis:['…이 몸에 신경 쓸 필요 없다.','원래 몸을 찾는 여행이지만, 너희와 함께라면 나쁘지 않군.','고맙다, 리나. 처음으로 동료라는 말이 어색하지 않아.'],
+amelia:['정의는 반드시 승리합니다!','리나 씨의 주문, 언제 봐도 박력 만점이에요!','세이룬의 이름으로 맹세할게요. 끝까지 함께예요!'],
+xellos:['그건… 비밀입니다♪','후후, 당신은 정말 흥미로운 분이군요.','마족에게도 즐거운 여행이란 게 있는 모양입니다.'],
+sera:['빛이 당신의 길을 비추기를.','상처는 제가 맡을게요. 앞만 보세요.','당신 곁에서 기도하는 시간이 가장 따뜻해요.'],
+rhea:['용의 피가 끓는다! 싸우자!','네 화염도 꽤 뜨겁더군. 인정한다.','언젠가 진짜 드래곤을 함께 쓰러뜨리자, 약속이다.'],
+lyra:['바람이 다음 표적을 알려줘요.','숲의 친구들도 당신을 좋아하게 됐대요.','당신을 위해서라면 백 발 백 중이에요.'],
+borin:['흠! 망치질 한 번이면 끝이지.','네 지팡이, 내가 손 좀 봐줄까?','드워프는 은혜를 잊지 않는다. 평생 동료다!'],
+kaede:['검은 마음을 비추는 거울입니다.','당신의 기세에 저도 수련을 다시 하게 되네요.','이 칼날은 이제 당신을 지키기 위해 있습니다.'],
+pip:['헤헤, 이건 주운 거예요! 진짜로!','보물 냄새가 나요! 저쪽이에요!','언니가 최고야! 제일 좋은 보물은 언니예요!'],
+noel:['…추운 건 익숙해요.','당신 곁은 이상하게 따뜻하네요.','얼어붙었던 마음이 녹았어요. 고마워요.']};
+const TH=[0,30,80,160,280,450],MX=5,LIM=5;
+const GF=[{k:'f',n:'들꽃 다발',e:10,ic:'🌼',gold:40},{k:'c',n:'수제 과자',e:35,ic:'🍪',gold:120},{k:'j',n:'마법 보석',e:100,ic:'💎',gems:30}];
+const st=()=>{const s=C.S();if(!s.bond)s.bond={x:{},day:'',n:{},sel:''};const b=s.bond;if(b.day!=C.today()){b.day=C.today();b.n={}}return b};
+const lv=k=>{const x=st().x[k]||0;let l=0;TH.forEach((t,i)=>{if(x>=t)l=i});return l};
+const price=g=>g.gold?Math.max(50,Math.round(C.goldKill(Math.max(0,C.S().maxSi))*g.gold)):g.gems;
+const line=(k,l)=>{const L=LN[k]||['…','…','…'];return l>=5?L[2]:l>=3?L[1]:L[0]};
+G.bondGive=(k,gk)=>{const s=C.S(),b=st(),g=GF.find(x=>x.k==gk);if(!g||!s.comps[k])return 0;if(lv(k)>=MX)return -1;if((b.n[k]||0)>=LIM)return -2;const p=price(g);if(g.gold?s.gold<p:s.gems<p)return -3;
+ if(g.gold)s.gold-=p;else s.gems-=p;b.n[k]=(b.n[k]||0)+1;const l0=lv(k);b.x[k]=Math.min(TH[MX],(b.x[k]||0)+g.e);const l1=lv(k);if(l1>l0)s.gems+=10*(l1-l0);return {up:l1>l0,l:l1}};
+const hearts=l=>Array.from({length:MX},(_,i)=>`<span class="bh ${i<l?'on':''}">♥</span>`).join('');
+const css=document.createElement('style');css.textContent=`
+.bdsel{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}.bdsel::-webkit-scrollbar{display:none}
+.bdc{flex:0 0 62px;border:2px solid #5a4a6a;border-radius:10px;background:linear-gradient(#2a2238,#17121f);text-align:center;padding:3px 0 2px;position:relative}
+.bdc img{width:56px;height:44px;object-fit:contain}.bdc b{display:block;font-size:10px;color:#eee}.bdc.on{border-color:#ff8ab0;box-shadow:0 0 10px #ff5a90}.bdc .bl{font-size:9px;color:#ff8ab0}
+.bdhero{position:relative;height:300px;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 70%,#ffd0e0 0%,#f7a3c4 35%,#7a4a8a 100%);border:2px solid #ff9ac0}
+.bdhero .pt{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:270px;max-width:96%;object-fit:contain;filter:drop-shadow(0 6px 10px #0006)}
+.bdhero .sp{position:absolute;left:10px;right:10px;top:10px;background:#fffdf7;color:#3a2440;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:700;box-shadow:0 3px 8px #0005}
+.bdhero .sp:after{content:'';position:absolute;bottom:-9px;left:50%;border:9px solid transparent;border-top-color:#fffdf7;border-bottom:0}
+.bdhero .nm{position:absolute;left:10px;bottom:10px;background:#0008;border-radius:8px;padding:4px 8px;color:#fff;font-size:13px}
+.bdhero .fl{position:absolute;color:#ff4a86;font-size:22px;text-shadow:0 0 6px #fff;z-index:2;animation:bdfl 3.2s linear infinite;opacity:0}
+@keyframes bdfl{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.9}100%{transform:translateY(-230px) scale(1.2);opacity:0}}
+.bh{color:#5a4a5a;font-size:18px;margin-right:1px}.bh.on{color:#ff5a90;text-shadow:0 0 6px #ff5a90}
+.bdbar{height:9px;border-radius:5px;background:#2a2030;border:1px solid #ff9ac0;overflow:hidden;margin:4px 0}.bdbar i{display:block;height:100%;background:linear-gradient(90deg,#ff7aa8,#ffc0d8)}
+.bdg{display:flex;gap:6px;margin-top:6px}.bdgi{flex:1;border:2px solid #ff9ac0;border-radius:10px;background:#2a1a2a;text-align:center;padding:6px 2px;color:#fff}
+.bdgi .i{font-size:26px;display:block}.bdgi b{font-size:12px;display:block}.bdgi small{font-size:10px;color:#ffd77a}.bdgi.off{opacity:.4}
+.bdln{font-size:12px;padding:5px 0;border-bottom:1px solid #fff2}.bdln.lock{color:#888}
+.bdpop{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:linear-gradient(#ff7aa8,#c24a7a);color:#fff;font-weight:900;font-size:22px;padding:10px 22px;border-radius:14px;border:2px solid #fff;box-shadow:0 0 24px #ff5a90;animation:bdpp 1.6s ease forwards;pointer-events:none;z-index:5;white-space:nowrap}
+@keyframes bdpp{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}`;document.head.appendChild(css);
+const CUT={amelia:1,borin:1,gourry:1,noel:1,sera:1,xellos:1,zelgadis:1};
+const draw=up=>{const el=$('#screen'),s=C.S(),b=st();const own=D.COMPS.filter(c=>s.comps[c.k]);
+ if(!own.length){el.innerHTML=shell('인연','bg_lobby.jpg','<div class=card style="text-align:center">동료를 소환하면 인연을 쌓을 수 있어요</div>');}
+ else{if(!s.comps[b.sel])b.sel=own[0].k;const c=D.COMPS.find(x=>x.k==b.sel),l=lv(c.k),x=b.x[c.k]||0,nx=TH[Math.min(MX,l+1)],pv=TH[l],pct=l>=MX?100:Math.round((x-pv)/(nx-pv)*100),F=D.FACTIONS[c.fac];
+ const fl=Array.from({length:7},(_,i)=>`<span class=fl style="left:${8+i*13}%;bottom:${10+(i%3)*8}px;animation-delay:${i*.45}s">♥</span>`).join('');
+ el.innerHTML=shell('인연','bg_lobby.jpg',`<div class=bdsel>${own.map(o=>`<div class="bdc ${o.k==c.k?'on':''}" data-bk=${o.k}><img src="${A}${o.img}"><b>${o.n}</b><span class=bl>♥${lv(o.k)}</span></div>`).join('')}</div>
+ <div class=bdhero>${fl}<img class=pt src="${A}${CUT[c.k]?'cutc/'+c.k+'.png':c.img}"><div class=sp>「${line(c.k,l)}」</div><div class=nm><b>${c.n}</b> <span style="color:${F.c}">${F.n}</span></div>${up?`<div class=bdpop>인연 Lv.${l} 달성! 💎+10</div>`:''}</div>
+ <div class=card><div class=ttl>인연 Lv.${l} <span>${hearts(l)}</span></div><div class=bdbar><i style="width:${pct}%"></i></div><small>${l>=MX?'인연 최대!':`다음 단계까지 ${nx-x} · 오늘 선물 ${b.n[c.k]||0}/${LIM}`} · 단계 달성마다 💎10</small>
+ <div class=bdg>${GF.map(g=>{const p=price(g),ok=l<MX&&(b.n[c.k]||0)<LIM&&(g.gold?s.gold>=p:s.gems>=p);return `<div class="bdgi ${ok?'':'off'}" data-gf=${g.k}><span class=i>${g.ic}</span><b>${g.n}</b><small>${g.gold?'🪙'+fmt(p):'💎'+p} · +${g.e}</small></div>`}).join('')}</div></div>
+ <div class=card><div class=ttl>인연 대사</div>${[1,3,5].map(t=>`<div class="bdln ${l>=t?'':'lock'}">♥${t} ${l>=t?'「'+line(c.k,t)+'」':'🔒 인연 Lv.'+t+' 달성 시 해금'}</div>`).join('')}</div>`);}
+ const bk=el.querySelector('#sBack');if(bk)bk.onclick=()=>closeScreen();
+ el.querySelectorAll('[data-bk]').forEach(e=>e.onclick=()=>{st().sel=e.dataset.bk;draw()});
+ el.querySelectorAll('[data-gf]').forEach(e=>e.onclick=()=>{const r=G.bondGive(st().sel,e.dataset.gf);if(r==-1)return toast('인연이 최대예요');if(r==-2)return toast('오늘은 더 선물할 수 없어요');if(r==-3)return toast('재화가 부족해요');if(r){updateHud();draw(r.up)}})};
+if(!MENU.some(m=>m[0]=='bond')){const i=MENU.findIndex(m=>m[0]=='party');MENU.splice(i+1,0,['bond','인연','ic3_friend.png'])}try{renderHub()}catch(_){}
+const rs=renderScreen;renderScreen=function(){if(G.screen=='bond')return draw();return rs.apply(this,arguments)};
+})();
