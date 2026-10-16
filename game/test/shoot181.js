@@ -1,0 +1,12 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,noel:1,amelia:1};s.party=['gourry','noel','amelia'];G.C.buildAllies()});
+await sl(2000);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+await until(()=>C.B.enemies.some(e=>!e.boss&&e.hp>0)&&(C.S().wave||0)<2,40000);await ev(()=>G._crSpawn());await sl(2200);await clr();await sh('844-crate-hp');
+let mx=0;for(let i=0;i<60;i++){const n=await ev(()=>[...document.querySelectorAll('.wvb,.wclr,.mkb,.fevban,.enrb')].filter(x=>!x.classList.contains('bgone')).length);mx=Math.max(mx,n);await sl(250)}console.log('maxBanners',mx);
+await ev(()=>{G._echG=false});await until(()=>C.B.enemies.filter(e=>!e.boss&&e.hp>0).length>3&&(C.S().wave||0)<1,60000);await ev(()=>{const e=C.B.enemies.filter(e=>!e.boss&&e.hp>0)[0];if(e){e.el=1;e.hp=1}});await until(()=>document.querySelector('.ech'),20000);await sl(1200);await clr();console.log('ekT',await ev(()=>!!R.ekT));await sh('845-elite-clean');
+await until(()=>document.querySelector('.vic'),60000);await sl(600);console.log('visBanners',await ev(()=>[...document.querySelectorAll('.wvb,.wclr,.mkb,.fevban,.enrb')].filter(x=>!x.classList.contains('bgone')).length));await sh('846-victory-clean');
+stop();console.log('ERR',errs);await b.close()})();

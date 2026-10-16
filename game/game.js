@@ -1491,7 +1491,7 @@ const PT=[];const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||(G.saverState&
 const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=G._echG!=null?G._echG:Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
  const w=document.createElement('div');w.className='ech'+(gold?' gold':'');w.style.left=Math.max(90,Math.min(265,q.x))+'px';w.style.top=(q.y-20)+'px';
  w.innerHTML=`<div class="echb"></div><img src="assets/ic3_chest.png"><div class="echt">${gold?'황금 보물상자!':'보물상자'}<br><b><img src="assets/it2_gem.png">${gm} <img src="assets/it2_stone.png">${st}</b></div>`;b.appendChild(w);
- setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000)}}}catch(_){}return ok(e,...a)}})();
+ setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000);const r=ok(e,...a);R.ekT=null;return r}}}catch(_){}return ok(e,...a)}})();
 /* v95 breakable field crates */
 (()=>{const C=G.C;let cd=12,el=null;
 function brk(byTap){if(!el)return;const w=el,s=C.S(),g=Math.round(C.goldKill(s.si||0)*(byTap?25:20));C.addGold(g);el=null;w.classList.add('brk');
@@ -1504,3 +1504,8 @@ const ot=C.tick;C.tick=(dt,...a)=>{const r=ot(dt,...a);try{if(G.screen=='sim'||G
 /* v96 spawn rift portal */
 (()=>{const C=G.C;const os=C.ev.spawn;C.ev.spawn=function(){const r=os&&os.apply(this,arguments);try{if(G.screen)return r;const b=document.getElementById('battle');if(!b)return r;const bo=(C.B.enemies||[]).some(e=>e.boss);
  const d=document.createElement('div');d.className='rift'+(bo?' boss':'');d.innerHTML='<i class="rs"></i><i class="rc"></i><i class="rb"></i>';b.appendChild(d);setTimeout(()=>d.remove(),bo?1400:1700)}catch(_){}return r}})();
+
+/* v97 declutter: one center banner at a time, damage-number cap */
+(()=>{const BN=['wvb','wclr','mkb','fevban','enrb'];const b=document.getElementById('battle');if(!b)return;
+const mo=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(!n.classList)continue;const vic=n.classList.contains('vic');if(vic||BN.some(c=>n.classList.contains(c))){if(!vic&&document.querySelector('.vic')){n.classList.add('bgone');continue}document.querySelectorAll(BN.map(c=>'.'+c).join(',')+',.ech,.crate').forEach(o=>{if(o!==n&&!o.classList.contains('bgone'))o.classList.add('bgone')})}}});mo.observe(b,{childList:true});mo.observe(document.body,{childList:true});
+G.declutter=1})();
