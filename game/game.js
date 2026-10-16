@@ -1969,6 +1969,10 @@ const rs=renderScreen;renderScreen=function(){if(G.screen=='town')return draw();
 ;(()=>{const PIN=[[13,60],[29,46],[43,34],[90,42],[70,40],[80,14],[86,80]];// ch1..7 region on map_world
 const NP=[[26,80],[68,72],[28,62],[70,52],[30,43],[70,35],[46,25]];// stage nodes in chapter view (%)
 const WW=1244,WH=700;
+// per-chapter art (cover crop centred); node positions follow the painted path. Missing art → world-map crop.
+// add a chapter index here when assets/map_chN.jpg is added (avoids 404 probing)
+const MAPART=[0];const NPC2={0:[[38,80],[64,74],[42,63],[70,53],[38,43],[64,33],[50,22]]};G.mapArt=G.mapArt||{};MAPART.forEach(i=>G.mapArt[i]=1);
+
 const draw=()=>{const el=$('#screen'),s=C.S(),cur=Math.floor(s.si/7),mx=Math.floor(Math.min(s.maxSi,D.FIELDS.length-1)/7);if(G.mapCh==null)G.mapCh=cur;const ch=G.mapCh;
  const head=`<div class=shead><span class=back id=sBack>‹</span><b>${ch<0?'월드맵':'제'+(ch+1)+'장 · '+D.CH[ch]}</b><span class=chip><img class=ci src=assets/it2_gold.png> ${fmt(s.gold)}</span></div>`;
  if(ch<0){el.innerHTML=`<img class=sbg src="${A}map_world.jpg" style="filter:blur(6px) brightness(.5)">${head}<div class=wmap id=mapw><div class=wmin style="width:${WW}px;height:${WH}px">
@@ -1977,12 +1981,12 @@ const draw=()=>{const el=$('#screen'),s=C.S(),cur=Math.floor(s.si/7),mx=Math.flo
   <img class=wlina src="${A}hero_lina.png" style="left:${PIN[cur][0]}%;top:${PIN[cur][1]}%"></div></div>`;
   const w=$('#mapw');w.scrollLeft=PIN[cur][0]/100*WW-195;el.querySelectorAll('[data-ch]').forEach(n=>n.onclick=()=>{const i=+n.dataset.ch;if(i>mx)return toast('이전 장의 보스를 처치하세요');G.mapCh=i;draw()});
  }else{const [px,py]=PIN[ch],bh=1150,bw=bh*16/9,bx=Math.max(0,Math.min(bw-390,px/100*bw-195)),by=Math.max(0,Math.min(bh-700,py/100*bh-350));
-  const pl=D.BOSSPLAN[ch]||[0,1],bo=D.BOSSES[pl[1]];
-  el.innerHTML=`<img class=sbg src="${A}map_world.jpg" style="filter:blur(6px) brightness(.5)">${head}<div class=cmap style="background-image:url(${A}map_world.jpg);background-size:${bw}px ${bh}px;background-position:-${bx}px -${by}px">
+  const pl=D.BOSSPLAN[ch]||[0,1],bo=D.BOSSES[pl[1]];const NPx=(G.mapArt&&G.mapArt[ch]&&NPC2[ch])||NP;
+  el.innerHTML=`<img class=sbg src="${A}map_world.jpg" style="filter:blur(6px) brightness(.5)">${head}<div class=cmap style="${G.mapArt[ch]?`background:url(${A}map_ch${ch+1}.jpg) center/cover`:`background-image:url(${A}map_world.jpg);background-size:${bw}px ${bh}px;background-position:-${bx}px -${by}px`}">
   <div class=cban style="background-image:url(${A}chap/ch${ch+1}.jpg)"><small>CHAPTER ${ch+1}</small><b>${D.CH[ch]}</b></div>
-  <svg viewBox="0 0 100 100" preserveAspectRatio=none style="position:absolute;inset:0;width:100%;height:100%"><polyline points="${NP.map(([x,y])=>x+','+y).join(' ')}" fill=none stroke="#fff3c0" stroke-width=.8 stroke-dasharray=".4 2" stroke-linecap=round vector-effect=none /></svg>
-  ${NP.map(([x,y],j)=>{const i=ch*7+j,lk=i>s.maxSi,bs=j==6,n=G.stStar?G.stStar(i):0;return `<div class="snode ${lk?'lk':''} ${i==s.si?'cur':''} ${bs?'bs':''}" data-n=${i} style="left:${x}%;top:${y}%">${bs?`<img class=sbimg src="${A}${bo.img}">`:''}<img src="assets/node_${lk?'locked':bs?'boss':'normal'}.png"><b>${C.stageName(i)}</b>${lk?'':`<small>${[0,1,2].map(k=>`<i class="${k<n?'on':''}">★</i>`).join('')}</small>`}${bs?`<em>${bo.n}</em>`:''}</div>`}).join('')}
-  ${s.si>=ch*7&&s.si<ch*7+7?`<img class=slina src="${A}hero_lina.png" style="left:${NP[s.si%7][0]}%;top:${NP[s.si%7][1]}%">`:''}
+  <svg viewBox="0 0 100 100" preserveAspectRatio=none style="position:absolute;inset:0;width:100%;height:100%"><polyline points="${NPx.map(([x,y])=>x+','+y).join(' ')}" fill=none stroke="#fff3c0" stroke-width=.8 stroke-dasharray=".4 2" stroke-linecap=round vector-effect=none /></svg>
+  ${NPx.map(([x,y],j)=>{const i=ch*7+j,lk=i>s.maxSi,bs=j==6,n=G.stStar?G.stStar(i):0;return `<div class="snode ${lk?'lk':''} ${i==s.si?'cur':''} ${bs?'bs':''}" data-n=${i} style="left:${x}%;top:${y}%">${bs?`<img class=sbimg src="${A}${bo.img}">`:''}<img src="assets/node_${lk?'locked':bs?'boss':'normal'}.png"><b>${C.stageName(i)}</b>${lk?'':`<small>${[0,1,2].map(k=>`<i class="${k<n?'on':''}">★</i>`).join('')}</small>`}${bs?`<em>${bo.n}</em>`:''}</div>`}).join('')}
+  ${s.si>=ch*7&&s.si<ch*7+7?`<img class=slina src="${A}hero_lina.png" style="left:${NPx[s.si%7][0]}%;top:${NPx[s.si%7][1]}%">`:''}
   <div class=cbar><span class=btn id=wBtn>🗺 월드맵</span><span class="btn schbtn" id=schB><img src=assets/ic3_chest.png>★${G.chStars?G.chStars(ch):0}/21</span><span class=btn id=mapDun2><img src="${A}ic4/gate.png">일일 던전</span></div></div>`;
   $('#wBtn').onclick=()=>{G.mapCh=-1;draw()};$('#schB').onclick=()=>G.starOpen&&G.starOpen(ch);$('#mapDun2').onclick=()=>openScreen('dungeon');
   el.querySelectorAll('.snode').forEach(n=>n.onclick=()=>{const i=+n.dataset.n;if(i>s.maxSi)return toast('이전 스테이지의 보스를 처치하세요');C.selectStage(i);toast(C.stageName(i)+' 으로 이동');closeScreen()})}
