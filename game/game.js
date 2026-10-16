@@ -2903,3 +2903,21 @@ body.nofx #skills .sk .cdsw.on::after{display:none}
 #skills .sk .t{z-index:2;color:#ffe9b0;-webkit-text-stroke:3px #2a1406;paint-order:stroke fill;text-shadow:0 1px 2px #000;font-size:15px!important}`;document.head.appendChild(st);
 const up=()=>{const fx=!(typeof R!=="undefined"&&R.opt&&R.opt.fx===false);document.body.classList.toggle('nofx',!fx);document.querySelectorAll('#skills .sk').forEach(el=>{let w=el.querySelector('.cdsw');if(!w){w=document.createElement('i');w.className='cdsw';el.appendChild(w)}const c=el.querySelector('.cd'),p=el.classList.contains('lock')||!c?0:parseFloat(c.style.height)||0;const v=String(Math.round(p*10)/10);if(w.style.getPropertyValue('--cdp')!==v)w.style.setProperty('--cdp',v);w.classList.toggle('on',p>0&&p<100)})};
 setInterval(up,100)})();
+
+/* v187: stage route on the header bar — 7 nodes, party marker, chapter boss icon (visual only) */
+(()=>{const st=document.createElement('style');st.textContent=`
+#stagebar .srow .bar{position:relative!important}
+#stagebar .srow{position:relative!important}#strt{position:absolute!important;pointer-events:none!important;z-index:3!important}
+#strt .nd{position:absolute!important;top:50%!important;width:7px!important;height:7px!important;margin:-3.5px 0 0 -3.5px!important;border-radius:50%!important;background:#2a1a0c!important;border:1.2px solid #a8844a!important;box-sizing:border-box!important}
+#strt .nd.dn{background:radial-gradient(circle at 40% 35%,#fff2b0,#e0a030)!important;border-color:#fff0c0!important}
+#strt .nd.cu{width:9px!important;height:9px!important;margin:-4.5px 0 0 -4.5px!important;background:#ffd75a!important;border-color:#fff!important;box-shadow:0 0 5px #ffcf5a!important;animation:strp 1s ease-in-out infinite alternate!important}
+#strt .nd.bs{border-color:#ff6a4a!important}
+#strt .pm{position:absolute!important;top:50%!important;margin-top:-7px!important;width:14px!important;height:14px!important;margin-left:-7px!important;border-radius:50%!important;background:url(assets/hero_lina.png) center 12%/180% auto no-repeat,#5a1a14!important;border:1.5px solid #ffe08a!important;box-shadow:0 1px 3px #000a!important;transition:left .6s ease!important}
+@keyframes strp{to{box-shadow:0 0 9px #ffcf5a}}
+body.bossfight #strt{display:none!important}`;document.head.appendChild(st);
+let last='';const up=()=>{try{const bar=document.querySelector('#stagebar .srow .bar');if(!bar)return;const row=bar.parentElement;let r=row.querySelector('#strt');const s=G.S(),si=s.si,ch=Math.floor(si/7),pl=D.BOSSPLAN[ch];if(!pl){if(r)r.remove();return}
+ const n=7,cur=si%7;if(!r){r=document.createElement('div');r.id='strt';row.appendChild(r);last=''}r.style.cssText=`left:${bar.offsetLeft}px!important;top:${bar.offsetTop}px;width:${bar.offsetWidth}px;height:${bar.offsetHeight}px`;
+ const key=si+'|'+s.maxSi;if(key!==last){last=key;let h='';for(let k=0;k<n;k++){const ex=ch*7+k;const cls=k===cur?'cu':ex<s.maxSi?'dn':'';h+=`<span class="nd ${cls}${k===n-1?' bs':''}" style="left:${(4+k*92/(n-1)).toFixed(1)}%"></span>`}r.innerHTML=h+'<span class=pm></span>';
+  const bo=D.BOSSES[pl[1]]||D.BOSSES[pl[0]],im=document.querySelector('#stagebar .sboss');if(bo&&im&&!im.src.endsWith(bo.img))im.src='assets/'+bo.img}
+ const w=parseFloat((document.getElementById('stBar')||{}).style?.width)||0,fr=C.B&&C.B.boss?1:Math.min(1,w/100);const pos=4+(cur+Math.min(.92,fr)*(cur<n-1?1:0))*92/(n-1);const mk=r.querySelector('.pm');if(mk)mk.style.left=Math.min(96,pos).toFixed(1)+'%'}catch(_){}};
+setInterval(up,300)})();
