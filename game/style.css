@@ -801,3 +801,16 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 @keyframes bctx{0%{transform:translateX(-120px);opacity:0}20%{transform:translateX(0);opacity:1}100%{transform:translateX(10px)}}
 .bcut{left:66px;right:66px}.bcut img{right:0;height:100px;top:0}.bcut .bct{left:10px;top:24px}.bcut b{font-size:24px}
 .bcut em{font:800 11px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#ffe08a;text-shadow:0 1px 0 #000;margin-top:1px}
+#fevg{position:absolute;left:70px;right:70px;bottom:206px;z-index:6;display:flex;align-items:center;gap:6px;pointer-events:none}
+#fevg b{font:900 italic 11px Maplestory,sans-serif;color:#ffe9a0;text-shadow:0 1px 0 #000,0 0 3px #000}
+#fevg .fvb{flex:1;height:7px;border-radius:4px;background:#0009;border:1px solid #000;overflow:hidden}
+#fevg .fvb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff9a2a,#ffe14a);transition:width .2s}
+#fevg.full .fvb i{animation:fvfl .5s ease-in-out infinite alternate}@keyframes fvfl{to{filter:brightness(1.6)}}
+#fevg.on b{color:#fff;text-shadow:0 0 6px #ff6a00,0 1px 0 #000}#fevg.on .fvb i{background:linear-gradient(90deg,#ff3a6a,#ffb02e,#fff3a0);transition:none}
+.fevov{position:absolute;inset:0;pointer-events:none;z-index:5;box-shadow:inset 0 0 50px 14px rgba(255,170,40,.55);animation:fevp .9s ease-in-out infinite alternate;transition:opacity .5s}
+.fevov.out{opacity:0}@keyframes fevp{from{box-shadow:inset 0 0 40px 10px rgba(255,170,40,.4)}to{box-shadow:inset 0 0 64px 20px rgba(255,120,30,.6)}}
+.fevban{position:absolute;left:0;right:0;top:300px;text-align:center;pointer-events:none;z-index:7;animation:fevb 1.4s ease-out forwards}
+.fevban b{display:block;font:900 italic 40px Maplestory,sans-serif;color:#fff6c0;letter-spacing:2px;text-shadow:3px 3px 0 #a02a00,-1px -1px 0 #a02a00,0 0 16px #ff8a00}
+.fevban small{font:800 13px Maplestory,"Noto Sans KR",sans-serif;color:#fff;text-shadow:0 1px 0 #000,0 0 4px #000}
+@keyframes fevb{0%{opacity:0;transform:scale(2)}12%{opacity:1;transform:scale(.95)}20%{transform:scale(1.05)}80%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-16px)}}
+.fevov{z-index:6;box-shadow:inset 0 0 60px 18px rgba(255,160,30,.7)}@keyframes fevp{from{box-shadow:inset 0 0 50px 14px rgba(255,170,40,.55)}to{box-shadow:inset 0 0 80px 26px rgba(255,110,20,.8)}}
