@@ -2893,3 +2893,13 @@ setInterval(()=>{const B=C.B;if(!B||!B.allies)return;const pp=document.querySele
 (()=>{const st=document.createElement('style');st.textContent=`
 .wvb:not(.fin):not(.tgb) b{color:#fff4dc;text-shadow:0 2px 0 #3a2008,0 0 10px #e0a040,0 0 2px #000}
 .wvb:not(.fin) i{height:2px;width:60px;background:linear-gradient(90deg,transparent,#e8c070,transparent)}`;document.head.appendChild(st)})();
+
+/* v182: skill-dock radial cooldown sweep (visual only; reads existing .cd height) */
+(()=>{const st=document.createElement('style');st.textContent=`
+#skills .sk .cd{opacity:0!important}
+#skills .sk .cdsw{position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:1;background:conic-gradient(from 0deg,#0000 0 calc(360deg - var(--cdp,0)*3.6deg),#0a0604c8 0 360deg)}
+#skills .sk .cdsw.on::after{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from calc(360deg - var(--cdp,0)*3.6deg - 10deg),#0000 0,#ffcf6a99 10deg,#0000 12deg)}
+body.nofx #skills .sk .cdsw.on::after{display:none}
+#skills .sk .t{z-index:2;color:#ffe9b0;-webkit-text-stroke:3px #2a1406;paint-order:stroke fill;text-shadow:0 1px 2px #000;font-size:15px!important}`;document.head.appendChild(st);
+const up=()=>{const fx=!(typeof R!=="undefined"&&R.opt&&R.opt.fx===false);document.body.classList.toggle('nofx',!fx);document.querySelectorAll('#skills .sk').forEach(el=>{let w=el.querySelector('.cdsw');if(!w){w=document.createElement('i');w.className='cdsw';el.appendChild(w)}const c=el.querySelector('.cd'),p=el.classList.contains('lock')||!c?0:parseFloat(c.style.height)||0;const v=String(Math.round(p*10)/10);if(w.style.getPropertyValue('--cdp')!==v)w.style.setProperty('--cdp',v);w.classList.toggle('on',p>0&&p<100)})};
+setInterval(up,100)})();
