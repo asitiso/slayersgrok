@@ -841,3 +841,6 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .whl .whub{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:radial-gradient(#fff6c0,#e89a1a);border:3px solid #5a2a00;display:flex;align-items:center;justify-content:center;font:900 italic 15px Maplestory,sans-serif;color:#5a1a00}
 .whl .wptr{position:absolute;left:50%;top:-12px;margin-left:-13px;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:26px solid #e0402a;z-index:2;filter:drop-shadow(0 2px 1px #000a)}
 .whl .wbtns{display:flex;flex-direction:column}.whl .wnote{display:block;text-align:center;color:#aab;margin-top:8px;font-size:11px}
+.wico{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:4px;vertical-align:-2px;background:conic-gradient(#5ab0ff 0 45deg,#b0a0ff 0 90deg,#ffd24a 0 135deg,#3a8aff 0 180deg,#8a6aff 0 225deg,#ff8ac0 0 270deg,#ff9a2a 0 315deg,#ff5a7a 0);border:2px solid #ffd25a;box-shadow:0 0 0 1px #5a2a00;position:relative;flex-shrink:0}
+.wico::after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:#fff6c0}
+.ttl .wico{width:18px;height:18px;margin-right:6px}
