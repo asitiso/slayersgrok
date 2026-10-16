@@ -10,7 +10,7 @@ C.fresh=()=>({gold:100,gems:300,orbs:10,tickets:0,lv:1,exp:0,si:0,maxSi:0,wave:0
   bld:{vault:{lv:1,up:0,last:0,acc:0},mine:{lv:1,up:0,last:0,acc:0},tower:{lv:0,up:0}},guild:{lv:1,exp:0,dDay:'',don:{}},raid:{lv:1,dmg:0,day:'',tries:0},
   arena:{pts:1000,tickets:5,tAt:0,opps:[],week:-1,pend:null,win:0,streak:0},shop:{day:'',bought:{}},stats:{rolls:[0,0,0,0,0,0],goldEarned:0,goldSpent:{train:0,build:0,shop:0,donate:0},bossFails:0}});
 let S=C.fresh();C.S=()=>S;
-C.load=d=>{S=Object.assign(C.fresh(),d||{});if(!S.idleAt)S.idleAt=C.now();const fr=C.fresh();for(const k of ['bld','guild','raid','arena','shop','stats','stl'])S[k]=Object.assign(fr[k],S[k]||{});const t=C.now();if(!S.last)S.last=t;for(const b of ['vault','mine'])if(!S.bld[b].last)S.bld[b].last=t;if(!S.arena.tAt)S.arena.tAt=t;if(S.arena.week<0)S.arena.week=C.week();return S};
+C.load=d=>{S=Object.assign(C.fresh(),d||{});if(!S.idleAt)S.idleAt=C.now();const fr=C.fresh();for(const k of ['bld','guild','raid','arena','shop','stats','stl'])S[k]=Object.assign(fr[k],S[k]||{});const t=C.now();if(!S.last)S.last=t;for(const b of ['vault','mine'])if(!S.bld[b].last)S.bld[b].last=t;if(!S.arena.tAt)S.arena.tAt=t;if(S.arena.week<0)S.arena.week=C.week();if(C.mailStamp)C.mailStamp();return S};
 // ---- derived
 C.stat=k=>{const s=D.STATS.find(x=>x.k==k);return s.mult?Math.pow(s.mult,S.stl[k]):Math.min(s.max||1e18,s.base+s.inc*S.stl[k])};
 C.cost=s=>s.max&&C.stat(s.k)>=s.max?Infinity:Math.floor(s.cost*Math.pow(s.g,S.stl[s.k]));
@@ -176,7 +176,8 @@ C.idleClaim=()=>{const sec=C.idleSec();if(sec<60)return null;const r=C.offlineCa
 C.compUpCost=k=>Math.floor(300*Math.pow(1.45,((S.clv||{})[k]||1)-1));
 C.compUp=k=>{S.clv=S.clv||{};if(!S.comps[k])return false;const c=C.compUpCost(k);if(S.gold<c)return false;S.gold-=c;S.clv[k]=(S.clv[k]||1)+1;C.buildAllies();return true};
 C.mileSummon=k=>{if((S.mile||0)<100)return false;S.mile-=100;S.comps[k]=(S.comps[k]||0)+1;C.buildAllies();return true};
-C.mailClaim=(k)=>{S.mailc=S.mailc||{};let n=0;const r={g:0,o:0,t:0};for(const m of D.MAILS)if(!S.mailc[m.k]&&(k==null||m.k==k)){S.mailc[m.k]=1;S.gems+=m.g||0;S.orbs+=m.o||0;S.tickets+=m.t||0;r.g+=m.g||0;r.o+=m.o||0;r.t+=m.t||0;n++}r.n=n;return r};
+C.MAILTTL=7*864e5;C.mailStamp=()=>{S.mailt=S.mailt||{};const t=C.now();let ch=0;for(const m of D.MAILS)if(!S.mailt[m.k]){S.mailt[m.k]=t;ch=1}return ch};C.mailLeft=k=>{C.mailStamp();return S.mailt[k]+C.MAILTTL-C.now()};C.mailLive=m=>!(S.mailc||{})[m.k]&&C.mailLeft(m.k)>0;
+C.mailClaim=(k)=>{S.mailc=S.mailc||{};let n=0;const r={g:0,o:0,t:0};for(const m of D.MAILS)if(!S.mailc[m.k]&&C.mailLeft(m.k)>0&&(k==null||m.k==k)){S.mailc[m.k]=1;S.gems+=m.g||0;S.orbs+=m.o||0;S.tickets+=m.t||0;r.g+=m.g||0;r.o+=m.o||0;r.t+=m.t||0;n++}r.n=n;return r};
 }
 C.allyFac=a=>a&&a.c?a.c.fac:((C.synergy()[0]||{}).f||'none');
 C.facMul=(a,e)=>{if(!e||!e.fac)return 1;const f=C.allyFac(a);return D.COUNTER[f]==e.fac?BAL.facAdv:D.COUNTER[e.fac]==f?BAL.facDis:1};
