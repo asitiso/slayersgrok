@@ -1050,3 +1050,26 @@ G.powOpen=()=>{const I=G.powInfo(),BD=G.BD||{},r=C.POW()/I.req;
  document.querySelectorAll('.pwgo').forEach(e=>e.onclick=()=>{document.querySelectorAll('.modal').forEach(m=>m.remove());menuGo(e.dataset.k)})};
 document.addEventListener('click',ev=>{const t=ev.target.closest&&ev.target.closest('#prof');if(t&&!G.screen){ev.stopPropagation();ev.preventDefault();G.powOpen()}},true);
 })();
+;(()=>{// v56 친구 · 우정 포인트 (NPC 친구 · 일일 하트 주고받기 · 우정 상점)
+const FR=[['붉은망토리나','ally_amelia.png'],['검사가우리팬','ally_gourry.png'],['키메라젤','ally_zelgadis.png'],['정의의아멜','ally_amelia.png'],['수상한신관','ally_xellos.png'],['사이라그주민','ally_kaede.png'],['드래곤슬레이브','ally_lyra.png'],['세이룬기사','ally_borin.png']].map((f,i)=>({k:'f'+i,n:f[0],img:f[1],m:[1.15,.95,1.05,.85,1.3,.7,1.0,.9][i],lv:[3,-2,1,-4,6,-6,0,-1][i]}));
+const SH=[{k:'tk',n:'동료 소환권',img:'it2_ticket.png',c:100,lim:1,g:s=>s.tickets=(s.tickets||0)+1},{k:'st',n:'강화석 ×10',img:'it2_stone.png',c:40,lim:3,g:s=>s.stone=(s.stone||0)+10},{k:'ob',n:'마정구 ×5',img:'it2_exp.png',c:30,lim:3,g:s=>s.orbs+=5},{k:'gm',n:'다이아 ×20',img:'it2_gem.png',c:60,lim:2,g:s=>s.gems+=20}];
+const st=()=>{const s=C.S();if(!s.fr)s.fr={pt:0,day:'',sent:{},got:{},buy:{}};const f=s.fr;if(f.day!=C.today()){f.day=C.today();f.sent={};f.got={};f.buy={}}return f};
+const canGet=f=>!st().got[f.k]&&(+f.k.slice(1)%4!=3);// 일부 친구만 선물 보냄
+C.frRed=()=>{const t=st();return FR.some(f=>!t.sent[f.k]||canGet(f))};
+const send=k=>{const t=st();let n=0;FR.forEach(f=>{if((!k||f.k==k)&&!t.sent[f.k]){t.sent[f.k]=1;n++}});t.pt+=n*5;return n};
+const get=k=>{const t=st();let n=0;FR.forEach(f=>{if((!k||f.k==k)&&canGet(f)){t.got[f.k]=1;n++}});t.pt+=n*10;return n};
+G.frSendAll=()=>send();G.frGetAll=()=>get();G.frBuy=k=>{const t=st(),it=SH.find(x=>x.k==k),s=C.S();if(!it||(t.buy[k]||0)>=it.lim||t.pt<it.c)return 0;t.pt-=it.c;t.buy[k]=(t.buy[k]||0)+1;it.g(s);return it};
+const MI=MENU.findIndex(m=>m[0]=='guild');if(!MENU.some(m=>m[0]=='friend'))MENU.splice(MI+1,0,['friend','친구','ic2_party.png']);try{renderHub()}catch(_){}
+const draw=()=>{const el=$('#screen'),t=st(),P=C.POW(),L=C.S().lv;
+ el.innerHTML=shell('친구','bg_guild.jpg',`<div class="card frh"><span class=frp>💗</span><div class=f><b>우정 포인트 ${fmt(t.pt)}</b><small>하트 보내기 +5 · 받기 +10 · 매일 05:00 초기화</small></div></div>
+ <div class="card frb"><span class="pill ${FR.some(f=>!t.sent[f.k])?'green':'off'}" id=frSA>💌 모두 보내기</span><span class="pill ${FR.some(canGet)?'green':'off'}" id=frGA>🎁 모두 받기</span></div>
+ <div class=card><div class=ttl>친구 목록 <small>${FR.length}/30</small></div>${FR.map(f=>`<div class="row frr"><img src="${A}${f.img}"><div class=f><b>${f.n}</b><small>Lv.${Math.max(1,L+f.lv)} · ⚔ ${fmt(Math.round(P*f.m))}</small></div><span class="frx ${t.sent[f.k]?'off':''}" data-s=${f.k}>${t.sent[f.k]?'✔':'💌'}</span><span class="frx ${canGet(f)?'on':'off'}" data-g=${f.k}>${canGet(f)?'🎁':t.got[f.k]?'✔':'—'}</span></div>`).join('')}</div>
+ <div class=card><div class=ttl>우정 상점 <small>매일 초기화</small></div><div class=frs>${SH.map(it=>{const b=t.buy[it.k]||0,ok=b<it.lim&&t.pt>=it.c;return `<div class="frsi ${ok?'':'off'}" data-b=${it.k}><img src="assets/${it.img}"><b>${it.n}</b><small>💗${it.c} · ${b}/${it.lim}</small></div>`}).join('')}</div></div>`);
+ const b=el.querySelector('#sBack');if(b)b.onclick=()=>closeScreen();
+ const fx=(n,w)=>{if(n){toast(`${w} ${n}명 · 우정 포인트 +${n*(w=='하트 보내기'?5:10)}`)}draw();updateHud()};
+ el.querySelector('#frSA').onclick=()=>fx(send(),'하트 보내기');el.querySelector('#frGA').onclick=()=>fx(get(),'선물 받기');
+ el.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>fx(send(e.dataset.s),'하트 보내기'));el.querySelectorAll('[data-g]').forEach(e=>e.onclick=()=>fx(get(e.dataset.g),'선물 받기'));
+ el.querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{const it=G.frBuy(e.dataset.b);if(!it)return toast('우정 포인트가 부족하거나 구매 한도입니다');updateHud();draw();rewardPop([[it.img,it.n.split(' ×')[1]||1,it.n.split(' ×')[0]]],'우정 상점')})};
+const rs=renderScreen;renderScreen=function(){if(G.screen=='friend'){scr0();return draw()}return rs.apply(this,arguments)};const scr0=()=>{};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const a=document.querySelector('#mgrid a[data-s=friend]');if(a){let d=a.querySelector('.dot');if(!d){d=document.createElement('span');d.className='dot';a.appendChild(d)}const on=C.frRed();d.style.display=on?'':'none';if(on){const m=document.querySelector('#sidemenu .dot');if(m)m.style.display=''}}}catch(_){}return r};
+})();
