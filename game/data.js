@@ -35,7 +35,7 @@ SHOP:[{k:'dkey',n:'던전 열쇠',img:'it3_dungeonkey.png',cur:'gems',p:80,give:
 PKG:[{n:'초보 마도사 패키지',img:'it3_staff.png',won:'₩ 3,300',d:'💎 300 · 전설 지팡이'},{n:'붉은 망토 패키지',img:'it3_cape.png',won:'₩ 11,000',d:'💎 1,200 · 영웅 망토'},{n:'드래곤 슬레이브 각성',img:'sk/ds.png',won:'₩ 55,000',d:'💎 3,000 · 강화석 ×50'}],
 LEAGUE:[{n:'브론즈',pts:0,gem:50},{n:'실버',pts:1100,gem:100},{n:'골드',pts:1300,gem:200},{n:'플래티넘',pts:1550,gem:350},{n:'다이아',pts:1850,gem:500},{n:'마왕',pts:2200,gem:800}],
 BAL:{
- mobHP:[45,1.42], mobATK:[3,1.42], bossHP:50, bossATK:2.4, bossTime:30, chBoss:1.0, ch3HP:1.15, waves:3, walk:1.4, swarm:[8,15], dodge:.08, facAdv:1.25, facDis:.85, parry:.08, block:.14, swarmHP:1,
+ mobHP:[45,1.42], mobATK:[3,1.42], bossHP:50, bossATK:2.4, bossTime:30, chBoss:1.0, ch3HP:1.15, ch45HP:1.05, waves:3, walk:1.4, swarm:[8,15], dodge:.08, facAdv:1.25, facDis:.85, parry:.08, block:.14, swarmHP:1,
  gold:[1,1.30], exp:[3,1.24], needExp:[30,1.17], lvAtk:2, lvHp:12,
  orbDrop:.10, bossOrbs:5, bossGems:15, item:[3,25,1.10], sell:1,
  offEff:.08, offExp:.25, offCap:8*3600,

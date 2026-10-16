@@ -28,7 +28,7 @@ C.DEFLOAD=['fire','ice','heal','ragna','ds','giga'];C.load6=()=>{if(S.loadOut&&S
 C.spells=()=>C.load6().filter(s=>!s.unlock||S.maxSi>=s.unlock);
 C.power=()=>Math.round(C.estDPS()*1000);C.estDPS=()=>{let m=1.2;S.party.forEach(k=>{const c=D.COMPS.find(x=>x.k==k);m+=C.compMul(k)*c.spd*(c.aoe?1.6:1)*(c.healer?.6:1)});C.spells().forEach(s=>{if(s.mul)m+=s.mul/s.cd*(s.aoe?2:1)});return C.ATK()*m*(1+C.stat('crit')/100)};
 C.needExp=()=>Math.floor(f(BAL.needExp,S.lv-1));
-C.mobHP=i=>f(BAL.mobHP,i)*(i>=14?BAL.ch3HP:1);C.goldKill=i=>f(BAL.gold,i);C.expKill=i=>f(BAL.exp,i);
+C.mobHP=i=>f(BAL.mobHP,i)*(i>=14?BAL.ch3HP:1)*(i>=21&&i<35?(BAL.ch45HP||1):1);C.goldKill=i=>f(BAL.gold,i);C.expKill=i=>f(BAL.exp,i);
 C.stageName=i=>`${Math.floor(i/7)+1}-${i%7+1}`;
 C.kps=()=>Math.min(1.1,C.estDPS()/(C.mobHP(S.si)*1.05)*.75);
 // ---- missions
