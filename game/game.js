@@ -1751,6 +1751,36 @@ const draw=fx=>{const el=$('#screen'),s=C.S(),t=s.tal||{},P=C.talPts();
  <div class=tlt>${C.TAL.map(b=>{const n=t[b.k]||0;return `<div class=tlc style="--c:${b.c}"><b>${b.n}</b><small>${b.d} 강화</small>${b.v.map((v,i)=>{const on=i<n,nx=i==n,cs=C.TALC[i];return `<div class="tln ${on?'on':nx?'nx':'lock'} ${i==4?'cap':''}" data-tl="${b.k}" data-i=${i}><div class=o><img src="${A}${IC[b.k]}"></div>${!on?`<span class=cs>${cs}P</span>`:''}<em>${b.nm[i]}</em><i>${b.d} +${Math.round(v*100)}%</i>${fx==b.k+i?'<span class=tlfx></span>':''}</div>`}).join('')}</div>`}).join('')}</div>`);
  el.querySelector('#sBack').onclick=()=>closeScreen();
  el.querySelectorAll('[data-tl]').forEach(e=>e.onclick=()=>{const k=e.dataset.tl,i=+e.dataset.i,n=(C.S().tal||{})[k]||0;if(i<n)return;if(i>n)return toast('아래 단계를 먼저 습득하세요');if(!C.talUp(k))return toast('특성 포인트가 부족해요');try{updateHud()}catch(_){}draw(k+i);toast((C.TAL.find(b=>b.k==k).nm[i])+' 습득!')})};
-if(!MENU.some(m=>m[0]=='talent')){const i=MENU.findIndex(m=>m[0]=='star');MENU.splice(i+1,0,['talent','특성','sk/fire.png'])}try{renderHub()}catch(_){}
+if(!MENU.some(m=>m[0]=='talent')){const i=MENU.findIndex(m=>m[0]=='star');MENU.splice(i+1,0,['talent','특성','ic3_talent.png'])}try{renderHub()}catch(_){}
 const rs=renderScreen;renderScreen=function(){if(G.screen=='talent')return draw();return rs.apply(this,arguments)};
+})();
+;(()=>{// v109 갤러리 (동료 일러스트 · 보스 · 코스튬 감상 · 전체 화면 뷰어, 보상 없음)
+const CUTK={amelia:1,borin:1,gourry:1,noel:1,sera:1,zelgadis:1,xellos:1,rhea:1,lyra:1,kaede:1,pip:1};
+const css=document.createElement('style');css.textContent=`
+.glt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.glc{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;border:2px solid var(--c,#c9902a);background:radial-gradient(ellipse at 50% 75%,#fff6d8,#f0b0c8 55%,#6a3a7a)}
+.glc img{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:100%;max-width:none;object-fit:contain}
+.glc.bs img{height:auto;width:96%;bottom:18px}.glc b{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#0000,#000c);color:#fff;font-size:10px;text-align:center;padding:8px 0 3px}
+.glc.lock{background:#2a2a33;border-color:#555}.glc.lock img{filter:brightness(0) opacity(.5)}.glc.lock b{color:#888}
+.glv{position:fixed;inset:0;z-index:1000;background:radial-gradient(ellipse at 50% 60%,#ffe8f0,#d088b0 50%,#2a1030);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:glin .35s ease both}
+.glv img{max-width:96%;max-height:62%;object-fit:contain;filter:drop-shadow(0 8px 16px #0008);animation:glzm .5s cubic-bezier(.2,1.3,.4,1) both}
+.glv .nm{margin-top:10px;font:900 24px Maplestory,'Noto Sans KR',sans-serif;color:#fff;text-shadow:0 2px 0 #5a2040,0 0 10px #ff8ac0}.glv .sb{color:#fff;font-size:12px;margin-top:2px;opacity:.9}
+.glv .q{margin:10px 20px 0;background:#fffdf7;color:#4a2440;border-radius:12px;padding:8px 12px;font-size:13px;font-weight:700;max-width:320px;text-align:center}
+.glv .x{position:absolute;bottom:40px;color:#fff;font-size:12px;opacity:.8}.glv .nv{position:absolute;top:45%;font-size:34px;color:#fff;padding:10px;text-shadow:0 2px 4px #000}
+@keyframes glin{from{opacity:0}}@keyframes glzm{from{transform:scale(.7);opacity:0}}`;document.head.appendChild(css);
+let tab='c';
+const items=()=>{const s=C.S();if(tab=='c')return D.COMPS.map(c=>({img:CUTK[c.k]?'cutc/'+c.k+'.png':c.img,n:c.n,sub:(D.FACTIONS[c.fac]||{}).n||'',own:!!s.comps[c.k],c:(D.RAR[c.g]||{}).c,q:(c.d||'')}));
+ if(tab=='b'){const r=s.bdex||{};return D.BOSSES.map(b=>({img:b.img,n:b.n,sub:'보스',own:!!r[b.img],c:'#ff6a3a',q:b.q,bs:1}))}
+ return (D.SKINS||[]).map(k=>({img:k.img,n:k.n,sub:'리나 코스튬',own:k.cost==0||!!(s.skins||{})[k.k],c:'#b07cff'})).concat((D.CSKINS||[]).map(k=>({img:k.img,n:k.n,sub:((D.COMPS.find(c=>c.k==k.k)||{}).n||'')+' 코스튬',own:!!(s.cown||{})[k.k],c:'#ff8ab0'})))};
+const view=i=>{const L=items().filter(x=>x.own);if(!L.length)return;i=(i+L.length)%L.length;const x=L[i];document.querySelectorAll('.glv').forEach(e=>e.remove());const v=document.createElement('div');v.className='glv';
+ v.innerHTML=`<span class=nv style="left:6px" data-p>‹</span><span class=nv style="right:6px" data-n>›</span><img src="${A}${x.img}"><div class=nm>${x.n}</div><div class=sb>${x.sub}</div>${x.q?`<div class=q>「${x.q}」</div>`:''}<div class=x>탭하여 닫기 · ‹ › 넘기기 (${i+1}/${L.length})</div>`;
+ v.onclick=e=>{if(e.target.dataset.p!=null)return view(i-1);if(e.target.dataset.n!=null)return view(i+1);v.remove()};document.body.appendChild(v)};
+G._glView=view;
+const draw=()=>{const el=$('#screen'),L=items(),own=L.filter(x=>x.own);
+ el.innerHTML=shell('갤러리','bg_lobby.jpg',`<div class=entabs>${[['c','동료'],['b','보스'],['s','코스튬']].map(([k,n])=>`<span class="${tab==k?'on':''}" data-gt=${k}>${n}</span>`).join('')}</div>
+ <div class=card><div class=ttl>수집한 일러스트 ${own.length}/${L.length} <small>탭하면 크게 감상</small></div><div class=glt>${L.map(x=>`<div class="glc ${x.own?'':'lock'} ${x.bs?'bs':''}" style="--c:${x.c}" ${x.own?`data-gv=${own.indexOf(x)}`:''}><img src="${A}${x.img}"><b>${x.own?x.n:'???'}</b></div>`).join('')}</div></div>`);
+ el.querySelector('#sBack').onclick=()=>closeScreen();
+ el.querySelectorAll('[data-gt]').forEach(b=>b.onclick=()=>{tab=b.dataset.gt;draw()});el.querySelectorAll('[data-gv]').forEach(b=>b.onclick=()=>view(+b.dataset.gv))};
+if(!MENU.some(m=>m[0]=='gallery')){const i=MENU.findIndex(m=>m[0]=='codex');MENU.splice(i+1,0,['gallery','갤러리','ic3_relic.png'])}try{renderHub()}catch(_){}
+const rs=renderScreen;renderScreen=function(){if(G.screen=='gallery')return draw();return rs.apply(this,arguments)};
 })();

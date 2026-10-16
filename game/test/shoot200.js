@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s200');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={kaede:1,pip:1,xellos:1};s.party=['kaede','pip','xellos'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await sl(1500);await clr();
+await ev(()=>{document.querySelector('#sidemenu').click()});await sl(800);await clr();await ev(()=>{const a=document.querySelector('#mgrid a[data-s=talent]');if(a)a.scrollIntoView({block:'center'})});await sl(400);await sh('926-menu-talent-icon');
+await ev(()=>{const s=G.S();s.comps={gourry:1,amelia:1,kaede:1,pip:1,xellos:1,noel:1,rhea:1};s.bdex={'mon_bandit.png':{n:1},'boss_ogre.png':{n:2},'boss_sorc.png':{n:1}};s.skins={ice:1};s.cown={amelia:1};document.querySelector('#menuClose').click();openScreen('gallery')});await sl(900);await sh('927-gallery-comps');
+await ev(()=>{const e=document.querySelector('.glc[data-gv="2"]');e&&e.click()});await sl(700);await sh('928-gallery-viewer');
+await ev(()=>{document.querySelector('.glv').remove();document.querySelector('[data-gt=b]').click()});await sl(700);await sh('929-gallery-bosses');
+await ev(()=>{document.querySelector('[data-gt=s]').click()});await sl(700);await sh('930-gallery-costumes');
+stop();console.log('ERR',errs);await b.close()})();

@@ -10,6 +10,7 @@ for(let chunk=0;chunk<6000;chunk++){const r=await p.evaluate((MH)=>{const C=G.C,
  if(window._t<1)while(S.gems>=2700)C.summon(10);
  while(performance.now()-t0<400){for(let k=0;k<40;k++){C.tick(.1);window._t+=.1}
   for(let k=0;k<30;k++){if(!C.train(C.cheapestStat().k))break}
+  if(C.talUp)for(let g=0;g<15;g++){const o=['atk','hp','gold'].sort((x,y)=>((S.tal||{})[x]||0)-((S.tal||{})[y]||0));if(!o.some(q=>C.talUp(q)))break}
   if(S.orbs>0){S.filter=99;for(let k=0;k<8&&S.orbs>0;k++){C.rollOnce();C.autoRollStep()}}
   for(const sl in S.gear){for(let k=0;k<3;k++){const r=C.enhance(sl);if(r!==true&&r!=='ok'&&r!=='fail'&&typeof r=='string')break}}
   for(const k of S.party){for(let j=0;j<3;j++)if(!C.compUp(k))break;try{C.starUp(k)}catch(_){}}
