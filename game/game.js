@@ -552,8 +552,8 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=document.que
  ctx.restore()}catch(err){}}})();
 ;(()=>{// v19 ally chain/combo skills (연계기)
 const NAMES={'gourry+zelgadis':'쌍검 연격','amelia+sera':'성광 합창','lyra+pip':'그림자 저격','xellos+zelgadis':'아스트랄 붕괴','borin+gourry':'대지 가르기','kaede+rhea':'용화 일섬'};
-const COL={gourry:'#ffd25a',zelgadis:'#b07cff',amelia:'#fff0a0',sera:'#ffe6ff',lyra:'#7af07a',pip:'#9a7aff',xellos:'#a050ff',borin:'#ff9a4a',kaede:'#ff7aa0',rhea:'#ff5a3a'};
-const STK={lyra:'stun',pip:'psn',zelgadis:'frz',rhea:'burn',xellos:'stun',kaede:'stun',gourry:'stun',borin:'stun',sera:'burn',amelia:'burn'};
+const COL={gourry:'#ffd25a',zelgadis:'#b07cff',amelia:'#fff0a0',sera:'#ffe6ff',lyra:'#7af07a',pip:'#9a7aff',noel:'#9fe6ff',xellos:'#a050ff',borin:'#ff9a4a',kaede:'#ff7aa0',rhea:'#ff5a3a'};
+const STK={lyra:'stun',pip:'psn',noel:'frz',zelgadis:'frz',rhea:'burn',xellos:'stun',kaede:'stun',gourry:'stun',borin:'stun',sera:'burn',amelia:'burn'};
 let last=null,cd=0,RING=null;G.comboN=0;
 const nm=(a,b)=>NAMES[[a,b].sort().join('+')]||'합동 공격';
 const fire=(a,b)=>{const A=D.COMPS.find(x=>x.k==a),Bc=D.COMPS.find(x=>x.k==b);if(!A||!Bc)return;cd=8;G.comboN++;const L=C.alive();if(!L.length)return;
