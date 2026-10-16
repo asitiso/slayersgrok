@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s223');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await ev(()=>{G.S().gear=G.S().gear||{};openSheet('gear')});await sl(900);await sh('994-gear-room-bg');await ev(()=>openSheet('gear'));
+await clr();await ev(()=>menuGo('menu'));await sl(700);await clr();await ev(()=>menuGo('menu'));await sh('995-menu-town-entry');
+await ev(()=>menuGo('town'));await sl(1200);await clr();await sh('996-town-hub');
+await ev(()=>document.querySelector('.town').scrollLeft=0);await sl(400);await sh('997-town-hub-left');
+await ev(()=>document.querySelector('.town').scrollLeft=9999);await sl(400);await sh('998-town-hub-right');
+await ev(()=>document.querySelector('[data-go=guild]').click());await sl(900);console.log('scr',await ev(()=>G.screen));
+console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();

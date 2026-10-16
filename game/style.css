@@ -1021,3 +1021,19 @@ body:has(#sheet.on) .cmbx,body:has(#screen.on) .cmbx{display:none}
 .dollc .dr{position:absolute;bottom:30px;width:150px;height:34px;border-radius:50%;background:radial-gradient(#ffb06a,#ff6a2a55 50%,transparent 72%);box-shadow:0 0 20px #ff7a3d}
 .dollc .dp{position:absolute;top:2px;text-align:center}.dollc .dp small{display:block;font-size:10px;color:#ccc}.dollc .dp b{font:900 20px Maplestory,sans-serif;color:#ffd77a;text-shadow:0 2px 0 #6a3a00}
 .dollc .dn{position:absolute;bottom:6px;font-size:11px;color:#fff;background:#0008;padding:1px 8px;border-radius:8px}
+.eqgrid.doll{background:linear-gradient(#0000 70%,#0006),url(assets/bg_gear_room.jpg) center 0/auto 400px}
+.dollc .dr{opacity:.55}
+/* v127 town */
+.town{position:relative;margin:-8px -10px 0;height:600px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-radius:0 0 12px 12px}
+.town::-webkit-scrollbar{display:none}
+.tpan{position:relative;width:1067px;height:600px;background:url(assets/bg_lobby_town.jpg) 0 0/100% 100%}
+.tsp{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;cursor:pointer;animation:tspB 2.4s ease-in-out infinite}
+.tsp img{width:44px;height:44px;filter:drop-shadow(0 2px 3px #000)}
+.tsp b{margin-top:-4px;padding:2px 10px;border-radius:10px;border:2px solid #ffd77a;background:linear-gradient(#5a3a1a,#2a1a0a);color:#fff;font:900 13px Maplestory,sans-serif;white-space:nowrap;box-shadow:0 2px 4px #000a}
+.tsp.rd b::after{content:'';position:absolute;top:-2px;right:-2px;width:10px;height:10px;border-radius:50%;background:#ff3a3a;border:2px solid #fff}
+@keyframes tspB{50%{transform:translate(-50%,calc(-50% - 4px))}}
+.tlina{position:absolute;left:46%;top:520px;height:150px;transform:translate(-50%,-100%);filter:drop-shadow(0 4px 3px #0008);cursor:pointer}
+.tbat{position:absolute;right:10px;bottom:12px;z-index:3;padding:8px 16px;border-radius:14px;border:2px solid #fff;background:linear-gradient(#ff7a3d,#c2361a);color:#fff;font:900 16px Maplestory,sans-serif;box-shadow:0 3px 8px #000a}
+.thint{position:absolute;left:10px;bottom:16px;z-index:3;color:#fff;font-size:11px;background:#0008;padding:2px 8px;border-radius:8px}
+.town{height:700px}.tpan{width:1244px;height:700px}.tlina{top:640px;height:170px}
+body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:has(#screen.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg){display:none!important}

@@ -1956,3 +1956,10 @@ function deco(){const el=$('#screen'),s=C.S(),f0=el.querySelector('.slotrow');if
 /* v126 화룡전식 장비 인형 (리나 전신 중앙 + 좌우 4부위 슬롯) · 시트 열림 시 콤보 숨김 */
 ;(()=>{const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab=='gear'){const g=document.querySelector('#panel .eqgrid');if(g&&!g.classList.contains('doll')){g.classList.add('doll');const s=C.S(),n=Object.values(s.gear||{}).filter(Boolean).length;
  const c=document.createElement('div');c.className='dollc';c.innerHTML=`<i class=dr></i><img src="${A}hero_lina.png"><div class=dp><small>전투력</small><b>${fmt(C.POW())}</b></div><span class=dn>리나 Lv.${s.lv} · 장착 ${n}/8</span>`;g.appendChild(c)}}}catch(e){console.warn(e)}return r}})();
+/* v127 화룡전식 마을 허브 (가로 스크롤 마을 전경 · 건물 탭으로 기존 메뉴 이동 · 전투가 기본 화면) */
+;(()=>{if(!MENU.some(m=>m[0]=='town')){MENU.unshift(['town','마을','ic3_castle.png'])}try{renderHub()}catch(_){}
+const HS=[['summon','소환의 전당','ic3_summon.png',15,40],['guild','모험가 협회','ic3_guild.png',57,30],['shop','상점가','ic3_shop.png',84,46],['enhance','대장간','ic3_anvil.png',92,26],['event','출석','ic3_calendar.png',50,52],['mail','우편함','ic3_mail.png',27,22],['base','영지','ic3_castle.png',73,70],['party','편성','ic3_party.png',22,74]];
+const draw=()=>{const el=$('#screen');el.innerHTML=shell('마을','bg_lobby_town.jpg',`<div class=town><div class=tpan>${HS.map(([k,n,i,x,y])=>`<div class=tsp data-go=${k} style="left:${x}%;top:${y}%"><img src="${A}${i}"><b>${n}</b></div>`).join('')}<img class=tlina src="${A}hero_lina.png" data-go=skin></div></div><span class=thint>◀ 좌우로 밀어 둘러보기 ▶</span><span class=tbat id=tBat>⚔ 전투로</span>`);
+ el.querySelector('.sbg').style.filter='blur(6px) brightness(.6)';const t=el.querySelector('.town');t.scrollLeft=(1244-t.clientWidth)/2;
+ el.querySelectorAll('[data-go]').forEach(n=>n.onclick=()=>menuGo(n.dataset.go));$('#tBat').onclick=closeScreen;$('#sBack').onclick=closeScreen};
+const rs=renderScreen;renderScreen=function(){if(G.screen=='town')return draw();return rs.apply(this,arguments)};})();
