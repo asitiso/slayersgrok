@@ -2913,7 +2913,7 @@ setInterval(up,100)})();
 #strt .nd.cu{width:9px!important;height:9px!important;margin:-4.5px 0 0 -4.5px!important;background:#ffd75a!important;border-color:#fff!important;box-shadow:0 0 5px #ffcf5a!important;animation:strp 1s ease-in-out infinite alternate!important}
 #strt .nd.bs{border-color:#ff6a4a!important}
 #strt .pm{position:absolute!important;top:50%!important;margin-top:-7px!important;width:14px!important;height:14px!important;margin-left:-7px!important;border-radius:50%!important;background:url(assets/hero_lina.png) center 12%/180% auto no-repeat,#5a1a14!important;border:1.5px solid #ffe08a!important;box-shadow:0 1px 3px #000a!important;transition:left .6s ease!important}
-@keyframes strp{to{box-shadow:0 0 9px #ffcf5a}}
+#strt .nd.fl{animation:stfl .9s ease-out!important}@keyframes stfl{0%{transform:scale(2.4);box-shadow:0 0 0 6px #fff8,0 0 14px #ffd75a}100%{transform:scale(1);box-shadow:0 0 0 0 #fff0}}@keyframes strp{to{box-shadow:0 0 9px #ffcf5a}}
 body.bossfight #strt{display:none!important}`;document.head.appendChild(st);
 let last='';const up=()=>{try{const bar=document.querySelector('#stagebar .srow .bar');if(!bar)return;const row=bar.parentElement;let r=row.querySelector('#strt');const s=G.S(),si=s.si,ch=Math.floor(si/7),pl=D.BOSSPLAN[ch];if(!pl){if(r)r.remove();return}
  const n=7,cur=si%7;if(!r){r=document.createElement('div');r.id='strt';row.appendChild(r);last=''}r.style.cssText=`left:${bar.offsetLeft}px!important;top:${bar.offsetTop}px;width:${bar.offsetWidth}px;height:${bar.offsetHeight}px`;
@@ -2921,3 +2921,7 @@ let last='';const up=()=>{try{const bar=document.querySelector('#stagebar .srow 
   const bo=D.BOSSES[pl[1]]||D.BOSSES[pl[0]],im=document.querySelector('#stagebar .sboss');if(bo&&im&&!im.src.endsWith(bo.img))im.src='assets/'+bo.img}
  const w=parseFloat((document.getElementById('stBar')||{}).style?.width)||0,fr=C.B&&C.B.boss?1:Math.min(1,w/100);const pos=4+(cur+Math.min(.92,fr)*(cur<n-1?1:0))*92/(n-1);const mk=r.querySelector('.pm');if(mk)mk.style.left=Math.min(96,pos).toFixed(1)+'%'}catch(_){}};
 setInterval(up,300)})();
+
+/* v188: victory moment — party hop + sparkle on win (visual only; within clear card time) */
+(()=>{const go=()=>{const fx=!(R.opt&&R.opt.fx===false);R.cheer={t:0,id:(R._chid=(R._chid||0)+1),fx};if(!fx)return;const s=C.S(),ch=Math.floor(s.si/7),ci=(s.maxSi-1)-ch*7;const nd=document.querySelectorAll('#strt .nd')[ci];if(nd&&ci>=0){nd.classList.remove('fl');void nd.offsetWidth;nd.classList.add('fl')}};
+const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w&&!C.B.br&&!C.B.rb&&!G.screen){const d=[...document.querySelectorAll('.vic.win')].pop();let n=0;const wt=()=>{if(++n>60)return;if(!d||!d.isConnected||d.classList.contains('out'))go();else setTimeout(wt,80)};setTimeout(wt,80)}}catch(_){}return r}})();
