@@ -2258,5 +2258,29 @@ function deco(){const el=$('#screen');if(el.querySelector('.rkst'))return;const 
  let h=`<img class=rbg src="${A}bg_rank_podium.jpg"><span class=rttl>전투력 랭킹 · 시즌 1</span>`;
  rows.slice(0,3).forEach((x,i)=>{const [l,t,hh,c]=pos[i];h+=`<div class=rkp style="left:${l}%;top:${t}px;--h:${hh}px;--c:${c}"><div class=rav><i class=rno>${i+1}</i>${i==0?`<img class=rlr src="${A}rk_laurel.png" style="height:${hh+10}px;bottom:-14px">`:''}<img src="${A}${av(x,i)}"></div><div class=rnm><b>${x.n}</b><small>${x.p}</small></div></div>`});
  const d=document.createElement('div');d.className='rkst';d.innerHTML=h;hd.parentNode.insertBefore(d,hd);hd.querySelector('img').style.display='none';const t=hd.querySelector('.ttl');if(t)t.style.display='none';
- lc.innerHTML=rows.map((x,i)=>{const m=hsh(x.n+'w')%3;return `<div class="rkrow ${x.me?'me':''}"><b class=rn>${i+1}</b><img class=rav2 src="${A}${av(x,i)}"><div class=f><b>${x.n}</b><br><small>${x.lv}</small></div><b class=rp>${x.p}</b>${m==1?`<img class=ra src="${A}rk_up.png">`:m==2?`<img class=ra src="${A}rk_down.png">`:'<span class=ra style="width:16px;text-align:center;opacity:.6">-</span>'}</div>`}).join('')}
+ const sv=C.S();sv.rkh=sv.rkh||{cur:null,prev:null};const now={};rows.forEach((x,i)=>now[x.n.replace(/ \(나\)$/,'')]=i+1);if(JSON.stringify(now)!==JSON.stringify(sv.rkh.cur)){sv.rkh.prev=sv.rkh.cur;sv.rkh.cur=now;try{G.save&&G.save()}catch(_){}}const pv=sv.rkh.prev;
+ lc.innerHTML=rows.map((x,i)=>{const nk=x.n.replace(/ \(나\)$/,''),p0=pv&&pv[nk],m=!p0||p0==i+1?0:p0>i+1?1:2;return `<div class="rkrow ${x.me?'me':''}"><b class=rn>${i+1}</b><img class=rav2 src="${A}${av(x,i)}"><div class=f><b>${x.n}</b><br><small>${x.lv}</small></div><b class=rp>${x.p}</b>${m==1?`<img class=ra src="${A}rk_up.png">`:m==2?`<img class=ra src="${A}rk_down.png">`:'<span class=ra style="width:16px;text-align:center;opacity:.6">-</span>'}</div>`}).join('')}
+})();
+;(()=>{/* v146 코스튬 드레스룸 */
+const st=document.createElement('style');st.textContent=`.skst{position:relative;height:330px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+.skst>.kbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 60%}
+.skst .kspot{position:absolute;left:50%;bottom:30px;width:220px;height:300px;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 100%,#fff6 0,#ffe8ff33 40%,#0000 70%);pointer-events:none}
+.skst .kch{position:absolute;left:50%;bottom:58px;height:190px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 8px 6px #0009);animation:kbob 2s ease-in-out infinite}@keyframes kbob{50%{transform:translateX(-50%) translateY(-5px)}}
+.skst .kst{position:absolute;height:26px;z-index:3;animation:ktw 1.6s ease-in-out infinite}@keyframes ktw{50%{transform:scale(.6) rotate(20deg);opacity:.5}}
+.skst .knm{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:3;background:linear-gradient(#5a2a6af0,#2a1036f0);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #ffc0f088;border-radius:12px;padding:3px 14px;text-align:center;white-space:nowrap;color:#fff}.skst .knm b{font-size:15px;color:#ffe08a}.skst .knm small{display:block;font-size:10px}
+.skst .kcnt{position:absolute;left:10px;top:10px;z-index:3;display:flex;align-items:center;gap:4px;background:#000a;border:1px solid #ffd77a66;border-radius:10px;padding:3px 8px;font-size:11px;font-weight:800;color:#fff}.skst .kcnt img{height:18px}
+.skstrip{display:flex!important;overflow-x:auto;gap:8px;padding:4px 2px 8px;scroll-snap-type:x mandatory;grid-template-columns:none!important}
+.skstrip .skn{flex:0 0 96px;scroll-snap-align:start;position:relative;background:linear-gradient(#3a2448,#22142c)!important;border:2px solid #0b0d0f!important;box-shadow:inset 0 0 0 1px #c9a0e088!important;border-radius:12px}
+.skstrip .skn.on{box-shadow:inset 0 0 0 2px #ffd25a,0 0 12px #ffb03a99!important;background:linear-gradient(#6a4a20,#3a2810)!important}
+.skstrip .skn .klk{position:absolute;right:4px;top:4px;height:24px;z-index:2;filter:drop-shadow(0 2px 2px #000a)}.skstrip .skn.lk>img:first-child{filter:brightness(.55) saturate(.6)}
+.skstrip .skn .kon{position:absolute;left:4px;top:4px;height:22px;z-index:2}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='skin')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen');if(el.querySelector('.skst'))return;const s=C.S(),cur=s.skin||'base',sk=D.SKINS.find(x=>x.k==cur)||D.SKINS[0],cards=el.querySelectorAll('.card');if(cards.length<3)return;
+ const own=D.SKINS.filter(k=>k.k=='base'||k.cost==0||(s.skins||{})[k.k]).length;
+ const d=document.createElement('div');d.className='skst';d.innerHTML=`<img class=kbg src="${A}bg_dressing_room.jpg"><div class=kspot></div><span class=kcnt><img src="${A}sk_hanger.png">보유 ${own}/${D.SKINS.length}</span><img class=kch src="${A}${sk.img}"><img class=kst src="${A}sk_star.png" style="left:110px;bottom:200px"><img class=kst src="${A}sk_star.png" style="right:105px;bottom:150px;animation-delay:.8s"><div class=knm><b>${sk.n}</b><small>착용 중 · 전투에 즉시 반영</small></div>`;
+ cards[0].replaceWith(d);
+ const lc=cards[cards.length-1],g=lc.querySelector('.skg');if(g){g.classList.add('skstrip');lc.insertAdjacentHTML('afterbegin','<div class=ttl>리나 코스튬 <small>탭하여 착용 · 구매</small></div>');
+  g.querySelectorAll('[data-sk]').forEach(c=>{const k=c.dataset.sk,x=D.SKINS.find(q=>q.k==k)||{},o=k=='base'||x.cost==0||(s.skins||{})[k];if(!o){c.classList.add('lk');c.insertAdjacentHTML('beforeend',`<img class=klk src="${A}sk_lock.png">`)}if(k==cur)c.insertAdjacentHTML('beforeend',`<img class=kon src="${A}sk_star.png">`)});
+  d.after(lc);
+  const on=g.querySelector('.skn.on');if(on)g.scrollLeft=Math.max(0,on.offsetLeft-g.clientWidth/2+48)}}
 })();
