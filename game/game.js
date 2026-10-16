@@ -989,3 +989,40 @@ const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments)
   const v=st[vk]??def;const d=document.createElement('div');d.className='row volrow';d.innerHTML=`<div class=f><small>${n}</small></div><input type=range min=0 max=100 step=5 value=${v} data-vol=${vk}><b class=vv>${v}</b>`;row.after(d);
   const inp=d.querySelector('input');inp.oninput=()=>{G.set[vk]=+inp.value;d.querySelector('.vv').textContent=inp.value;G._vol&&G._vol();try{localStorage.setItem('slayers_set',JSON.stringify(G.set))}catch(_){}};inp.onchange=()=>{if(vk=='sfxV'&&G.sfx)G.sfx('coin')}})}}catch(_){}return r};
 })();
+;(()=>{// v53 신규 7일 성장 이벤트 (newbie 7-day roadmap)
+const T=[
+ [['stage',4,'1-5 도달',{gems:50}],['lv',10,'레벨 10 달성',{gems:50}],['summon',3,'동료 소환 3회',{tk:2}]],
+ [['stage',8,'2-2 도달',{gems:80}],['enh',5,'장비 강화 5회',{stone:15}],['kills',500,'몬스터 500마리 처치',{gems:60}]],
+ [['stage',12,'2-6 도달',{gems:100}],['lv',25,'레벨 25 달성',{gems:80}],['summon',10,'동료 소환 10회',{tk:3}]],
+ [['stage',15,'3-2 도달',{gems:120}],['enh',20,'장비 강화 20회',{stone:30}],['rolls',100,'장비 뽑기 100회',{gems:80}]],
+ [['stage',18,'3-5 도달',{gems:150}],['lv',40,'레벨 40 달성',{gems:100}],['kills',3000,'몬스터 3,000마리 처치',{tk:3}]],
+ [['stage',21,'4-1 도달',{gems:180}],['summon',30,'동료 소환 30회',{tk:5}],['enh',40,'장비 강화 40회',{stone:50}]],
+ [['stage',25,'4-5 도달',{gems:250}],['lv',55,'레벨 55 달성',{gems:150}],['kills',8000,'몬스터 8,000마리 처치',{tk:5}]]];
+const FIN={tk:10,gems:300};
+const st=()=>{const s=C.S();if(!s.nb)s.nb={t0:C.now(),c:{},fin:0};return s.nb};st();
+const day=()=>Math.min(7,Math.floor((C.now()-st().t0)/864e5)+1);
+const val=k=>{const s=C.S();return k=='stage'?s.maxSi:k=='lv'?s.lv:k=='summon'?(s.mile||0):k=='enh'?((s.ac&&s.ac.enh)||0):k=='kills'?(s.kills||0):k=='rolls'?((s.stats&&s.stats.rolls)||0):0};
+const done=(d,i)=>{const t=T[d][i];return val(t[0])>=t[1]};
+const can=(d,i)=>d<day()&&done(d,i)&&!st().c[d+'_'+i];
+const allC=()=>T.every((r,d)=>r.every((_,i)=>st().c[d+'_'+i]));
+const nReady=()=>{let n=0;T.forEach((r,d)=>r.forEach((_,i)=>{if(can(d,i))n++}));if(allC()&&!st().fin)n++;return n};
+const give=w=>{const s=C.S();s.gems+=w.gems||0;s.tickets=(s.tickets||0)+(w.tk||0);s.stone=(s.stone||0)+(w.stone||0)};
+const rl=w=>[w.gems&&['it2_gem.png',w.gems,'보석'],w.tk&&['it2_ticket.png',w.tk,'소환권'],w.stone&&['it2_stone.png',w.stone,'강화석']].filter(Boolean);
+const chip=w=>rl(w).map(([i,n])=>`<span><img class=ci src=assets/${i}>${n}</span>`).join(' ');
+G.nbClaim=(d,i)=>{if(!can(d,i))return 0;st().c[d+'_'+i]=1;const w=T[d][i][3];give(w);try{updateHud()}catch(_){}return w};
+G.nbFin=()=>{if(!allC()||st().fin)return 0;st().fin=1;give(FIN);try{updateHud()}catch(_){}return FIN};
+let sel=null;
+G.nbOpen=d0=>{const D0=day();sel=d0??(sel??Math.max(0,Math.min(6,(T.findIndex((r,d)=>r.some((_,i)=>can(d,i)))+1||D0)-1)));document.querySelectorAll('.modal.nbm').forEach(x=>x.remove());
+ const m=document.createElement('div');m.className='modal nbm';const tot=T.length*3,got=Object.keys(st().c).length;
+ m.innerHTML=`<div class="card nbc"><div class=nbh><b>신규 7일 성장 이벤트</b><small>${D0}일차 · 매일 새로운 미션 개방</small></div>
+ <div class=nbd>${T.map((r,d)=>{const lk=d>=D0,rd=!lk&&r.some((_,i)=>can(d,i)),ok=r.every((_,i)=>st().c[d+'_'+i]);return `<span class="nbt ${d==sel?'on':''} ${lk?'lk':''} ${ok?'ok':''} ${rd?'rd':''}" data-d=${d}>${lk?'🔒':ok?'✔':''}${d+1}일</span>`}).join('')}</div>
+ <div class=nbl>${sel>=D0?`<div class=nblk>🔒 ${sel+1}일차에 개방됩니다</div>`:T[sel].map((t,i)=>{const v=val(t[0]),c=st().c[sel+'_'+i],dn=v>=t[1];return `<div class=nbr><div class=f><b>${t[2]}</b><div class=nbp><i style="width:${Math.min(100,v/t[1]*100)}%"></i><em>${Math.min(v,t[1]).toLocaleString()}/${t[1].toLocaleString()}</em></div><div class=rl>${chip(t[3])}</div></div><span class="btn ${c||!dn?'off':''}" data-c=${i}>${c?'완료':dn?'받기':'진행 중'}</span></div>`}).join('')}</div>
+ <div class="nbf ${allC()&&!st().fin?'rd':''}"><div class=f><b>전체 완료 보상</b><small>${got}/${tot} 미션</small><div class=rl>${chip(FIN)}</div></div><span class="btn ${allC()&&!st().fin?'':'off'}" id=nbFin>${st().fin?'수령 완료':'받기'}</span></div>
+ <span class="btn wide" data-x style="margin-top:10px">닫기</span></div>`;
+ document.body.appendChild(m);
+ m.onclick=e=>{if(e.target==m||e.target.dataset.x!=null){m.remove();refresh();return}const t=e.target.closest('[data-d]');if(t){G.nbOpen(+t.dataset.d);return}const c=e.target.closest('[data-c]');if(c){const w=G.nbClaim(sel,+c.dataset.c);if(w){G.nbOpen(sel);try{rewardPop(rl(w),'7일 이벤트 보상')}catch(_){}}return}if(e.target.id=='nbFin'){const w=G.nbFin();if(w){G.nbOpen(sel);try{rewardPop(rl(w),'7일 이벤트 전체 완료!')}catch(_){}}}}};
+const btn=document.createElement('span');btn.id='nbBtn';btn.className='pill';btn.innerHTML='🎁 7일';btn.onclick=e=>{e.stopPropagation();G.nbOpen()};
+const place=()=>{const b=document.getElementById('bufBtn');if(b&&!document.getElementById('nbBtn'))b.after(btn)};
+const refresh=()=>{place();const s=st();const gone=s.fin&&allC();btn.style.display=gone?'none':'';btn.classList.toggle('rd',nReady()>0)};
+setInterval(refresh,700);refresh();G.nbState=()=>({day:day(),ready:nReady(),c:Object.keys(st().c).length,fin:st().fin});
+})();

@@ -657,3 +657,15 @@ body.bossfight .combo img{height:96px;width:90px;margin-top:-20px}
 body.sheeton .combo{display:none}
 .volrow{gap:10px}.volrow .f{flex:0 0 74px}.volrow small{color:#cbb;font-size:11px}
 .volrow input[type=range]{flex:1;accent-color:#ffb02e;height:20px}.volrow .vv{width:30px;text-align:right;color:#ffd77a;font-size:12px}
+#nbBtn{cursor:pointer;margin-left:4px;flex-shrink:0;display:inline-flex;align-items:center;padding-left:6px!important;padding-right:7px!important;position:relative;white-space:nowrap;background:linear-gradient(#ffd25a,#e89a1a);color:#3a1a00;font-weight:900}
+#nbBtn.rd::after{content:'';position:absolute;right:-2px;top:-2px;width:8px;height:8px;border-radius:50%;background:#ff3030;border:1px solid #fff}
+.nbc{width:350px}.nbh{text-align:center;margin-bottom:8px}.nbh b{display:block;font-size:17px;color:#ffd77a}.nbh small{color:#cbb;font-size:11px}
+.nbd{display:flex;gap:3px;margin-bottom:8px}.nbt{flex:1;text-align:center;padding:6px 0;border-radius:8px;background:#ffffff14;font-size:11px;font-weight:900;position:relative;cursor:pointer}
+.nbt.on{background:linear-gradient(#ff8a3d,#c9461a);color:#fff}.nbt.lk{opacity:.5}.nbt.ok{color:#7dff7a}.nbt.rd::after{content:'';position:absolute;right:1px;top:1px;width:7px;height:7px;border-radius:50%;background:#ff3030}
+.nbr,.nbf{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #ffffff1a}.nbr .f,.nbf .f{flex:1;min-width:0}.nbr b,.nbf b{font-size:13px}
+.nbp{position:relative;height:12px;background:#000a;border-radius:6px;margin:4px 0;overflow:hidden}.nbp i{display:block;height:100%;background:linear-gradient(90deg,#ffb02e,#ffe27a)}.nbp em{position:absolute;inset:0;text-align:center;font:900 9px/12px sans-serif;font-style:normal;color:#fff;text-shadow:0 1px 1px #000}
+.nbr .rl,.nbf .rl{display:flex;gap:8px;font-size:11px}.nbr .btn,.nbf .btn{min-width:64px;text-align:center}
+.nbf{margin-top:6px;border:1.5px solid #e8b85a;border-radius:10px;background:#3a200a88}.nbf small{display:block;font-size:10px;color:#cbb}.nbf.rd{box-shadow:0 0 12px #ffb02e}
+.nblk{text-align:center;padding:30px 0;color:#cbb;font-weight:900}
+#nbBtn{position:absolute!important;left:126px;top:172px;height:22px;z-index:6;font-size:11px}
+#nbBtn{height:22px!important;min-height:0!important;padding:0 8px!important;border-radius:11px!important;font-size:11px!important;line-height:22px!important}
