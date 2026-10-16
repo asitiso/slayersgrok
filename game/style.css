@@ -745,3 +745,6 @@ body.nopow .powup{display:none!important}
 .ntar{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}.ntar.l{left:6px}.ntar.r{right:6px}
 .ntdot{display:flex;justify-content:center;gap:6px;margin:8px 0}.ntdot i{width:7px;height:7px;border-radius:50%;background:#556}.ntdot i.on{background:#ffd75a;width:16px;border-radius:4px}
 .ntgo{display:block;text-align:center;background:linear-gradient(#5ad07a,#2a9a4a);color:#fff;font-weight:900;padding:9px;border-radius:12px;cursor:pointer}.ntn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;opacity:.8;margin-top:8px}
+.hlpb{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font-weight:900;font-size:13px;margin-left:6px;margin-right:auto;cursor:pointer;flex:none}
+.hlp{margin:10px 0 0;padding-left:18px;font-size:13px;line-height:1.55}.hlp li{margin-bottom:6px}
+.hlp{text-align:left}

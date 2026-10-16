@@ -1265,3 +1265,29 @@ const auto=()=>{const s=C.S();if((s.tut||0)<9||localStorage.getItem('slayers_not
 setTimeout(auto,4500);
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='settings'){const e2=$('#screen'),sv=e2.querySelector('#svRow');if(sv&&!e2.querySelector('#ntRow')){sv.insertAdjacentHTML('afterend',`<div class="card row" id=ntRow><div class=f><b>공지사항</b><small style="display:block;opacity:.7">이벤트 · 업데이트 소식</small></div><span class="pill" id=ntGo>📢 보기</span></div>`);e2.querySelector('#ntGo').onclick=()=>{closeScreen();G.noticeOpen()}}}}catch(_){}return r};
 })();
+;(()=>{// v70 도움말 (?) — 화면별 시스템 설명
+const H={map:['지도','클리어한 스테이지를 골라 다시 사냥할 수 있어요.','별 3개 조건을 달성하면 별 보상 상자를 열 수 있어요.'],
+ base:['영지','건물이 시간마다 골드·마정구를 생산해요. 보관 한도가 차기 전에 수확하세요.','건물 레벨을 올리면 생산량과 보관량이 늘어나요.'],
+ guild:['협회','매일 기부하면 협회 경험치와 공격력 버프를 얻어요.','협회 레벨이 오를수록 모든 협회원 공격력 +2%.'],
+ arena:['투기장','상대 파티와 자동 대전해 점수를 얻어요. 하루 5회 무료.','예상 승률이 높은 상대부터 도전하면 안정적이에요.','리그가 오를수록 주간 보상이 커져요.'],
+ dungeon:['도전 던전','던전 열쇠로 입장해 골드·강화석·마정구를 대량으로 얻어요.','패배해도 입장 횟수는 차감되지 않아요.'],
+ relic:['기보','기보를 모아 강화하면 공격력·체력 %가 올라요.'],
+ explore:['탐험','동료를 보내 일정 시간 후 보상을 받아요. 오프라인에도 진행돼요.'],
+ summon:['동료 소환','다이아 또는 소환권으로 동료를 소환해요. 10회 소환은 1회 보너스.','소환할 때마다 마일리지가 쌓여 원하는 동료와 교환할 수 있어요.'],
+ party:['편성','최대 3명의 동료와 함께 싸워요. 상성(빛·혼돈·자연)이 맞으면 피해 증가.','같은 진영 동료를 모으면 시너지 보너스가 발동해요.'],
+ enhance:['강화 · 육성','장비 +1 강화마다 능력치 +10%. 단계가 높을수록 성공률이 낮아져요.','실패해도 장비는 사라지지 않고 재료만 소모돼요.','동료 육성과 스킬 편성도 여기서 할 수 있어요.'],
+ codex:['도감','동료·몬스터·펫·장비를 처음 얻으면 등록하고 다이아를 받아요.','수집 수에 따라 공격력·체력 보너스가 영구 적용돼요.'],
+ tower:['무한의 탑','층을 올라갈수록 강해지는 적과 싸워요. 10층마다 보스.','최고 층 기준으로 매일 보상을 받을 수 있어요.'],
+ wboss:['월드보스','하루 정해진 횟수만큼 도전해 준 피해량에 따라 보상을 받아요.'],
+ pet:['펫','펫은 전투를 돕고 공격력·체력·골드 보너스를 줘요.'],
+ pass:['마도 패스','임무를 하면 패스 경험치가 쌓여 단계별 보상을 받아요.'],
+ friend:['친구','매일 하트를 보내고(+5) 선물을 받아(+10) 우정 포인트를 모으세요.','우정 상점에서 소환권·강화석 등과 교환할 수 있어요.'],
+ shop:['상점','매일 갱신되는 일일 상품과 다이아 상품을 구매할 수 있어요.'],
+ ach:['업적','누적 기록을 달성하면 다이아를 받아요. 단계가 올라갈수록 보상 증가.'],
+ rank:['랭킹','전투력 기준 순위예요. 매주 월요일 보상이 지급돼요.'],
+ star:['승급','같은 동료를 중복으로 얻으면 별을 올려 크게 강해져요.'],
+ mail:['우편함','이벤트·보상 우편을 받을 수 있어요. 기간이 지나면 사라질 수 있어요.'],
+ event:['출석','매일 접속해 출석 보상을 받아요. 28일 주기.']};
+G.help=k=>{const h=H[k];if(!h)return;modal(`<div class=ttl style="justify-content:center;font-size:18px">❓ ${h[0]} 도움말</div><ul class=hlp>${h.slice(1).map(x=>`<li>${x}</li>`).join('')}</ul>`)};G.HELP=H;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{const k=G.screen,hd=document.querySelector('#screen .shead');if(hd&&H[k]&&!hd.querySelector('.hlpb')){const b=document.createElement('span');b.className='hlpb';b.textContent='?';b.onclick=()=>G.help(k);const t=hd.querySelector('b');t?t.after(b):hd.appendChild(b)}}catch(_){}return r};
+})();
