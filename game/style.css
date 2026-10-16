@@ -790,3 +790,14 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 @keyframes tgf{0%{opacity:0;transform:translate(-50%,6px)}20%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-22px)}}
 .wvb.tgb b{text-shadow:none;filter:drop-shadow(0 2px 0 #4a2a00) drop-shadow(0 0 8px #ffb02e)}
 .tgflee{font:900 20px Maplestory,"Noto Sans KR",sans-serif;color:#fff6c8;-webkit-text-stroke:0;text-shadow:0 0 0 #000,2px 0 #4a2a00,-2px 0 #4a2a00,0 2px #4a2a00,0 -2px #4a2a00,1.5px 1.5px #4a2a00,-1.5px -1.5px #4a2a00,1.5px -1.5px #4a2a00,-1.5px 1.5px #4a2a00,0 3px 6px #000a;animation-duration:1.4s;white-space:nowrap}
+.bcut{position:absolute;left:0;right:0;top:262px;height:96px;z-index:7;pointer-events:none;overflow:hidden;animation:bcut 1.25s ease-out forwards}
+.bcut .bcs{position:absolute;inset:14px 0;background:linear-gradient(90deg,rgba(60,0,10,.0),rgba(90,0,20,.88) 18%,rgba(140,10,30,.88) 60%,rgba(60,0,10,0));border-top:2px solid #ff5a4a;border-bottom:2px solid #ff5a4a;transform:skewY(-4deg)}
+.bcut img{position:absolute;right:8px;top:-6px;height:116px;filter:drop-shadow(0 0 6px #ff3a2a) drop-shadow(0 2px 0 #000);animation:bcimg 1.25s ease-out forwards}
+.bcut .bct{position:absolute;left:62px;top:28px;display:flex;flex-direction:column;animation:bctx 1.25s ease-out forwards}
+.bcut small{font:900 12px Maplestory,"Noto Sans KR",sans-serif;color:#ffc0b0;text-shadow:0 1px 0 #000}
+.bcut b{font:900 italic 28px Maplestory,"Noto Sans KR",sans-serif;color:#fff;letter-spacing:1px;text-shadow:2px 2px 0 #5a0010,-1px -1px 0 #5a0010,0 0 10px #ff3a2a}
+@keyframes bcut{0%{opacity:0}8%{opacity:1}80%{opacity:1}100%{opacity:0}}
+@keyframes bcimg{0%{transform:translateX(140px)}18%{transform:translateX(0)}100%{transform:translateX(-14px)}}
+@keyframes bctx{0%{transform:translateX(-120px);opacity:0}20%{transform:translateX(0);opacity:1}100%{transform:translateX(10px)}}
+.bcut{left:66px;right:66px}.bcut img{right:0;height:100px;top:0}.bcut .bct{left:10px;top:24px}.bcut b{font-size:24px}
+.bcut em{font:800 11px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#ffe08a;text-shadow:0 1px 0 #000;margin-top:1px}
