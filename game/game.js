@@ -2440,3 +2440,28 @@ const deco=()=>{if(G.screen!='summon')return;const sc=$('#screen'),bn=sc.querySe
  ['#su1','#su10'].forEach(id=>{const b=sc.querySelector(id);if(b)b.insertAdjacentHTML('afterbegin',`<img class=smt src="${A}${id=='#su1'?'sm_scroll':'sm_circle'}.png">`)})};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* v155 소환 결과 제단 (sr_back 카드 뒤집기 · 전설 sr_burst · 실제 신규만 NEW 방패 · 전부 열기) */
+const st=document.createElement('style');st.textContent=`#sumModal.srm>.card{background:url(assets/bg_summon_result.jpg) 50% 70%/cover!important;border:2px solid #c9a6ff!important;box-shadow:0 0 0 2px #0b0d0f,0 0 24px #9a6aff99!important;padding-bottom:14px!important}
+#sumModal.srm .ttl{color:#fff3d0;text-shadow:0 2px 0 #000,0 0 10px #c8a0ff}
+#sumModal.srm .srg{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;perspective:600px;padding:4px 0}
+.srm .srf{position:relative;width:68px;transform-style:preserve-3d}.srm .srf.one{width:150px}
+.srm .sumcard{animation:none!important;width:100%!important;box-sizing:border-box;backface-visibility:hidden;transform:rotateY(180deg);transition:transform .45s ease;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--rc) 55%,#000),#120a20)!important;border:3px solid var(--rc)!important;box-shadow:inset 0 0 0 1px #fff6,0 0 12px var(--rc)!important}
+.srm .sumcard::before,.srm .sumcard::after{display:none!important}
+.srm .srbk{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;backface-visibility:hidden;transition:transform .45s ease;filter:drop-shadow(0 3px 4px #000a);z-index:2}
+.srm .srf.open .srbk{transform:rotateY(-180deg)}.srm .srf.open .sumcard{transform:rotateY(0)}
+.srm .srbu{position:absolute;left:50%;top:50%;width:260%;max-width:none;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;z-index:0;mix-blend-mode:screen}.srm .srf.leg{z-index:3}.srm .srf>.sumcard{position:relative;z-index:1}.srm .srf.one .srbu{width:150%}
+.srm .srf.leg.open .srbu{animation:srbu 1.1s ease-out forwards}@keyframes srbu{0%{transform:translate(-50%,-50%) scale(.2) rotate(0);opacity:0}30%{opacity:1}100%{transform:translate(-50%,-50%) scale(1) rotate(25deg);opacity:1}}
+.srm .srf.leg.open .sumcard{box-shadow:0 0 18px #ffd86a,0 0 34px #ffb02a!important}
+.srm .srnw{position:absolute;right:-9px;top:-10px;z-index:4;width:30px;height:32px;display:grid;place-items:center;opacity:0;transform:scale(.3);transition:.3s .35s}.srm .srnw img{position:absolute;inset:0;width:100%;height:100%}.srm .srnw b{position:relative;margin-top:-3px;font:italic 900 8px Maplestory,sans-serif;color:#fff;text-shadow:0 1px 0 #600}
+.srm .srf.open .srnw{opacity:1;transform:scale(1)}
+.srm .srall{display:block;margin:10px auto 0;width:60%;text-align:center;padding:8px;border-radius:10px;font-weight:900;color:#3a1a00;background:linear-gradient(#ffe08a,#e0a020);border:2px solid #0b0d0f;box-shadow:0 3px 0 #5a3a00;cursor:pointer}`;document.head.appendChild(st);
+const os=summon;summon=function(n){os(n);const got=G._sumGot,m=document.getElementById('sumModal');if(!got||!m||m.classList.contains('srm'))return;m.classList.add('srm');
+ const cards=[...m.querySelectorAll('.sumcard')],wrap=cards[0]&&cards[0].parentNode;if(!wrap)return;wrap.className='srg';wrap.removeAttribute('style');
+ const fs=cards.map((c,i)=>{const k=got[i],cp=D.COMPS.find(x=>x.k==k),f=document.createElement('div');f.className='srf'+(cards.length==1?' one':'')+(cp&&cp.g>=4?' leg':'');c.before(f);
+  if(cp&&cp.g>=4)f.insertAdjacentHTML('beforeend',`<img class=srbu src="${A}sr_burst.png">`);f.appendChild(c);f.insertAdjacentHTML('beforeend',`<img class=srbk src="${A}sr_back.png">`);
+  const nw=[...c.querySelectorAll('.snew')].find(e=>e.textContent.trim()=='NEW');if(nw){nw.remove();f.insertAdjacentHTML('beforeend',`<span class=srnw><img src="${A}sr_new.png"><b>NEW</b></span>`)}return f});
+ const card=m.querySelector('.card'),ok=card.querySelector('.btn.wide'),b=document.createElement('span');b.className='srall';b.textContent='전부 열기';ok.before(b);
+ let i=0,tm=null;const step=()=>{if(i<fs.length){fs[i++].classList.add('open');if(i>=fs.length)b.style.display='none'}};
+ b.onclick=e=>{e.stopPropagation();clearInterval(tm);while(i<fs.length)step()};
+ const go=()=>{if(!m.isConnected)return;if(m.style.display=='none'||getComputedStyle(m).display=='none')return setTimeout(go,120);setTimeout(()=>{step();tm=setInterval(()=>{step();if(i>=fs.length)clearInterval(tm)},fs.length>1?230:0)},250)};go()};
+})();
