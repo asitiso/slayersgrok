@@ -913,7 +913,7 @@ const op=G.jobPromote;G.jobPromote=function(){const r=op.apply(this,arguments);f
 Object.defineProperty(R,'jobLv',{get:()=>G.jobT(),configurable:true});
 const DSM=[1,1.5,2.2];const ocs=C.castSpell;C.castSpell=sp=>{const t=G.jobT();if(sp&&sp.k=='ds'&&t)sp=Object.assign({},sp,{mul:sp.mul*DSM[t]});return ocs(sp)};
 })();
-;(()=>{['cut/lina_ult_job2.png','cut/lina_ult_job3.png','skin/lina_job2_atk.png','skin/lina_job2_cast.png','skin/lina_job3_atk.png','skin/lina_job3_cast.png'].forEach(s=>{const i=new Image();i.src='assets/'+s})})();
+;(()=>{['cut/lina_ult_job2.png','cut/lina_ult_job3.png','skin/lina_job2_atk.png','skin/lina_job2_cast.png','skin/lina_job3_atk.png','skin/lina_job3_cast.png'].forEach(s=>{const R0=window.RENDER;if(R0&&R0.preQ)R0.preQ(s);else{const i=new Image();i.src='assets/'+s}})})();
 ;(()=>{// v45 boss-fight body flag (combo banner moves off the boss band)
 let on=false;setInterval(()=>{const b=!!(C.B.boss&&C.alive().some(e=>e.boss));if(b!==on){on=b;document.body.classList.toggle('bossfight',b)}},150);
 // 권장 전투력 recalibration from growth sim (players clear ch3+ at well under the old estimate)
