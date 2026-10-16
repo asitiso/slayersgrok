@@ -2699,3 +2699,26 @@ const dec=()=>{const sb=$('#screen');if(G.screen!='party'){sb.classList.remove('
  sb.querySelectorAll('.card').forEach(c=>{const t=c.querySelector('.ttl');if(!t||!t.textContent.startsWith('세력 효과'))return;c.querySelectorAll('.row').forEach(r=>{if(r.classList.contains('fxr'))return;r.classList.add('fxr');const b=r.querySelector(':scope>b');if(b&&b.textContent=='발동')r.classList.add('on')})});
  sb.querySelectorAll('.rcard.in').forEach(r=>{if(!r.querySelector('.pfl'))r.insertAdjacentHTML('beforeend',`<img class=pfl src="${A}pt_flag.png">`)})};
 const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
+
+/* v167 rare popups: celebration frame (보상 획득 · 콘텐츠 개방 · 황금룡 결과 · LEVEL UP) */
+(function(){const st=document.createElement('style');st.textContent=`
+.rpf,.modal .card.rpf{position:relative;border-style:solid!important;border-width:46px 50px 40px!important;border-image:url(assets/rp_frame.png) 145 150 135 150 stretch!important;border-radius:0!important;background:radial-gradient(ellipse at 50% 30%,#5a1420,#24060c 75%) padding-box!important;box-shadow:none!important;filter:drop-shadow(0 10px 24px #000c)}
+.rpray{position:absolute;left:50%;top:50%;width:620px;height:620px;margin:-310px 0 0 -310px;pointer-events:none;z-index:0;background:repeating-conic-gradient(from 0deg,#ffd56a77 0 7deg,#0000 7deg 18deg);-webkit-mask:radial-gradient(circle,#000 8%,#0008 35%,#0000 62%);mask:radial-gradient(circle,#000 8%,#0008 35%,#0000 62%);animation:rwspin 14s linear infinite}
+.rpray::after{content:'';position:absolute;inset:30%;border-radius:50%;background:radial-gradient(circle,#ffe7a066,#ff9a2a22 50%,#0000 70%)}
+.rwpop .rwbox.rpf{width:290px!important;padding:2px 0 4px!important;margin:0}.rwpop .rwrays{display:none}
+.rpic{display:block;height:74px;margin:-62px auto 0;position:relative;z-index:2;filter:drop-shadow(0 0 10px #ffc94a) drop-shadow(0 4px 4px #000a)}
+.unl .unb.rpf{width:230px!important;padding:0 0 4px!important;animation:unb .45s cubic-bezier(.2,1.5,.4,1)}
+.unl .unb.rpf .rpic{height:64px;margin-top:-56px}.unl .unb.rpf>img:not(.rpic){width:76px!important;height:76px!important}
+.unl,.rwpop{isolation:isolate}.unl>.rpray,.rwpop>.rpray{z-index:-1}
+.modal .card.rpf{width:300px!important;padding:0 0 6px!important}
+.modal .card.rpf .rpcr{display:block;height:46px;margin:-50px auto -4px;position:relative;z-index:2;filter:drop-shadow(0 0 8px #ffd75a)}
+.modal .card.rpf>img[src*=boss_dragon]{height:110px!important;filter:drop-shadow(0 0 14px #ff6a2a)}
+.banner.rplv{display:flex;align-items:center;justify-content:center;gap:4px}.banner.rplv img{height:44px;filter:drop-shadow(0 0 8px #ffc94a)}
+body:has(#screen.on) #toastQ{bottom:auto!important;top:96px!important;flex-direction:column!important}`;document.head.appendChild(st);
+const ray=p=>{if(!p.querySelector(':scope>.rpray'))p.insertAdjacentHTML('afterbegin','<div class=rpray></div>')};
+const deco=n=>{if(n.nodeType!=1)return;
+ if(n.classList.contains('rwpop')){const b=n.querySelector('.rwbox');if(b&&!b.classList.contains('rpf')){b.classList.add('rpf');b.insertAdjacentHTML('afterbegin',`<img class=rpic src="${A}rp_chest.png">`);ray(n)}}
+ else if(n.classList.contains('unl')){const b=n.querySelector('.unb');if(b&&!b.classList.contains('rpf')){b.classList.add('rpf');b.insertAdjacentHTML('afterbegin',`<img class=rpic src="${A}rp_unlock.png">`);ray(n)}}
+ else if(n.classList.contains('modal')){const c=n.querySelector(':scope>.card');const im=c&&c.querySelector(':scope>img[src*="boss_dragon"]');if(im&&!c.classList.contains('rpf')){c.classList.add('rpf');ray(n);const t=c.querySelector('.ttl');if(t&&/성공/.test(t.textContent))c.insertAdjacentHTML('afterbegin',`<img class=rpcr src="${A}wb_crown.png">`)}}
+ else if(n.classList.contains('banner')&&/^LEVEL UP/.test(n.textContent)&&!n.classList.contains('rplv')){n.classList.add('rplv');n.insertAdjacentHTML('afterbegin',`<img src="${A}rp_lvup.png">`)}};
+new MutationObserver(ms=>ms.forEach(r=>r.addedNodes.forEach(n=>{try{deco(n)}catch(_){}}))).observe(document.body,{childList:true,subtree:true})})();

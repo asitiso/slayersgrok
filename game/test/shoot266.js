@@ -1,0 +1,16 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+const rm=()=>ev(()=>document.querySelectorAll('#notice,.modal,.unl,.chap,.banner,.tut,.rwpop').forEach(x=>x.remove()));
+await sl(1500);await rm();
+await ev(()=>C.gainExp(C.needExp()+1));await sl(350);await sh('1166-levelup-banner');await rm();
+await ev(()=>{const s=G.S();s.ach=s.ach||{};G.rewardPop([['it2_gem.png',300,'다이아'],['it2_gold.png',50000,'골드'],['ic3_trophy.png','칭호','「초보 슬레이어」']],'업적 달성')});await sl(700);await sh('1167-reward-pop');await rm();
+await ev(()=>{const s=G.S();for(const k in G.UNL)if(G.isOpen(k)){delete s.unl[k];break}});await sl(2500);await sh('1168-unlock-pop');
+console.log(await ev(()=>document.querySelector('.unl')?.textContent));await rm();
+await ev(()=>{C.raidAttack=()=>({killed:1,dmg:123456,pct:.42,gem:50,orb:20,bonus:{gems:200,orbs:50}});G.open('guild')});await sl(800);await ev(()=>{const e=[...document.querySelectorAll('#screen .btn,#screen .pill,#screen span,#screen button')].find(x=>x.textContent.trim()=='가입');e&&e.click()});await sl(800);await rm();await ev(()=>{const e=document.querySelector('#raid');e&&e.click()});await sl(600);await sh('1169-raid-kill');
+await rm();await ev(()=>{G.close();const s=G.S();s.party=['gourry','xellos'];G.open('party')});await sl(1000);await rm();await ev(()=>{document.querySelector('[data-ps="1"]').click();document.querySelector('#screen .sbody').scrollTop=9999});await sl(300);await sh('1170-party-toast');
+console.log('ERRS',errs);stop();await b.close()})();
