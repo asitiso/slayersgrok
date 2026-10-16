@@ -1781,6 +1781,23 @@ const draw=()=>{const el=$('#screen'),L=items(),own=L.filter(x=>x.own);
  <div class=card><div class=ttl>수집한 일러스트 ${own.length}/${L.length} <small>탭하면 크게 감상</small></div><div class=glt>${L.map(x=>`<div class="glc ${x.own?'':'lock'} ${x.bs?'bs':''}" style="--c:${x.c}" ${x.own?`data-gv=${own.indexOf(x)}`:''}><img src="${A}${x.img}"><b>${x.own?x.n:'???'}</b></div>`).join('')}</div></div>`);
  el.querySelector('#sBack').onclick=()=>closeScreen();
  el.querySelectorAll('[data-gt]').forEach(b=>b.onclick=()=>{tab=b.dataset.gt;draw()});el.querySelectorAll('[data-gv]').forEach(b=>b.onclick=()=>view(+b.dataset.gv))};
-if(!MENU.some(m=>m[0]=='gallery')){const i=MENU.findIndex(m=>m[0]=='codex');MENU.splice(i+1,0,['gallery','갤러리','ic3_relic.png'])}try{renderHub()}catch(_){}
+if(!MENU.some(m=>m[0]=='gallery')){const i=MENU.findIndex(m=>m[0]=='codex');MENU.splice(i+1,0,['gallery','갤러리','ic3_gallery.png'])}try{renderHub()}catch(_){}
 const rs=renderScreen;renderScreen=function(){if(G.screen=='gallery')return draw();return rs.apply(this,arguments)};
+})();
+;(()=>{// v110 보스 전리품 폭발 (보스 처치 시 전리품이 튀어나와 바닥에 튕긴 뒤 HUD로 빨려 들어감 · 시각 전용)
+const css=document.createElement('style');css.textContent=`
+.bloot{position:absolute;z-index:7;width:34px;height:34px;margin:-17px 0 0 -17px;pointer-events:none;animation:blj .75s cubic-bezier(.3,0,.7,1) both}
+.bloot img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 2px #0008);animation:blb .75s ease-out both}
+.bloot .bm{position:absolute;left:50%;bottom:8px;width:26px;height:150px;margin-left:-13px;background:linear-gradient(#fff0,var(--bc) 70%,#fff);opacity:0;filter:blur(1.5px);animation:blbm 1.1s .45s ease-out both;border-radius:12px;mix-blend-mode:screen}
+.bloot .sd{position:absolute;left:50%;bottom:-4px;width:26px;height:7px;margin-left:-13px;border-radius:50%;background:#0005;animation:blsd .75s ease-out both}
+.bloot.fly{transition:left .5s cubic-bezier(.6,0,.9,.4),top .5s cubic-bezier(.6,0,.9,.4),transform .5s,opacity .5s;transform:scale(.5);opacity:.2}
+@keyframes blj{0%{transform:translate(var(--sx),var(--sy)) scale(.4)}55%{transform:translate(calc(var(--sx)*.4),-70px) scale(1.1)}80%{transform:translate(0,0) scale(1)}90%{transform:translate(0,-10px)}100%{transform:translate(0,0)}}
+@keyframes blb{0%{transform:rotate(-200deg)}80%{transform:rotate(0)}}
+@keyframes blsd{0%,70%{opacity:0;transform:scale(.3)}100%{opacity:1}}
+@keyframes blbm{0%{opacity:0;transform:scaleY(.2)}25%{opacity:.85;transform:scaleY(1)}100%{opacity:0;transform:scaleY(1.2)}}`;document.head.appendChild(css);
+const LOOT=[['it2_gold.png',''],['it2_gold.png',''],['it2_gold.png',''],['it2_gem.png','#4ab0ff'],['it2_stone.png','#c0c8ff'],['it2_exp.png','#b07cff'],['it2_gold.png','']];
+G._bossLoot=(bx,by)=>{const bt=document.querySelector('#battle');if(!bt)return;const n=LOOT.length;LOOT.forEach(([im,bc],i)=>{const x=Math.max(90,Math.min(280,bx-80+i*(150/(n-1))+(Math.random()*14-7))),y=515+Math.random()*20;const d=document.createElement('div');d.className='bloot';d.style.left=x+'px';d.style.top=y+'px';d.style.setProperty('--sx',(bx-x)+'px');d.style.setProperty('--sy',(by-y)+'px');d.style.animationDelay=(i*.05)+'s';
+ d.innerHTML=`${bc?`<span class=bm style="--bc:${bc}"></span>`:''}<span class=sd></span><img src="${A}${im}" style="animation-delay:${i*.05}s">`;bt.appendChild(d);
+ setTimeout(()=>{const t=document.querySelector(im=='it2_gem.png'?'#cGem':'#cGold'),br=bt.getBoundingClientRect();let tx=300,ty=20;if(t){const r=t.getBoundingClientRect();tx=r.left-br.left+r.width/2;ty=r.top-br.top+r.height/2}d.style.animation='none';d.classList.add('fly');d.style.left=tx+'px';d.style.top=ty+'px';setTimeout(()=>d.remove(),550)},1500+i*60)})};
+const ok=C.ev.kill;C.ev.kill=function(e){try{if(e&&e.boss&&!e.wb&&!G.screen&&G.screen!=='sim'){const q=R._ES().get(e);if(q){const bx=q.x,by=q.y-60;setTimeout(()=>G._bossLoot(bx,by),350)}}}catch(_){}return ok.apply(this,arguments)};
 })();
