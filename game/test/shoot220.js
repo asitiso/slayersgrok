@@ -7,5 +7,5 @@ await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.
 const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
 await ev(()=>{const s=G.S();s.comps={gourry:1,xellos:1,borin:1,kaede:1,amelia:1,noel:1,pip:1};s.party=['gourry','xellos','borin','kaede'];G.C.buildAllies()});
 await ev(()=>menuGo('party'));await sl(1200);await sh(process.argv[2]||'s220');
-await ev(()=>document.querySelector('.sbody').scrollTop=9999);await sl(500);console.log(await ev(()=>[...document.querySelectorAll('.pfig')].map(n=>n.outerHTML.slice(0,90)).concat(document.querySelectorAll('.pstage').length, G.S().party)));await sh((process.argv[2]||'s220')+'b');
+await ev(()=>document.querySelector('.sbody').scrollTop=9999);await sl(500);console.log(await ev(()=>[...document.querySelectorAll('.pfig')].map(n=>n.outerHTML.slice(0,90)).concat(document.querySelectorAll('.pstage').length, G.S().party)));await sl(300);await sh((process.argv[2]||'s220')+'b');
 console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();

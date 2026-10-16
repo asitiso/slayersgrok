@@ -998,3 +998,7 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .pstage{height:318px}.pstage .prb{top:38px;gap:110px}.pstage .prb .pfig{transform:scale(.82);transform-origin:50% 100%}.pstage .prf{top:158px}
 .rgrid .rcard,.rgrid .rcard.in{border-color:var(--rc)!important}
 .pstage .prb{z-index:2}
+.pstage{background:linear-gradient(#0000 60%,#0006),url(assets/bg_party_stage.jpg) center 0/auto 400px}
+.rgrid .fd{width:20px;height:20px;top:2px;right:2px;background:none;filter:drop-shadow(0 1px 1px #000)}
+.fac .fci{width:16px;height:16px;vertical-align:-4px;margin-right:3px}
+.rgrid .rcard img.fd{position:absolute;width:20px;height:20px;margin:0}
