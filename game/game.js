@@ -463,7 +463,7 @@ C.petEq=k=>{const p=P();if(!p.own[k])return false;p.eq=k;C.refreshMax&&C.refresh
 {const oa=C.atkPct;C.atkPct=()=>oa()+C.petB('atk');const oh=C.MAXHP;C.MAXHP=()=>oh()*(1+C.petB('hp'));const og=C.addGold;C.addGold=g=>og(g*(1+C.petB('gold')))}
 {const ot=C.towerTry;if(ot)C.towerTry=()=>{const r=ot();if(r&&!r.fail&&r.f%5==0){P().egg++;r.egg=1}return r}}
 // battle render: active pet floats beside Lina
-{const of=R.frame;const cv=()=>document.querySelector('#battle canvas');const im={};R.frame=dt=>{of(dt);try{const p=C.S().pet;if(!p||!p.eq||G.screen)return;const x=PETS.find(q=>q.k==p.eq),L=R._AS().get('lina');const c=cv();if(!x||!L||!c)return;let I=im[x.img];if(!I){I=im[x.img]=new Image();I.src=A+x.img}if(!I.complete||!I.naturalWidth)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,t=performance.now()/1000,f=L.face>=0?1:-1,h=38,w=h*I.naturalWidth/I.naturalHeight,px=Math.max(66,L.x-f*62),py=L.y-4+Math.sin(t*3.2)*4;
+{const of=R.frame;const cv=()=>document.querySelector('#battle canvas');const im={};R.frame=dt=>{of(dt);try{const p=C.S().pet;if(!p||!p.eq||G.screen||G._bpet)return;const x=PETS.find(q=>q.k==p.eq),L=R._AS().get('lina');const c=cv();if(!x||!L||!c)return;let I=im[x.img];if(!I){I=im[x.img]=new Image();I.src=A+x.img}if(!I.complete||!I.naturalWidth)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,t=performance.now()/1000,f=L.face>=0?1:-1,h=38,w=h*I.naturalWidth/I.naturalHeight,px=Math.max(66,L.x-f*62),py=L.y-4+Math.sin(t*3.2)*4;
  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.globalAlpha=.35;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(px,L.y+2,16,5,0,0,6.283);ctx.fill();ctx.globalAlpha=1;ctx.translate(px,py);if(f<0)ctx.scale(-1,1);ctx.drawImage(I,-w/2,-h,w,h);ctx.restore()}catch(e){}}}
 function scr(el){const p=P(),s=C.S();if(!p.gift){p.gift=1;p.egg+=1}
  const cards=PETS.map(x=>{const l=p.own[x.k],eq=p.eq==x.k;return `<div class="ptc ${l?'':'lock'} ${eq?'pton':''}" data-pk=${x.k} style="--rc:${D.RAR[x.g].c}"><img src="${A}${x.img}"><b>${x.n}</b><small>${l?`Lv.${l} · ${SN[x.st]} +${(x.per*l).toFixed(1).replace('.0','')}%`:'미보유'}</small>${eq?'<i class=pteq>장착</i>':''}</div>`}).join('');
@@ -1488,7 +1488,7 @@ const PT=[];const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||(G.saverState&
  ctx.globalAlpha=1;ctx.restore()}catch(_){}}})();
 /* v94 elite treasure chest drop */
 (()=>{const C=G.C;let live=0;
-const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=G._echG!=null?G._echG:Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
+const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'&&!document.querySelector('.vic')){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=G._echG!=null?G._echG:Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
  const w=document.createElement('div');w.className='ech'+(gold?' gold':'');w.style.left=Math.max(90,Math.min(265,q.x))+'px';w.style.top=(q.y-20)+'px';
  w.innerHTML=`<div class="echb"></div><img src="assets/ic3_chest.png"><div class="echt">${gold?'황금 보물상자!':'보물상자'}<br><b><img src="assets/it2_gem.png">${gm} <img src="assets/it2_stone.png">${st}</b></div>`;b.appendChild(w);
  setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000);const r=ok(e,...a);R.ekT=null;return r}}}catch(_){}return ok(e,...a)}})();
@@ -1507,5 +1507,15 @@ const ot=C.tick;C.tick=(dt,...a)=>{const r=ot(dt,...a);try{if(G.screen=='sim'||G
 
 /* v97 declutter: one center banner at a time, damage-number cap */
 (()=>{const BN=['wvb','wclr','mkb','fevban','enrb'];const b=document.getElementById('battle');if(!b)return;
-const mo=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(!n.classList)continue;const vic=n.classList.contains('vic');if(vic||BN.some(c=>n.classList.contains(c))){if(!vic&&document.querySelector('.vic')){n.classList.add('bgone');continue}document.querySelectorAll(BN.map(c=>'.'+c).join(',')+',.ech,.crate').forEach(o=>{if(o!==n&&!o.classList.contains('bgone'))o.classList.add('bgone')})}}});mo.observe(b,{childList:true});mo.observe(document.body,{childList:true});
+const mo=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(!n.classList)continue;if(n.classList.contains('powup')&&document.querySelector('.vic')){n.classList.add('bgone');continue}const vic=n.classList.contains('vic');if(vic||BN.some(c=>n.classList.contains(c))){if(!vic&&document.querySelector('.vic')){n.classList.add('bgone');continue}if(vic)document.querySelectorAll('.powup').forEach(o=>o.classList.add('bgone'));document.querySelectorAll(BN.map(c=>'.'+c).join(',')+',.ech,.crate').forEach(o=>{if(o!==n&&!o.classList.contains('bgone'))o.classList.add('bgone')})}}});mo.observe(b,{childList:true});mo.observe(document.body,{childList:true});
 G.declutter=1})();
+
+/* v98 equipped pet follows the party in battle */
+(()=>{const C=G.C;let el=null,cur=null,atkT=4,dash=0;G._bpet=1;
+function ensure(){const s=C.S(),p=s.pet&&s.pet.eq,b=document.getElementById('battle');if(!b)return null;const def=p&&(C.PETS||[]).find(x=>x.k==p);if(!def){if(el){el.remove();el=null;cur=null}return null}
+ if(!el||cur!==p){if(el)el.remove();el=document.createElement('div');el.className='bpet';el.innerHTML=`<img src="assets/${def.img}"><i class="bpsh"></i>`;b.appendChild(el);cur=p}return el}
+const ot=C.tick;C.tick=(dt,...a)=>{const r=ot(dt,...a);try{if(G.screen){if(el)el.style.display='none';return r}const e=ensure();if(!e)return r;e.style.display='';const L=R._AS().get('lina');if(!L)return r;
+ const T=performance.now()/1000;if(dash>0){dash-=dt;if(dash<=0)e.classList.remove('dash')}
+ if(!e.classList.contains('dash')){const f=L.face>=0?1:-1;e.style.left=Math.max(66,L.x-f*62)+'px';e.style.top=(L.y-4+Math.sin(T*3.2)*4)+'px'}
+ if((atkT-=dt)<=0){atkT=5+Math.random()*3;const tg=(C.B.enemies||[]).filter(x=>x.hp>0).map(x=>R._ES().get(x)).filter(q=>q&&q.x<300).sort((a,b)=>a.x-b.x)[0];
+  if(tg&&!document.querySelector('.vic')){e.classList.add('dash');e.style.left=(tg.x-20)+'px';e.style.top=(tg.y-70)+'px';dash=.55;setTimeout(()=>{const s=document.createElement('div');s.className='bpfx';s.style.left=tg.x+'px';s.style.top=(tg.y-50)+'px';document.getElementById('battle').appendChild(s);setTimeout(()=>s.remove(),500)},230)}}}catch(_){}return r}})();

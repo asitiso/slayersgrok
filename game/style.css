@@ -908,3 +908,13 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .bgone{transition:opacity .2s!important;opacity:0!important}
 .crate{z-index:9}.crhp{height:7px;top:-66px;left:-26px;width:52px;border:1.5px solid #fff;box-shadow:0 0 0 1px #000,0 2px 3px #0008;background:#300a}
 .crhp b{background:linear-gradient(#ffe27a,#ff9a1a)}
+/* v98 battle pet */
+.bpet{position:absolute;width:0;height:0;z-index:6;pointer-events:none;transition:left .12s linear,top .12s linear}
+.bpet.dash{transition:left .25s cubic-bezier(.5,0,.7,1.4),top .25s ease-out}
+.bpet img{position:absolute;width:44px;left:-22px;top:-44px;filter:drop-shadow(0 0 5px #fff8) drop-shadow(0 2px 2px #0006)}
+.bpet.dash img{animation:bpSp .5s}
+@keyframes bpSp{50%{transform:scale(1.25) rotate(-12deg)}}
+.bpsh{position:absolute;left:-14px;top:30px;width:28px;height:7px;border-radius:50%;background:#0003}
+.bpfx{position:absolute;width:0;height:0;z-index:7;pointer-events:none}
+.bpfx::before{content:'';position:absolute;left:-30px;top:-30px;width:60px;height:60px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 12px #ffe27a,inset 0 0 12px #ffe27a;animation:bpR .45s ease-out forwards}
+@keyframes bpR{0%{transform:scale(.2);opacity:1}100%{transform:scale(1.4);opacity:0}}
