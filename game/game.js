@@ -1089,11 +1089,11 @@ G.olOpen=()=>{const o=st();modal(`<div class=ttl style="justify-content:center;f
 let lt=Date.now();setInterval(()=>{const n=Date.now(),d=Math.min(5,(n-lt)/1000);lt=n;if(!document.hidden&&!G.noSave)st().sec+=d;upd()},1000);setTimeout(upd,300);
 })();
 ;(()=>{// v58 스토리 대화 (챕터 진입 시 짧은 대화 · 탭으로 진행 · 건너뛰기)
-const P={lina:['리나','hero_lina.png'],gourry:['가우리','ally_gourry.png'],zel:['젤가디스','ally_zelgadis.png'],amelia:['아멜리아','ally_amelia.png'],xel:['젤로스','ally_xellos.png']};
+const P={lina:['리나','hero_lina.png'],gourry:['가우리','ally_gourry.png'],zel:['젤가디스','ally_zelgadis.png'],amelia:['아멜리아','ally_amelia.png'],xel:['제로스','ally_xellos.png']};
 const SC=[
  [['lina','세이룬까지 가는 길에 몬스터가 이렇게 많을 리 없는데…'],['gourry','배고프다, 리나. 저 슬라임 먹을 수 있을까?'],['lina','먹지 마! …아무튼 길을 막는 녀석들은 전부 날려 버린다!']],
  [['zel','이 숲에서 마족의 기척이 느껴진다. 조심해라.'],['lina','흥, 마족이든 뭐든 내 마법 앞에선 똑같아.'],['amelia','정의의 이름으로! 숲의 평화를 되찾겠어요!']],
- [['xel','후후, 붉은 마왕의 성에 오신 걸 환영합니다.'],['lina','젤로스… 너 또 뭔가 숨기고 있지?'],['xel','그건 비밀입니다~♪'],['lina','좋아, 성째로 날려 버리면 비밀도 사라지겠지!']],
+ [['xel','후후, 붉은 마왕의 성에 오신 걸 환영합니다.'],['lina','제로스… 너 또 뭔가 숨기고 있지?'],['xel','그건 비밀입니다~♪'],['lina','좋아, 성째로 날려 버리면 비밀도 사라지겠지!']],
  [['gourry','으아, 발밑이 뜨거워! 신발 녹는다!'],['zel','염제가 깨어났다는 소문이 사실이었군.'],['lina','불에는 불로! 화염 마법의 진수를 보여 주지!']],
  [['amelia','추, 추워요… 여기가 얼음 여제의 성채인가요?'],['zel','방심하지 마라. 얼음 속에 무언가 잠들어 있다.'],['lina','겨울이 영원하다고? 내가 봄을 데려다 주지. 가자!']]];
 const st=()=>{const s=C.S();if(!s.story)s.story={};return s.story};
@@ -1163,4 +1163,25 @@ G.saverState=()=>on;
 const btn=()=>{const bt=document.getElementById('battle');if(!bt||document.getElementById('svBtn'))return;const b=document.createElement('span');b.id='svBtn';b.className='pill';b.textContent='🌙';b.title='절전 모드';b.onclick=()=>G.saverOn();bt.appendChild(b)};
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{btn()}catch(_){}return r};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='settings'){const el2=$('#screen'),nk=el2.querySelector('#nkRow');if(nk&&!el2.querySelector('#svRow')){nk.insertAdjacentHTML('afterend',`<div class="card row" id=svRow><div class=f><b>절전 모드</b><small style="display:block;opacity:.7">화면을 끄고 방치 사냥 · 배터리 절약</small></div><span class="pill" id=svGo>🌙 켜기</span></div>`);el2.querySelector('#svGo').onclick=()=>{closeScreen();G.saverOn()}}}}catch(_){}return r};
+})();
+;(()=>{// v63 전투 말풍선 (스킬 · 보스 · 위기 · 승리 대사)
+const L={lina:{sp:['{n}!','받아라, {n}!','날려 버리겠어!'],boss:['덤벼 봐! 상대해 주지!','보스라고? 흥!'],low:['큭… 아직이야!','이 정도로는 안 쓰러져!'],win:['역시 나라니까~♪','보물은 내 거야!'],grog:['지금이야! 몰아쳐!'],tele:['큰 거 온다! 피해!']},
+ gourry:{boss:['내 검을 받아라!'],low:['아야야… 배고파서 힘이 안 나'],win:['이제 밥 먹으러 가자!'],grog:['좋아, 한 방 더!'],tele:['우왓, 위험해!']},
+ zelgadis:{boss:['방심하지 마라.'],low:['…이 정도 상처쯤은.'],win:['흥, 별것 아니군.'],grog:['틈이 생겼다!']},
+ amelia:{boss:['정의의 이름으로 용서하지 않겠어요!'],low:['정의는… 지지 않아요!'],win:['정의는 승리한다!'],grog:['지금이 정의의 타이밍!']},
+ xellos:{boss:['후후, 재미있어지겠네요.'],low:['어머, 아프네요~'],win:['그건 비밀입니다~♪']},
+ _:{boss:['간다!','조심해!'],low:['위험해…!'],win:['해냈다!'],grog:['기회다!']}};
+const pick=a=>a[Math.floor(Math.random()*a.length)];let gT=0;const lastA={};let layer=null;const live=[];
+const lay=()=>{if(!layer||!layer.isConnected){layer=document.createElement('div');layer.id='bubL';const bt=document.getElementById('battle');bt&&bt.appendChild(layer)}return layer};
+const say=(k,type,vars,force)=>{try{if(G.storyOn||(G.saverState&&G.saverState())||(G.set&&G.set.bubble===false))return;const now=performance.now();if(!force&&(now-gT<2600||now-(lastA[k]||0)<7000))return;const T=(L[k]||L._)[type]||L._[type];if(!T)return;const AS=R._AS&&R._AS();if(!AS||!AS.get(k))return;gT=now;lastA[k]=now;
+ live.splice(0).forEach(q=>q.d.remove());const d=document.createElement('div');d.className='bub '+type;d.textContent=pick(T).replace('{n}',(vars&&vars.n)||'');lay().appendChild(d);const o={k,d,t:now};live.push(o);setTimeout(()=>{d.classList.add('out');setTimeout(()=>{d.remove();const i=live.indexOf(o);i>=0&&live.splice(i,1)},250)},1700)}catch(_){}};
+const place=()=>{const AS=R._AS&&R._AS();if(AS)live.forEach(o=>{const s=AS.get(o.k);if(!s)return;const w=o.d.offsetWidth||100,x=Math.max(56+w/2,Math.min(328-w/2,s.x)),y=s.y-118;o.d.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`});requestAnimationFrame(place)};requestAnimationFrame(place);
+const alive=()=>(C.aliveAllies?C.aliveAllies():[]).map(a=>a.k);const rnd=()=>{const a=alive();return a[Math.floor(Math.random()*a.length)]};
+const hook=(n,f)=>{const o=C.ev[n];C.ev[n]=function(){const r=o&&o.apply(this,arguments);try{f.apply(this,arguments)}catch(_){}return r}};
+hook('spell',(sp)=>{if(sp&&!sp.heal&&Math.random()<.35)say('lina','sp',{n:sp.n})});
+hook('walk',()=>{if(C.B.boss)setTimeout(()=>say(Math.random()<.5?'lina':rnd(),'boss',0,1),2700)});
+hook('dmgAlly',(a)=>{if(a&&a.hp>0&&a.hp<a.max*.3)say(a.k,'low')});
+hook('grog',()=>say(rnd(),'grog',0,1));hook('tele',()=>say(Math.random()<.6?'lina':rnd(),'tele',0,1));
+hook('kill',(e)=>{if(e&&e.boss)setTimeout(()=>say(rnd(),'win',0,1),300)});
+G.bubSay=say;
 })();
