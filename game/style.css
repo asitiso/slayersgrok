@@ -1142,3 +1142,18 @@ body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:h
 #screen.arena2 .sbody>.card{background:#1a1230b8!important;backdrop-filter:blur(2px)}
 .arvsi .avs b{display:inline-block;margin-top:4px;padding:3px 10px;border-radius:10px;background:#000a;font-size:16px}
 .arvsi .avs small{display:block;margin-top:3px;font-size:14px;text-shadow:0 1px 0 #000,0 0 4px #000}
+/* v132 dungeon */
+#screen.dun2 .shade{opacity:.3}
+#screen.dun2 .sbody>.card,#screen.dun2 .duntr{background:#141826c4!important}
+.dgc{display:flex;gap:6px;margin:4px 0 6px}
+.dgcard{flex:1;text-align:center;padding:6px 3px 7px;border-radius:12px;background:linear-gradient(#2a2440e8,#12101ce8);border:2px solid #4a4466;animation:aocin .35s ease-out both}
+.dgcard:nth-child(2){animation-delay:.07s}.dgcard:nth-child(3){animation-delay:.14s}
+.dgcard.on{border-color:var(--dc);box-shadow:0 0 12px var(--dc),inset 0 0 14px #fff2;transform:translateY(-2px)}
+.dgcard .dge{width:64px;height:64px;object-fit:contain;display:block;margin:0 auto 2px;filter:drop-shadow(0 3px 4px #000a)}
+.dgcard:not(.on) .dge{filter:saturate(.6) brightness(.8)}
+.dgcard b{display:block;font:900 13px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #000}.dgcard small{display:block;font-size:9.5px;color:#cfc8e8}
+.dgt{display:flex;justify-content:center;align-items:center;gap:3px;margin-top:3px}.dgt i{width:12px;height:12px;border-radius:50%;background:#0008;border:1px solid #888}.dgt i.on{background:var(--dc);border-color:#fff;box-shadow:0 0 5px var(--dc)}.dgt em{font-style:normal;font-size:10px;color:#fff;font-weight:900;margin-left:2px}
+.dgtier{display:inline-block;margin-top:3px;padding:1px 6px;border-radius:7px;background:#0007;font-size:9px;color:#ffd77a;font-weight:800}
+.dgfr{display:flex;align-items:center;gap:6px;padding:4px 8px;margin-bottom:8px;border-radius:10px;background:#1a1428d8;border:1.5px solid #4a4466}.dgfr img{width:24px}.dgfr b{font-size:12px;color:#fff}.dgfr small{flex:1;font-size:10px;color:#cfc8e8}.dgfr em{font-style:normal;font-size:11px;font-weight:900;color:#fff}
+.dgfr.on,.dgfr[data-dk2]:active{border-color:var(--dc)}
+.dunh .dgsw{margin-top:6px;align-self:flex-start;background:linear-gradient(#ffd25a,#d08a10);color:#3a2000;font-weight:900}
