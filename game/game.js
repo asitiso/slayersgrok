@@ -2888,3 +2888,8 @@ setInterval(()=>{const B=C.B;if(!B||!B.allies)return;const pp=document.querySele
 #chatP .chl span{color:#f0e4d0}
 #chatP .chi input{background:#1a0e06;border:1.5px solid #8a6a3a;color:#ffeccc}
 #chatP #chGo{border:2px solid #e8c47a}`;document.head.appendChild(st)})();
+
+/* v180: battlefield labels — WAVE banner in bronze/gold (visual only; 대기/증원 capsule in render.js) */
+(()=>{const st=document.createElement('style');st.textContent=`
+.wvb:not(.fin):not(.tgb) b{color:#fff4dc;text-shadow:0 2px 0 #3a2008,0 0 10px #e0a040,0 0 2px #000}
+.wvb:not(.fin) i{height:2px;width:60px;background:linear-gradient(90deg,transparent,#e8c070,transparent)}`;document.head.appendChild(st)})();
