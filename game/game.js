@@ -1945,3 +1945,11 @@ function deco(){const el=$('#screen'),s=C.S(),f0=el.querySelector('.slotrow');if
  el.querySelectorAll('.row .fac').forEach(n=>{const f=Object.keys(D.FACTIONS).find(x=>D.FACTIONS[x].n==n.textContent);if(f&&!n.querySelector('img'))n.insertAdjacentHTML('afterbegin',`<img class=fci src="assets/fac_${f}.png">`)});const rc=el.querySelectorAll('.rcard');if(!rc.length)return;rc[0].parentNode.classList.add('rgrid');
  rc.forEach(n=>{const k=n.dataset.c,c=D.COMPS.find(x=>x.k==k),lv=s.comps[k],R=D.RAR[c.g],F=D.FACTIONS[c.fac],inP=P.includes(k);n.style.setProperty('--rc',R.c);n.classList.toggle('own',!!lv);
   n.innerHTML=`<img src="${A}${c.img}"><span class=rg>${R.n}</span><img class=fd src="assets/fac_${c.fac}.png">${inP?'<span class=ck>✔</span>':''}<b>${c.n}</b><small>${lv?'★'.repeat(Math.min(5,lv)):'미보유'}</small>${lv?`<span class=di data-det=${k}>i</span>`:''}`})}})();
+/* v125 화룡전식 동료 상세 (전신 일러스트 무대 · 세력 엠블럼 · 능력치 막대 · 스킬 카드) */
+;(()=>{const ocd=compDetail;compDetail=function(k){const r=ocd.apply(this,arguments);try{const c=D.COMPS.find(x=>x.k==k),im=[...document.querySelectorAll('.cdet .cdimg')].pop();if(!c||!im)return r;
+ im.classList.add('cdx');im.querySelector('img').src=`${A}cutc/${k}.png`;im.querySelector('img').onerror=function(){this.onerror=null;this.src=A+c.img};
+ const fb=im.querySelector('.fac');if(fb)fb.innerHTML=`<img class=fci src="assets/fac_${c.fac}.png">${fb.textContent}`;
+ const bar=(n,v,mx,col)=>`<div class=cxb><span>${n}</span><i><u style="width:${Math.min(100,v/mx*100)}%;background:${col}"></u></i><b>${v.toFixed(2)}</b></div>`;
+ const sk=(D.CSKI||{})[k],st=document.createElement('div');st.className='cxs';
+ st.innerHTML=bar('공격',C.compMul(k),2.5,'linear-gradient(90deg,#ff7a3d,#ffd25a)')+bar('체력',c.hp||1,1.5,'linear-gradient(90deg,#3ad07a,#b4ff6a)')+bar('속도',c.spd||1,1.5,'linear-gradient(90deg,#3a9bff,#7ae8ff)')+(sk?`<div class=cxk><img src="${A}${sk[0]}"><div><b>${sk[1]}</b><small>${c.d}</small></div></div>`:'');
+ const st0=im.parentNode.querySelector('.stars');(st0||im).after(st)}catch(e){console.warn(e)}return r}})();
