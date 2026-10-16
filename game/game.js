@@ -525,7 +525,7 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=document.que
  ctx.restore()}catch(err){}}})();
 ;(()=>{// v17 break gauge + crit juice
 const FT2=[];
-C.ev.grog=e=>{R.hs=Math.max(R.hs||0,.35);const s=R._ES().get(e);FT2.push({t:0,x:s?s.x:200,y:s?s.y-120:300});if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash grogfl';document.body.appendChild(f);setTimeout(()=>f.remove(),120)}toast('<b style="color:#ffd25a">그로기!</b> 보스가 무력화되었습니다 · 피해 +50%')};
+C.ev.grog=e=>{R.hs=Math.max(R.hs||0,.35);const s=R._ES().get(e);FT2.push({t:0,x:s?s.x:200,y:s?s.y-120:300});if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash grogfl';document.body.appendChild(f);setTimeout(()=>f.remove(),120)}(!G.screen)&&toast('<b style="color:#ffd25a">그로기!</b> 보스가 무력화되었습니다 · 피해 +50%')};
 C.ev.grogEnd=()=>{};
 {const oh=C.ev.hit;C.ev.hit=(e,d,cr)=>{oh(e,d,cr);if(cr&&!C._dot&&e&&(e.boss||Math.random()<.35)){R.hs=Math.max(R.hs||0,e.boss?.07:.04)}}}
 const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const bo=C.alive().find(e=>e.boss&&!e.wb);const c=document.querySelector('#battle canvas');if(!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,W=c.clientWidth,T=performance.now()/1000;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
@@ -937,7 +937,7 @@ const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);t
 ;(()=>{// v51 사운드: procedural WebAudio SFX + light BGM (original, synthesized; respects 설정 배경음/효과음)
 let ac=null,mg=null,sg=null,bg=null,nz=null;G.sfxN={};
 const on=k=>{try{const s=G.set||G.loadSet();return s[k]!==false&&s[k]!==0}catch(_){return true}};
-const init=()=>{if(ac)return;try{ac=new (window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.gain.value=.8;mg.connect(ac.destination);G._an=ac.createAnalyser();G._an.fftSize=2048;mg.connect(G._an);G._mg=mg;sg=ac.createGain();sg.gain.value=.55;sg.connect(mg);bg=ac.createGain();bg.gain.value=.16;bg.connect(mg);
+const init=()=>{if(ac)return;try{ac=new (window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.gain.value=1;const cp=ac.createDynamicsCompressor();cp.threshold.value=-30;cp.knee.value=8;cp.ratio.value=6;cp.attack.value=.003;cp.release.value=.2;const mk=ac.createGain();mk.gain.value=G.MAKEUP||1.2;const lim=ac.createDynamicsCompressor();lim.threshold.value=-10.5;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=.001;lim.release.value=.08;mg.connect(cp);cp.connect(mk);mk.connect(lim);lim.connect(ac.destination);G._mk=mk;G._an=ac.createAnalyser();G._an.fftSize=2048;lim.connect(G._an);G._mg=lim;sg=ac.createGain();sg.connect(mg);bg=ac.createGain();bg.connect(mg);G._vol=()=>{const st=G.set||G.loadSet(),sv=(st.sfxV??80)/100,bv=(st.bgmV??70)/100;sg.gain.value=.55*sv*sv*1.56;bg.gain.value=.16*bv*bv*2.04};G._vol();
  const len=ac.sampleRate*.5,b=ac.createBuffer(1,len,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;nz=b;startBgm()}catch(_){ac=null}};
 ['pointerdown','keydown','touchstart'].forEach(e=>window.addEventListener(e,()=>{init();if(ac&&ac.state=='suspended')ac.resume()},{passive:true}));
 document.addEventListener('visibilitychange',()=>{if(!ac)return;document.hidden?ac.suspend():ac.resume()});
@@ -982,4 +982,10 @@ function startBgm(){if(timer)return;nextT=ac.currentTime+.1;timer=setInterval(()
    if(i%4==0)tone(mid(ch[0]-24),nextT,spb*3,{type:'sine',vol:.12,dest:bg})}
   step++;nextT+=spb}},80)}
 G.audioState=()=>({ctx:ac?ac.state:null,n:G.sfxN});
+})();
+;(()=>{// v52 volume sliders (배경음/효과음)
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='settings'){const st=G.set||G.loadSet();
+ [['bgm','bgmV',70,'배경음 볼륨'],['sfx','sfxV',80,'효과음 볼륨']].forEach(([k,vk,def,n])=>{const tg=document.querySelector(`#screen [data-set="${k}"]`),row=tg&&tg.closest('.row');if(!row||row.nextElementSibling&&row.nextElementSibling.classList.contains('volrow'))return;
+  const v=st[vk]??def;const d=document.createElement('div');d.className='row volrow';d.innerHTML=`<div class=f><small>${n}</small></div><input type=range min=0 max=100 step=5 value=${v} data-vol=${vk}><b class=vv>${v}</b>`;row.after(d);
+  const inp=d.querySelector('input');inp.oninput=()=>{G.set[vk]=+inp.value;d.querySelector('.vv').textContent=inp.value;G._vol&&G._vol();try{localStorage.setItem('slayers_set',JSON.stringify(G.set))}catch(_){}};inp.onchange=()=>{if(vk=='sfxV'&&G.sfx)G.sfx('coin')}})}}catch(_){}return r};
 })();

@@ -655,3 +655,5 @@ body.bossfight .combo img{height:96px;width:90px;margin-top:-20px}
 .mcall small{display:inline-block;min-width:16px;margin-left:4px;padding:0 5px;border-radius:8px;background:#e33;color:#fff;font-size:11px}
 .mcall.off{filter:grayscale(1);opacity:.55;box-shadow:none}
 body.sheeton .combo{display:none}
+.volrow{gap:10px}.volrow .f{flex:0 0 74px}.volrow small{color:#cbb;font-size:11px}
+.volrow input[type=range]{flex:1;accent-color:#ffb02e;height:20px}.volrow .vv{width:30px;text-align:right;color:#ffd77a;font-size:12px}
