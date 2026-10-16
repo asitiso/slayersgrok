@@ -2465,3 +2465,31 @@ const os=summon;summon=function(n){os(n);const got=G._sumGot,m=document.getEleme
  b.onclick=e=>{e.stopPropagation();clearInterval(tm);while(i<fs.length)step()};
  const go=()=>{if(!m.isConnected)return;if(m.style.display=='none'||getComputedStyle(m).display=='none')return setTimeout(go,120);setTimeout(()=>{step();tm=setInterval(()=>{step();if(i>=fs.length)clearInterval(tm)},fs.length>1?230:0)},250)};go()};
 })();
+;(()=>{/* v156 동료 영웅 갤러리 (등급색 받침대 · 실제 조각 바 · 실제 진영 문장 · 미획득 실루엣) */
+const st=document.createElement('style');st.textContent=`.hgal{position:relative;margin:0 0 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #e0c070;background:url(assets/bg_hero_gallery.jpg) 30% 60%/cover}
+.hgal:before{content:'';position:absolute;inset:0;background:linear-gradient(#fff0 0,#2a1a0a55 55%,#1a1008cc)}
+.hgal .hgt{position:relative;display:flex;justify-content:space-between;align-items:center;padding:8px 10px 2px;color:#fff;font-weight:900;text-shadow:0 2px 0 #000}.hgal .hgt small{font-size:11px;color:#ffe8a8}
+.hgal .hgg{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:4px 4px;padding:4px 6px 8px}
+.hgc{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:2px;cursor:pointer}
+.hgc .hgch{position:relative;z-index:2;height:66px;width:auto;margin-bottom:-14px;filter:drop-shadow(0 3px 2px #0008)}
+.hgc .hgpd{position:relative;z-index:1;width:70px;filter:drop-shadow(0 0 3px var(--rc)) drop-shadow(0 0 8px var(--rc)) drop-shadow(0 2px 2px #000a)}.hgc .hgpd:after{content:''}
+.hgc .hgrc{position:absolute;z-index:1;left:50%;top:56px;width:60px;height:20px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(var(--rc),transparent 72%);opacity:.9;mix-blend-mode:color;pointer-events:none}.hgc .hgch{z-index:3!important}
+.hgc b{font-size:11px;color:#fff;text-shadow:0 1px 0 #000,0 0 3px #000;margin-top:1px}.hgc .hgst{font-size:9px;color:#ffd84a;text-shadow:0 1px 0 #000;line-height:1}
+.hgc .hgsb{display:flex;align-items:center;gap:1px;width:74px;margin-top:2px}.hgc .hgsb img{height:15px;filter:drop-shadow(0 0 3px #4ab0ff)}.hgc .hgsb div{flex:1;position:relative;height:9px;border-radius:5px;background:#0a1020;border:1px solid #0b0d0f;overflow:hidden}
+.hgc .hgsb i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#2a7aff,#8ad8ff)}.hgc .hgsb i.ok{background:linear-gradient(90deg,#3ad05a,#c0ff8a)}.hgc .hgsb span{position:absolute;inset:0;font-size:7px;line-height:8px;text-align:center;font-weight:900;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}
+.hgc .hgcr{position:absolute;left:2px;top:2px;z-index:3;width:24px;height:27px;display:grid;place-items:center}.hgc .hgcr>img{position:absolute;inset:0;width:100%;height:100%;filter:hue-rotate(var(--fh)) saturate(1.1)}.hgc .hgcr>i{position:relative;width:14px;height:14px;background-size:contain;background-repeat:no-repeat;background-position:center;margin-top:-2px}
+.hgc .hgrl{position:absolute;right:0;top:4px;z-index:3;font-size:8px;font-weight:900;color:#fff;background:#0009;border:1px solid #fff5;border-radius:5px;padding:0 3px}
+.hgc.sel .hgpd{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px var(--rc))}.hgc.sel b{color:#3a2000;background:#ffe08a;border-radius:6px;padding:0 5px;text-shadow:none}
+.hgc.no{cursor:default}.hgc.no .hgch{filter:brightness(0) opacity(.75) drop-shadow(0 0 3px #b8a0ff88)}.hgc.no .hgpd{filter:grayscale(1) brightness(.55)}.hgc.no .hgrc{opacity:.2}.hgc.no b{color:#c8c0d0}.hgc.no .hgst{color:#aaa}
+.trv .trsel{display:none!important}`;document.head.appendChild(st);
+const FH={light:'190deg',chaos:'70deg',human:'0deg',wild:'250deg',none:'0deg'};
+const role=c=>c.healer?'회복':c.aoe?'광역':(c.d||'').split('·')[1]?.trim().split(' ')[0]||'';
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen!='enhance'||G.enTab!='comp')return r;const sb=document.querySelector('#screen .sbody'),tv=sb&&sb.querySelector('.trv');if(!tv||sb.querySelector('.hgal'))return r;
+ const s=C.S(),L=[...D.COMPS].sort((a,b)=>(!!s.comps[b.k])-(!!s.comps[a.k])||b.g-a.g),own=L.filter(c=>s.comps[c.k]).length;
+ const tile=c=>{const o=s.comps[c.k],R=D.RAR[c.g]?D.RAR[c.g].c:'#fff',sh=(s.csh||{})[c.k]||0,need=C.starCost(c.k),mx=o>=C.STARMAX,F=D.FACTIONS[c.fac];
+  return `<div class="hgc ${o?'':'no'} ${c.k==G.trSel?'sel':''}" ${o?`data-hg=${c.k}`:''} style="--rc:${R};--fh:${FH[c.fac]||'0deg'}">${F?`<span class=hgcr title="${F.n}"><img src="${A}hg_crest.png"><i style="background-image:url(${A}fac_${c.fac}.png)"></i></span>`:''}${role(c)?`<em class=hgrl>${role(c)}</em>`:''}
+  <img class=hgch src="${A}${c.img}"><img class=hgpd src="${A}hg_pedestal.png"><i class=hgrc></i><b>${o?c.n:'???'}</b><span class=hgst>${o?'★'.repeat(o):D.RAR[c.g].n}</span>
+  ${o?`<div class=hgsb><img src="${A}hg_shard.png"><div><i class="${mx||sh>=need?'ok':''}" style="width:${mx?100:Math.min(100,sh/need*100)}%"></i><span>${mx?'MAX':sh+'/'+need}</span></div></div>`:'<div class=hgsb style="opacity:.5"><img src="'+A+'hg_shard.png" style="filter:grayscale(1)"><div><span>미획득</span></div></div>'}</div>`};
+ tv.insertAdjacentHTML('beforebegin',`<div class=hgal><div class=hgt><span>영웅 갤러리</span><small>보유 ${own}/${D.COMPS.length}</small></div><div class=hgg>${L.map(tile).join('')}</div></div>`);
+ sb.querySelectorAll('[data-hg]').forEach(e=>e.onclick=()=>{G.trSel=e.dataset.hg;renderScreen()})}catch(e){console.warn(e)}return r};
+})();
