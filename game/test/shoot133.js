@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s88');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.comps={gourry:1,zelgadis:1,amelia:1};s.party=['gourry','zelgadis','amelia'];G.C.buildAllies()});
+await sl(3500);await ev(()=>{const k=document.querySelector('.stsk');k&&k.click()});await sl(800);
+await ev(()=>document.getElementById('chat').click());await sl(600);await sh('704-chat-open');
+await p.type('#chIn','2-7 보스 어떻게 깨요?');await ev(()=>document.getElementById('chGo').click());await sl(3200);await sh('705-chat-sent');
+await ev(()=>document.querySelector('[data-ct=시스템]').click());await ev(()=>G.chatSys('테스트: 리나님이 도적 두목을 처치했습니다!'));await sl(300);await sh('706-chat-system');
+await ev(()=>G.chatClose());await sl(400);console.log('n',await ev(()=>G.chatLog.length),'me',await ev(()=>G.chatLog.filter(m=>m.me).length));stop();console.log('ERR',errs);await b.close()})();

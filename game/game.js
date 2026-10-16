@@ -1235,3 +1235,19 @@ const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{chk
 if(G.todoList){const tl=G.todoList;G.todoList=()=>tl().filter(k=>G.isOpen(k))}
 const om2=menuGo;menuGo=function(k){const r=om2.apply(this,arguments);try{if(k=='menu'){mark();const t=document.getElementById('todoBar');if(t){t.querySelectorAll('.tdc').forEach(c=>{if(!G.isOpen(c.dataset.k))c.remove()});const n=t.querySelectorAll('.tdc').length,sm=t.querySelector('.tdh small');if(sm)sm.textContent=n?n+'개':'모두 완료!'}}}catch(_){}return r};
 })();
+;(()=>{// v68 채팅창 (탭: 전체/월드/협회/시스템 · 기록 · 내 메시지)
+let open=false,tab='전체',el=null;const LOG=[];const MAX=60;const now=()=>new Date().toTimeString().slice(0,5);
+const parse=t=>{const m=(t||'').match(/^\[(.+?)\]\s*(.*)$/);if(!m)return{ch:'월드',who:'',t};const p=m[2].split(':');const ch=m[1]=='시스템'?'시스템':m[1]=='협회'?'협회':'월드';return p.length>1?{ch,who:p[0].trim(),t:p.slice(1).join(':').trim()}:{ch,who:'',t:m[2]}};
+const add=(o)=>{o.at=now();LOG.push(o);if(LOG.length>MAX)LOG.shift();if(open)draw()};
+D.CHAT.slice(0,8).forEach(x=>add(parse(x)));
+const ct=document.getElementById('chatT');if(ct)new MutationObserver(()=>{const t=ct.textContent;if(t&&(!LOG.length||LOG[LOG.length-1].raw!==t)){const o=parse(t);o.raw=t;add(o)}}).observe(ct,{childList:true,characterData:true,subtree:true});
+const RE=['ㅋㅋㅋ 화이팅!','오 고수다','저도 거기서 막혔어요 ㅠ','강화석 모아서 강화 ㄱㄱ','리나 최고!','드래곤 슬레이브 한 방이면 끝','협회 들어오세요~'];const NPC=['붉은마도사','용파참','검은고양이','세일룬공주','드래곤슬레이어'];
+const draw=()=>{if(!el)return;const L=LOG.filter(m=>tab=='전체'||m.ch==tab);const box=el.querySelector('.chl');box.innerHTML=L.map(m=>`<p class="c-${m.ch=='시스템'?'sys':m.ch=='협회'?'gd':'wd'} ${m.me?'me':''}"><i>[${m.ch}]</i>${m.who?`<b>${m.who}</b>`:''}<span>${m.t}</span><small>${m.at}</small></p>`).join('')||'<p class=c-sys><span>메시지가 없습니다</span></p>';box.scrollTop=box.scrollHeight;el.querySelectorAll('[data-ct]').forEach(b=>b.classList.toggle('on',b.dataset.ct==tab))};
+const send=()=>{const i=el.querySelector('#chIn'),v=(i.value||'').trim();if(!v)return;if(v.length>40)return toast('40자까지 입력할 수 있어요');const ch=tab=='협회'?'협회':'월드';add({ch,who:G.nick?G.nick():'나',t:v.replace(/[<>]/g,''),me:1});i.value='';if(Math.random()<.6)setTimeout(()=>add({ch,who:NPC[Math.floor(Math.random()*NPC.length)],t:RE[Math.floor(Math.random()*RE.length)]}),1200+Math.random()*1500)};
+G.chatOpen=()=>{if(open)return;open=true;el=document.createElement('div');el.id='chatP';el.innerHTML=`<div class=chd></div><div class=chb><div class=chh><div class=cht>${['전체','월드','협회','시스템'].map(t=>`<span data-ct=${t}>${t}</span>`).join('')}</div><span class=chx>✕</span></div><div class=chl></div><div class=chi><input id=chIn maxlength=40 placeholder="메시지 입력 (최대 40자)"><span id=chGo>전송</span></div></div>`;document.body.appendChild(el);
+ el.querySelector('.chd').onclick=G.chatClose;el.querySelector('.chx').onclick=G.chatClose;el.querySelectorAll('[data-ct]').forEach(b=>b.onclick=()=>{tab=b.dataset.ct;draw()});el.querySelector('#chGo').onclick=send;el.querySelector('#chIn').onkeydown=e=>{if(e.key=='Enter')send()};draw()};
+G.chatClose=()=>{if(!el)return;el.classList.add('out');const e=el;setTimeout(()=>e.remove(),220);el=null;open=false};
+G.chatSys=t=>add({ch:'시스템',who:'',t});G.chatLog=LOG;
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#chat')){e.stopPropagation();e.preventDefault();G.chatOpen()}},true);
+if(C.ev){const ok=C.ev.kill;C.ev.kill=function(e){const r=ok&&ok.apply(this,arguments);try{if(e&&e.boss&&!e.wb)G.chatSys(`${G.nick?G.nick():'나'}님이 ${e.n||'보스'}을(를) 처치했습니다!`)}catch(_){}return r}}
+})();
