@@ -1,10 +1,11 @@
 // lean growth sim: active play + daily offline/gems/summons. usage: node test/sim_grow.js [activeHoursPerDay=2] [maxHours=60]
-const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const AH=+(process.argv[2]||2),MH=+(process.argv[3]||60),NB=+(process.argv[4]??3000);
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const AH=+(process.argv[2]||2),MH=+(process.argv[3]||60),NB=+(process.argv[4]??3000),MODE=process.argv[5]||'new';
 (async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:60000});const p=await b.newPage();await p.setViewport({width:390,height:844});
 await p.goto('http://127.0.0.1:18791/index.html');await p.evaluate(()=>localStorage.clear());await p.goto('http://127.0.0.1:18791/index.html');await new Promise(r=>setTimeout(r,1500));const stop=await wd(p,'grow');
 await p.evaluate((AH)=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.autoBoss=true;s.autoSpell=true;G.noSave=1;G.save=()=>{};G.screen='sim';R.frame=()=>{};
  const C=G.C;window._t=0;window._rows=[];window._last=-1;window._day=0;const T0=Date.now();C.now=()=>T0+window._t*1000+window._day*86400e3*0;window.AH=AH[0];window.NB=AH[1];window._dl=[];s.gems+=window.NB;// one-time newbie mail+achievements+attendance approx
-},[AH,NB]);
+if(AH[2]=='base'){C.gearSet=()=>({atk:0,hp:0})}window.MODE=AH[2];
+},[AH,NB,MODE]);
 for(let chunk=0;chunk<6000;chunk++){const r=await p.evaluate((MH)=>{const C=G.C,S=G.S();const t0=performance.now();
  if(window._t<1)while(S.gems>=2700)C.summon(10);
  while(performance.now()-t0<400){for(let k=0;k<40;k++){C.tick(.1);window._t+=.1}
@@ -17,6 +18,7 @@ for(let chunk=0;chunk<6000;chunk++){const r=await p.evaluate((MH)=>{const C=G.C,
   const day=Math.floor(window._t/(window.AH*3600));if(day>window._day){window._day=day;const off=C.offlineCalc(24*3600);C.addGold(off.g);C.gainExp(off.x);S.orbs+=off.o;S.stone=(S.stone||0)+Math.floor(off.sec/900);
    for(let q=0;q<2;q++){const o2=C.offlineCalc(7200);C.addGold(o2.g);C.gainExp(o2.x);S.orbs+=o2.o;S.stone+=8}
    S.gems+=600;let n=0;while(S.gems>=2700){C.summon(10);n+=10}window._dl.push([day,Math.round(off.g),Math.round(off.x),off.o,n])}
+  if(window.MODE!='base'&&S.nb&&G.nbClaim){S.nb.t0=C.now()-window._day*864e5;for(let d=0;d<7;d++)for(let i=0;i<3;i++)G.nbClaim(d,i);G.nbFin&&G.nbFin()}
   if(S.maxSi>window._last){window._last=S.maxSi;window._rows.push([C.stageName(S.maxSi),Math.round(window._t/60),window._day,S.lv,C.POW(),C.stageReq(S.maxSi)])}
   if(S.maxSi>=34||S.done||window._t>MH*3600)break}
  return {t:window._t,last:window._rows.slice(-1),done:S.maxSi>=34||S.done||window._t>MH*3600,rows:window._rows,dl:window._dl}},MH);

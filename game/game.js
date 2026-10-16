@@ -1036,3 +1036,17 @@ G.gsCard=()=>{const x=st();return `<div class="card gsc"><div class=ttl>장비 �
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab=='gear'){const p=document.querySelector('#panel .pbody')||document.querySelector('#panel');if(p&&!p.querySelector('.gsc'))p.insertAdjacentHTML('beforeend',G.gsCard())}}catch(e){}return r};
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const k=key();if(last!==null&&k!==last){const x=st();const [a,b]=last.split('_').map(Number);if((x.rt?x.rt.r:0)>a)toast(`✨ ${D.RAR[x.rt.r].n}+ 세트 효과 발동! 공격력·체력 +${x.rt.a}%`);else if((x.et?x.et.n:0)>b)toast(`✨ 강화 합계 +${x.et.n} 세트 발동! 공격력 +${x.et.a}%`)}last=k}catch(e){}return r};
 })();
+;(()=>{// v55 전투력 분석 (프로필 탭 → 전투력 구성 + 성장 추천)
+const pc=v=>Math.round((v||0)*100);const sf=f=>{try{return f()||0}catch(_){return 0}};
+G.powInfo=()=>{const s=C.S(),A=C.ATK(),H=C.MAXHP(),cp=s.party.reduce((a,k)=>a+A*4*C.compMul(k),0),parts=[['마법 공격',A*10,'#ff7a5a'],['체력',H,'#5ad07a'],['방어·치명',C.stat('def')*20+C.stat('crit')*50,'#5ab0ff'],['동료',cp,'#c08aff']],tot=parts.reduce((a,x)=>a+x[1],0)||1;
+ const bon=[['장비 세트',sf(()=>C.gearSet().atk),sf(()=>C.gearSet().hp),'gear'],['도감',sf(()=>C.codexB().atk+(C.cdxB?C.cdxB('atk'):0)),sf(()=>C.codexB().hp+(C.cdxB?C.cdxB('hp'):0)),'codex'],['기보',sf(()=>C.relicB('atk')),sf(()=>C.relicB('hp')),'relic'],['동료 시너지',sf(()=>C.synergy().reduce((a,x)=>a+x.atk,0)),sf(()=>C.synergy().reduce((a,x)=>a+x.hp,0)),'party'],['펫',sf(()=>C.petB&&C.petB('atk')),sf(()=>C.petB&&C.petB('hp')),'pet'],['협회',sf(()=>C.gBuf&&C.gBuf('atk')+Object.keys(s.guild.don).length*BAL.donate.buff+.02*(s.guild.lv-1)),sf(()=>C.gBuf&&C.gBuf('hp')),'guild'],['칭호',sf(()=>((C.titleCur()||{}).atk||0)/100),0,'title']];
+ return{tot,parts,bon,req:C.stageReq(s.maxSi)}};
+G.powOpen=()=>{const I=G.powInfo(),BD=G.BD||{},r=C.POW()/I.req;
+ const rec=[['enhance','장비 강화','장비 +1마다 능력치 +10%'],['train','마력 수련','레벨·스탯 단련'],['summon','동료 소환','동료 1명당 공격력 ×4 기여'],['relic','기보','공격력·체력 %'],['pet','펫','추가 % 보너스']];
+ modal(`<div class="ttl pwt" style="justify-content:center;font-size:18px">전투력 분석</div><div class=pwbig>⚔ ${fmt(C.POW())}<small class="${r>=1?'up':'dn'}">현재 스테이지 권장 ${fmt(I.req)} (${Math.round(r*100)}%)</small></div>
+ <div class=pwbar>${I.parts.map(p=>`<i style="width:${p[1]/I.tot*100}%;background:${p[2]}"></i>`).join('')}</div><div class=pwleg>${I.parts.map(p=>`<span><i style="background:${p[2]}"></i>${p[0]} ${Math.round(p[1]/I.tot*100)}%</span>`).join('')}</div>
+ <div class=pwh>보너스 출처 <small>공격력 / 체력</small></div><div class=pwl>${I.bon.map(b=>`<div class="pwr ${b[1]||b[2]?'':'z'}"><b>${b[0]}</b><span>+${pc(b[1])}%</span><span>+${pc(b[2])}%</span></div>`).join('')}</div>
+ <div class=pwh>성장 추천</div><div class=pwg>${rec.map(x=>`<span class=pwgo data-k=${x[0]}>${BD[x[0]]?'<em></em>':''}<b>${x[1]}</b><small>${x[2]}</small></span>`).join('')}</div>`);
+ document.querySelectorAll('.pwgo').forEach(e=>e.onclick=()=>{document.querySelectorAll('.modal').forEach(m=>m.remove());menuGo(e.dataset.k)})};
+document.addEventListener('click',ev=>{const t=ev.target.closest&&ev.target.closest('#prof');if(t&&!G.screen){ev.stopPropagation();ev.preventDefault();G.powOpen()}},true);
+})();
