@@ -1597,7 +1597,7 @@ const price=g=>g.gold?Math.max(50,Math.round(C.goldKill(Math.max(0,C.S().maxSi))
 const line=(k,l)=>{const L=LN[k]||['…','…','…'];return l>=5?L[2]:l>=3?L[1]:L[0]};
 G.bondGive=(k,gk)=>{const s=C.S(),b=st(),g=GF.find(x=>x.k==gk);if(!g||!s.comps[k])return 0;if(lv(k)>=MX)return -1;if((b.n[k]||0)>=LIM)return -2;const p=price(g);if(g.gold?s.gold<p:s.gems<p)return -3;
  if(g.gold)s.gold-=p;else s.gems-=p;b.n[k]=(b.n[k]||0)+1;const l0=lv(k);b.x[k]=Math.min(TH[MX],(b.x[k]||0)+g.e);const l1=lv(k);if(l1>l0)s.gems+=10*(l1-l0);return {up:l1>l0,l:l1}};
-const hearts=l=>Array.from({length:MX},(_,i)=>`<span class="bh ${i<l?'on':''}">♥</span>`).join('');
+const hearts=l=>Array.from({length:MX},(_,i)=>`<span class="bh ${i<l?'on':''}"><img src="assets/${i<l?'bd_heart':'bd_socket'}.png"></span>`).join('');
 const css=document.createElement('style');css.textContent=`
 .bdsel{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}.bdsel::-webkit-scrollbar{display:none}
 .bdc{flex:0 0 62px;border:2px solid #5a4a6a;border-radius:10px;background:linear-gradient(#2a2238,#17121f);text-align:center;padding:3px 0 2px;position:relative}
@@ -1618,12 +1618,12 @@ const css=document.createElement('style');css.textContent=`
 @keyframes bdpp{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}`;document.head.appendChild(css);
 const CUT={amelia:1,borin:1,gourry:1,noel:1,sera:1,zelgadis:1,xellos:1,rhea:1,lyra:1,kaede:1,pip:1};
 const draw=up=>{const el=$('#screen'),s=C.S(),b=st();const own=D.COMPS.filter(c=>s.comps[c.k]);
- if(!own.length){el.innerHTML=shell('인연','bg_lobby.jpg','<div class=card style="text-align:center">동료를 소환하면 인연을 쌓을 수 있어요</div>');}
+ if(!own.length){el.innerHTML=shell('인연','bg_bond_tavern.jpg','<div class=card style="text-align:center">동료를 소환하면 인연을 쌓을 수 있어요</div>');}
  else{if(!s.comps[b.sel])b.sel=own[0].k;const c=D.COMPS.find(x=>x.k==b.sel),l=lv(c.k),x=b.x[c.k]||0,nx=TH[Math.min(MX,l+1)],pv=TH[l],pct=l>=MX?100:Math.round((x-pv)/(nx-pv)*100),F=D.FACTIONS[c.fac];
  const fl=Array.from({length:7},(_,i)=>`<span class=fl style="left:${8+i*13}%;bottom:${10+(i%3)*8}px;animation-delay:${i*.45}s">♥</span>`).join('');
- el.innerHTML=shell('인연','bg_lobby.jpg',`<div class=bdsel>${own.map(o=>`<div class="bdc ${o.k==c.k?'on':''}" data-bk=${o.k}><img src="${A}${o.img}"><b>${o.n}</b><span class=bl>♥${lv(o.k)}</span></div>`).join('')}</div>
+ el.innerHTML=shell('인연','bg_bond_tavern.jpg',`<div class=bdsel>${own.map(o=>`<div class="bdc ${o.k==c.k?'on':''}" data-bk=${o.k}><span class=bdm><img src="${A}${o.img}"><img class=bdmf src="${A}bd_medal.png"></span><b>${o.n}</b><span class=bl>♥${lv(o.k)}</span></div>`).join('')}</div>
  <div class=bdhero>${fl}<img class=pt src="${A}${CUT[c.k]?'cutc/'+c.k+'.png':c.img}"><div class=sp>「${line(c.k,l)}」</div><div class=nm><b>${c.n}</b> <span style="color:${F.c}">${F.n}</span></div>${up?`<div class=bdpop>인연 Lv.${l} 달성! 💎+10</div>`:''}</div>
- <div class=card><div class=ttl>인연 Lv.${l} <span>${hearts(l)}</span></div><div class=bdbar><i style="width:${pct}%"></i></div><small>${l>=MX?'인연 최대!':`다음 단계까지 ${nx-x} · 오늘 선물 ${b.n[c.k]||0}/${LIM}`} · 단계 달성마다 💎10</small>
+ <div class="card bdcard"><div class=ttl>인연 Lv.${l} <span>${hearts(l)}</span></div><div class=bdbar><i style="width:${pct}%"></i></div><small>${l>=MX?'인연 최대!':`다음 단계까지 ${nx-x} · 오늘 선물 ${b.n[c.k]||0}/${LIM}`} · 단계 달성마다 💎10</small>
  <div class=bdg>${GF.map(g=>{const p=price(g),ok=l<MX&&(b.n[c.k]||0)<LIM&&(g.gold?s.gold>=p:s.gems>=p);return `<div class="bdgi ${ok?'':'off'}" data-gf=${g.k}><span class=i>${g.ic}</span><b>${g.n}</b><small>${g.gold?'🪙'+fmt(p):'💎'+p} · +${g.e}</small></div>`}).join('')}</div></div>
  <div class=card><div class=ttl>인연 대사</div>${[1,3,5].map(t=>`<div class="bdln ${l>=t?'':'lock'}">♥${t} ${l>=t?'「'+line(c.k,t)+'」':'🔒 인연 Lv.'+t+' 달성 시 해금'}</div>`).join('')}</div>`);}
  const bk=el.querySelector('#sBack');if(bk)bk.onclick=()=>closeScreen();
@@ -2633,3 +2633,22 @@ const deco=m=>{const c=m.querySelector(':scope>.card');if(!c||c.classList.contai
  c.classList.add('ppx','pp-'+k);t.classList.add('pphid');t.insertAdjacentHTML('beforebegin',`<div class=pph><img src="${A}${ic}.png"><span class=ppb>${tx}</span></div>`);
  if(k=='fail'){const sm=c.querySelector('small');const mm=sm&&sm.innerHTML.match(/권장 전투력 ([^·<]+) · 내 전투력 ([^<]+)<br>/);if(mm){sm.innerHTML=sm.innerHTML.replace(mm[0],'');sm.insertAdjacentHTML('beforebegin',`<div class=ppf><div><small>권장 전투력</small><i>${mm[1].trim()}</i></div><div><small>내 전투력</small><i class=${parseFloat(mm[2].replace(/,/g,''))<parseFloat(mm[1].replace(/,/g,''))?'lo':''}>${mm[2].trim()}</i></div></div>`)}}};
 new MutationObserver(ms=>ms.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType==1&&n.classList.contains('modal'))try{deco(n)}catch(_){}}))).observe(document.getElementById('app'),{childList:true})})();
+
+/* v164 인연: tavern dialogue */
+(function(){const st=document.createElement('style');st.textContent=`
+.bdhero{background:none!important;border:none!important;height:330px!important;overflow:visible!important}
+.bdhero .pt{bottom:96px!important;height:230px!important}
+.bdhero .sp{top:auto!important;bottom:0;left:0!important;right:0!important;height:112px;box-sizing:border-box;background:none!important;box-shadow:none!important;border-radius:0!important;padding:38px 26px 18px 26px!important;color:#4a2a2a!important;font-size:13.5px!important;line-height:1.45;display:flex;align-items:center;filter:drop-shadow(0 4px 8px #0008)}
+.bdhero .sp::before{content:'';position:absolute;inset:0;z-index:-1;border-style:solid;border-width:30px 22px 22px 80px;border-image:url(assets/bd_panel.png) 120 120 110 330 fill stretch}
+.bdhero .sp:after{display:none!important}
+.bdhero .nm{left:12px!important;bottom:84px!important;background:none!important;padding:2px 10px!important;color:#6a3040!important;font-size:12px!important;z-index:3;width:56px;text-align:center;white-space:nowrap}
+.bdhero .nm span{display:none}
+.bdhero .fl{bottom:auto!important;top:60%}
+.bh{display:inline-block;width:22px;height:22px;margin-right:1px;vertical-align:middle}.bh img{width:100%;height:100%;object-fit:contain}.bh.on img{filter:drop-shadow(0 0 4px #ff5a90)}
+.bdsel .bdc{background:none!important;border:none!important;box-shadow:none!important}
+.bdsel .bdc .bdm{position:relative;display:block;width:56px;height:56px;margin:0 auto}
+.bdsel .bdc .bdm img{position:absolute;left:7px;top:7px;width:42px!important;height:42px!important;border-radius:50%;object-fit:cover;object-position:50% 20%;background:radial-gradient(#ffe0ea,#a05070)}
+.bdsel .bdc .bdm img.bdmf{left:0;top:0;width:56px!important;height:56px!important;background:none;border-radius:0}
+.bdsel .bdc.on .bdm{filter:drop-shadow(0 0 6px #ff7aa8)}
+.bdsel .bdc b{color:#fff;text-shadow:0 1px 2px #000}
+#screen .card.bdcard,#screen .bdcard~.card{background:rgba(40,18,28,.82)!important;border:1px solid #c88a8a!important}`;document.head.appendChild(st)})();
