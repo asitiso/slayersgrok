@@ -722,3 +722,8 @@ body.sheeton .combo{display:none}
 #todoBar{margin:0 0 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 10px}.tdh{font-weight:800;font-size:13px;margin-bottom:6px}.tdh small{color:#ffd75a;margin-left:4px}
 .tdl{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.tdl::-webkit-scrollbar{display:none}.tdc{flex:none;background:linear-gradient(#ff7a5a,#d0442a);color:#fff;font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:12px;cursor:pointer;white-space:nowrap}.tdd{font-size:12px;color:#8fe39a}
 .tdl{flex-wrap:wrap;overflow:visible}.tdc{padding:4px 8px;font-size:11px}
+/* r73: power/toasts never cover menu or sheet headers */
+body:has(#sheet.on) .powup,body:has(#menuPop.on) .powup{top:auto!important;bottom:104px;animation-name:powupB}
+@keyframes powupB{0%{opacity:0;transform:translate(-50%,10px)}15%{opacity:1;transform:translate(-50%,0)}85%{opacity:1}100%{opacity:0}}
+body:has(#sheet.on) #toastQ,body:has(#menuPop.on) #toastQ,body:has(#screen.on) #toastQ{top:auto!important;bottom:146px;flex-direction:column-reverse}
+body.nopow .powup{display:none!important}

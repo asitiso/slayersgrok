@@ -1098,7 +1098,7 @@ const SC=[
  [['amelia','추, 추워요… 여기가 얼음 여제의 성채인가요?'],['zel','방심하지 마라. 얼음 속에 무언가 잠들어 있다.'],['lina','겨울이 영원하다고? 내가 봄을 데려다 주지. 가자!']]];
 const st=()=>{const s=C.S();if(!s.story)s.story={};return s.story};
 let q=[],on=false;
-const busy=()=>(C.B&&(C.B.boss||C.B.br||C.B.rb))||document.body.classList.contains('chapon')||document.querySelector('.vic:not(.out),.modal,.rwpop,.tut,.chap')||G.screen;
+const busy=()=>(G.set&&!G.set.story)||(C.B&&(C.B.boss||C.B.br||C.B.rb))||document.body.classList.contains('chapon')||document.querySelector('.vic:not(.out),.modal,.rwpop,.tut,.chap')||G.screen;
 const pump=()=>{if(on||!q.length)return;if(busy())return setTimeout(pump,400);play(q.shift())};
 const play=c=>{const L=SC[c];if(!L||st()[c])return pump();on=true;G.storyOn=1;st()[c]=1;let i=0;const d=document.createElement('div');d.className='sty';document.body.appendChild(d);
  const draw=()=>{const [who,t]=L[i],p=P[who],left=who=='lina';d.innerHTML=`<div class=stdim></div><img class="stp ${left?'l':'r'}" src="assets/${p[1]}"><div class=stb><b class="stn ${left?'l':'r'}">${p[0]}</b><div class=stt>${t}</div><small class=stc>CHAPTER ${c+1} · ${D.CH[c]} <i>${i+1}/${L.length}</i> ▼</small></div><span class=stsk>건너뛰기 ▶▶</span>`;d.querySelector('.stsk').onclick=e=>{e.stopPropagation();end()}};
@@ -1173,7 +1173,7 @@ const L={lina:{sp:['{n}!','받아라, {n}!','날려 버리겠어!'],boss:['덤�
  _:{boss:['간다!','조심해!'],low:['위험해…!'],win:['해냈다!'],grog:['기회다!']}};
 const pick=a=>a[Math.floor(Math.random()*a.length)];let gT=0;const lastA={};let layer=null;const live=[];
 const lay=()=>{if(!layer||!layer.isConnected){layer=document.createElement('div');layer.id='bubL';const bt=document.getElementById('battle');bt&&bt.appendChild(layer)}return layer};
-const say=(k,type,vars,force)=>{try{if(G.storyOn||(G.saverState&&G.saverState())||(G.set&&G.set.bubble===false))return;const now=performance.now();if(!force&&(now-gT<2600||now-(lastA[k]||0)<7000))return;const T=(L[k]||L._)[type]||L._[type];if(!T)return;const AS=R._AS&&R._AS();if(!AS||!AS.get(k))return;gT=now;lastA[k]=now;
+const say=(k,type,vars,force)=>{try{if(G.storyOn||(G.saverState&&G.saverState())||(G.set&&!G.set.bubble))return;const now=performance.now();if(!force&&(now-gT<2600||now-(lastA[k]||0)<7000))return;const T=(L[k]||L._)[type]||L._[type];if(!T)return;const AS=R._AS&&R._AS();if(!AS||!AS.get(k))return;gT=now;lastA[k]=now;
  live.splice(0).forEach(q=>q.d.remove());const d=document.createElement('div');d.className='bub '+type;d.textContent=pick(T).replace('{n}',(vars&&vars.n)||'');lay().appendChild(d);const o={k,d,t:now};live.push(o);setTimeout(()=>{d.classList.add('out');setTimeout(()=>{d.remove();const i=live.indexOf(o);i>=0&&live.splice(i,1)},250)},1700)}catch(_){}};
 const place=()=>{const AS=R._AS&&R._AS();if(AS)live.forEach(o=>{const s=AS.get(o.k);if(!s)return;const w=o.d.offsetWidth||100,x=Math.max(56+w/2,Math.min(328-w/2,s.x)),y=s.y-118;o.d.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`});requestAnimationFrame(place)};requestAnimationFrame(place);
 const alive=()=>(C.aliveAllies?C.aliveAllies():[]).map(a=>a.k);const rnd=()=>{const a=alive();return a[Math.floor(Math.random()*a.length)]};
@@ -1211,4 +1211,10 @@ const draw=()=>{const p=document.getElementById('mgrid');if(!p)return;let t=docu
  t.innerHTML=`<div class=tdh>📋 오늘의 할 일 <small>${L.length?L.length+'개':'모두 완료!'}</small></div><div class=tdl>${L.length?L.map(k=>`<span class=tdc data-k=${k}>${k=='nb'?'7일 이벤트':k=='ol'?'접속 보상':N[k]} ▶</span>`).join(''):'<span class=tdd>✔ 할 일을 모두 끝냈어요</span>'}</div>`;
  t.querySelectorAll('.tdc').forEach(e=>e.onclick=()=>{const k=e.dataset.k;$('#menuPop').classList.remove('on');if(k=='nb')return G.nbOpen&&G.nbOpen();if(k=='ol')return G.olOpen&&G.olOpen();menuGo(k)})};
 const om=menuGo;menuGo=function(k){const r=om.apply(this,arguments);try{if(k=='menu')draw()}catch(_){}return r};
+})();
+
+;(()=>{// v66 연출 설정 (말풍선 · 전투력 알림 · 스토리 대화 on/off)
+const st=G.loadSet();['bubble','powpop','story'].forEach(k=>{if(st[k]==null)st[k]=1});G.applySet();
+const sync=()=>document.body.classList.toggle('nopow',!G.loadSet().powpop);sync();
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{sync();if(G.screen=='settings'){const el=$('#screen'),dm=el.querySelector('[data-set="dmg"]'),row=dm&&dm.closest('.row');if(row&&!el.querySelector('[data-set="bubble"]')){row.insertAdjacentHTML('afterend',[['bubble','전투 말풍선'],['powpop','전투력 변화 알림'],['story','스토리 대화']].map(([k,n])=>`<div class=row><div class=f><b>${n}</b></div><span class="tog ${G.set[k]?'on':''}" data-set=${k}><i></i></span></div>`).join(''));el.querySelectorAll('[data-set=bubble],[data-set=powpop],[data-set=story]').forEach(b=>b.onclick=()=>{G.set[b.dataset.set]^=1;G.applySet();renderScreen()})}}}catch(_){}return r};
 })();
