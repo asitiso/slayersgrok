@@ -8,10 +8,10 @@ const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;a
 await ev(()=>{G.C.rand0=G.C.gpick;});
 await ev(()=>menuGo('summon'));await sl(800);
 await ev(()=>{const o=G.C.gpick;G.C.gpick=()=>D.COMPS.find(c=>c.g==4)||o();});
-await ev(()=>summon(1));await sl(1300);await sh('974-summon-orb-legend');
-await sl(1700);await sh('975-summon-hero-reveal');
-await ev(()=>document.querySelector('.sumhero').click());await sl(1200);await sh('976-summon-result');
+await ev(()=>summon(1));await sl(1300);await sh('979-summon-orb-altar');
+await sl(1700);await sh('980-summon-hero-reveal-fade');
+await ev(()=>document.querySelector('.sumhero').click());await sl(1200);await sh('s219a');
 await ev(()=>{document.querySelectorAll('.modal').forEach(x=>x.remove());G.C.gpick=()=>D.COMPS.find(c=>c.g==2);});
-await ev(()=>summon(10));await sl(1500);await sh('977-summon10-orb-rare');
-await ev(()=>document.querySelector('.sumcin').click());await sl(2500);await sh('978-summon10-result');
+await ev(()=>summon(10));await sl(1500);await sh('981-summon10-orb-altar');
+await ev(()=>document.querySelector('.sumcin').click());await sl(2500);await sh('s219b');
 console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();
