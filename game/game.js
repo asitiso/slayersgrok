@@ -1949,7 +1949,7 @@ function deco(){const el=$('#screen'),s=C.S(),f0=el.querySelector('.slotrow');if
 ;(()=>{const ocd=compDetail;compDetail=function(k){const r=ocd.apply(this,arguments);try{const c=D.COMPS.find(x=>x.k==k),im=[...document.querySelectorAll('.cdet .cdimg')].pop();if(!c||!im)return r;
  im.classList.add('cdx');im.querySelector('img').src=`${A}cutc/${k}.png`;im.querySelector('img').onerror=function(){this.onerror=null;this.src=A+c.img};
  const fb=im.querySelector('.fac');if(fb)fb.innerHTML=`<img class=fci src="assets/fac_${c.fac}.png">${fb.textContent}`;
- const bar=(n,v,mx,col)=>`<div class=cxb><span>${n}</span><i><u style="width:${Math.min(100,v/mx*100)}%;background:${col}"></u></i><b>${v.toFixed(2)}</b></div>`;
+ const SI={'공격':'atk','체력':'hp','속도':'spd'},bar=(n,v,mx,col)=>`<div class=cxb><img class=sti src="assets/st_${SI[n]}.png"><span>${n}</span><i><u style="width:${Math.min(100,v/mx*100)}%;background:${col}"></u></i><b>${v.toFixed(2)}</b></div>`;
  const sk=(D.CSKI||{})[k],st=document.createElement('div');st.className='cxs';
  st.innerHTML=bar('공격',C.compMul(k),2.5,'linear-gradient(90deg,#ff7a3d,#ffd25a)')+bar('체력',c.hp||1,1.5,'linear-gradient(90deg,#3ad07a,#b4ff6a)')+bar('속도',c.spd||1,1.5,'linear-gradient(90deg,#3a9bff,#7ae8ff)')+(sk?`<div class=cxk><img src="${A}${sk[0]}"><div><b>${sk[1]}</b><small>${c.d}</small></div></div>`:'');
  const st0=im.parentNode.querySelector('.stars');(st0||im).after(st)}catch(e){console.warn(e)}return r}})();
