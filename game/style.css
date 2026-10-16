@@ -1236,3 +1236,24 @@ body:has(#sheet.on) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),body:h
 .shfly{width:44px;height:44px}
 #nav a.pop{animation:atpop .35s}
 .shfly,.atfly{z-index:99999!important}
+/* v137 forge */
+.card.anvil.forge{padding-top:0;overflow:hidden}
+.forge .anvilv{position:relative;height:230px;margin:0 -10px 6px;background:url(assets/bg_forge_anvil.jpg) center/cover;border-radius:10px 10px 0 0}
+.forge .anvilv .av1{display:none}
+.forge .anvilv .eqbig{position:absolute!important;left:55%;top:40px;margin-left:-44px;width:88px;height:88px;animation:fgfloat 2.4s ease-in-out infinite;z-index:2}
+.forge .fglow{position:absolute;left:55%;top:110px;width:160px;height:40px;margin-left:-80px;border-radius:50%;background:radial-gradient(#ffb04a99,#0000 70%);animation:fgglow 2.4s ease-in-out infinite}
+.forge .fen{position:absolute;left:55%;top:20px;margin-left:30px;z-index:3;padding:1px 8px;border-radius:9px;background:linear-gradient(#ffd25a,#d08a10);color:#3a2000;font-weight:900;font-size:14px;box-shadow:0 2px 0 #0008}
+@keyframes fgfloat{50%{margin-top:-8px}}@keyframes fgglow{50%{opacity:.5}}
+.engauge{display:flex;align-items:center;gap:8px;margin:6px 4px}.engauge span{font-size:12px;font-weight:900;color:#fff;white-space:nowrap}.engauge small{font-size:9.5px;opacity:.7;white-space:nowrap}
+.egb{flex:1;position:relative;height:16px;border-radius:8px;background:#0009;border:1.5px solid #c9953f;overflow:hidden}.egb i{position:absolute;left:0;top:0;bottom:0}.egb b{position:relative;display:block;text-align:center;font-size:11px;line-height:14px;color:#fff;text-shadow:0 1px 2px #000}
+.emats{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 8px}.eplus{font-style:normal;font-weight:900;color:#ffd77a;font-size:18px}
+.emat{text-align:center;width:96px}.emf{position:relative;width:56px;height:56px;margin:0 auto}.emf .emfr{position:absolute;inset:0;width:100%;height:100%}.emf .emi{position:absolute;inset:24%;width:52%;height:52%;object-fit:contain}
+.emf::before{content:'';position:absolute;inset:12%;border-radius:4px;background:radial-gradient(#5a4a3a,#2a1a10)}
+.emat b{display:block;font-size:13px;color:#fff}.emat small{font-size:9.5px;opacity:.8}.emat.no b{color:#ff7a6a}.emat.ok b{color:#9aff8a}
+.fxham{position:absolute;width:70px;z-index:99999;pointer-events:none;transform-origin:20% 90%;animation:fxham .45s ease-in forwards}
+@keyframes fxham{0%{transform:rotate(-50deg);opacity:0}30%{opacity:1;transform:rotate(-60deg)}80%{transform:rotate(25deg) translate(-30px,40px)}100%{transform:rotate(20deg) translate(-30px,40px);opacity:.9}}
+.fxhit{animation:fxhit .3s!important}@keyframes fxhit{40%{transform:scale(.85) translateY(6px)}}
+.fxres{position:absolute;z-index:99999;pointer-events:none;transform:translate(-50%,-50%);text-align:center}
+.fxres img{width:150px;display:block;animation:fxres .9s ease-out forwards}.fxres b{display:block;margin-top:-20px;font:900 20px Maplestory,sans-serif;color:#ffe27a;text-shadow:0 2px 0 #000,0 0 8px #ff9a2a;animation:aocin .3s both}
+.fxres.fail b{color:#ccd;text-shadow:0 2px 0 #000}
+@keyframes fxres{0%{transform:scale(.3);opacity:0}25%{transform:scale(1.15);opacity:1}100%{transform:scale(1.3);opacity:0}}

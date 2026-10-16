@@ -1,0 +1,11 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s235');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await ev(()=>{const s=G.S();G.lastSi=s.si;s.stone=500;if(!Object.values(s.gear).some(Boolean)){s.gear.staff={slot:'staff',name:'마도사의 지팡이',r:2,lv:5,st:'atk',v:120,en:7}}const k=Object.keys(s.gear).find(k=>s.gear[k]);s.gear[k].en=7;G.enSel=k;G.enTab='gear'});await clr();
+await ev(()=>G.open('enhance'));await sl(1200);await ev(()=>document.querySelectorAll('#notice,.modal,.unl,.chap,.banner,.tut').forEach(x=>x.remove()));await sh('1049-enhance-forge');
+let got={};for(let i=0;i<12&&!(got.ok&&got.fail);i++){await ev(()=>document.querySelector('#enGo').click());await sl(150);await sh('1050-enhance-hammer');await sl(400);const r=await ev(()=>G._enLast);if(!got[r]){got[r]=1;await sh(r=='ok'?'1051-enhance-success':'1052-enhance-fail')}await sl(900);await ev(()=>document.querySelectorAll('.toast').forEach(x=>x.remove()))}
+console.log(JSON.stringify(got));console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();
