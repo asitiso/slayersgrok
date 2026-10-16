@@ -2302,3 +2302,31 @@ function deco(){const el=$('#screen'),c0=el.querySelector('.card');if(!c0||el.qu
  ic('[data-set=bgm],[data-set=sfx]','st_sound.png');const nt=body.querySelector('#ntRow');if(nt&&!nt.querySelector('.sri'))nt.insertAdjacentHTML('afterbegin',`<img class=sri src="${A}st_bell.png">`);
  body.querySelectorAll('.row').forEach(r=>{if(/알림|푸시/.test(r.textContent)&&!r.querySelector('.sri'))r.insertAdjacentHTML('afterbegin',`<img class=sri src="${A}st_bell.png">`)})}
 })();
+;(()=>{/* v148 마도 패스 사다리 */
+const st=document.createElement('style');st.textContent=`.pld{position:relative;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;margin:6px -4px 8px;background:url(assets/bg_pass_road.jpg) 60% 0/auto 100% no-repeat,#8ac8ff}
+.pld:before{content:'';position:absolute;inset:0;background:linear-gradient(#ffffff22,#0a2a5a55)}
+.plh{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:1fr 54px 1fr;gap:6px;padding:6px 8px;background:linear-gradient(#1a2a5af2,#0e1838f2);color:#fff;font-weight:900;font-size:12px;text-align:center;align-items:center}
+.plh span{display:flex;align-items:center;justify-content:center;gap:4px}.plh img{height:22px}
+.pll{position:relative;max-height:520px;overflow-y:auto;padding:6px 8px 10px}
+.pll:before{content:'';position:absolute;left:50%;top:0;bottom:0;width:8px;margin-left:-4px;background:linear-gradient(90deg,#c9a25a,#ffe8a0,#c9a25a);box-shadow:0 0 6px #0006}
+.plr{position:relative;display:grid;grid-template-columns:1fr 54px 1fr;gap:6px;align-items:center;margin:6px 0}
+.pln{width:42px;height:42px;margin:auto;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff;background:radial-gradient(#5a6a8a,#2a3450);border:3px solid #0b0d0f;box-shadow:0 0 0 2px #8a9ab8;z-index:1;position:relative}
+.plr.ok .pln{background:radial-gradient(#ffe08a,#c08a20);color:#4a2a00;box-shadow:0 0 0 2px #fff6}
+.plr.cur .pln{width:50px;height:50px;font-size:18px;background:radial-gradient(#fff6c0,#ffb030);color:#5a2a00;box-shadow:0 0 0 3px #fff,0 0 18px #ffd040;animation:plp 1.3s infinite}@keyframes plp{50%{box-shadow:0 0 0 3px #fff,0 0 30px #ffe060}}
+.plr.cur:after{content:'현재';position:absolute;left:50%;top:-8px;transform:translateX(-50%);font-size:9px;font-weight:900;background:#ff5a3a;color:#fff;border-radius:6px;padding:0 5px;z-index:2}
+.plc{position:relative;min-height:46px;display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap;font-size:11px;font-weight:800;color:#fff;border-radius:10px;padding:4px;border:2px solid #0b0d0f;background:linear-gradient(#3a4a6aee,#222c44ee);box-shadow:inset 0 0 0 1px #9ab0d888;text-shadow:0 1px 2px #000}
+.plc .ci{height:18px}.plc.p{background:linear-gradient(#6a4a18ee,#3a280cee);box-shadow:inset 0 0 0 1px #ffd77a99}
+.plc.lockp{filter:saturate(.4) brightness(.75)}.plc.lockp:before{content:'🔒';position:absolute;right:3px;top:1px;font-size:10px}
+.plc.can:after{content:'받기';position:absolute;left:4px;top:-7px;font-size:9px;font-weight:900;background:#2fbf3a;color:#fff;border-radius:6px;padding:0 5px;border:1px solid #0b0d0f}.plc.p.can:after{background:#e0a020}.plc.can{background:linear-gradient(#3a8a4aee,#1e5a2aee)!important;cursor:pointer;box-shadow:inset 0 0 0 2px #fff,0 0 14px #7fffa0!important;animation:plg 1s ease-in-out infinite}.plc.p.can{background:linear-gradient(#c08a20ee,#7a5210ee)!important;box-shadow:inset 0 0 0 2px #fff,0 0 14px #ffd040!important}@keyframes plg{50%{transform:scale(1.04);filter:brightness(1.2)}}
+.plc.got{filter:brightness(.7)}.plc .pck{position:absolute;right:-6px;top:-8px;height:26px;filter:drop-shadow(0 2px 2px #000a)}
+.plr .pbd{position:absolute;left:-4px;top:-6px;height:20px}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='pass')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen'),g=el.querySelector('.bpg');if(!g||el.querySelector('.pld'))return;const T=C.bpTier(),card=g.closest('.card');
+ const cells=[...g.querySelectorAll('.bpc')],n=cells.length/2;let h='';
+ for(let t=0;t<n;t++){const f=cells[t*2],p=cells[t*2+1],cl=(c,pp)=>`<div class="plc ${pp?'p':''} ${c.classList.contains('can')?'can':''} ${c.classList.contains('got')?'got':''} ${c.classList.contains('lockp')?'lockp':''}" data-px="${t*2+pp}">${c.innerHTML.replace(' ✔','')}${c.classList.contains('got')?`<img class=pck src="${A}pass_check.png">`:''}</div>`;
+  h+=`<div class="plr ${t<T?'ok':''} ${t==T||(T>=n&&t==n-1)?'cur':''}">${cl(f,0)}<div class=pln>${t+1}</div>${cl(p,1)}</div>`}
+ const d=document.createElement('div');d.className='pld';d.innerHTML=`<div class=plh><span><img src="${A}pass_free.png">무료</span><span>단계</span><span><img src="${A}pass_premium.png">프리미엄</span></div><div class=pll>${h}</div>`;
+ card.style.display='none';card.parentNode.insertBefore(d,card);
+ d.querySelectorAll('.plc.can').forEach(x=>x.onclick=()=>{const c=cells[+x.dataset.px];if(c)c.click()});
+ const L=d.querySelector('.pll'),cu=d.querySelector('.plr.cur');if(cu)requestAnimationFrame(()=>{L.scrollTop=Math.max(0,cu.offsetTop-L.clientHeight/2+30)})}
+})();

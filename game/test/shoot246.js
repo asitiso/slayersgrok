@@ -1,0 +1,15 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s246');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await ev(()=>{const s=G.S();s.lv=30;const b=G.C.bp();b.xp=G.D?0:0;});
+await ev(()=>{const b=G.C.bp();b.xp=850;b.fc={};b.pc={};});
+await ev(()=>{const b=G.C.bp();const T=G.C.bpTier();for(let t=0;t<Math.min(3,T);t++)b.fc[t]=1;console.log('T',T)});
+await ev(()=>G.open('pass'));await sl(1200);await ev(()=>document.querySelectorAll('#notice,.modal,.unl,.chap,.banner,.tut').forEach(x=>x.remove()));await sh('1096-pass-ladder');
+await ev(()=>document.querySelector('.pld').scrollIntoView());await sl(500);await sh('1097-pass-current');
+await ev(()=>{const c=document.querySelector('.plc.can');if(c)c.click()});await sl(1000);await ev(()=>document.querySelectorAll('.rwpop,.modal').forEach(x=>x.remove()));await ev(()=>document.querySelector('.pld').scrollIntoView());await ev(()=>{document.querySelector('.pll').scrollTop=0});await sl(500);await sh('1098-pass-claimed');
+await ev(()=>{G.C.bpBuy();renderScreen()});await sl(800);await ev(()=>document.querySelector('.pld').scrollIntoView());await sl(500);await sh('1099-pass-premium');
+console.log('ERRS',JSON.stringify(errs));stop();await b.close()})();
