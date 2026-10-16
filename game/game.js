@@ -1912,3 +1912,13 @@ let base=null,bb=null,cx0=null,cy0=null,lead=null;const of=R.frame;R.frame=dt=>{
  ctx.fillStyle='#ff3a5a';for(const [px,py] of [[-13,-6],[0,-11],[13,-6]]){ctx.beginPath();ctx.arc(px,py,2.2,0,6.283);ctx.fill()}ctx.fillStyle='#fff';ctx.globalAlpha=.6+.4*Math.sin(T*6);ctx.beginPath();ctx.arc(-4,-2,1.3,0,6.283);ctx.fill();ctx.globalAlpha=1;
  ctx.font='900 8px "Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.lineWidth=2.5;ctx.strokeStyle='#3a1a00';ctx.strokeText('MVP',0,15);ctx.fillStyle='#ffe27a';ctx.fillText('MVP',0,15);ctx.restore()}catch(_){}};
 })();
+
+;(()=>{// v121 콤보 카운터 DOM화 (포털·적 위에 표시 · 단계별 색/이름)
+R.cmbDom=1;const st=document.createElement('style');st.textContent=`.cmbx{position:absolute;left:272px;top:592px;transform:translate(-50%,-70%);z-index:29;pointer-events:none;text-align:center;font-family:Maplestory,"Noto Sans KR",sans-serif;font-style:italic;white-space:nowrap}
+.cmbx b{display:block;font:italic 900 28px/1 Maplestory,"Noto Sans KR",sans-serif;background:linear-gradient(var(--c0),var(--c1));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1.6px #5a1208;filter:drop-shadow(0 2px 0 #3a0a00) drop-shadow(0 0 var(--gl) var(--c1))}
+.cmbx small{display:block;margin-top:1px;font:italic 900 12px Maplestory,"Noto Sans KR",sans-serif;color:var(--lc);text-shadow:-1px -1px 0 #5a1208,1px -1px 0 #5a1208,-1px 1px 0 #5a1208,1px 1px 0 #5a1208,0 0 6px var(--c1)}`;document.head.appendChild(st);
+let el=null,lv=0,pop=0;const TC=[['#fff6c0','#ff8a2a','#ffd77a','0px'],['#fffbe0','#ff4a2a','#ffd77a','6px'],['#f6e0ff','#b04aff','#e0b0ff','10px'],['#e0fbff','#2ad0ff','#9ff0ff','14px']];
+const of=R.frame;R.frame=dt=>{of(dt);try{const [cb]=R._cmbGet?R._cmbGet():[0];const b=document.getElementById('battle');const show=cb>=5&&!G.screen&&!G._fin&&!(R.cut&&R.cut.t<1.25)&&!document.querySelector('.vsx,.vic');if(!show){if(el){el.remove();el=null}lv=0;return}
+ if(!el){el=document.createElement('div');el.className='cmbx';el.innerHTML='<b></b><small></small>';b.appendChild(el)}if(cb!==lv){if(cb>lv)pop=1;lv=cb;const t=cb>=100?3:cb>=50?2:cb>=20?1:0,c=TC[t];el.style.setProperty('--c0',c[0]);el.style.setProperty('--c1',c[1]);el.style.setProperty('--lc',c[2]);el.style.setProperty('--gl',c[3]);el.firstChild.textContent=cb;el.lastChild.textContent=t==3?'LEGEND COMBO':t==2?'GREAT COMBO':t==1?'NICE COMBO':'COMBO'}
+ pop=Math.max(0,pop-dt*6);el.style.transform=`translate(-50%,-70%) scale(${1+pop*.25})`}catch(_){}};
+})();
