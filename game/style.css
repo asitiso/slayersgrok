@@ -918,3 +918,9 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .bpfx{position:absolute;width:0;height:0;z-index:7;pointer-events:none}
 .bpfx::before{content:'';position:absolute;left:-30px;top:-30px;width:60px;height:60px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 12px #ffe27a,inset 0 0 12px #ffe27a;animation:bpR .45s ease-out forwards}
 @keyframes bpR{0%{transform:scale(.2);opacity:1}100%{transform:scale(1.4);opacity:0}}
+/* v99 shiny */
+.shk{position:absolute;width:180px;margin-left:-90px;text-align:center;z-index:8;pointer-events:none;animation:shk 2.4s ease-out forwards;font-family:sans-serif}
+.shk b{display:block;font:900 17px sans-serif;background:linear-gradient(90deg,#ff6a8a,#ffd24a,#7aff9a,#6ad0ff,#c08aff);-webkit-background-clip:text;color:transparent;-webkit-text-stroke:.6px #3a1a00;filter:drop-shadow(0 2px 2px #000a)}
+.shk span{font:900 14px sans-serif;color:#fff;text-shadow:0 0 3px #000,0 2px 2px #000}.shk span img{width:18px;vertical-align:-4px}
+.shk em{display:block;font:900 12px sans-serif;font-style:normal;color:#ffe27a;text-shadow:0 0 3px #000}
+@keyframes shk{0%{transform:scale(.4);opacity:0}12%{transform:scale(1.15);opacity:1}20%{transform:none}80%{opacity:1}100%{transform:translateY(-30px);opacity:0}}
