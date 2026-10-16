@@ -781,3 +781,4 @@ body:has(.modal) .unl,body:has(#screen.on) .unl,body:has(#notice) .unl,body:has(
 .mkb.k4 b{font-size:34px;background:linear-gradient(#fff,#ff5a7a);-webkit-background-clip:text;-webkit-text-stroke-color:#5a0020}
 .mkb small{font:900 18px Maplestory,sans-serif;color:#ffe9a0;-webkit-text-stroke:1px #5a0020;margin-left:4px}
 @keyframes mkb{0%{opacity:0;transform:translateX(-50%) scale(1.8)}12%{opacity:1;transform:translateX(-50%) scale(.95)}20%{transform:translateX(-50%) scale(1.05)}75%{opacity:1;transform:translateX(-50%) translateY(-6px)}100%{opacity:0;transform:translateX(-50%) translateY(-18px)}}
+.mkb.k4 b{font-size:28px}.mkb small{font-size:15px}
