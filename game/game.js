@@ -1934,3 +1934,14 @@ const os=summon;summon=function(n){G._sumGot=null;os(n);const got=G._sumGot,m=do
   h.innerHTML=`<div class=shr></div><img src="${A}cutc/${c.k}.png" onerror="this.src='${A}${c.img}'"><div class=shn><span>${D.RAR[c.g].n}</span><b>${c.n}</b><em>${'★'.repeat(c.g+1)}</em></div><small class=scs>탭하여 계속</small>`;
   document.body.appendChild(h);setTimeout(()=>h.onclick=()=>{h.classList.add('out');setTimeout(()=>{h.remove();next()},250)},500)};
  v.onclick=fin;setTimeout(fin,top>=4?2600:1900)}})();
+/* v124 화룡전식 편성 화면 (진형 무대 + 카드 그리드) */
+;(()=>{const orS=renderScreen;renderScreen=function(f){const r=orS.apply(this,arguments);try{if(G.screen=='party')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen'),s=C.S(),f0=el.querySelector('.slotrow');if(!f0)return;const card=f0.closest('.card');card.style.display='none';
+ const fig=(k,i)=>{const c=k=='lina'?{k:'lina',n:'리나',img:'hero_lina.png',g:4}:D.COMPS.find(x=>x.k==k);if(!c)return `<div class="pfig emp" data-i=${i}><i></i><span>＋</span></div>`;const R=D.RAR[c.g];
+  return `<div class=pfig data-k=${c.k} style="--rc:${R.c}"><i></i><img src="${A}${c.img}"><em>${k=='lina'?'리더':'Lv.'+s.comps[k]}</em><b>${c.n}</b></div>`};
+ const P=s.party,st=document.createElement('div');st.className='pstage';
+ st.innerHTML=`<div class=psp><img src=assets/it2_gem.png><small>파티 전투력</small><b>${fmt(C.POW())}</b></div><div class="prw prb">${fig(P[2],2)}${fig(P[3],3)}</div><div class="prw prf">${fig(P[0],0)}${fig('lina',-1)}${fig(P[1],1)}</div><small class=pst>캐릭터 탭: 해제 · 아래 카드 탭: 출전</small>`;
+ card.before(st);st.querySelectorAll('.pfig[data-k]').forEach(n=>{if(n.dataset.k!='lina')n.onclick=()=>{const o=el.querySelector(`[data-rm="${n.dataset.k}"]`);o&&o.click()}});
+ const rc=el.querySelectorAll('.rcard');if(!rc.length)return;rc[0].parentNode.classList.add('rgrid');
+ rc.forEach(n=>{const k=n.dataset.c,c=D.COMPS.find(x=>x.k==k),lv=s.comps[k],R=D.RAR[c.g],F=D.FACTIONS[c.fac],inP=P.includes(k);n.style.setProperty('--rc',R.c);n.classList.toggle('own',!!lv);
+  n.innerHTML=`<img src="${A}${c.img}"><span class=rg>${R.n}</span><span class=fd style="background:${F.c}">${F.n[0]}</span>${inP?'<span class=ck>✔</span>':''}<b>${c.n}</b><small>${lv?'★'.repeat(Math.min(5,lv)):'미보유'}</small>${lv?`<span class=di data-det=${k}>i</span>`:''}`})}})();
