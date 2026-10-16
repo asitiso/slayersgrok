@@ -2375,3 +2375,26 @@ setInterval(()=>{const t=document.getElementById('fsTm');if(t)t.textContent=left
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
 new MutationObserver(()=>{try{deco()}catch(e){}}).observe(document.querySelector('#screen')||document.body,{childList:true,subtree:false});
 })();
+;(()=>{/* v151 우편함 우체국 */
+const st=document.createElement('style');st.textContent=`.mlst{position:relative;height:190px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f}
+.mlst>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 50%}.mlst:after{content:'';position:absolute;inset:0;background:linear-gradient(#0000 45%,#1e1206e8)}
+.mlst .mln{position:absolute;left:12px;bottom:10px;z-index:2;display:flex;align-items:center;gap:8px;color:#fff}.mlst .mln img{height:42px;filter:drop-shadow(0 2px 3px #000)}.mlst .mln b{font-size:18px;color:#fff3d0;text-shadow:0 2px 0 #000;display:block}.mlst .mln small{font-size:11px;font-weight:800;color:#ffe0a8}
+.mlst .mlc{position:absolute;right:10px;top:10px;z-index:2;background:#c0201a;border:1px solid #fff8;border-radius:10px;padding:2px 9px;font-size:11px;font-weight:900;color:#fff}
+.mail3 .card>.ttl{display:none}.mail3 .mgg{display:flex!important;flex-direction:column;gap:7px}
+.mail3 .mgc{position:relative;display:flex!important;flex-direction:row!important;align-items:center;gap:9px;text-align:left!important;padding:7px 9px!important;min-height:0!important;border-radius:12px!important;background:linear-gradient(#fff4dc,#ecd2a0)!important;border:2px solid #4a2a10!important;box-shadow:0 3px 0 #2a1606,inset 0 0 0 1px #fff8!important;color:#3a2008}
+.mail3 .mgc .mgb{width:50px!important;height:auto!important;margin:0!important;filter:drop-shadow(0 2px 2px #0006)}
+.mail3 .mgc .mlm{flex:1;min-width:0}.mail3 .mgc .mlm>b{display:block;font-size:13px;color:#3a2008!important}
+.mail3 .mgc .mgr{display:flex!important;align-items:center;gap:5px;margin-top:3px;justify-content:flex-start!important}.mail3 .mgc .mgr span{display:flex;align-items:center;gap:2px;background:#3a2008;color:#fff;border-radius:7px;padding:0 5px 0 2px;font-size:11px;font-weight:900}.mail3 .mgc .mgr span img{height:16px}.mail3 .mgc .mgr .mlp{height:22px;margin-right:1px}
+.mail3 .mgc .mlx{position:absolute;right:8px;top:5px;font-size:9px;font-weight:900;color:#fff;background:#a8521a;border-radius:6px;padding:0 5px}
+.mail3 .mgc>.pill,.mail3 .mgc>small{margin:14px 0 0!important;flex:0 0 auto!important;width:auto!important;min-width:0!important;position:static!important}.mail3 .mgc>.pill{padding:6px 14px!important;font-size:13px!important}.mail3 .mgc .mlm{flex:1 1 auto!important;width:auto!important}.mail3 .mgc>small{color:#6a4a2a!important;font-weight:800}
+.mail3 .mgc.got{background:linear-gradient(#d8cdb8,#b8a888)!important}.mail3 .mgc.got .mgr,.mail3 .mgc.got .mlx{filter:grayscale(1);opacity:.6}
+.mail3 #mailAll{display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:6px;background:linear-gradient(#ffcf5a,#e08a1a)!important;color:#3a1a00!important;border:2px solid #0b0d0f!important}.mail3 #mailAll img{height:24px}`;document.head.appendChild(st);
+const deco=()=>{const sb=$('#screen');if(G.screen!='mail')return;const g=sb.querySelector('.mgg');if(!g||g.dataset.ml)return;g.dataset.ml=1;const card=g.closest('.card');card.parentNode.classList.add('mail3');
+ const all=[...g.querySelectorAll('.mgc')],un=all.filter(m=>!m.classList.contains('got')).length;
+ if(!sb.querySelector('.mlst')){const d=document.createElement('div');d.className='mlst';card.parentNode.insertBefore(d,card)}
+ sb.querySelector('.mlst').innerHTML=`<img src="${A}bg_mail_post.jpg">${un?`<span class=mlc>새 우편 ${un}</span>`:''}<div class=mln><img src="${A}${un?'ml_letter':'ml_open'}.png"><div><b>마도 우체국</b><small>보관 기한 7일 · ${un}/${all.length}통 미수령</small></div></div>`;
+ all.forEach(m=>{const got=m.classList.contains('got'),b=m.querySelector(':scope>b'),r=m.querySelector('.mgr'),im=m.querySelector('.mgb');if(im)im.src=`${A}${got?'ml_open':'ml_letter'}.png`;
+  const w=document.createElement('div');w.className='mlm';if(b)w.appendChild(b);if(r){r.insertAdjacentHTML('afterbegin',`<img class=mlp src="${A}ml_parcel.png">`);w.appendChild(r)}im.after(w);m.insertAdjacentHTML('beforeend',`<i class=mlx>${got?'수령함':'7일 남음'}</i>`)});
+ const ma=sb.querySelector('#mailAll');if(ma)ma.innerHTML=`<img src="${A}ml_parcel.png">모두 받기${un?` (${un})`:''}`};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
+})();
