@@ -17,6 +17,8 @@ for(let chunk=0;chunk<6000;chunk++){const r=await p.evaluate((MH)=>{const C=G.C,
   // day boundary every AH active hours: offline (rest of day, capped), daily gems ~300, quick hunts x2, summons
   const day=Math.floor(window._t/(window.AH*3600));if(day>window._day){window._day=day;const off=C.offlineCalc(24*3600);C.addGold(off.g);C.gainExp(off.x);S.orbs+=off.o;S.stone=(S.stone||0)+Math.floor(off.sec/900);
    for(let q=0;q<2;q++){const o2=C.offlineCalc(7200);C.addGold(o2.g);C.gainExp(o2.x);S.orbs+=o2.o;S.stone+=8}
+   if(window.MODE!='base'&&G.frSendAll){if(S.fr)S.fr.day='';G.frSendAll();G.frGetAll();for(const k of ['tk','st','st','st','ob','ob','ob','gm','gm'])G.frBuy(k)}
+   if(window.MODE!='base'&&G.olClaimAll){S.ol=null;G.olAdd(3600);G.olClaimAll()}
    S.gems+=600;let n=0;while(S.gems>=2700){C.summon(10);n+=10}window._dl.push([day,Math.round(off.g),Math.round(off.x),off.o,n])}
   if(window.MODE!='base'&&S.nb&&G.nbClaim){S.nb.t0=C.now()-window._day*864e5;for(let d=0;d<7;d++)for(let i=0;i<3;i++)G.nbClaim(d,i);G.nbFin&&G.nbFin()}
   if(S.maxSi>window._last){window._last=S.maxSi;window._rows.push([C.stageName(S.maxSi),Math.round(window._t/60),window._day,S.lv,C.POW(),C.stageReq(S.maxSi)])}

@@ -1059,7 +1059,7 @@ C.frRed=()=>{const t=st();return FR.some(f=>!t.sent[f.k]||canGet(f))};
 const send=k=>{const t=st();let n=0;FR.forEach(f=>{if((!k||f.k==k)&&!t.sent[f.k]){t.sent[f.k]=1;n++}});t.pt+=n*5;return n};
 const get=k=>{const t=st();let n=0;FR.forEach(f=>{if((!k||f.k==k)&&canGet(f)){t.got[f.k]=1;n++}});t.pt+=n*10;return n};
 G.frSendAll=()=>send();G.frGetAll=()=>get();G.frBuy=k=>{const t=st(),it=SH.find(x=>x.k==k),s=C.S();if(!it||(t.buy[k]||0)>=it.lim||t.pt<it.c)return 0;t.pt-=it.c;t.buy[k]=(t.buy[k]||0)+1;it.g(s);return it};
-const MI=MENU.findIndex(m=>m[0]=='guild');if(!MENU.some(m=>m[0]=='friend'))MENU.splice(MI+1,0,['friend','친구','ic2_party.png']);try{renderHub()}catch(_){}
+const MI=MENU.findIndex(m=>m[0]=='guild');if(!MENU.some(m=>m[0]=='friend'))MENU.splice(MI+1,0,['friend','친구','ic3_friend.png']);try{renderHub()}catch(_){}
 const draw=()=>{const el=$('#screen'),t=st(),P=C.POW(),L=C.S().lv;
  el.innerHTML=shell('친구','bg_guild.jpg',`<div class="card frh"><span class=frp>💗</span><div class=f><b>우정 포인트 ${fmt(t.pt)}</b><small>하트 보내기 +5 · 받기 +10 · 매일 05:00 초기화</small></div></div>
  <div class="card frb"><span class="pill ${FR.some(f=>!t.sent[f.k])?'green':'off'}" id=frSA>💌 모두 보내기</span><span class="pill ${FR.some(canGet)?'green':'off'}" id=frGA>🎁 모두 받기</span></div>
@@ -1072,4 +1072,19 @@ const draw=()=>{const el=$('#screen'),t=st(),P=C.POW(),L=C.S().lv;
  el.querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{const it=G.frBuy(e.dataset.b);if(!it)return toast('우정 포인트가 부족하거나 구매 한도입니다');updateHud();draw();rewardPop([[it.img,it.n.split(' ×')[1]||1,it.n.split(' ×')[0]]],'우정 상점')})};
 const rs=renderScreen;renderScreen=function(){if(G.screen=='friend'){scr0();return draw()}return rs.apply(this,arguments)};const scr0=()=>{};
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const a=document.querySelector('#mgrid a[data-s=friend]');if(a){let d=a.querySelector('.dot');if(!d){d=document.createElement('span');d.className='dot';a.appendChild(d)}const on=C.frRed();d.style.display=on?'':'none';if(on){const m=document.querySelector('#sidemenu .dot');if(m)m.style.display=''}}}catch(_){}return r};
+})();
+;(()=>{// v57 접속 보상 (일일 플레이 시간 상자)
+const T=[{m:5,w:{gold:1},n:'골드'},{m:10,w:{orbs:5},n:'마정구 ×5'},{m:20,w:{stone:10},n:'강화석 ×10'},{m:30,w:{gems:30},n:'다이아 ×30'},{m:60,w:{tk:1},n:'소환권 ×1'}];
+const st=()=>{const s=C.S();if(!s.ol||s.ol.day!=C.today())s.ol={day:C.today(),sec:0,c:{}};return s.ol};
+const gl=()=>Math.round(C.goldKill(Math.max(0,C.S().maxSi))*120);
+const give=w=>{const s=C.S();const g=w.gold?gl():0;if(g)C.addGold(g);s.orbs+=w.orbs||0;s.stone=(s.stone||0)+(w.stone||0);s.gems+=w.gems||0;s.tickets=(s.tickets||0)+(w.tk||0);return g};
+const ready=()=>{const o=st();return T.map((t,i)=>i).filter(i=>!o.c[i]&&o.sec>=T[i].m*60)};
+G.olClaimAll=()=>{const o=st(),out=[];ready().forEach(i=>{o.c[i]=1;const g=give(T[i].w);const w=T[i].w;out.push(w.gold?['it2_gold.png',g,'골드']:w.orbs?['it2_exp.png',w.orbs,'마정구']:w.stone?['it2_stone.png',w.stone,'강화석']:w.gems?['it2_gem.png',w.gems,'다이아']:['it2_ticket.png',w.tk,'소환권'])});return out};
+G.olAdd=sec=>{st().sec+=sec};G.olState=()=>({...st(),ready:ready().length});
+const fm=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const btn=()=>{let b=document.getElementById('olBtn');const bt=document.getElementById('battle');if(!b&&bt){b=document.createElement('span');b.id='olBtn';b.className='pill';bt.appendChild(b);b.onclick=()=>G.olOpen()}return b};
+const upd=()=>{const b=btn();if(!b)return;const o=st(),nx=T.findIndex((t,i)=>!o.c[i]);if(nx<0){b.style.display='none';return}b.style.display='';const r=ready().length;b.classList.toggle('rdy',r>0);b.innerHTML=r?`⏰ 받기<span class=dot></span>`:`⏰ ${fm(T[nx].m*60-o.sec)}`};
+G.olOpen=()=>{const o=st();modal(`<div class=ttl style="justify-content:center;font-size:18px">접속 보상</div><small style="display:block;text-align:center;opacity:.75">오늘 플레이 ${Math.floor(o.sec/60)}분 · 매일 05:00 초기화</small><div class=oll>${T.map((t,i)=>{const ok=o.sec>=t.m*60,c=o.c[i];return `<div class="olr ${c?'got':ok?'rdy':''}"><b>${t.m}분</b><span>${t.n}</span><em>${c?'✔ 수령':ok?'받기 가능':fm(t.m*60-o.sec)}</em></div>`}).join('')}</div><span class="pill green wide ${ready().length?'':'off'}" id=olGo style="margin-top:10px;justify-content:center">🎁 모두 받기</span>`);
+ const g=document.getElementById('olGo');if(g)g.onclick=()=>{const it=G.olClaimAll();if(!it.length)return;document.querySelectorAll('.modal').forEach(m=>m.remove());updateHud();upd();rewardPop(it,'접속 보상')}};
+let lt=Date.now();setInterval(()=>{const n=Date.now(),d=Math.min(5,(n-lt)/1000);lt=n;if(!document.hidden&&!G.noSave)st().sec+=d;upd()},1000);setTimeout(upd,300);
 })();
