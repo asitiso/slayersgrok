@@ -2165,6 +2165,34 @@ function deco(){const el=$('#screen'),T=C.T,t=C.tower(),cur=t.f+1,pw=C.POW(),lis
   if(s=='cur')h+=`<img class=tlina src="${A}hero_lina.png" data-y=${y}>`});
  const rq=T.req(cur);h+=`<span class="tgo ${pw>=rq?'':'hard'}" id=twGo2>${cur}층 도전<small>전투력 ${fmt(pw)} / ${fmt(rq)}</small></span>`;
  const d=document.createElement('div');d.className='twst';d.innerHTML=h;list.parentNode.insertBefore(d,el.querySelector('.twh'));list.style.display='none';
- const cp=d.querySelector('.tfl.cur'),li=d.querySelector('.tlina');if(cp&&li){cp.style.paddingRight='60px';li.style.left=(cp.offsetLeft+cp.offsetWidth-62)+'px';li.style.top=(cp.offsetTop-38)+'px'}
+ const cp=d.querySelector('.tfl.cur'),li=d.querySelector('.tlina');if(cp&&li){cp.style.paddingRight='60px';li.style.left=(cp.offsetLeft+cp.offsetWidth-62)+'px';li.style.top=(cp.offsetTop+14)+'px'}
  d.querySelector('#twGo2').onclick=()=>{const g=el.querySelector('#twGo');if(g)g.click()}}
+})();
+;(()=>{/* v142 펫 정원 */
+const st=document.createElement('style');st.textContent=`.ptst{position:relative;height:300px;margin:-4px -4px 8px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+.ptst>.pbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ptst .ppet{position:absolute;left:50%;bottom:162px;height:110px;transform:translateX(-50%);filter:drop-shadow(0 0 10px #fff9) drop-shadow(0 6px 4px #0008);animation:ppb 1.6s ease-in-out infinite;z-index:2}
+@keyframes ppb{50%{transform:translateX(-50%) translateY(-7px)}}
+.ptst .pnm{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:3;background:linear-gradient(#5a2a6aee,#2a1036ee);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #ffc0f088;border-radius:12px;padding:4px 12px;text-align:center;white-space:nowrap;color:#fff}
+.ptst .pnm b{font-size:15px;color:#ffe08a}.ptst .pnm small{display:block;font-size:10px}
+.ptst .phs{position:absolute;left:10px;top:10px;z-index:3;display:flex;gap:6px}.ptst .phs span{background:#0009;border:1px solid #fff4;border-radius:10px;padding:3px 8px;font-size:11px;font-weight:800;color:#fff;display:flex;align-items:center;gap:3px}.ptst .phs img{height:16px}
+.pthrt{display:flex;justify-content:center;gap:1px;margin-top:2px}.pthrt img{height:11px}.pthrt img.e{filter:grayscale(1) brightness(.5);opacity:.6}
+.ptc .pthrt{position:relative;z-index:1}.ptst .pthrt img{height:15px}
+#ptHatch img.pegi{height:20px;vertical-align:-5px;margin-right:2px}
+.pthm .pegg{width:120px;height:140px;margin:6px auto 0;position:relative}.pthm .pegg img{width:100%;height:100%;object-fit:contain;animation:pwob .9s ease-in-out 0s 2,pcrk .5s 1.8s forwards}
+.pthm .pegg:after{content:'';position:absolute;inset:-30px;border-radius:50%;background:radial-gradient(#fff,#ffe08a88 35%,#0000 65%);opacity:0;animation:pfl .7s 1.9s forwards}
+@keyframes pwob{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(5deg)}}
+@keyframes pcrk{0%{transform:scale(1);filter:brightness(1)}60%{transform:scale(1.15);filter:brightness(2.5)}100%{transform:scale(1.4);opacity:0;filter:brightness(4)}}
+@keyframes pfl{40%{opacity:1}100%{opacity:0;transform:scale(1.8)}}
+.pthm .pthi{position:absolute;left:50%;top:24px;margin:0 0 0 -65px!important;height:130px;width:130px;object-fit:contain;opacity:0;animation:prv .6s 2.1s forwards!important}
+.pthm .pthr{opacity:0;animation:prt .4s 2.4s forwards}
+@keyframes prv{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes prt{to{opacity:1}}`;document.head.appendChild(st);
+const PM=20,hearts=(l,n=5)=>{const f=Math.round((l||0)/PM*n);return `<div class=pthrt>${Array.from({length:n},(_,i)=>`<img class="${i<f?'':'e'}" src="${A}pt_heart.png">`).join('')}</div>`};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='pet')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen'),p=C.S().pet||{},P=C.PETS,hd=el.querySelector('.pth');if(!hd||el.querySelector('.ptst'))return;
+ const x=P.find(q=>q.k==p.eq),own=Object.keys(p.own||{}).length;
+ const d=document.createElement('div');d.className='ptst';d.innerHTML=`<img class=pbg src="${A}bg_pet_garden.jpg"><div class=phs><span><img src="${A}pt_egg.png">알 ${p.egg||0}</span><span><img src="${A}pt_paw.png">${own}/${P.length}</span></div>`+(x?`<img class=ppet src="${A}${x.img}"><div class=pnm><b>${x.n}</b><small>Lv.${p.own[x.k]} · 장착 중</small>${hearts(p.own[x.k])}</div>`:`<div class=pnm><b>장착한 펫 없음</b><small>알을 부화해 보세요</small></div>`);
+ hd.parentNode.insertBefore(d,hd);
+ el.querySelectorAll('.ptc[data-pk]').forEach(c=>{const l=(p.own||{})[c.dataset.pk];if(l)c.querySelector('small').insertAdjacentHTML('afterend',hearts(l))});
+ const hb=el.querySelector('#ptHatch');if(hb){hb.innerHTML=hb.innerHTML.replace('🥚',`<img class=pegi src="${A}pt_egg.png">`);const o=hb.onclick;hb.onclick=e=>{o&&o(e);const m=[...document.querySelectorAll('.pthm')].pop();if(!m)return;const eg=m.querySelector('.egg');if(eg)eg.outerHTML=`<div class=pegg><img src="${A}pt_egg.png"></div>`;const c=m.querySelector('.card');[...c.children].forEach(n=>{if(!n.matches('.pegg,.pthi'))n.classList.add('pthr')})}}}
 })();
