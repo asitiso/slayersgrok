@@ -1,0 +1,17 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await clr();await ev(()=>{const s=G.S();s.maxSi=34;s.autoBoss=false;s.lv=60;G.C.buildAllies();G.C.selectStage(20)});await sl(3000);await clr();
+const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
+await p.tracing.start({path:'/tmp/tr.json',categories:['disabled-by-default-skia','disabled-by-default-cc.debug','gpu','benchmark','devtools.timeline','disabled-by-default-devtools.timeline','v8.execute','blink','cc']});
+await sl(4000);await p.tracing.stop();
+const T=JSON.parse(require('fs').readFileSync('/tmp/tr.json')).traceEvents;
+const main=T.find(e=>e.name=='TracingStartedInBrowser');
+const thr={};T.filter(e=>e.name=='thread_name').forEach(e=>thr[e.pid+':'+e.tid]=e.args.name);
+const agg={};T.filter(e=>e.ph=='X'&&e.dur).forEach(e=>{const tn=thr[e.pid+':'+e.tid]||'?';if(!/CrRendererMain|Compositor|GPU|Viz/.test(tn))return;const k=tn+' '+e.name;agg[k]=(agg[k]||0)+e.dur});
+Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,30).forEach(([k,v])=>console.log((v/4000/1000*100).toFixed(1)+'%',k));
+stop();await b.close()})();

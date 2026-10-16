@@ -1,0 +1,13 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await clr();await sl(2000);await clr();
+console.log(await ev(()=>{const by={};const nm=e=>{if(!e||!e.tagName)return e&&e.parentElement?nm(e.parentElement)+'>#t':'?';return e.tagName.toLowerCase()+(e.id?'#'+e.id:'')+(e.className&&typeof e.className=='string'?'.'+e.className.split(' ')[0]:'')};
+const mo=new MutationObserver(m=>m.forEach(x=>{const t=x.target;const k=x.type[0]+':'+(x.attributeName||'')+':'+nm(t.parentElement)+'/'+nm(t);by[k]=(by[k]||0)+1}));mo.observe(document.body,{subtree:true,childList:true,attributes:true,characterData:true});
+return new Promise(r=>setTimeout(()=>{mo.disconnect();r(Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,30).map(x=>x[1]+' '+x[0]).join('\n'))},1000))}));
+console.log(await ev(()=>[...document.querySelectorAll('*')].filter(e=>getComputedStyle(e).filter!=='none').map(e=>e.tagName+(e.id?'#'+e.id:'')+'.'+String(e.className).split(' ')[0]).reduce((a,k)=>(a[k]=(a[k]||0)+1,a),{})));
+stop();await b.close()})();

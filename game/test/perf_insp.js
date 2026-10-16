@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+await clr();await sl(2000);await clr();
+console.log(await ev(()=>{const an=document.getAnimations();const by={};an.forEach(a=>{const t=a.effect&&a.effect.target;const k=(t&&(t.id||t.className&&String(t.className).split(' ')[0]||t.tagName))+'|'+(a.animationName||'tr');by[k]=(by[k]||0)+1});
+const cv=[...document.querySelectorAll('canvas')].map(c=>c.id+':'+c.width+'x'+c.height);
+let bf=0,fl=0;document.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);if(c.backdropFilter&&c.backdropFilter!=='none')bf++;if(c.filter!=='none')fl++});
+let mut=0;const mo=new MutationObserver(m=>mut+=m.length);mo.observe(document.body,{subtree:true,childList:true,attributes:true,characterData:true});
+return new Promise(r=>setTimeout(()=>{mo.disconnect();r(JSON.stringify({anims:an.length,top:Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,25),cv,bf,fl,mutPerSec:mut}))},1000))}));
+stop();await b.close()})();
