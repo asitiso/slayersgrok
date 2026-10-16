@@ -2420,3 +2420,23 @@ const deco=()=>{if(G.screen!='shop')return;const sb=document.querySelector('#scr
  sb.querySelectorAll('[data-b]').forEach(bt=>{const c=bt.closest('.card');if(!c||c.querySelector('.shlm'))return;const m=(c.querySelector('b small')||{}).textContent;const mm=m&&m.match(/(\d+)\/(\d+)/);if(!mm)return;c.style.position='relative';c.insertAdjacentHTML('beforeend',`<span class=shlm><i>일일 한정 ${mm[1]}/${mm[2]}</i><img src="${A}sh_limited.png"></span>`)})};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* v153 소환 제단 (마법진 스테이지 · 실제 확률 보석 · 실제 천장 크리스탈 바 · 석판 버튼) */
+const st=document.createElement('style');st.textContent=`.smal .sumban{position:relative;background:url(assets/bg_summon_altar.jpg) 50% 88%/cover!important;overflow:hidden;border:2px solid #0b0d0f!important;box-shadow:0 0 0 2px #b890ff88,0 0 18px #8a5aff66!important}
+.smal .sumban img.smc{position:absolute;left:50%;bottom:-135px;width:300px;height:auto;transform:translateX(-50%);opacity:1;filter:brightness(2.2) saturate(1.3) drop-shadow(0 0 14px #e0c0ff);mix-blend-mode:screen;bottom:-125px!important;animation:smsp 9s linear infinite;z-index:1;pointer-events:none}
+@keyframes smsp{from{transform:translateX(-50%) perspective(400px) rotateX(70deg) rotate(0)}to{transform:translateX(-50%) perspective(400px) rotateX(70deg) rotate(360deg)}}
+.smal .sumban>img{z-index:2;filter:drop-shadow(0 0 10px #d8b8ffaa)}.smal .sumban .bt{z-index:3}
+.smal .smr{display:flex;gap:6px;margin:2px 0 8px}.smal .smr>div{flex:1;display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:10px;background:linear-gradient(#2a1a4a,#160c2a);border:1px solid #8a6ad0}.smal .smr img{height:30px}.smal .smr b{display:block;font-size:15px;color:#fff}.smal .smr small{display:block;font-size:10px;font-weight:800}
+.smal .card .ttl small{display:none}.smal .spity{display:none!important}
+.smal .smp{display:flex;align-items:center;gap:6px;margin:8px 2px 4px}.smal .smp .bar{flex:1;position:relative;height:16px;border-radius:9px;background:#140a26;border:2px solid #0b0d0f;box-shadow:0 0 0 1px #b890ff88;overflow:hidden}
+.smal .smp .bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7a4aff,#d8a0ff,#fff3a0);box-shadow:0 0 10px #d8a0ff}.smal .smp .bar span{position:absolute;inset:0;text-align:center;font-size:10px;font-weight:900;line-height:12px;color:#fff;text-shadow:0 0 3px #000,0 1px 0 #000,0 0 2px #000}
+.smal .smp>img{height:34px;filter:drop-shadow(0 0 6px #ffd27a)}.smal .smp>b{font-size:11px;color:#ffe8a0;white-space:nowrap}
+.smal .sumbtns .pill{position:relative;display:flex!important;flex-direction:column;align-items:center;justify-content:center;padding:10px 6px 8px 40px!important;border-radius:8px 8px 14px 14px!important;background:linear-gradient(#8a8aa0,#4a4a64)!important;border:2px solid #0b0d0f!important;box-shadow:inset 0 2px 0 #d0d0e8,inset 0 -4px 0 #2a2a3a,0 0 12px #9a7aff88!important;color:#fff!important;text-shadow:0 2px 0 #000}
+.smal .sumbtns .pill.red{background:linear-gradient(#a07ad8,#5a3a9a)!important;box-shadow:inset 0 2px 0 #e8d0ff,inset 0 -4px 0 #2a1a4a,0 0 16px #c89aff!important}
+.smal .sumbtns .pill>img.smt{position:absolute;left:6px;top:50%;transform:translateY(-50%);height:42px;filter:drop-shadow(0 2px 2px #000a)}`;document.head.appendChild(st);
+const deco=()=>{if(G.screen!='summon')return;const sc=$('#screen'),bn=sc.querySelector('.sumban');if(!bn||sc.querySelector('.smr'))return;const C=G.C,s=C.S(),D=C.D;sc.querySelector('.sbody')?.classList.add('smal');
+ bn.insertAdjacentHTML('afterbegin',`<img class=smc src="${A}sm_circle.png">`);const card=bn.nextElementSibling,tt=card&&card.querySelector('.ttl');
+ if(tt)tt.insertAdjacentHTML('afterend',`<div class=smr>${[4,3,2].map((g,i)=>`<div><img src="${A}sm_crystal.png" style="filter:hue-rotate(${[0,250,170][i]}deg) saturate(${g==4?1.3:.9})"><div><b>${C.GW[g]}%</b><small style="color:${D.RAR[g].c}">${D.RAR[g].n}</small></div></div>`).join('')}</div>`);
+ if(C.PITY){const p=s.pity||0,sp=sc.querySelector('.spity');(sp||card).insertAdjacentHTML(sp?'beforebegin':'beforeend',`<div class=smp><div class=bar><i style="width:${Math.min(100,p/C.PITY*100)}%"></i></div><img src="${A}sm_crystal.png"><b>${p}/${C.PITY} · 확정까지 ${C.PITY-p}회</b></div>`)}
+ ['#su1','#su10'].forEach(id=>{const b=sc.querySelector(id);if(b)b.insertAdjacentHTML('afterbegin',`<img class=smt src="${A}${id=='#su1'?'sm_scroll':'sm_circle'}.png">`)})};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
+})();
