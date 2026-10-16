@@ -1390,3 +1390,5 @@ const oc=C.ev.clear;C.ev.clear=function(){const r=oc&&oc.apply(this,arguments);t
 
 /* v79 제6장 천공의 신전 · 클리어 세이브 이전 */
 (()=>{const C=G.C,s=C.S();if(s&&s.done&&s.maxSi<D.FIELDS.length-1){s.done=0;s.maxSi++;}})();
+/* v80 보스 피니시 카메라 줌 */
+(()=>{const C=G.C;const ok=C.ev.kill;C.ev.kill=function(e){try{if(e&&e.boss&&!e.wb&&!G.screen&&(!R.opt||R.opt.shake)){const q=R._ES().get(e),c=document.querySelector('#battle canvas');if(q&&c){const h=(e.sc||1)*90;c.style.transformOrigin=`${q.x}px ${q.y-h*.5}px`;c.style.transition='transform .35s cubic-bezier(.2,.9,.3,1)';c.style.transform='scale(1.18)';clearTimeout(G._fzT);G._fzT=setTimeout(()=>{c.style.transition='transform .6s ease-in-out';c.style.transform='';setTimeout(()=>{c.style.transition='';c.style.transformOrigin=''},650)},1000)}}}catch(_){}return ok&&ok.apply(this,arguments)};})();
