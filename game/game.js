@@ -1841,5 +1841,27 @@ let pc=null,pl=null;const of=R.frame;R.frame=dt=>{of(dt);try{const t=document.qu
 ;(()=>{// v114 보스 HP 퍼센트 표시 + v115 피해 잔상 바 (시각 전용)
 let gb=null,gv=100,gd=0;const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||G._fin)return;const bo=C.alive().find(e=>e.boss&&!e.wb);if(!bo)return;const c=document.querySelector('#battle canvas');if(!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,W=c.clientWidth,p=Math.max(0,bo.hp/bo.max*100);
  if(gb!==bo){gb=bo;gv=p;gd=0}if(p<gv){gd+=dt;if(gd>.35)gv=Math.max(p,gv-(gv-p)*Math.min(1,dt*4)-dt*6)}else{gv=p;gd=0}if(p>=gv)gd=0;
- ctx.save();ctx.setTransform(sc,0,0,sc,0,0);{const x0=74,bw=W-148;if(gv-p>.15){const xa=x0+bw*p/100,xb=x0+bw*gv/100;const gr=ctx.createLinearGradient(0,207,0,220);gr.addColorStop(0,'#fff8e0');gr.addColorStop(1,'#ffb070');ctx.globalAlpha=.85;ctx.fillStyle=gr;ctx.fillRect(xa,208,xb-xa,11);ctx.globalAlpha=1}}ctx.font='900 11px "Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=3;ctx.strokeStyle='#2a0008';const tx=p<10?p.toFixed(1)+'%':Math.ceil(p)+'%';ctx.strokeText(tx,W/2,213);ctx.fillStyle=p<25?'#ffb0a0':'#fff';ctx.fillText(tx,W/2,213);ctx.restore()}catch(_){}};
+ ctx.save();ctx.setTransform(sc,0,0,sc,0,0);{const x0=74,bw=W-148;if(gv-p>.15){const xa=x0+bw*p/100,xb=x0+bw*gv/100;const gr=ctx.createLinearGradient(0,207,0,220);gr.addColorStop(0,'#fff8e0');gr.addColorStop(1,'#ffb070');ctx.globalAlpha=.85;ctx.fillStyle=gr;ctx.fillRect(xa,211,xb-xa,7);ctx.globalAlpha=1}}ctx.font='900 11px "Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=3;ctx.strokeStyle='#2a0008';const tx=p<10?p.toFixed(1)+'%':Math.ceil(p)+'%';ctx.strokeText(tx,W/2,213);ctx.fillStyle=p<25?'#ffb0a0':'#fff';ctx.fillText(tx,W/2,213);ctx.restore()}catch(_){}};
+})();
+;(()=>{// v116 보스 VS 스플래시 (보스 등장 시 리나 vs 보스 대치 화면 · 캔버스 'BOSS 등장' 띠 대체 · 시각 전용)
+const st=document.createElement('style');st.textContent=`.vsx{position:absolute;left:0;right:0;top:300px;height:200px;z-index:34;pointer-events:none;overflow:hidden;animation:vsxO 2.2s ease-in forwards}
+.vsx .vl,.vsx .vr{position:absolute;top:0;bottom:0;width:62%;overflow:hidden}
+.vsx .vl{left:0;clip-path:polygon(0 0,100% 0,78% 100%,0 100%);background:linear-gradient(110deg,#1b3a8a,#3a7ae0 70%,#9fd0ff);animation:vsxL .38s cubic-bezier(.2,.9,.3,1) both}
+.vsx .vr{right:0;clip-path:polygon(22% 0,100% 0,100% 100%,0 100%);background:linear-gradient(250deg,#5a0612,#c01a1a 70%,#ff8a5a);animation:vsxR .38s cubic-bezier(.2,.9,.3,1) both}
+.vsx .vl img{position:absolute;left:-30px;top:-6px;height:215px;filter:drop-shadow(4px 0 0 #fff8)}
+.vsx .vr img{position:absolute;right:30px;bottom:6px;height:170px;filter:drop-shadow(-3px 0 0 #fff8) drop-shadow(0 0 10px #ff3a2a)}
+.vsx .vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:900 64px/1 Maplestory,"Noto Sans KR",sans-serif;font-style:italic;background:linear-gradient(#fffbe0,#ffd23a 50%,#ff7a10);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:2px #4a1400;filter:drop-shadow(0 3px 0 #2a0800) drop-shadow(0 0 12px #ffb02a);animation:vsxV .5s .25s cubic-bezier(.3,1.6,.5,1) both}
+.vsx .sl{position:absolute;left:50%;top:-20px;bottom:-20px;width:6px;background:#fff;transform:translateX(-50%) rotate(12deg);box-shadow:0 0 16px 6px #fff8;animation:vsxS .5s .2s both}
+.vsx .nl,.vsx .nr{position:absolute;bottom:10px;font:900 15px "Noto Sans KR",sans-serif;color:#fff;text-shadow:0 2px 0 #0008,0 0 6px #000}
+.vsx .nl{left:12px;text-align:left}.vsx .nr{right:12px;text-align:right}.vsx small{display:block;font:800 10px "Noto Sans KR";color:#ffe9a0}
+.vsx .bt{position:absolute;right:12px;top:8px;font:900 11px "Noto Sans KR";color:#ffd23a;letter-spacing:2px;text-shadow:0 1px 2px #000}
+.vsx .bd{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,#ffd23a00,#ffd23a,#ffd23a00)}.vsx .bd.t{top:0}.vsx .bd.b{bottom:0}
+@keyframes vsxL{0%{transform:translateX(-100%)}100%{transform:none}}@keyframes vsxR{0%{transform:translateX(100%)}100%{transform:none}}
+@keyframes vsxV{0%{opacity:0;transform:translate(-50%,-50%) scale(3)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes vsxS{0%{opacity:0;height:0}40%{opacity:1}100%{opacity:.9}}
+@keyframes vsxO{0%,80%{opacity:1}100%{opacity:0;transform:scale(1.05)}}`;document.head.appendChild(st);
+let lastB=null;G.vsShow=bo=>{const b=document.getElementById('battle');if(!b||!bo)return;b.querySelectorAll('.vsx').forEach(n=>n.remove());const s=C.S(),job=s.job||0,lim=job>=3?'cut/lina_ult_job3.png':job>=2?'cut/lina_ult_job2.png':'cut/lina_ult.png';
+ const el=document.createElement('div');el.className='vsx';el.innerHTML=`<div class=vl><img src="assets/${lim}"></div><div class=vr><img src="assets/${bo.img}"></div><i class=sl></i><b class=vs>VS</b><i class="bd t"></i><i class="bd b"></i><span class=bt>BOSS BATTLE</span><div class=nl><small>전투력 ${fmt(C.POW())}</small>리나 일행</div><div class=nr><small>HP ${fmt(Math.round(bo.max))}</small>${bo.n||'보스'}</div>`;b.appendChild(el);G._vsT=performance.now()+1900;if(R.ccCd!=null||1)R.ccCd=Math.max(R.ccCd||0,2.3);setTimeout(()=>el.remove(),2250)};
+{const ot=C.tick;C.tick=dt=>{if(G._vsT&&performance.now()<G._vsT)return;return ot(dt)}}
+const of=R.frame;R.frame=dt=>{of(dt);try{if(R.bossT!=null&&R.bossT<.05){const bo=C.alive().find(e=>e.boss&&!e.wb);if(bo&&bo!==lastB&&!G.screen){lastB=bo;R.bossT=1.6;G.vsShow(bo)}}}catch(_){}};
 })();
