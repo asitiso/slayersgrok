@@ -1,0 +1,18 @@
+const puppeteer=require('puppeteer-core');const wd=require('./watchdog');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:30000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>['error','warning'].includes(m.type())&&errs.push(m.text()));p.on('requestfailed',r=>errs.push('RF '+r.url()));
+const U='http://127.0.0.1:18791/index.html';const sh=n=>p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85});const ev=(f,a)=>p.evaluate(f,a);
+await p.goto(U);await ev(()=>localStorage.clear());await p.goto(U);await sl(1500);const stop=await wd(p,'s256');
+await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());const s=G.S();s.tut=9;s.lv=14;s.maxSi=6;s.gold=99999;s.gems=5000;s.comps={gourry:1,xellos:1,borin:1};s.party=['gourry','xellos','borin'];s.bond={x:{kaede:450,pip:80,xellos:160},day:'',n:{}};G.C.buildAllies()});
+await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
+const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
+const kn=()=>ev(()=>{[...document.querySelectorAll('*')].filter(x=>x.textContent.trim().length<16&&/^바로 가기/.test(x.textContent.trim())).forEach(x=>{let p=x;for(let k=0;k<6&&p.parentElement&&p.parentElement!==document.body;k++){p=p.parentElement;if(/공지/.test(p.textContent)&&!p.querySelector('canvas,#nav')){p.remove();return}}});document.querySelectorAll('#notice,.chap,.sty,.unl,.rwpop,.rpop,.modal').forEach(x=>x.remove())});
+await sl(1500);await kn();await ev(()=>{try{menuGo('settings')}catch(e){}});await sl(900);await ev(()=>document.getElementById('gqrow').scrollIntoView({block:'center'}));await sl(300);await sh('1285_settings_quality_auto');
+await ev(()=>document.querySelector('#gqrow [data-gq=save]').click());await sl(500);await ev(()=>document.getElementById('gqrow').scrollIntoView({block:'center'}));await sl(200);await sh('1286_settings_quality_save');
+console.log('save',await ev(()=>[R.dprLvl(),R.qLvl,R.noAdapt,JSON.parse(localStorage.getItem('slayers_set')).gq]));
+await ev(()=>{closeScreen()});await sl(2500);await kn();await sh('1287_battle_save_mode');
+await ev(()=>{menuGo('settings')});await sl(700);await ev(()=>document.querySelector('#gqrow [data-gq=high]').click());await sl(300);
+const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await sl(7000);await cdp.send('Emulation.setCPUThrottlingRate',{rate:1});await ev(()=>document.getElementById('gqrow').scrollIntoView({block:'center'}));await sl(500);await sh('1288_settings_quality_high_throttled');
+console.log('high',await ev(()=>[R.dprLvl(),R.qLvl,R.noAdapt]));
+await ev(()=>document.querySelector('#gqrow [data-gq=auto]').click());await sl(300);console.log('auto',await ev(()=>[R.dprLvl(),R.qLvl,R.noAdapt]));
+await p.reload();await sl(2500);console.log('reload',await ev(()=>[R.qMode,R.dprLvl()]));
+console.log('ERRS',errs);stop();await b.close()})();
