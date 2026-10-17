@@ -8,7 +8,7 @@ const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;a
 await clr();await ev(()=>{const s=G.S();s.maxSi=34;s.autoBoss=false;s.lv=60;G.C.buildAllies();G.C.selectStage(20)});await sl(3000);await clr();
 const meas=async(lab,setup,ms)=>{await ev(setup);await sl(400);
  const r=await ev(ms=>new Promise(res=>{const ft=[];let l=performance.now(),s=l;let lt=0;const ob=new PerformanceObserver(e=>e.getEntries().forEach(x=>lt+=x.duration));try{ob.observe({entryTypes:['longtask']})}catch(_){}
-  window._rw.length=0;const f=t=>{const n=performance.now();ft.push(n-l);l=n;if(n-s<ms)requestAnimationFrame(f);else{ob.disconnect();ft.sort((a,b)=>a-b);const avg=ft.reduce((a,b)=>a+b,0)/ft.length;const w=window._rw.slice().sort((a,b)=>a-b);res({work:+(w.reduce((a,b)=>a+b,0)/Math.max(1,ft.length)).toFixed(2),wp95:+(w[Math.floor(w.length*.95)]||0).toFixed(2),fps:+(1000/avg).toFixed(1),avg:+avg.toFixed(2),p95:+ft[Math.floor(ft.length*.95)].toFixed(1),max:+ft[ft.length-1].toFixed(1),longtask:Math.round(lt),en:G.C.B.enemies.length,P:typeof P!=='undefined'?P.length:-1,dom:document.getElementsByTagName('*').length,heap:Math.round(performance.memory.usedJSHeapSize/1e6)})}};requestAnimationFrame(f)}),ms);
+  window._rw.length=0;const f=t=>{const n=performance.now();ft.push(n-l);l=n;if(n-s<ms)requestAnimationFrame(f);else{ob.disconnect();ft.sort((a,b)=>a-b);const avg=ft.reduce((a,b)=>a+b,0)/ft.length;const w=window._rw.slice().sort((a,b)=>a-b);res({q:R.qLvl||0,dpr:R.dprLvl(),work:+(w.reduce((a,b)=>a+b,0)/Math.max(1,ft.length)).toFixed(2),wp95:+(w[Math.floor(w.length*.95)]||0).toFixed(2),fps:+(1000/avg).toFixed(1),avg:+avg.toFixed(2),p95:+ft[Math.floor(ft.length*.95)].toFixed(1),max:+ft[ft.length-1].toFixed(1),longtask:Math.round(lt),en:G.C.B.enemies.length,P:typeof P!=='undefined'?P.length:-1,dom:document.getElementsByTagName('*').length,heap:Math.round(performance.memory.usedJSHeapSize/1e6)})}};requestAnimationFrame(f)}),ms);
  console.log(lab,JSON.stringify(r));return r};
 const prof=process.env.PROF;const cdp=await p.target().createCDPSession();
 if(prof){await cdp.send('Profiler.enable');await cdp.send('Profiler.setSamplingInterval',{interval:200});await cdp.send('Profiler.start')}
@@ -16,7 +16,7 @@ await cdp.send('Emulation.setCPUThrottlingRate',{rate:+(process.env.THR||4)});co
 await meas('swarm',swarm,8000);
 await ev(()=>{G.C.startBoss()});await sl(2500);await clr();
 await meas('boss',()=>{R.opt.fx=true},8000);
-await meas('idle',()=>{},4000);
+await sl(6000);await meas("boss_settled",()=>{},8000);await ev(()=>{G.C.selectStage(20)});await sl(4000);await meas("swarm_settled",swarm,8000);
 if(prof){const {profile}=await cdp.send('Profiler.stop');const self={};const byId={};profile.nodes.forEach(n=>byId[n.id]=n);const dt=profile.timeDeltas;const cnt={};profile.samples.forEach((id,i)=>cnt[id]=(cnt[id]||0)+(dt[i]||0));
  for(const id in cnt){const n=byId[id].callFrame;const k=(n.functionName||'(anon)')+' '+n.url.split('/').pop()+':'+n.lineNumber+':'+n.columnNumber;self[k]=(self[k]||0)+cnt[id]}
  const tot=Object.values(self).reduce((a,b)=>a+b,0);Object.entries(self).sort((a,b)=>b[1]-a[1]).slice(0,25).forEach(([k,v])=>console.log((v/tot*100).toFixed(1)+'%',k))}

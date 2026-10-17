@@ -6,5 +6,5 @@ await ev(()=>{document.querySelectorAll('.modal,.tut').forEach(x=>x.remove());co
 await sl(1500);const clr=()=>ev(()=>{document.querySelectorAll('#notice,.modal,.sty,.unl,.chap,.bwarn,.vic').forEach(x=>x.remove());G.storyOn=0;G.loadSet().story=0});await clr();
 const until=async(f,ms)=>{for(let i=0;i<ms/500;i++){if(await ev(f))return true;await sl(500)}return false};
 await clr();await ev(()=>{const s=G.S();s.maxSi=48;s.autoBoss=false;s.lv=80;G.C.buildAllies();window._bbx=1;window._bbs=[]});
-for(const si of [2,6,9,13,16,20,23,27,30,34,37,41,44,48]){await ev(si=>{G.C.selectStage(si)},si);await sl(1500);await clr();await ev(()=>G.C.startBoss());await sl(5000);await clr();console.log(si,await ev(()=>(window._bbad||0)+'/'+(window._bbn||0)+JSON.stringify(window._bbs)))}
+for(const si of [2,6,13,20,27,34,41,48]){await ev(si=>{G.C.selectStage(si)},si);await sl(1500);await clr();await ev(()=>G.C.startBoss());await sl(5000);await clr();console.log(si,await ev(()=>(window._bbad||0)+'/'+(window._bbn||0)+JSON.stringify(window._bbs)))}
 console.log('ERRS',errs.slice(0,3));stop();await b.close()})();
