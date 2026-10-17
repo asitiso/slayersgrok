@@ -1,0 +1,4 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://127.0.0.1:18791/index.html');await sl(1500);await p.goto('http://127.0.0.1:18791/index.html');const t0=Date.now();let gone=-1;for(let i=0;i<100;i++){if(!(await p.evaluate(()=>!!document.getElementById('boot')))){gone=Date.now()-t0;break}await sl(50)}
+await sl(1500);await p.screenshot({path:'screenshots/1284_fast_load_after.jpg',type:'jpeg',quality:85});console.log('splash gone after ms',gone,'ERRS',errs);await b.close()})();
