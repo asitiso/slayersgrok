@@ -1354,3 +1354,23 @@ body:is(.hs-sh,#_x.hs_x) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),b
 .hdst{display:flex;gap:6px;margin-bottom:6px}.hdst span{flex:1;background:#0006;border-radius:8px;padding:4px;text-align:center;font-size:10px;color:#ccc}.hdst b{display:block;font-size:14px;color:#fff}
 .hdh{text-align:left;background:#0005;border-radius:10px;padding:6px 9px;margin-top:6px;font-size:11.5px;color:#fff;line-height:1.55}.hdt{font-weight:900;color:#ffd77a;font-size:12px;margin-bottom:2px}
 .hdset{display:flex;align-items:center;gap:6px;flex-wrap:wrap;opacity:.65}.hdset.ok{opacity:1}.hdset b{font-size:11px}.hdset span{display:flex;gap:2px}.hdset img{width:24px;height:24px;object-fit:contain;border-radius:6px;background:#0006}.hdset img.lock{filter:brightness(0) invert(.6);opacity:.85;background:none}.hdset small{font-size:10px;color:#9fe09a}
+
+/* r337 출석 board: CSS stamp, today glow, wider big-reward column, gold claim button. Display only */
+.atgrid{grid-template-columns:repeat(6,1fr) 1.32fr!important}
+.atc.sp .atx{width:34px;height:34px}.atc.sp b{font-size:10px;color:#6a3000}
+.atc.sp:after{content:'';position:absolute;inset:-2px;border-radius:8px;box-shadow:inset 0 0 0 1.5px #fff6,0 0 8px #ffb02a88;pointer-events:none}
+.atc .atok{display:none}
+.atc .atst{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2.5px solid #d4262e;box-shadow:inset 0 0 0 1.5px #fff8,inset 0 0 0 3.5px #d4262e;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-14deg);color:#d4262e;background:radial-gradient(#ffffff40,#ffffff00 70%);z-index:2;opacity:.92}
+.atc .atst i{font-style:normal;font-weight:900;font-size:10.5px;line-height:1;letter-spacing:-.5px}.atc .atst em{font-style:normal;font-weight:900;font-size:6.5px;line-height:1;margin-top:1px;border-top:1px solid #d4262e;padding-top:1px}
+.atc.sp .atst{width:40px;height:40px;margin:-20px 0 0 -20px}
+.atc.now{border:2px solid #ffc030!important;background:linear-gradient(#fff6d0,#ffe08a)!important;box-shadow:0 0 0 1px #8a4a00,0 0 12px #ffb030!important;animation:atnow2 1.2s ease-in-out infinite;z-index:3}
+@keyframes atnow2{0%,100%{box-shadow:0 0 0 1px #8a4a00,0 0 6px #ffb030}50%{box-shadow:0 0 0 1px #8a4a00,0 0 16px #ffc030}}
+.atc .attd{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);font-style:normal;font-size:8px;font-weight:900;color:#fff;background:linear-gradient(#ff5a3a,#c8201a);border:1px solid #5a0a00;border-radius:6px;padding:0 4px;line-height:11px;white-space:nowrap;z-index:4}
+body.tglite .atc.now,body.nofx .atc.now{animation:none}
+#screen.att2 #attC{background:none!important;border:12px solid transparent!important;border-image:url(assets/btn_gold.png) 30 fill/12px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif;font-weight:900;font-size:16px;text-shadow:0 1px 0 #5a3006,0 0 3px #5a3006;padding:2px 0!important;filter:drop-shadow(0 2px 3px #0008);animation:atbtn 1.3s ease-in-out infinite}
+#screen.att2 #attC.off{border-image-source:url(assets/btn_grey.png)!important;text-shadow:0 1px 0 #3a2a1a!important;animation:none}
+@keyframes atbtn{0%,100%{filter:drop-shadow(0 2px 3px #0008) drop-shadow(0 0 2px #ffd25a)}50%{filter:drop-shadow(0 2px 3px #0008) drop-shadow(0 0 12px #ffc030)}}
+body.tglite #screen.att2 #attC,body.nofx #screen.att2 #attC{animation:none}
+#screen.att2 #attC:active{transform:scale(.96)}
+.atc .atst i{position:static;inset:auto;display:block;transform:none;text-shadow:none;color:#d4262e}
+.atc .atst em{display:block}
