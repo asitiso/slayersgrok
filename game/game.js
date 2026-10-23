@@ -4062,3 +4062,32 @@ function deco(){const el=$('#screen'),g=el.querySelector('.ptg');if(!g||g.datase
  const d=el.querySelector('.ptd');if(d){const im=d.querySelector(':scope>img');if(im){const w=document.createElement('div');w.className='ptpd';w.innerHTML=`<img class=ppd2 src="${A}pt_pedestal.png">`;im.replaceWith(w);w.appendChild(im)}
   const l=(p.own||{})[sk]||0,s=d.querySelector('.f>small');if(l&&s)s.insertAdjacentHTML('afterend',`<div class=ptgg><i style="width:max(0px,calc(${(Math.min(1,l/20)).toFixed(3)} * (100% + 12px) - 12px))"></i></div>`)}}
 })();
+;(()=>{/* v246 r295: 낚시터 — 던지기 on btn_green (fs_bobber icon kept), 챔질! btn_red (existing pulse kept), waiting / no tries → btn_grey; tries bar → thin sld_track_s/sld_fill_s gauge with fs_bobber pips + label above (real tries left); 어종 도감 + 요리 cards on panel_stage + gem; fish slots on hc_statplate tiles around the existing fs_plaque ring (rarity glow, locked dimmed); cook rows keep fs_board dish plates; 요리 btn_gold / btn_grey; miss-result 💨 → dimmed fs_bobber. Visual only; static CSS, DOM touch only when the screen re-renders */
+const X=':is(#_f1,#_f2,div):is(#_f3,#_f4,div)',Y=':is(#_f5,#_f6,span):is(#_f7,#_f8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+B=(f,c,w=9)=>`background:none!important;border:${w}px solid transparent!important;border-image:url(${A}${f}) 30 fill/${w}px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:${ol(c)}!important;filter:drop-shadow(0 2px 2px #0007)`,G2=`border-image-source:url(${A}btn_grey.png)!important;color:#eee!important;text-shadow:${ol('#2a2a2a')}!important;opacity:1!important`,
+K='#screen.fsx .sbody>.card'+X,T='#screen.fsx .fcol>.fcc'+X,st=document.createElement('style');
+st.textContent=`#screen.fsx #fgo${Y}{${B('btn_green.png','#0b3510',10)};width:220px!important;padding:6px 10px!important;font-size:19px!important;line-height:1.2}
+#screen.fsx #fgo.hot${Y}{border-image-source:url(${A}btn_red.png)!important;text-shadow:${ol('#4a0606')}!important}
+#screen.fsx #fgo.off${Y}{${G2}}#screen.fsx #fgo${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8)!important}
+#screen.fsx .fgauge .ch${X}{height:0!important;box-sizing:content-box;border:6px solid transparent!important;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch!important;background:none!important;border-radius:0!important;box-shadow:none!important;margin-top:24px}
+#screen.fsx .fgauge .ch${X}>i{left:-6px!important;top:-6px!important;bottom:auto!important;height:0!important;box-sizing:content-box;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch;background:none!important;border-radius:0!important;box-shadow:none!important}
+#screen.fsx .fgauge .ch${X}>span{inset:auto 0 auto 0!important;top:-30px!important;height:22px}
+#screen.fsx .fgauge .rl{margin-top:2px}
+${K}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px!important;position:relative;margin-top:28px!important;overflow:visible!important}
+${K}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
+${K} .ttl{text-shadow:0 2px 2px #000}${K} small{color:#efe4cc;text-shadow:0 1px 2px #000}
+#screen.fsx .fcol{gap:3px!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+${T}{background:none!important;border:solid transparent!important;border-width:8px 8px 10px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/8px 8px 10px stretch!important;border-radius:0!important;padding:0 0 5px!important;filter:drop-shadow(0 0 2px var(--c)) drop-shadow(0 2px 2px #0008)}
+${T} .fpw{zoom:.74;margin:0 auto!important}${T} small{display:block;font-size:8.5px!important;line-height:1.2}${T} b{line-height:1.25}
+${T} b{color:#fff;text-shadow:0 1px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}${T} small{color:#ffe7a8;text-shadow:0 1px 2px #000;white-space:nowrap}
+${T}.lock{filter:grayscale(.5) brightness(.75) drop-shadow(0 2px 2px #0008)!important}${T}.lock b{color:#bfb6a4}
+#screen.fsx .ckr{border-bottom:1px solid #ffffff1a!important}#screen.fsx .ckr:last-child{border-bottom:0!important}
+#screen.fsx .ckr .ckb${Y}{${B('btn_gold.png','#5a3006')};padding:2px 8px!important;font-size:14px!important}
+#screen.fsx .ckr .ckb.off${Y}{${G2}}#screen.fsx .ckr .ckb${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8)!important}
+#screen.fsx .catch img.fmi{width:54px;height:54px;object-fit:contain;filter:grayscale(1) brightness(.8);opacity:.8;display:block;margin:0 auto}
+body.tglite ${T},body.tglite ${T}.lock{filter:none!important}`;document.head.appendChild(st);
+const LIM=5,dec=()=>{if(G.screen!='fish')return;const sb=$('#screen');
+ const i=sb.querySelector('.fgauge .ch>i');if(i&&!i.dataset.v246){i.dataset.v246=1;const f=C.S().fish||{n:0},fr=Math.max(0,LIM-(f.n||0))/LIM;i.style.width=`max(0px,calc(${fr.toFixed(3)} * (100% + 12px) - 12px))`;if(!fr)i.style.display='none'}
+ const m=sb.querySelector('.catch span.i');if(m&&m.textContent.includes('💨'))m.outerHTML=`<img class="i fmi" src="${A}fs_bobber.png">`};
+let busy=0;new MutationObserver(()=>{if(busy)return;busy=1;try{dec()}catch(_){}busy=0}).observe(document.getElementById('screen')||document.body,{childList:true});
+const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
