@@ -3710,3 +3710,15 @@ const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments)
 img.ppi{height:16px;width:auto;vertical-align:-3px;margin:0 2px}
 #screen img.ci.rlf{height:15px;width:auto;vertical-align:-3px;filter:drop-shadow(0 1px 1px #0008)}
 #screen img.ci.frp{height:14px;width:14px;vertical-align:-2px}`;document.head.appendChild(st)})();
+/* v224: quick icons — ⏱→ui_timer (영지 timers, 상점 refresh), 🧺→bd_harvest (전체 수확), ⚡→ui_bolt (일괄 소탕/전체 소탕/일괄 강화), plus existing-art leftovers 🔒→sk_lock, 💎→it2_gem (shop), 🗺→ic_map, 🎣→fs_bobber. Per-screen text-node swap (only listed glyphs on listed screens; values/handlers untouched). Preset slot number moved off the pedestal. Visual only. */
+(function(){const IM={'⏱':'ui_timer','🧺':'bd_harvest','⚡':'ui_bolt','🔒':'sk_lock','💎':'it2_gem','🗺':'ic_map','🎣':'fs_bobber'};
+const SC={base:'⏱🧺🔒',shop:'⏱💎',dungeon:'⚡🔒',enhance:'⚡',gallery:'🔒',explore:'🔒',map:'🗺',fish:'🎣'};
+const st=document.createElement('style');st.textContent=`#screen img.qic{height:1.2em;width:auto;vertical-align:-.25em;margin:0 .12em;filter:drop-shadow(0 1px 1px #0009);pointer-events:none}
+#screen img.qic.q_ui_bolt{height:1.3em}#screen img.qic.q_bd_harvest{height:1.35em;vertical-align:-.32em}
+#screen .pset .psl>b{position:absolute!important;left:-9px;top:-10px;z-index:3!important;min-width:20px;height:20px;line-height:20px;border-radius:10px;background:radial-gradient(#5a3a12,#2a1a08);border:1.5px solid #d8a84a;font-size:12px!important;text-align:center;box-shadow:0 1px 3px #000a}`;document.head.appendChild(st);
+let busy=0;const sw=()=>{const set=SC[G.screen];if(!set)return;const root=document.getElementById('screen');if(!root)return;const re=new RegExp('['+[...set].join('')+']\\uFE0F?','u');
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>re.test(n.nodeValue)&&!n.parentNode.closest('script,style,textarea,input')?1:3});const ns=[];while(w.nextNode())ns.push(w.currentNode);
+ busy=1;ns.forEach(n=>{const f=document.createDocumentFragment();n.nodeValue.split(new RegExp('(['+[...set].join('')+']\\uFE0F?)','u')).forEach(p=>{const k=p.replace('\uFE0F','');if(IM[k]&&set.includes(k)){const i=document.createElement('img');i.className='qic q_'+IM[k];i.src='assets/'+IM[k]+'.png';i.alt='';f.appendChild(i)}else if(p)f.appendChild(document.createTextNode(p))});n.parentNode.replaceChild(f,n)});busy=0};
+let q=0;const kick=()=>{if(q||busy)return;q=1;requestAnimationFrame(()=>{q=0;try{sw()}catch(_){}})};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{sw()}catch(_){}return r};
+const s=document.getElementById('screen');if(s)new MutationObserver(()=>{if(SC[G.screen])kick()}).observe(s,{childList:true,subtree:true,characterData:true});G.qicSwap=sw})();
