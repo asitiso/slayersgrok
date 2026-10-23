@@ -3072,7 +3072,7 @@ const clear=()=>{if(dirty&&lx){lx.setTransform(1,0,0,1,0,0);lx.clearRect(0,0,lay
 R.ccFrame=(dt,W,H)=>{try{if(C.B.boss||C.B.wb)return false;fr=fr||img('cutin_frame.png');if(!fr.complete||!fr.naturalWidth)return false;const c=R.ccut,cx=ensure(W,H);if(!cx)return false;
  c.t+=dt;const t=c.t;if(t>=1){clear();return true}
  const ein=Math.min(1,t/.16),eo=t>.8?(1-t)/.2:1,a=Math.max(0,Math.min(ein,eo)),k=BW/FW,h=FH*k,e=1-Math.pow(1-ein,3),x0=8-(1-e)*(BW+20)+(t>.8?-(t-.8)/.2*50:0),y0=Y0;
- cx.clearRect(0,0,W,H);dirty=1;{const bt=document.getElementById('battle');if(!bt.classList.contains('ccon'))bt.classList.add('ccon')};cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
+ cx.clearRect(0,0,W,H);dirty=1;{const bt=document.getElementById('battle');if(!bt.classList.contains('ccon'))bt.classList.add('ccon')};if(R._ccUlt&&R._ccUlt(cx,c,t,a,W,H))return true;cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
  // bust inside arch (clip: semicircle top + rect)
  const pi=img(c.img);
  cx.save();cx.beginPath();cx.moveTo(45,FH);cx.lineTo(45,140);cx.ellipse(134,140,89,86,0,Math.PI,2*Math.PI);cx.lineTo(223,FH);cx.closePath();cx.clip();
@@ -4288,4 +4288,25 @@ G.bump=(el,k)=>{if(!el)return;if(!el.animate)return G.replay(el,k);try{
  if(k==='gbump'){if(el._lp)return;/* CSS: #cGold.lpop rule outranked .gbump once lpop was on, so gbmp only showed before the first coin pulse */run(el,'gb',GB,{duration:250});return}
  G.replay(el,k)}catch(_){G.replay(el,k)}};
 const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);const P=G._post;if(P)for(let i=0;i<P.length;i++){try{P[i]()}catch(_){}}return r};
+})();
+
+;(()=>{/* r315: companion ult cut-in art. If assets/cut/<k>_ult.png is listed in ULT and decoded, the field cut-in (ccFrame, non-boss) draws a Lina-style tilted band with the full art sliding in; otherwise the arch-banner portrait as before. Boss fights keep the slim strip. Off under low graphics / fx off (portrait banner), and R.opt.cut=off already suppresses the cut-in. Art decoded at idle. Display only. */
+const ULT={gourry:1},IM={};const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
+const low=()=>document.body.classList.contains('tglite')||document.body.classList.contains('nofx')||(R.opt&&R.opt.fx===false);
+const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)i._ok=1})}return i};
+const pre=Object.keys(ULT);const step=()=>{const k=pre.shift();if(!k)return;ric(()=>{get(k);setTimeout(step,400)},{timeout:4000})};setTimeout(step,3000);
+G._ultArt=()=>Object.keys(IM).filter(k=>IM[k]._ok);
+const FN1='bold 14px Maplestory,"Noto Sans KR",sans-serif',FN2='900 28px Maplestory,"Noto Sans KR",sans-serif';
+R._ccUlt=(cx,c,t,a,W,H)=>{if(!c||!c.k||!ULT[c.k]||low())return false;const im=get(c.k);if(!im._ok||!im.naturalWidth)return false;
+ const e=1-Math.pow(1-Math.min(1,t/.18),3),cy=262,bh=96,h2=bh*1.8,w2=h2*im.naturalWidth/im.naturalHeight;
+ cx.save();cx.globalAlpha=a;cx.translate(0,cy);cx.rotate(-.09);
+ if(!c._g){const g=cx.createLinearGradient(0,-bh/2,0,bh/2);g.addColorStop(0,'#0a1638');g.addColorStop(.5,'#1d3c86');g.addColorStop(1,'#0a1638');c._g=g}
+ cx.fillStyle=c._g;cx.fillRect(-40,-bh/2,W+80,bh);
+ cx.strokeStyle='rgba(255,214,120,.95)';cx.lineWidth=3;cx.beginPath();cx.moveTo(-40,-bh/2);cx.lineTo(W+40,-bh/2);cx.moveTo(-40,bh/2);cx.lineTo(W+40,bh/2);cx.stroke();
+ cx.strokeStyle='rgba(255,226,150,.32)';cx.lineWidth=2;cx.beginPath();for(let i=0;i<12;i++){const yy=((i*29)%bh)-bh/2+4,xx=W-((t*1300+i*97)%(W+200));cx.moveTo(xx,yy);cx.lineTo(xx+110,yy)}cx.stroke();
+ const sx=-w2+e*(w2-36)+t*12;cx.save();cx.beginPath();cx.rect(-40,-bh/2-90,W+80,bh+90);cx.clip();cx.drawImage(im,sx,bh/2-h2+6,w2,h2);cx.restore();
+ const tx=W-14+(1-Math.min(1,Math.max(0,(t-.1)/.2)))*120;cx.textAlign='right';cx.textBaseline='alphabetic';
+ cx.font=FN1;cx.lineWidth=4;cx.strokeStyle='#050a1c';cx.strokeText(c.n,tx,-8);cx.fillStyle=c.rc||'#ffd77a';cx.fillText(c.n,tx,-8);
+ cx.font=FN2;cx.lineWidth=7;cx.strokeStyle='#050a1c';const sk=(c.sk||'')+'!';cx.strokeText(sk,tx,24,W*.55);if(!c._tg){const g=cx.createLinearGradient(0,0,0,26);g.addColorStop(0,'#fff6c8');g.addColorStop(1,'#ffb02e');c._tg=g}cx.fillStyle=c._tg;cx.fillText(sk,tx,24,W*.55);
+ cx.restore();return true};
 })();
