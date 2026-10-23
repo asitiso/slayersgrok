@@ -4457,7 +4457,8 @@ const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments)
 ;(()=>{/* r340: 가방 detail card on 재화/소모품/장비 tabs (selected item; existing item text / gear fields only; defaults to first visible item) */
 const OWN=s=>({it2_gold:s.gold,it2_gem:s.gems,it2_exp:s.orbs,it2_ticket:s.tickets||0,it2_hp:s.pot||0,it2_mp:s.mpot||0,it2_stone:s.stone||0,it3_dungeonkey:s.dkey||0,it3_guildcoin:s.gcoin||0,it3_arenatoken:s.atoken||0,it3_mileagestar:s.mile||0});
 const chips=L=>L.map(x=>`<span>${x[1]}</span>`).join('');
-const det=(sb,t)=>{sb.querySelectorAll('.bgdt').forEach(x=>x.remove());const s=C.S(),cards=[...sb.querySelectorAll(':scope>.card')];let h='';
+const det=(sb,t0)=>{sb.querySelectorAll('.bgdt').forEach(x=>x.remove());const s=C.S(),cards=[...sb.querySelectorAll(':scope>.card')];let h='';const t=t0==0&&G.bgAK=='g'?3:t0;/* r341: 전체 tab -> item or gear, whichever was tapped last */
+ cards.forEach(c=>c.querySelectorAll('.bgsel').forEach(b=>b.classList.remove('bgsel')));
  if(t==3){const gs=Object.values(s.gear||{}).filter(Boolean);if(!gs.length)return;const i=Math.min(G.bgSelG||0,gs.length-1),x=gs[i],R=D.RAR[x.r]||{},SL=D.SLOTS.find(q=>q.k==x.slot)||{};
   [...cards[1].querySelectorAll('.bagg .bi')].forEach((b,j)=>b.classList.toggle('bgsel',j==i));
   h=`<div class=bgdh><div class=bgdi style="--rc:${R.c}"><img src="${A}${SL.img}"></div><div class=f><b style="color:${R.c}">${x.name}</b><small><em style="background:${R.c}">${R.n}</em>${SL.n||''} · Lv.${x.lv}${x.en?` · 강화 +${x.en}`:''}</small></div></div>
@@ -4469,10 +4470,10 @@ const det=(sb,t)=>{sb.querySelectorAll('.bgdt').forEach(x=>x.remove());const s=C
   h=`<div class=bgdh><div class=bgdi><img src="${A}${k}.png"></div><div class=f><b>${nm}</b><small>보유 <i>${fmt(own==null?0:own)}</i></small></div></div>${d?`<p class=bgds>${d[1]}</p><div class=bgsec><small>사용처</small><div>${chips(d[2])}</div></div><div class=bgsec><small>획득처</small><div>${chips(d[3])}</div></div><span class=bggo data-ii=${k}>바로 가기 ▶</span>`:''}`}
  const c=document.createElement('div');c.className='card bgdt';c.innerHTML=h;(t==3?cards[1]:cards[0]).after(c);
  const g=c.querySelector('.bggo');if(g)g.onclick=()=>{if(g.dataset.ii)G.itemInfo(g.dataset.ii);else{closeScreen();menuGo(g.dataset.go)}}};
-const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='bag')return r;const sb=document.querySelector('#screen .sbody'),t=G.bgT||0;if(!sb||!sb.querySelector('.bgtab')||t==0||sb.querySelector('.bgdt'))return r;
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='bag')return r;const sb=document.querySelector('#screen .sbody'),t=G.bgT||0;if(!sb||!sb.querySelector('.bgtab')||sb.querySelector('.bgdt'))return r;
  const cards=[...sb.querySelectorAll(':scope>.card')];
- if(t==3)cards[1].querySelectorAll('.bagg .bi').forEach((b,j)=>b.onclick=()=>{G.bgSelG=j;det(sb,3)});
- else cards[0].querySelectorAll('.bagg .bi').forEach(b=>{const k=((b.querySelector('img')||{}).getAttribute?.('src')||'').match(/(it\d_[a-z]+)\.png/)?.[1];b.onclick=()=>{G.bgSel=k;det(sb,t)}});
+ if(t==3||t==0)cards[1].querySelectorAll('.bagg .bi').forEach((b,j)=>b.onclick=()=>{G.bgSelG=j;G.bgAK='g';det(sb,t)});
+ if(t!=3)cards[0].querySelectorAll('.bagg .bi').forEach(b=>{const k=((b.querySelector('img')||{}).getAttribute?.('src')||'').match(/(it\d_[a-z]+)\.png/)?.[1];b.onclick=()=>{G.bgSel=k;G.bgAK='i';det(sb,t)}});
  det(sb,t)}catch(e){console.warn(e)}return r}})();
 ;(()=>{/* r340: 동료 소환 tabs (소환 / 선택 소환 / 확률 정보) + cards; display only, existing data and actions */
 const sum=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.sutab'))return;const ch=[...sb.children],rc=ch.find(c=>c.classList.contains('card'));if(!rc||!sb.querySelector('.sumbtns'))return;
