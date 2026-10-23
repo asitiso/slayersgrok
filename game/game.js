@@ -4023,3 +4023,42 @@ ${R}:nth-child(${n}) .rn::before{content:'';position:absolute;inset:0;background
 #screen .rkst>.rkp .rno::before{content:'';position:absolute;inset:0;background:url(${A}ac_medal.png) center/contain no-repeat;z-index:-1;filter:drop-shadow(0 2px 2px #0009)}
 ${[2,3].map(n=>`#screen .rkst>.rkp:nth-of-type(${n}) .rno::before{filter:${MF[n-1]} drop-shadow(0 2px 2px #0009)}`).join('\n')}
 #screen .rkst>.rttl{left:8px!important;transform:none!important;top:8px!important}#screen .rkst>.rkp:nth-of-type(1) .rav::after{content:'';position:absolute;left:50%;top:-26px;width:46px;height:33px;margin-left:-23px;background:url(${A}tt_crown.png) center/contain no-repeat;filter:drop-shadow(0 2px 2px #0009);z-index:3;pointer-events:none}`;document.head.appendChild(st)})();
+;(()=>{/* v245 r294: 펫 — garden name plate + header chips on hc_statplate; 펫 부화 / 펫 보너스 / detail cards on panel_stage + gem; pet tiles on hc_statplate with static rarity glow, equipped tile gold glow + pt_flag, selected tile outline, locked dimmed; bonus header stat icons (st_atk / st_hp / it2_gold) instead of words-only; detail pet stands on pt_pedestal; thin Lv gauge (real Lv / PMAX); 부화 btn_gold, 장착 btn_green, Lv↑ btn_gold, off → btn_grey. Visual only, static, no per-frame work */
+const X=':is(#_p1,#_p2,div):is(#_p3,#_p4,div)',Y=':is(#_p5,#_p6,span):is(#_p7,#_p8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+B=(f,c,w=9)=>`background:none!important;border:${w}px solid transparent!important;border-image:url(${A}${f}) 30 fill/${w}px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:${ol(c)}!important;filter:drop-shadow(0 2px 2px #0007)`,G2=`border-image-source:url(${A}btn_grey.png)!important;color:#eee!important;text-shadow:${ol('#2a2a2a')}!important`,
+SP=(v,h)=>`background:none!important;border:solid transparent!important;border-width:${v}px ${h}px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/${v}px ${h}px stretch!important;border-radius:0!important;box-shadow:none!important`,
+PS=`background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px!important;position:relative;margin-top:26px!important;overflow:visible!important`,
+GEM=`content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none`,
+K='#screen .sbody>:is(.pth,.ptd,.ptbn).card'+X,T='#screen .ptg .ptc'+X,st=document.createElement('style');
+st.textContent=`#screen .ptst .pnm${X}{${SP(10,12)};padding:1px 8px 2px!important;filter:drop-shadow(0 3px 3px #0009)}
+#screen .ptst .pnm${X} b{color:#ffe08a;text-shadow:0 2px 2px #000}#screen .ptst .pnm${X} small{color:#efe4cc;text-shadow:0 1px 2px #000}
+#screen .ptst .phs span${Y}{${SP(6,8)};padding:0 4px!important;color:#fff;text-shadow:0 1px 2px #000;filter:drop-shadow(0 2px 2px #0008)}
+${K}{${PS}}${K}::after{${GEM}}${K} b{text-shadow:0 2px 2px #000}${K} small{color:#efe4cc!important;opacity:1!important;text-shadow:0 1px 2px #000}
+#screen .ptbn .ttl small{display:flex;gap:6px;align-items:center}#screen .ptbn .ttl small img{height:15px;width:15px;object-fit:contain;vertical-align:-3px;margin-right:1px;filter:drop-shadow(0 1px 1px #000)}
+${T}{${SP(9,10)};border-width:9px 10px 12px!important;padding:2px 0 4px!important;filter:drop-shadow(0 0 2px var(--rc)) drop-shadow(0 2px 2px #0008)}
+${T} b{color:#fff;text-shadow:0 1px 2px #000}${T} small{color:#ffe7a8!important;text-shadow:0 1px 2px #000}
+${T}.lock{filter:grayscale(.6) brightness(.72) drop-shadow(0 2px 2px #0008)}${T}.lock small{color:#cfc6b4!important}
+${T}.ptsel{filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 2px var(--rc)) drop-shadow(0 2px 2px #0008)}
+${T}.pton{filter:drop-shadow(0 0 4px #ffd77a) drop-shadow(0 0 3px #ffb03a) drop-shadow(0 2px 2px #0008)}
+${T}.pton::after{content:'';position:absolute;right:-8px;top:-14px;width:22px;height:32px;background:url(${A}pt_flag.png) center/contain no-repeat;filter:drop-shadow(0 2px 2px #000);pointer-events:none}
+${T} .pteq{background:linear-gradient(#ffe48a,#e0a020)!important;color:#4a2600!important;border:1px solid #6a3a00!important;border-radius:8px!important;font-style:normal;font-weight:900;text-shadow:none!important;padding:0 5px!important}
+#screen .ptd .ptpd{position:relative;width:112px;height:120px;flex:none}
+#screen .ptd .ptpd>img.ppd2{position:absolute;left:50%;bottom:-4px;width:108px;margin-left:-54px;filter:drop-shadow(0 4px 4px #0009)}
+#screen .ptd .ptpd>img:not(.ppd2){position:absolute;left:6px;top:-6px;width:100px!important;height:100px!important;z-index:1}
+#screen .ptd .ptgg{height:0;box-sizing:content-box;border:6px solid transparent;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch;position:relative;margin:4px 0 2px}
+#screen .ptd .ptgg>i{position:absolute;left:-6px;top:-6px;height:0;max-width:100%;box-sizing:content-box;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch}
+#screen .pth #ptHatch${Y}{${B('btn_gold.png','#5a3006',10)};padding:4px 10px!important;font-size:15px!important;white-space:nowrap}
+#screen .ptd #ptEq${Y}{${B('btn_green.png','#0b3510')};padding:3px 6px!important;font-size:14px!important;line-height:1.2!important;white-space:nowrap;min-height:0!important;height:auto!important}
+#screen .ptd #ptUp${Y}{${B('btn_gold.png','#5a3006')};padding:3px 6px!important;font-size:14px!important;line-height:1.2!important;white-space:nowrap;min-height:0!important;height:auto!important}
+#screen :is(#ptHatch,#ptEq,#ptUp).off${Y}{${G2}}
+#screen :is(#ptHatch,#ptEq,#ptUp)${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8)!important}
+#screen .ptd :is(#ptEq,#ptUp)${Y}{display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:2px}#screen .ptb .pill img.ci{height:15px!important;width:15px!important;margin:0!important}
+body.tglite ${T},body.tglite ${T}.pton,body.tglite ${T}.ptsel{filter:none}body.tglite #screen .ptst .pnm${X}{filter:none}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='pet')deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen'),g=el.querySelector('.ptg');if(!g||g.dataset.v245)return;g.dataset.v245=1;const p=C.S().pet||{};
+ const bn=g.closest('.card');bn&&bn.classList.add('ptbn');const sm=bn&&bn.querySelector('.ttl small');
+ if(sm)sm.innerHTML=sm.innerHTML.replace('공격',`<img src="${A}st_atk.png">공격`).replace('체력',`<img src="${A}st_hp.png">체력`).replace('골드',`<img src="${A}it2_gold.png">골드`).replace(/ · /g,' ');
+ const sk=G.ptSel;g.querySelectorAll('.ptc[data-pk]').forEach(c=>{if(c.dataset.pk==sk)c.classList.add('ptsel')});
+ const d=el.querySelector('.ptd');if(d){const im=d.querySelector(':scope>img');if(im){const w=document.createElement('div');w.className='ptpd';w.innerHTML=`<img class=ppd2 src="${A}pt_pedestal.png">`;im.replaceWith(w);w.appendChild(im)}
+  const l=(p.own||{})[sk]||0,s=d.querySelector('.f>small');if(l&&s)s.insertAdjacentHTML('afterend',`<div class=ptgg><i style="width:max(0px,calc(${(Math.min(1,l/20)).toFixed(3)} * (100% + 12px) - 12px))"></i></div>`)}}
+})();
