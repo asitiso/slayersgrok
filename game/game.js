@@ -1923,7 +1923,7 @@ R.cmbDom=1;const st=document.createElement('style');st.textContent=`.cmbx{positi
 let el=null,lv=0,pop=0;const TC=[['#fff6c0','#ff8a2a','#ffd77a','0px'],['#fffbe0','#ff4a2a','#ffd77a','6px'],['#f6e0ff','#b04aff','#e0b0ff','10px'],['#e0fbff','#2ad0ff','#9ff0ff','14px']];
 const of=R.frame;R.frame=dt=>{of(dt);try{const [cb]=R._cmbGet?R._cmbGet():[0];const b=document.getElementById('battle');const show=cb>=5&&!G.screen&&!G._fin&&!(R.cut&&R.cut.t<1.25)&&!document.querySelector('.vsx,.vic');if(!show){if(el){el.remove();el=null}lv=0;return}
  if(!el){el=document.createElement('div');el.className='cmbx';el.innerHTML='<b></b><small></small>';b.appendChild(el)}if(cb!==lv){if(cb>lv)pop=1;lv=cb;const t=cb>=100?3:cb>=50?2:cb>=20?1:0,c=TC[t];el.style.setProperty('--c0',c[0]);el.style.setProperty('--c1',c[1]);el.style.setProperty('--lc',c[2]);el.style.setProperty('--gl',c[3]);el.firstChild.textContent=cb;el.lastChild.textContent=t==3?'LEGEND COMBO':t==2?'GREAT COMBO':t==1?'NICE COMBO':'COMBO'}
- pop=Math.max(0,pop-dt*6);el.style.transform=`translate(-50%,-70%) scale(${1+pop*.25})`}catch(_){}};
+ if(pop>0||el._pp){pop=Math.max(0,pop-dt*6);el.style.transform=`translate(-50%,-70%) scale(${1+pop*.25})`;el._pp=pop>0}/* r298: no per-frame style write once the pop settles */}catch(_){}};
 })();
 /* v123 소환 연출 (마법진 → 등급색 구슬 강림 → 전설 이상 단독 등장 · 탭으로 건너뛰기, 시각 전용) */
 ;(()=>{const oc=C.summon;C.summon=n=>{const r=oc(n);G._sumGot=r;return r};
@@ -4173,4 +4173,24 @@ function dStar(){const el=$('#screen'),s=C.S(),k=G.stSel,c=D.COMPS.find(x=>x.k==
  for(let n=1;n<=mx;n++){const m=base*(1+.1*(n-1)),cl=n<st||(n==st&&aw)?'sok':n==st?'scur':'sno';rows+=`<div class=${cl}><span>${SG.repeat(n)}</span><em>공격 ×${m.toFixed(2)}</em><u>${n==1?'기본':`체력 +${(n-1)*10}% · 조각 ${10*(n-1)}`}</u></div>`}
  const b6=base*(1+.1*(mx-1));for(let a=1;a<=AM;a++){const m=b6*(1+.15*a),cl=a<aw?'sok':a==aw?'scur':'sno';rows+=`<div class=${cl}><span class=aw>각성 ${'◆'.repeat(a)}</span><em>공격 ×${m.toFixed(2)}</em><u>조각 ${60+40*(a-1)} · 골드 ${fmt(Math.floor(5000*Math.pow(3,a-1)))}</u></div>`}
  c2.insertAdjacentHTML('afterend',`<div class=card><div class=ttl>성급 효과 <small>현재 ${SG}${st}${aw?' · 각성 '+'◆'.repeat(aw):''}</small></div><div class=slad>${rows}</div></div>`)}
+})();
+
+;(()=>{/* v249 r298 battle readability (visual only; battle logic / sim untouched):
+ (1) boss WARNING queued until the WAVE CLEAR ribbon has lifted - the ribbon keeps its readable first ~0.6s, then lifts (.out .2s) and the WARNING plays its full timeline afterwards (all of its own timers shifted by the same delay);
+ (2) damage-number clamp line = bottom of the title / wave pill / buff row HUD, re-measured once a second (render.js lanes + cap + pooled records);
+ (3) NICE COMBO in a fixed one-line slot bottom-right of the field (above the fever gauge, right of the 방치보상 chest, below the heroes' feet), hidden while the boss-clear chest moment or the boss duo banner is up */
+const st=document.createElement('style');st.textContent=`
+.bwarn.bwq{visibility:hidden}.bwarn.bwq,.bwarn.bwq *{animation-play-state:paused!important}
+#battle .cmbx:is(#_a,#_b,div):is(#_c,#_d,div){left:308px;top:612px;display:flex;align-items:baseline;justify-content:center;gap:5px;transform-origin:50% 70%}/* centre 308 keeps the box inside x 238-378 (right of the chest 165-225, left of the screen edge) for the longest LEGEND COMBO label */
+#battle .cmbx b:is(#_a,#_b,b):is(#_c,#_d,b){display:inline-block;font-size:26px}
+#battle .cmbx small:is(#_a,#_b,small):is(#_c,#_d,small){display:inline-block;margin:0;font-size:12px}
+#battle.cmbh .cmbx{opacity:0;transition:opacity .12s}/* class toggled 4x/s (no :has() on body = no document-wide style invalidation) */
+body.tglite #battle .cmbx b{filter:none}`;document.head.appendChild(st);
+document.addEventListener('animationstart',e=>{const t=e.target;if(e.animationName==='wrib'&&t.classList&&t.classList.contains('wrib'))t._t0=performance.now()},true);
+const ob=bossWarn;bossWarn=function(i){let rb=null,dl=0;try{rb=document.querySelector('#battle .wvb.wrib');if(rb&&!rb.classList.contains('out')){const age=rb._t0?performance.now()-rb._t0:0;dl=Math.max(0,600-age)+200}}catch(_){}
+ const r=ob.apply(this,arguments);if(!dl)return r;
+ try{const d=document.querySelector('.bwarn');if(!d||d._q)return r;d._q=1;d.classList.add('bwq');const cl=d.classList,ca=cl.add.bind(cl),rm=d.remove.bind(d);
+  const rv=performance.now()+dl;let oT=0,oH=0,od=0;const doOut=()=>{od=1;ca('out');setTimeout(rm,420)};cl.add=(...a)=>{if(a.indexOf('out')<0)return ca(...a);if(od)return;/* the WARNING keeps its full 1.5s on screen after the queue (0.9s minimum when the VS splash hands off), then its own out(.38s)/remove */const now=performance.now(),tg=Math.max(now,rv+(document.querySelector('#battle .vsx')?900:1500));if(oT&&tg>=oT)return;clearTimeout(oH);oT=tg;oH=setTimeout(doOut,tg-now)};d.remove=()=>{};setTimeout(rm,dl+3200)/* safety */;
+  setTimeout(()=>{if(rb.isConnected)rb.classList.add('out')},Math.max(0,dl-200));setTimeout(()=>cl.remove('bwq'),dl);R._bwQ=(R._bwQ||0)+1}catch(_){}return r};
+let mt=0,ht=0;const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{ht-=dt||0;if(ht<=0){ht=.25;const b=document.getElementById('battle');if(b){const h=!!document.querySelector('.bchest')||(!!C.B.boss&&!!b.querySelector('.combo.duo'));if(h!==b._cmbh){b._cmbh=h;b.classList.toggle('cmbh',h)}}}mt-=dt||0;if(mt<=0){mt=3;R._lite=document.body.classList.contains('tglite')||document.body.classList.contains('nofx');const b=document.getElementById('battle');if(b&&!G.screen){const c0=b.getBoundingClientRect().top;/* battle box, not #cv (the canvas is translated while the screen shakes) */let m=0;for(const q of ['#stagebar','.bossrow','#evrow']){const e=b.querySelector(q);if(!e)continue;const rr=e.getBoundingClientRect();if(rr.height>2&&rr.bottom-c0>m)m=rr.bottom-c0}if(m>0)R._dtTop=Math.min(300,m+6)}}}catch(_){}return r};
 })();
