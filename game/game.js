@@ -3214,3 +3214,32 @@ const pump=()=>{if(busy||!q.length)return;busy=1;let w=0;const go=()=>{if((G.scr
 R.questToast=it=>{if(q.length>=3)return;q.push(it);pump()};R._qsq=()=>{q.length=0;clearTimeout(endT);if(cur){cur.remove();cur=null}busy=0;const b=bat();b&&b.classList.remove('qson')};
 setInterval(()=>{try{if(!C.S)return;const l=list(),ids=new Set(l.map(x=>x.id));if(!seen){seen=ids;return}l.forEach(x=>{if(!seen.has(x.id))R.questToast(x)});seen=ids}catch(_){}},500);
 const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&((!C.B.boss&&R.ccut&&R.ccut.t<.5)||(R.cut&&R.cut.t<.5))){clearTimeout(endT);fin()}if(cur&&cur.classList.contains('bgone')&&!G._fin&&!document.querySelector('.vic,.bsht'))cur.classList.remove('bgone')}catch(_){}return r}})();
+
+/* v203: 업적 달성 / 칭호 획득 slide-in plate (achv_plate.png 214×76) — real D.ACH tier reached (C.achVal ≥ g[i]) and D.TITLES newly owned (q()); band 478–554 on the right (x 116–330): measured clear of callouts ≤462, combo counter 561+, side columns, fever 624; shares the duo band → waits for any #battle .combo and slides out early if one starts; slides in from the right edge, medal shine, hold 2 s, slide out; queue 3, extras fold to "외 N건"; tiers/titles already reached at load are seeded; DOM/CSS only */
+(()=>{const C=G.C;const st=document.createElement('style');st.textContent=`
+#battle .acp{position:absolute;left:116px;top:478px;width:214px;height:76px;z-index:9;pointer-events:none;animation:acIn .5s cubic-bezier(.2,1.25,.45,1) both}
+#battle .acp>img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 3px 4px #000a)}
+#battle .acp .sh{position:absolute;left:4px;top:3px;width:29px;height:29px;border-radius:50%;overflow:hidden}
+#battle .acp .sh:after{content:'';position:absolute;top:-20%;bottom:-20%;width:40%;left:-60%;background:linear-gradient(100deg,#fff0 0%,#fffbe0cc 50%,#fff0 100%);transform:skewX(-18deg);animation:acSh .7s .45s ease-in-out both,acSh .7s 1.7s ease-in-out both}
+#battle .acp .tx{position:absolute;left:46px;width:140px;top:11px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3;text-align:center}
+#battle .acp .tx em{font:900 9px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#ffcf4a;letter-spacing:1px;text-shadow:0 1px 0 #000}
+#battle .acp .tx b{font:900 13px Maplestory,"Noto Sans KR",sans-serif;color:#fff0c8;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #000,0 0 6px #ffcf4a55}
+#battle .acp .tx i{font:700 9px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#e8d6a8;white-space:nowrap}
+#battle .acp .tx i img{height:10px;vertical-align:-2px;margin:0 1px}
+#battle .acp.out{animation:acOut .4s ease-in forwards}
+@keyframes acIn{0%{opacity:0;transform:translateX(290px)}20%{opacity:1}100%{opacity:1;transform:translateX(0)}}
+@keyframes acOut{to{opacity:0;transform:translateX(290px)}}
+@keyframes acSh{0%{left:-60%}100%{left:130%}}`;document.head.appendChild(st);
+new Image().src=A+'achv_plate.png';
+const q=[];let cur=null,busy=0,endT=0,seen=null;const HOLD=2000;
+const bat=()=>document.getElementById('battle');
+const blk=()=>!!document.querySelector('#battle .combo,.vic,.bsht');
+const list=()=>{const o=[];D.ACH.forEach(a=>{const v=C.achVal(a.k);a.g.forEach((g,i)=>{if(v>=g)o.push({id:'a'+a.k+i,t:'업적 달성',h:a.n+' '+(i+1)+'단계',gem:a.gem[i],tk:a.t&&a.t[i],sto:a.st&&a.st[i]})})});C.titlesOwned().forEach(t=>o.push({id:'t'+t.k,t:'칭호 획득',h:'「'+t.n+'」',rw:'공격력 +'+t.atk+'%'+(t.gold?' · 골드 +'+t.gold+'%':'')}));return o};
+const fin=()=>{const d=cur;if(!d)return;if(R._acHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
+const show=it=>{const b=bat();if(!b){busy=0;return}const rw=it.rw||[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">${it.tk}`:'',it.sto?'강화석 '+it.sto:''].filter(Boolean).join(' ');
+ const d=document.createElement('div');d.className='acp';d.innerHTML=`<img src="${A}achv_plate.png" alt=""><span class=sh></span><div class=tx><em>${it.t}</em><b></b>${rw?`<i>${it.rw?'':'보상 '}${rw}</i>`:''}</div>`;d.querySelector('b').textContent=it.h+(it.more?' 외 '+it.more+'건':'');
+ b.appendChild(d);cur=d;endT=setTimeout(fin,HOLD+500)};
+const pump=()=>{if(busy||!q.length)return;busy=1;let w=0;const go=()=>{if((G.screen||G.storyOn||blk())&&w<8000){w+=150;setTimeout(go,150)}else{const it=q.shift();if(q.length){it.more=q.reduce((t,x)=>t+1+(x.more||0),0);q.length=0}show(it)}};go()};
+R.achToast=it=>{if(q.length>=3){const l=q[q.length-1];l.more=(l.more||0)+1;return}q.push(it);pump()};R._acq=()=>{q.length=0;clearTimeout(endT);if(cur){cur.remove();cur=null}busy=0};
+setInterval(()=>{try{if(!C.achVal)return;const l=list(),ids=new Set(l.map(x=>x.id));if(!seen){seen=ids;return}l.forEach(x=>{if(!seen.has(x.id))R.achToast(x)});seen=ids}catch(_){}},500);
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&document.querySelector('#battle .combo')){clearTimeout(endT);fin()}}catch(_){}return r}})();
