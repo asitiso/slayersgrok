@@ -627,7 +627,7 @@ const of=R.frame;R.frame=dt=>{const AS=R._AS&&R._AS(),app=[];if(AS)HA.forEach((h
 ;(()=>{const ob=banner;banner=function(t){if(R.slowT>0&&!/^LEVEL UP/.test(t)){setTimeout(()=>banner(t),R.slowT*1000+100);return}return ob.apply(this,arguments)}})();
 ;(()=>{// v23 enemy attack variety: ranged projectiles + elite special moves
 const RNG={'mon_garcher.png':'arrow','mon_dmage.png':'orb','mon_skeleton.png':'arrow','mon_bandit.png':'dagger','mon_imp.png':'fire','mon_cultist.png':'orb','mon_harpy.png':'feather','mon_ghost.png':'wisp'};G.RNG=RNG;
-const PJ=[],LB=[];let lastE=null;G.pjN=0;G.eskN=0;
+const PJ=[],LB=[],WI=new Image();WI.src='assets/ui_warn.png';let lastE=null;G.pjN=0;G.eskN=0;
 const oe=C.ev.eatk;C.ev.eatk=e=>{lastE=e;oe&&oe(e)};
 const od=C.ev.dmgAlly;C.ev.dmgAlly=(a,d,kind)=>{const e=lastE;lastE=null;const k=e&&!e.boss&&RNG[e.img];
  if(!k||G.screen||C._esk){od(a,d,kind);return}const s=R._ES().get(e),q=R._AS().get(a.k);if(!s||!q){od(a,d,kind);return}
@@ -658,7 +658,7 @@ const of=R.frame;R.frame=dt=>{of(dt);const c=document.querySelector('#battle can
   ctx.restore();if(k>=1){PJ.splice(i,1);RINGS.push({x:p.x1,y:p.y1+40,t:0,c:p.k=='fire'?'#ff9a40':p.k=='orb'?'#b070ff':p.k=='wisp'?'#60f0d0':'#ffffff',sm:1});try{p.cb()}catch(_){}}}
  for(let i=RINGS.length-1;i>=0;i--){const r=RINGS[i];r.t+=dt;const k=r.t/(r.sm?.25:.5);if(k>=1){RINGS.splice(i,1);continue}ctx.globalAlpha=(1-k)*.85;ctx.strokeStyle=r.c;ctx.lineWidth=(r.sm?4:8)*(1-k)+1;ctx.beginPath();ctx.ellipse(r.x,r.y-40*(r.sm?1:0),(r.sm?6:20)+k*(r.sm?22:r.big?150:70),((r.sm?6:8)+k*(r.sm?22:r.big?50:28)),0,0,6.283);ctx.stroke()}
  ctx.globalAlpha=1;for(let i=LB.length-1;i>=0;i--){const l=LB[i];l.t+=dt;const s=R._ES().get(l.e);if(l.t>1.1||!s||l.e.hp<=0){LB.splice(i,1);continue}const k=Math.min(1,l.t/.15);
-  ctx.save();ctx.translate(Math.min(300,Math.max(80,s.x)),s.y+30+ease(Math.min(1,l.t))*4);ctx.fillStyle='rgba(20,0,0,.6)';ctx.beginPath();ctx.roundRect?ctx.roundRect(-58,-15,116,21,10):ctx.rect(-58,-15,116,21);ctx.fill();ctx.scale(.6+.4*k,.6+.4*k);ctx.globalAlpha=l.t>.8?(1.1-l.t)/.3:1;ctx.font='900 15px Maplestory,sans-serif';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#200';ctx.strokeText(l.txt,0,0);ctx.fillStyle=l.c;ctx.fillText(l.txt,0,0);ctx.restore()
+  ctx.save();ctx.translate(Math.min(300,Math.max(80,s.x)),s.y+30+ease(Math.min(1,l.t))*4);ctx.fillStyle='rgba(20,0,0,.6)';ctx.beginPath();ctx.roundRect?ctx.roundRect(-58,-15,116,21,10):ctx.rect(-58,-15,116,21);ctx.fill();ctx.scale(.6+.4*k,.6+.4*k);ctx.globalAlpha=l.t>.8?(1.1-l.t)/.3:1;ctx.font='900 15px Maplestory,sans-serif';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#200';ctx.strokeText(l.txt,0,0);ctx.fillStyle=l.c;ctx.fillText(l.txt,0,0);if(l.warn&&WI.complete&&WI.naturalWidth){if(l.tw==null)l.tw=ctx.measureText(l.txt).width;ctx.drawImage(WI,-l.tw/2-21,-16,19,18)}ctx.restore()
   if(l.warn&&l.e.eskW!=null){ctx.save();ctx.globalAlpha=.35+.35*Math.sin(l.t*30);ctx.strokeStyle='#ff3030';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(s.x,s.y,40,14,0,0,6.283);ctx.stroke();ctx.restore()}}
  ctx.restore()};
 G.pjTest=k=>{const L=C.alive().map(e=>[e,R._ES().get(e)]).filter(x=>x[1]).sort((a,b)=>b[1].x-a[1].x)[0],q=R._AS().get('lina');if(!L||!q)return 0;const s=L[1];PJ.push({k,x0:s.x-14,y0:s.y-52,x1:q.x+8,y1:q.y-48,t:0,T:.9,cb:()=>{}});return 1};G.eskTest=img=>{const L=C.alive().filter(e=>!e.boss);const e=L.find(e=>!img||e.img==img)||L[0];if(!e)return 0;e.el=1;e.esk=0;return e.img};
@@ -4598,7 +4598,7 @@ const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments)
 
 /* r353 v303: game-wide emoji → existing borderless icon swap (visual only). Text-node swap on body (skips canvas/inputs/chat log),
    deferred to one rAF per mutation burst; glyphs with no matching art yet (⚠ ❓ 🎉) are stripped until icons are generated. */
-;(function(){const IM={'💗':'bd_heart_full','💌':'fr_heart_send','🎁':'fr_gift','✔':'pass_check','☑':'pass_check','☐':'dc_off','⚔':'ic3_arena','🔒':'sk_lock','⚡':'ui_bolt','⏱':'ui_timer','💎':'it2_gem','🗺':'ic_map','🎣':'fs_bobber','🧺':'bd_harvest','🥚':'pt_egg','✏':'ic_quill','📢':'ic_horn','🌙':'ic_moon','📋':'ic3_quest','👑':'ic4/crown','🏆':'ic3_trophy','💥':'fx_crit','⏩':'ic_speed','✨':'fx_success','🧳':'npc_merchant','🪙':'it2_gold','💾':'pp_save','📜':'rl_fragment','💪':'st_atk','🌼':'bd_flower','🍪':'bd_cookie','🔥':'st/burn','❄':'st/frz','💫':'st/stun','☠':'st/psn','🍳':'fs_board','💨':'fs_bobber'},STRIP='⚠❓🎉';
+;(function(){const IM={'💗':'bd_heart_full','💌':'fr_heart_send','🎁':'fr_gift','✔':'pass_check','☑':'pass_check','☐':'dc_off','⚔':'ic3_arena','🔒':'sk_lock','⚡':'ui_bolt','⏱':'ui_timer','💎':'it2_gem','🗺':'ic_map','🎣':'fs_bobber','🧺':'bd_harvest','🥚':'pt_egg','✏':'ic_quill','📢':'ic_horn','🌙':'ic_moon','📋':'ic3_quest','👑':'ic4/crown','🏆':'ic3_trophy','💥':'fx_crit','⏩':'ic_speed','✨':'fx_success','🧳':'npc_merchant','🪙':'it2_gold','💾':'pp_save','📜':'rl_fragment','💪':'st_atk','🌼':'bd_flower','🍪':'bd_cookie','🔥':'st/burn','❄':'st/frz','💫':'st/stun','☠':'st/psn','🍳':'fs_board','💨':'fs_bobber','⚠':'ui_warn','❓':'ui_help','🎉':'ui_confetti'},STRIP='';
 const keys=Object.keys(IM).concat([...STRIP]);const src='('+keys.join('|')+')\\uFE0F?',RT=new RegExp(src,'u'),RS=new RegExp(src+'\\s?','gu');
 const st=document.createElement('style');st.textContent=`img.emi{height:1.25em;width:auto;vertical-align:-.28em;margin:0 .1em;filter:drop-shadow(0 1px 1px #0008);pointer-events:none;display:inline-block}
 .frh .frp img.emi{height:44px;vertical-align:middle}img.emi.e_dc_off{height:1.05em;vertical-align:-.15em;filter:none}
@@ -4609,3 +4609,11 @@ const walk=r=>{if(r.nodeType===3)return conv(r);if(r.nodeType!==1||!RT.test(r.te
 const Q=new Set();let qd=0;const run=()=>{qd=0;Q.forEach(n=>{if(n.isConnected)try{walk(n)}catch(_){}});Q.clear()};
 new MutationObserver(ms=>{for(let i=0;i<ms.length;i++){const m=ms[i];if(m.type==='characterData'){if(RT.test(m.target.nodeValue))Q.add(m.target)}else for(let j=0;j<m.addedNodes.length;j++){const a=m.addedNodes[j];if(a.nodeType===3?RT.test(a.nodeValue):a.nodeType===1&&RT.test(a.textContent))Q.add(a)}}if(Q.size&&!qd){qd=1;requestAnimationFrame(run)}}).observe(document.body,{childList:true,subtree:true,characterData:true});
 walk(document.body);G.emiSwap=()=>walk(document.body)})();
+
+/* r354 v304: 친구 header point chip (replaces oversized heart; same t.pt text) + emi sizing inside small badges */
+;(function(){const st=document.createElement('style');st.textContent=`.ftp b.frchip{display:inline-flex;align-items:center;gap:5px;margin-top:3px;padding:2px 12px 2px 4px;border-radius:14px;background:linear-gradient(#3a1a2ae8,#1e0c16e8);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #ff9ac088,0 2px 4px #0008;font-size:17px;color:#fff;line-height:22px}
+.ftp b.frchip img{height:22px!important;width:auto;filter:drop-shadow(0 1px 1px #0009)}.ftp b.frchip em{font-style:normal;font-size:10px;font-weight:800;color:#ffb8d0;margin-right:2px}
+.frtv .frx .fok img.emi,i.fok img.emi,.twok img.emi,.ck img.emi{height:.95em!important;width:auto!important;margin:0!important;vertical-align:-.1em}`;document.head.appendChild(st);
+const fix=()=>{if(G.screen!='friend')return;const b=document.querySelector('#screen .frst .ftp b');if(!b||b.classList.contains('frchip'))return;const v=(b.textContent||'').replace(/[\u{1F497}\uFE0F\s]/gu,'');b.classList.add('frchip');b.innerHTML=`<img src="assets/bd_heart_full.png" alt=""><em>우정 포인트</em>${v}`};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{fix()}catch(e){console.warn(e)}return r};
+const sc=document.getElementById('screen');if(sc)new MutationObserver(()=>{try{fix()}catch(_){}}).observe(sc,{childList:true})})();
