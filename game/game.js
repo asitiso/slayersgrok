@@ -3057,3 +3057,31 @@ G.chestMoment=(w)=>{T.splice(0).forEach(clearTimeout);document.querySelectorAll(
  at(()=>ch.classList.add('out'),2250);at(()=>ch.remove(),2620);return 1};
 const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w&&document.querySelector('.vic.win:not(.out)'))G.chestMoment(w)}catch(_){}return r};
 G._bossLoot=()=>{}/* v110 loot burst superseded by the chest moment */})();
+
+/* v197: swarm companion cut-in on its own framed layer (arch portrait + plum plate) above combat text / damage / kill callouts; kill callout drops below it (visual only) */
+;(()=>{const st=document.createElement('style');st.textContent=`
+#ccLayer{position:absolute;left:0;top:0;z-index:45;pointer-events:none}
+#battle.ccon .mkb{top:362px!important;transition:top .12s}
+#battle.ccon .tdmg{top:392px!important}`;document.head.appendChild(st);
+const FW=640,FH=350,Y0=196,BW=270;let lay=null,lx=null,dirty=0,fr=null;
+const IC={},img=s=>IC[s]||(IC[s]=Object.assign(new Image(),{src:A+s}));
+const ensure=(W,H)=>{const b=document.getElementById('battle');if(!b)return null;if(!lay||!lay.isConnected){lay=document.createElement('canvas');lay.id='ccLayer';b.appendChild(lay);lx=lay.getContext('2d')}
+ const mc=b.querySelector('canvas:not(#ccLayer)'),dpr=mc&&mc.width?mc.width/W:(devicePixelRatio||1),pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(lay.width!=pw||lay.height!=ph){lay.width=pw;lay.height=ph;lay.style.width=W+'px';lay.style.height=H+'px'}lx.setTransform(dpr,0,0,dpr,0,0);return lx};
+const clear=()=>{if(dirty&&lx){lx.setTransform(1,0,0,1,0,0);lx.clearRect(0,0,lay.width,lay.height);dirty=0;const b=document.getElementById('battle');b&&b.classList.remove('ccon')}};
+R.ccFrame=(dt,W,H)=>{try{if(C.B.boss||C.B.wb)return false;fr=fr||img('cutin_frame.png');if(!fr.complete||!fr.naturalWidth)return false;const c=R.ccut,cx=ensure(W,H);if(!cx)return false;
+ c.t+=dt;const t=c.t;if(t>=1){clear();return true}
+ const ein=Math.min(1,t/.16),eo=t>.8?(1-t)/.2:1,a=Math.max(0,Math.min(ein,eo)),k=BW/FW,h=FH*k,e=1-Math.pow(1-ein,3),x0=8-(1-e)*(BW+20)+(t>.8?-(t-.8)/.2*50:0),y0=Y0;
+ cx.clearRect(0,0,W,H);dirty=1;document.getElementById('battle').classList.add('ccon');cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
+ // bust inside arch (clip: semicircle top + rect)
+ const pi=img(c.img);
+ cx.save();cx.beginPath();cx.moveTo(45,FH);cx.lineTo(45,140);cx.ellipse(134,140,89,86,0,Math.PI,2*Math.PI);cx.lineTo(223,FH);cx.closePath();cx.clip();
+ const bg=cx.createLinearGradient(0,50,0,FH);bg.addColorStop(0,'#fff4d8');bg.addColorStop(1,c.rc||'#c890ff');cx.fillStyle=bg;cx.globalAlpha=a*.55;cx.fillRect(40,40,190,FH);cx.globalAlpha=a;
+ if(pi.complete&&pi.naturalWidth){const iw=pi.naturalWidth,ih=pi.naturalHeight;if(c.bust){const s=(178*.95)/(iw*.5),dw=iw*s,dh=ih*s,ox=134-(iw/2+iw*.06)*s+(1-e)*-30+t*12,oy=62-ih*.06*s;cx.drawImage(pi,ox,oy,dw,dh)}else{const dh=FH*1.05,dw=dh*iw/ih;cx.drawImage(pi,134-dw/2+t*12,FH-dh+6,dw,dh)}}
+ cx.restore();cx.drawImage(fr,0,0,FW,FH);
+ // text on plate (plate inner ≈ x 285–540, y 125–270 in frame px)
+ cx.textAlign='left';cx.textBaseline='middle';const tx=292,mw=250;cx.font='bold 26px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=6;cx.strokeStyle='#000b';cx.strokeText(c.n,tx,162,mw);cx.fillStyle=c.rc||'#ffd77a';cx.fillText(c.n,tx,162,mw);
+ const sk=c.sk+'!';let fs=44;cx.font=`900 ${fs}px Maplestory,"Noto Sans KR",sans-serif`;const sw=cx.measureText(sk).width;if(sw>mw){fs=Math.max(28,fs*mw/sw);cx.font=`900 ${fs}px Maplestory,"Noto Sans KR",sans-serif`}
+ const pop=t<.22?1+(.22-t)*1.6:1;cx.save();cx.translate(tx,218);cx.scale(pop,pop);cx.lineWidth=9;cx.strokeStyle='#1a0610';cx.strokeText(sk,0,0,mw);const g=cx.createLinearGradient(0,-fs/2,0,fs/2);g.addColorStop(0,'#ffffff');g.addColorStop(.55,'#fff1c0');g.addColorStop(1,'#ffc24a');cx.fillStyle=g;cx.fillText(sk,0,0,mw);cx.restore();
+ cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
+const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{if(dirty&&!(R.ccut&&R.ccut.t<1&&!C.B.boss))clear()}catch(_){}return r};
+})();
