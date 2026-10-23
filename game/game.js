@@ -4764,3 +4764,26 @@ const deWb=d=>{if(d.dataset.r358)return;const bx=d.querySelector('.rwbox'),t=d.q
  const w=document.createElement('div');w.className='rscd';w.innerHTML=card('ic_trophy.png','등급',m[1])+card('wb_sword.png','피해',m[2])+card('tt_crown.png','오늘 순위',m[3]+'위');s.replaceWith(w)};
 new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('rwpop'))deWb(n)}).observe(document.body,{childList:true});
 })();
+;(()=>{// r359 v309 보스 러시 주간 랭킹 popup: ribbon title + framed scrolling list card (layout only) · battle overlays hidden under open sheet · 영지 building card frame
+const A='assets/',st=document.createElement('style');st.textContent=`
+.brmod .mbox.rs359{position:relative;overflow:visible;padding:40px 12px 12px;border-radius:14px;border:2px solid #0b0d0f;background:linear-gradient(#3a2a14f6,#1e1408f6);box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 4px #3a2410,inset 0 0 40px #ffc24a22,0 10px 30px #000c}
+.brmod .rs359>.ttl{position:absolute;left:50%;top:-28px;transform:translateX(-50%);width:270px;height:62px;margin:0;padding-top:6px;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;gap:6px;font:900 17px Maplestory,sans-serif;color:#ffe08a;text-shadow:0 2px 0 #3a2008,0 0 8px #ffb02e88;white-space:nowrap;filter:drop-shadow(0 3px 3px #000a)}
+.brmod .rs359>.ttl img{width:24px;height:24px;object-fit:contain}
+.brmod .rs359 .rsst{display:block;text-align:center;font:700 11px 'Noto Sans KR',sans-serif;color:#e0d4b8;margin:0 0 6px}
+.brmod .rs359 .brl{margin:0 0 8px;padding:4px;border-radius:10px;background:#0008;border:2px solid #6a4a1a;box-shadow:inset 0 0 0 1px #000,inset 0 6px 10px -6px #000;scrollbar-width:thin;scrollbar-color:#a07830 #0000}
+.brmod .rs359 .brr{border-radius:6px;border-bottom:1px solid #ffffff12;align-items:center}
+.brmod .rs359 .brr:nth-child(1) i{color:#ffd84a}.brmod .rs359 .brr:nth-child(2) i{color:#dfe6ee}.brmod .rs359 .brr:nth-child(3) i{color:#e09a5a}
+.brmod .rs359 .brr.me{background:linear-gradient(90deg,#8a5a18cc,#5a3a10cc);box-shadow:inset 0 0 0 1px #ffd25a}
+.brmod .rs359 .brtier span{background:radial-gradient(circle at 50% 35%,#5a3e18cc,#24180acc);border:1px solid #c9953f;border-radius:8px;padding:3px 7px;color:#ffe8c0;display:inline-flex;align-items:center;gap:2px}
+.brmod .rs359 .brtier img{width:13px;height:13px}
+body.sheeton #battle .combo,body.sheeton #battle .combo.duo,body.sheeton #battle .cmbx{visibility:hidden!important}
+#screen .card.bupc{position:relative;margin-top:24px!important;padding-top:44px!important;border-radius:14px!important;border:2px solid #0b0d0f!important;background:linear-gradient(#3a2a14f0,#1e1408f0)!important;box-shadow:inset 0 0 0 2px #c9953f,inset 0 0 0 4px #3a2410,0 6px 16px #0009!important}
+#screen .card.bupc>.ttl{position:absolute;left:50%;top:-24px;transform:translateX(-50%);width:250px;height:54px;padding-top:4px;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 3px #000a)}
+#screen .card.bupc>.ttl>span{font:900 15px Maplestory,sans-serif;color:#ffe08a;text-shadow:0 2px 0 #3a2008;white-space:nowrap}
+#screen .card.bupc>.ttl>span small{color:#e8d0a0;font-size:11px}
+#screen .card.bupc>.ttl>small{position:absolute;top:50px;right:-30px;font-size:10px;color:#e0d4b8;white-space:nowrap;display:flex;align-items:center;gap:3px}
+#screen .card.bupc .row{border-radius:10px;background:#0006!important;border:1px solid #6a4a24!important}
+#screen .card.bupc .row .ic{border-radius:10px;background:radial-gradient(circle at 50% 35%,#6a4a1a,#2a1a08);box-shadow:0 0 6px #ffb02e55}`;document.head.appendChild(st);
+const de=m=>{const bx=m.querySelector('.mbox');if(!bx||bx.classList.contains('rs359'))return;bx.classList.add('rs359');const t=bx.querySelector('.ttl');if(t){t.insertAdjacentHTML('afterbegin',`<img src="${A}tt_crown.png" alt="">`);t.insertAdjacentHTML('afterend','<small class=rsst>주간 랭킹 · 월 05:00 정산</small>')}};
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('brmod'))de(n)}).observe(document.getElementById('app'),{childList:true});
+})();
