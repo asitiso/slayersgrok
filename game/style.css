@@ -1333,3 +1333,24 @@ body:is(.hs-sh,#_x.hs_x) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),b
 .side a .grid.gmore{display:flex!important;align-items:center;justify-content:center;gap:4px}
 .side a .grid.gmore i{display:block;width:6px;height:6px;border-radius:50%;background:#ffe9a8;box-shadow:0 1px 1px #000}
 #sidemore{transition:transform .08s}#sidemore:active,#sideF a:active{transform:scale(.9)}
+
+/* r335 동료 도감 grade groups + detail card */
+.hcg{display:flex;align-items:center;gap:8px;margin:10px 2px 6px}.hcg:first-of-type{margin-top:4px}
+.hcg .hcgn{background:linear-gradient(var(--rc),color-mix(in srgb,var(--rc) 55%,#000));color:#fff;font-weight:900;font-size:12px;padding:2px 12px;border-radius:9px;border:2px solid #0b0d0f;text-shadow:0 1px 0 #0008}
+.hcg em{font-style:normal;font-size:11px;font-weight:800;color:#ffe8b0}.hcg:after{content:'';flex:1;height:2px;background:linear-gradient(90deg,var(--rc),#0000)}
+.hcgr{margin-bottom:2px}
+.cdc.hc{box-shadow:inset 0 0 0 2px var(--rc),inset 0 0 12px #000a!important}
+.cdc.hc.lock>img:first-child{filter:brightness(0) drop-shadow(0 0 4px #8ab8ff)!important;opacity:.75!important}
+.cdc.hc.lock small{color:#9ac0ff;font-size:9px}
+.cdc.hc .hclv{position:absolute;left:4px;top:3px;font-style:normal;font-size:10px;font-weight:900;color:#fff;background:#000a;border-radius:6px;padding:0 4px;z-index:2}
+.hcst{color:#ffd23a;letter-spacing:-1px;text-shadow:0 1px 0 #000}
+.hdm .card{max-width:340px;padding:10px 12px 12px}
+.hdart{position:relative;margin:-2px -4px 8px;border-radius:12px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px var(--rc);aspect-ratio:720/415;background:#000}
+.hdart>img{width:100%;height:100%;object-fit:cover;display:block}
+.hdart .hdnm{position:absolute;left:0;right:0;bottom:0;padding:16px 10px 6px;background:linear-gradient(#0000,#000c);display:flex;align-items:baseline;gap:6px;color:#fff}
+.hdnm span{background:var(--rc);color:#fff;font-size:10px;font-weight:900;padding:1px 7px;border-radius:7px;border:1px solid #0b0d0f}.hdnm b{font-size:20px;text-shadow:0 2px 0 #000}.hdnm em{font-style:normal;font-size:11px;font-weight:800;margin-left:auto}
+.hdart .hdno{position:absolute;right:8px;top:8px;font-style:normal;background:#000b;color:#cfd8ff;font-size:11px;font-weight:800;border-radius:8px;padding:2px 8px}
+.hdd{font-size:12px;color:#ffe8b0;text-align:center;margin-bottom:6px}
+.hdst{display:flex;gap:6px;margin-bottom:6px}.hdst span{flex:1;background:#0006;border-radius:8px;padding:4px;text-align:center;font-size:10px;color:#ccc}.hdst b{display:block;font-size:14px;color:#fff}
+.hdh{text-align:left;background:#0005;border-radius:10px;padding:6px 9px;margin-top:6px;font-size:11.5px;color:#fff;line-height:1.55}.hdt{font-weight:900;color:#ffd77a;font-size:12px;margin-bottom:2px}
+.hdset{display:flex;align-items:center;gap:6px;flex-wrap:wrap;opacity:.65}.hdset.ok{opacity:1}.hdset b{font-size:11px}.hdset span{display:flex;gap:2px}.hdset img{width:24px;height:24px;object-fit:contain;border-radius:6px;background:#0006}.hdset img.lock{filter:brightness(0) invert(.6);opacity:.85;background:none}.hdset small{font-size:10px;color:#9fe09a}
