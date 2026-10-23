@@ -3065,7 +3065,7 @@ G._bossLoot=()=>{}/* v110 loot burst superseded by the chest moment */})();
 #battle.ccon .mkb{top:362px!important;transition:top .12s}
 #battle.ccon .tdmg{top:392px!important}
 /* r317: XP orbs (fixed, body-level, z40) flew over the cut-in title; dim them while a field cut-in shows (filter, since the orb's WAAPI flight owns opacity) */
-body.ccon .xpo{filter:opacity(.35)}`;document.head.appendChild(st);
+body.ccon .xpo,body.lcut .xpo{filter:opacity(.35)}`;document.head.appendChild(st);
 const FW=640,FH=350,Y0=196,BW=270;let lay=null,lx=null,dirty=0,fr=null;
 const IC={},img=s=>IC[s]||(IC[s]=Object.assign(new Image(),{src:A+s}));
 const ensure=(W,H)=>{const b=document.getElementById('battle');if(!b)return null;if(!lay||!lay.isConnected){lay=document.createElement('canvas');lay.id='ccLayer';b.appendChild(lay);lx=lay.getContext('2d')}
@@ -4293,7 +4293,7 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);const P=G._
 })();
 
 ;(()=>{/* r315: companion ult cut-in art. If assets/cut/<k>_ult.png is listed in ULT and decoded, the field cut-in (ccFrame, non-boss) draws a Lina-style tilted band with the full art sliding in; otherwise the arch-banner portrait as before. Boss fights keep the slim strip. Off under low graphics / fx off (portrait banner), and R.opt.cut=off already suppresses the cut-in. Art decoded at idle. Display only. */
-const ULT={gourry:1,amelia:1,lyra:1},IM={};/* r316: +amelia, lyra */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
+const ULT={gourry:1,amelia:1,lyra:1,zelgadis:1},IM={};/* r316: +amelia, lyra; r318: +zelgadis */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
 const low=()=>document.body.classList.contains('tglite')||document.body.classList.contains('nofx')||(R.opt&&R.opt.fx===false);
 const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)i._ok=1})}return i};
 const pre=Object.keys(ULT);const step=()=>{const k=pre.shift();if(!k)return;ric(()=>{get(k);setTimeout(step,400)},{timeout:4000})};setTimeout(step,3000);
@@ -4311,4 +4311,8 @@ R._ccUlt=(cx,c,t,a,W,H)=>{if(!c||!c.k||!ULT[c.k]||low())return false;const im=ge
  cx.font=FN1;cx.lineWidth=4;cx.strokeStyle='#050a1c';cx.strokeText(c.n,tx,-8);cx.fillStyle=c.rc||'#ffd77a';cx.fillText(c.n,tx,-8);
  cx.font=FN2;cx.lineWidth=7;cx.strokeStyle='#050a1c';const sk=(c.sk||'')+'!';cx.strokeText(sk,tx,24,W*.55);if(!c._tg){const g=cx.createLinearGradient(0,0,0,26);g.addColorStop(0,'#fff6c8');g.addColorStop(1,'#ffb02e');c._tg=g}cx.fillStyle=c._tg;cx.fillText(sk,tx,24,W*.55);
  cx.restore();return true};
+})();
+
+;(()=>{/* r318: Lina's own full-screen cut-in (R.cut, drawn on the battle canvas) also dims the body-level XP orbs; class flips only on change (display only) */
+let on=false;const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);const n=!!(R.cut&&R.cut.t<1.25);if(n!==on){on=n;document.body.classList.toggle('lcut',n)}return r};
 })();
