@@ -10,7 +10,7 @@ const S=C.init(saved);const B=C.B;setTimeout(()=>{const e=document.querySelector
 const G={C,S:()=>C.S(),speed:1,tab:'battle',screen:null};window.G=G;
 const tfmt=s=>{s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
 function toast(t){let q=$('#toastQ');if(!q){q=document.createElement('div');q.id='toastQ';$('#app').appendChild(q)}const old=[...q.children].find(x=>x.innerHTML==t);if(old)old.remove();while(q.children.length>=3)q.firstChild.remove();const d=document.createElement('div');d.className='toast';d.innerHTML=t;q.appendChild(d);setTimeout(()=>d.remove(),1800)}
-function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
+function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';if(/^LEVEL UP/.test(t)){d.classList.add('lvb');G._dloOn&&G._dloOn()}setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
 function modal(html,cb){const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class=card>${html}<span class="btn wide" style="margin-top:12px">확인</span></div>`;m.onclick=e=>{if(e.target.closest('.btn')||e.target==m){m.remove();cb&&cb()}};$('#app').appendChild(m);return m}
 // core events -> renderer/UI
 Object.assign(C.ev,{hit:R.hit,kill:(e,...a)=>{R.kill(e,...a);if(e&&e.boss){R.hs=Math.max(R.hs||0,.6);if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash';document.body.appendChild(f);setTimeout(()=>f.remove(),700)}}},atk:R.atk,eatk:R.atk,dmgAlly:R.dmgAlly,heal:R.heal,spell:R.spell,walk:R.walk,banner,toast,clear:()=>{renderPanel();resultPop(1)},fail:()=>{renderPanel();resultPop(0)}});
@@ -1182,7 +1182,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];let gT=0;const lastA={};let 
 const lay=()=>{if(!layer||!layer.isConnected){layer=document.createElement('div');layer.id='bubL';const bt=document.getElementById('battle');bt&&bt.appendChild(layer)}return layer};
 const say=(k,type,vars,force)=>{try{if(G.storyOn||(G.saverState&&G.saverState())||(G.set&&!G.set.bubble))return;const now=performance.now();if(!force&&(now-gT<2600||now-(lastA[k]||0)<7000))return;const T=(L[k]||L._)[type]||L._[type];if(!T)return;const AS=R._AS&&R._AS();if(!AS||!AS.get(k))return;gT=now;lastA[k]=now;
  live.splice(0).forEach(q=>q.d.remove());const d=document.createElement('div');d.className='bub '+type;d.textContent=pick(T).replace('{n}',(vars&&vars.n)||'');lay().appendChild(d);const o={k,d,t:now};live.push(o);setTimeout(()=>{d.classList.add('out');setTimeout(()=>{d.remove();const i=live.indexOf(o);i>=0&&live.splice(i,1)},250)},1700)}catch(_){}};
-const place=()=>{const AS=R._AS&&R._AS();if(AS)live.forEach(o=>{const s=AS.get(o.k);if(!s)return;if(!o.w)o.w=o.d.offsetWidth;const w=o.w||100,x=Math.max(56+w/2,Math.min(328-w/2,s.x)),y=s.y-118;$sw(o.d.style,'transform',`translate(${x}px,${y}px) translate(-50%,-100%)`)})};(G._post=G._post||[]).push(place);/* r314: runs after the canvas frame, not in its own earlier rAF */
+const place=()=>{const AS=R._AS&&R._AS();if(AS)live.forEach(o=>{const s=AS.get(o.k);if(!s)return;if(!o.w)o.w=o.d.offsetWidth;const w=o.w||100,x=Math.max(56+w/2,Math.min(328-w/2,s.x)),y=s.y-118;{const f=!!(R._dtTop2&&y>279&&y-40<358||R._dloB&&y>362&&y-40<474);if(o.f!==f){o.f=f;o.d.classList.toggle('bfd',f)}}$sw(o.d.style,'transform',`translate(${x}px,${y}px) translate(-50%,-100%)`)})};(G._post=G._post||[]).push(place);/* r314: runs after the canvas frame, not in its own earlier rAF */
 const alive=()=>(C.aliveAllies?C.aliveAllies():[]).map(a=>a.k);const rnd=()=>{const a=alive();return a[Math.floor(Math.random()*a.length)]};
 const hook=(n,f)=>{const o=C.ev[n];C.ev[n]=function(){const r=o&&o.apply(this,arguments);try{f.apply(this,arguments)}catch(_){}return r}};
 hook('spell',(sp)=>{if(sp&&!sp.heal&&Math.random()<.35)say('lina','sp',{n:sp.n})});
@@ -4257,7 +4257,7 @@ new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.cla
 const st=document.createElement('style');st.textContent=`#battle .combo.duo:is(#_a,#_b,div):is(#_c,#_d,div){scale:.86}
 #battle .combo:not(.duo):is(#_a,#_b,div):is(#_c,#_d,div){max-width:290px!important;box-sizing:border-box;margin-inline:auto}
 #toastQ{transition:transform .2s,translate .2s}body:not(.hs-scr):not(.hs-sh):not(.hs-mp):has(#battle .combo:not(.cbq):not(.cbo)) #toastQ{translate:0 118px}
-/* r327: a lowered duo banner (362-474) would sit under the slid toast - slide it past the banner instead */body:not(.hs-scr):not(.hs-sh):not(.hs-mp):has(#battle .combo.dlo:not(.cbq):not(.cbo)) #toastQ{translate:0 166px}`;document.head.appendChild(st)})();
+/* r327: a lowered duo banner (362-474) would sit under the slid toast - slide it past the banner instead */body:not(.hs-scr):not(.hs-sh):not(.hs-mp):has(#battle .combo.dlo:not(.cbq):not(.cbo)) #toastQ{translate:0 176px}`;document.head.appendChild(st)})();
 
 ;(()=>{/* v256 r306 (visual only): boss-fight mid-field slots - boss frame 202-275 | boss HP notice (.phx) 279-301 | ally skill strip (canvas, ccStrip) 304-356; while either overlay is up the damage-number floor drops to 358 (R._dtTop2, read by render.js lanes) so crits rise below them instead of through them. One flag + one compare per frame, no allocation */
 const st=document.createElement('style');st.textContent=`body.bossfight #battle .phx:is(#_a,#_b,div):is(#_c,#_d,div){top:279px!important}
@@ -4265,7 +4265,14 @@ const st=document.createElement('style');st.textContent=`body.bossfight #battle 
 body.bossfight #battle .combo.duo.dlo:is(#_a,#_b,div):is(#_c,#_d,div){top:362px!important}
 #battle .combo.duo.dfd{opacity:.15!important;transition:opacity .12s}
 /* r324: battle combo counter hidden while any menu screen is open (body.scron, set in openScreen/closeScreen) */
-body.scron #battle .cmbx{visibility:hidden!important}`;document.head.appendChild(st);
+body.scron #battle .cmbx{visibility:hidden!important}
+/* r328: battle overlays never draw over an open menu screen or modal (display only; timers untouched) */
+body.scron .bwarn,body.scron #battle .vsx,body.scron #battle .wvb,body.scron #battle .bcut,body.scron #battle .banner,body.scron #battle .combo,body.scron #bubL,body.scron .vic,
+body:has(.modal) .bwarn,body:has(.modal) #battle .vsx,body:has(.modal) #battle .wvb,body:has(.modal) #battle .bcut,body:has(.modal) #battle .banner,body:has(.modal) #battle .combo,body:has(.modal) #bubL,body:has(.modal) .vic{visibility:hidden!important;animation-play-state:running}
+/* r328: LEVEL UP banner sits in the low band (numbers there fade via R._dloB), clear of kill banners at 238-300 */
+#battle .banner.lvb{top:212px!important}
+/* r328: speech bubble faded while it overlaps the ally strip / lowered duo band */
+#bubL .bub.bfd{opacity:.15!important}`;document.head.appendChild(st);
 const go=()=>{if(!G._phase)return setTimeout(go,300);const op=G._phase;G._phase=function(){R._phT=performance.now();return op.apply(this,arguments)}};go();
 const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const on=!!C.B.boss&&((R.ccut&&R.ccut.t<1)||(R._phT>0&&performance.now()-R._phT<1150));R._dtTop2=on?358:0;/* r324: ally skill strip up -> body.bsc (flips on change only) lowers the duo banner below it */const sc=!!C.B.boss&&!C.B.wb&&!!R.ccut&&R.ccut.t<1;if(sc!==R._bsc){R._bsc=sc;document.body.classList.toggle('bsc',sc);/* r325: strip starting under an already-shown banner fades it (on flip only) */document.querySelectorAll('#battle .combo.duo:not(.dlo)').forEach(x=>x.classList.toggle('dfd',sc))}}catch(_){}return r};
 })();
