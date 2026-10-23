@@ -1,0 +1,6 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate((s)=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));await p.goto(U);await sl(4000);
+console.log(await p.evaluate(()=>{const o=[...document.querySelectorAll('canvas')].map(c=>{const r=c.getBoundingClientRect();return (c.id||c.className||c.parentElement.id||c.parentElement.className)+' '+c.width+'x'+c.height+' vis'+(r.width>0&&getComputedStyle(c).display!='none'?1:0)});
+const an=[...document.querySelectorAll('*')].filter(e=>{const s=getComputedStyle(e);return s.animationName!='none'&&s.display!='none'&&e.getBoundingClientRect().width>0}).map(e=>(e.id||e.className||e.tagName).toString().slice(0,30)+':'+getComputedStyle(e).animationName);
+return JSON.stringify({o,an:an.slice(0,40),nan:an.length})}));await b.close()})();

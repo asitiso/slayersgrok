@@ -1,0 +1,7 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');const TH=+(process.argv[2]||4),GQ=process.argv[3]||'high';
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:120000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate((s,gq)=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq,story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'),GQ);await p.goto(U);await sl(3000);
+await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.S().tut=9;R.PROF=2;R._pa={};R._pn=0;const f0=R.frame;R.frame=function(dt){R._pn++;return f0.apply(this,arguments)}});
+const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:TH});
+for(let i=0;i<4;i++){await sl(10000);console.log('t',(i+1)*10,await p.evaluate(()=>{const n=R._pn||1,o=Object.entries(R._pa).map(([k,v])=>k+':'+(v/n).toFixed(1)).join(' ');const B=G.C.B;const L={};for(const k in B)if(Array.isArray(B[k])&&B[k].length>3)L[k]=B[k].length;for(const k in R)if(Array.isArray(R[k])&&R[k].length>3)L['R.'+k]=R[k].length;R._pa={};R._pn=0;return n+"f flN="+R._flN+" "+o+" | "+JSON.stringify(L)}))}
+await b.close()})();

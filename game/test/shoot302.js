@@ -1,0 +1,10 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';const kn=()=>p.evaluate(()=>{const t=document.getElementById('ntToday');if(t){let e=t;while(e.parentElement&&e.parentElement!==document.body&&e.parentElement.id!=='app')e=e.parentElement;e.remove()}});const sh=async n=>{await kn();await sl(150);return p.screenshot({path:'screenshots/'+n+'.jpg',type:'jpeg',quality:85})};
+await p.goto(U);await p.evaluate((s)=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));await p.goto(U);await sl(5000);
+await p.evaluate(()=>document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove()));await sl(1500);await sh('1290_battle_high_after_r237');
+const fr=()=>p.evaluate(()=>{const c=document.getElementById('cv');return c.getContext('2d').getImageData(200,400,1,1).data.join(',')});
+await p.evaluate(()=>openScreen('party'));await sl(300);const a=await fr();await sl(1500);const b2=await fr();await sh('1291_party_screen_battle_paused_under');
+await p.evaluate(()=>closeScreen());await sl(1500);const c2=await fr();await sh('1292_battle_resumed_after_close');
+console.log('canvas frozen while covered:',a===b2,'| redraws after close:',c2!==b2,'| cvRO',JSON.stringify(await p.evaluate(()=>G._cvRO())),'| autoSk',await p.evaluate(()=>{const e=document.querySelector('#bAutoSk');return e.className+' '+getComputedStyle(e,'::before').animationName}));
+console.log('ERRS',errs);await b.close()})();

@@ -1,0 +1,7 @@
+// R.PROF=2 per-section ms (forced flush) in late-game battle, High mode, 4x
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:180000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+if(process.env.NOFC)await p.evaluateOnNewDocument(()=>{window.__NOFC=1});await p.goto(U);await sl(4000);await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0});const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await sl(2000);
+await p.evaluate(()=>{R._pa={};R.PROF=2;R.noFC=+(new URLSearchParams(location.search).get('nofc')||0)||window.__NOFC;window.__n=0;const f=()=>{__n++;requestAnimationFrame(f)};requestAnimationFrame(f)});await sl(12000);
+console.log(await p.evaluate(()=>{R.PROF=0;const n=__n;return 'frames '+n+' FC '+JSON.stringify(R._FC&&{n:R._FC.n,full:R._FC.full})+' dpr '+devicePixelRatio+' cv '+R.cv?.width+'\n'+Object.entries(R._pa).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k.padEnd(12)+(v/n).toFixed(2)).join('\n')}));await b.close()})();
