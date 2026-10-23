@@ -3350,7 +3350,7 @@ G._brPut=(t,old)=>{let k=0;const put=()=>{const v=[...document.querySelectorAll(
 /* v208: 화룡전식 3-star crest on stage-map nodes — uses the real saved v42 rating (G.stStar(i)==3: boss beaten with no ally lost in <60s); ★1-2 nodes keep their star row. A node seen ★3 for the first time pops + one shine sweep (seen-set kept in localStorage, not the save; first run seeds silently). Visual only. */
 ;(()=>{const st=document.createElement('style');st.textContent=`
 .snode .ncr{position:absolute;left:50%;top:-10px;margin-left:12px;width:30px;height:32px;z-index:3;pointer-events:none;filter:drop-shadow(0 2px 2px #000a)}
-.snode.bs .ncr{top:-6px;margin-left:16px;width:34px;height:36px}
+.snode.bs .ncr{top:-6px;margin-left:-50px;width:34px;height:36px}
 .snode .ncr img{width:100%;height:100%;display:block}
 .snode .ncr::after{content:'';position:absolute;inset:0;-webkit-mask:url(assets/crest_3star.png) center/100% 100%;mask:url(assets/crest_3star.png) center/100% 100%;background:linear-gradient(110deg,#fff0 35%,#fffbe0e6 50%,#fff0 65%) -60px 0/200% 100% no-repeat;opacity:0}
 .snode.s3 small{visibility:hidden}
@@ -3367,3 +3367,33 @@ const deco=()=>{if(G.screen!='map'||!G.stStar)return;let seen=ld();const first=!
  let ch=0;const L=lite();document.querySelectorAll('#screen .snode').forEach(n=>{const i=+n.dataset.n;if(n.classList.contains('lk')||G.stStar(i)<3||n.querySelector('.ncr'))return;const nw=!seen[i];seen[i]=1;if(nw)ch=1;n.classList.add('s3');
   n.insertAdjacentHTML('beforeend',`<span class="ncr${nw?' nw':''}${L?' lite':''}" title="★3 완전 클리어">${nw?'<i></i>':''}<img src="assets/crest_3star.png" alt="★3"></span>`)});if(first||ch)sv(seen)};
 G.s3Deco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
+
+/* v209: 화룡전식 chapter conquest seal — a chapter whose 7 stages are all really ★3 (saved v42 rating via G.stStar) gets seal_conquer.png stamped on its chapter-view banner with a "완전 정복" plaque, and a small seal (seal_conquer_s.png) on its world-map pin. First-time stamp pop tracked in localStorage (first run seeds existing conquests silently); respects 스킬 연출 / graphics quality. Visual only. */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.cban .csl{position:absolute;right:4px;top:-12px;width:66px;height:85px;z-index:3;pointer-events:none;transform:rotate(-8deg);filter:drop-shadow(0 3px 3px #000b)}
+.cban .csl img{width:100%;height:100%;display:block}
+.cban .cslb{position:absolute;right:74px;top:50%;transform:translateY(-50%);padding:2px 9px 3px;border-radius:9px;background:linear-gradient(#8a1a14,#4a0a08);border:1.5px solid #ffd77a;color:#ffe9a0;font:900 12px Maplestory,sans-serif;white-space:nowrap;text-shadow:0 1px 1px #000;box-shadow:0 2px 4px #0008;z-index:3}
+.wpin .wsl{position:absolute;left:50%;top:-8px;margin-left:-46px;width:32px;height:41px;z-index:3;pointer-events:none;transform:rotate(-8deg);filter:drop-shadow(0 2px 2px #000a)}
+.wpin.cur .wsl{margin-left:-52px;top:-12px}
+.wpin .wsl img{width:100%!important;height:100%!important;display:block;filter:none!important;animation:none!important}
+.csl.nw{animation:cslP .6s cubic-bezier(.3,1.7,.5,1) .35s both}.cslb.nw{animation:cslL .3s ease-out .85s both}
+.csl.nw i{position:absolute;left:50%;top:55%;width:12px;height:12px;margin:-6px;border-radius:50%;border:3px solid #fff3b0;box-shadow:0 0 10px #ffd23a;opacity:0;animation:cslR .6s ease-out .6s both}
+.cban.cshk{animation:cslK .25s ease-out .6s}
+.wsl.nw{animation:cslP .5s cubic-bezier(.3,1.7,.5,1) .3s both}
+@keyframes cslP{0%{opacity:0;transform:scale(2.6) rotate(-22deg)}55%{opacity:1;transform:scale(.88) rotate(-5deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
+@keyframes cslL{from{opacity:0;transform:translateY(-50%) translateX(10px)}to{opacity:1;transform:translateY(-50%)}}
+@keyframes cslR{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(7)}}
+@keyframes cslK{0%,100%{translate:0 0}30%{translate:0 3px}60%{translate:0 -1px}}
+.csl.lite,.cslb.lite,.wsl.lite,.cban.lite{animation:none!important}.csl.lite i{display:none}`;document.head.appendChild(st);
+const K='slayers_ch3seen',ld=()=>{try{return JSON.parse(localStorage.getItem(K))}catch(_){return null}},sv=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(_){}};
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const NC=()=>Math.floor((D.FIELDS.length+6)/7);
+const full=c=>{if(!G.stStar)return false;for(let i=c*7;i<c*7+7;i++){if(i>=D.FIELDS.length||G.stStar(i)<3)return false}return true};G.chConq=full;
+const deco=()=>{if(G.screen!='map')return;let seen=ld();const first=!seen;if(first){seen={};for(let c=0;c<NC();c++)if(full(c))seen[c]=1}
+ const L=lite(),li=L?' lite':'';let ch=0;
+ const ban=document.querySelector('#screen .cban');if(ban&&G.mapCh>=0&&!ban.querySelector('.csl')&&full(G.mapCh)){const c=G.mapCh,nw=!seen[c];seen[c]=1;if(nw){ch=1;ban.classList.add('cshk');if(L)ban.classList.add('lite')}
+  ban.insertAdjacentHTML('beforeend',`<span class="cslb${nw?' nw':''}${li}">완전 정복</span><span class="csl${nw?' nw':''}${li}">${nw?'<i></i>':''}<img src="assets/seal_conquer.png" alt="완전 정복"></span>`)}
+ document.querySelectorAll('#screen .wpin[data-ch]').forEach(p=>{const c=+p.dataset.ch;if(p.classList.contains('lk')||p.querySelector('.wsl')||!full(c))return;const nw=!seen[c];seen[c]=1;if(nw)ch=1;
+  p.insertAdjacentHTML('beforeend',`<span class="wsl${nw?' nw':''}${li}"><img src="assets/seal_conquer_s.png" alt="완전 정복"></span>`)});
+ if(first||ch)sv(seen)};
+G.chSealDeco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
