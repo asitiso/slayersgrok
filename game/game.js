@@ -4194,3 +4194,12 @@ const ob=bossWarn;bossWarn=function(i){let rb=null,dl=0;try{rb=document.querySel
   setTimeout(()=>{if(rb.isConnected)rb.classList.add('out')},Math.max(0,dl-200));setTimeout(()=>cl.remove('bwq'),dl);R._bwQ=(R._bwQ||0)+1}catch(_){}return r};
 let mt=0,ht=0;const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{ht-=dt||0;if(ht<=0){ht=.25;const b=document.getElementById('battle');if(b){const h=!!document.querySelector('.bchest')||(!!C.B.boss&&!!b.querySelector('.combo.duo'));if(h!==b._cmbh){b._cmbh=h;b.classList.toggle('cmbh',h)}}}mt-=dt||0;if(mt<=0){mt=3;R._lite=document.body.classList.contains('tglite')||document.body.classList.contains('nofx');const b=document.getElementById('battle');if(b&&!G.screen){const c0=b.getBoundingClientRect().top;/* battle box, not #cv (the canvas is translated while the screen shakes) */let m=0;for(const q of ['#stagebar','.bossrow','#evrow']){const e=b.querySelector(q);if(!e)continue;const rr=e.getBoundingClientRect();if(rr.height>2&&rr.bottom-c0>m)m=rr.bottom-c0}if(m>0)R._dtTop=Math.min(300,m+6)}}}catch(_){}return r};
 })();
+;(()=>{/* v250 r299 bottom battle strip spacing (visual only): clear vertical slots between the hero column (ends y582) and the skill row (starts y692) -
+ chest 552-621 (timer no longer under the FEVER bar), potions/자동 585-621, FEVER 625-639, 지령 bar 643-689 + AUTO/×1 644-686; NICE COMBO keeps 591-621 right of the chest. #app is a fixed 390px stage scaled to the viewport, so 360-430px widths share this layout */
+const S=':is(#_a,#_b,div):is(#_c,#_d,div)';const st=document.createElement('style');st.textContent=`
+#battle #idleBtn${S}{top:552px!important;bottom:auto!important}
+#battle #potW${S}{top:585px!important;bottom:auto!important}
+#battle #fevg${S}{top:625px!important;bottom:auto!important}
+#battle #mission${S}{top:643px!important;bottom:auto!important}
+#battle #bctl${S}{top:644px!important;bottom:auto!important}`;document.head.appendChild(st);
+})();
