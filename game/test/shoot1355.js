@@ -1,0 +1,11 @@
+// r278: hero card gauges (sld_track/sld_fill/sld_fill_green) + st_arrow; idlebar extra
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));await p.goto(U);await sl(4000);
+const card=async(k,f)=>{await p.evaluate(k=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};C.S().autoBoss=false;if(G.screen)closeScreen();openScreen('enhance');G.enTab='comp';G.trSel=k;renderScreen()},k);await sl(900);
+const i=await p.evaluate(()=>{const e=document.querySelector('#screen .trv');const sb=document.querySelector('#screen .sbody');sb.scrollTop+=e.getBoundingClientRect().top-sb.getBoundingClientRect().top-58;document.querySelectorAll('.wcsl,.ccut').forEach(x=>x.remove());document.body.classList.add('hs-sh');
+return [...e.querySelectorAll('.trmb')].map(m=>{const t=m.getBoundingClientRect(),f=m.querySelector('i').getBoundingClientRect();return m.querySelector('b').textContent+' track '+Math.round(t.width)+' fill '+Math.round(f.width)+(m.querySelector('i').classList.contains('ok')?' ok':'')}).join(' | ')+' arrow:'+!!e.querySelector('.hcar')});console.log(k,i);await sl(400);await p.screenshot({path:'../screenshots/'+f,type:'jpeg',quality:86})};
+await card('gourry','1355_hero_gauges.jpg');await card('pip','1355b_hero_gauges_pip.jpg');
+// idle bar extra: show the existing idle-reward modal markup if a function exists
+const ok=await p.evaluate(()=>{document.body.classList.remove('hs-sh');if(G.screen)closeScreen();const fns=Object.keys(window).filter(k=>/idle|offline/i.test(k)&&typeof window[k]=='function');return fns});console.log('idle fns',ok);
+console.log('ERRS',JSON.stringify(errs));await b.close()})();

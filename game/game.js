@@ -3753,3 +3753,19 @@ ${btn('#screen .trv.hcf #trLv#trLv:not(.off),#screen .trv.hcf #trSk#trSk:not(.of
 const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='enhance'||G.enTab!='comp')return r;const sp=document.querySelector('#screen .trv.hcf .trnm span');if(!sp||sp.dataset.hs)return r;
 const i=sp.querySelector('i'),e=i?[...i.textContent].length:0,f=[...sp.textContent].length-e;sp.dataset.hs=1;sp.innerHTML='<img class=hst src="assets/star_gold.png">'.repeat(f)+'<img class="hst e" src="assets/star_gold.png">'.repeat(e)}catch(e){console.warn(e)}return r}})();
+;(()=>{/* v229 reuse r269 sld_track/sld_fill gauges (9-slice, fill clip by width) on 동료 카드 material bars (.trmb; full = pre-baked sld_fill_green) and the 18px idle/offline bar (.idlebar); st_arrow replaces ▶ in 공격 배율 row. Visual only */
+const T=`border:8px solid transparent!important;border-image:url(assets/sld_track.png) 20 fill/8px stretch!important;background:none!important;border-radius:0!important;box-sizing:border-box`;
+const Fl=`box-sizing:content-box!important;border:8px solid transparent;border-image:url(assets/sld_fill.png) 20 fill/8px stretch;background:none!important;min-width:0`;
+const st=document.createElement('style');st.textContent=`
+#screen .trv .trmb{${T};height:18px;overflow:visible}
+#screen .trv .trmb i{${Fl};position:absolute;left:-8px;top:-8px;bottom:auto;height:2px;max-width:100%}
+#screen .trv .trmb i.ok{border-image-source:url(assets/sld_fill_green.png)}
+#screen .trv .trmb i[style^="width:0%"]{display:none}
+#screen .trv .trmb b{position:absolute;left:-8px;right:-8px;top:-8px;line-height:18px;font-size:10.5px;text-shadow:-1px 0 #2a1606,1px 0 #2a1606,0 -1px #2a1606,0 1px #2a1606;z-index:1}
+#screen .trv .trm{margin:4px 0}
+.trcmp i.hcar{width:14px;height:18px;background:url(assets/st_arrow.png) center/contain no-repeat;transform:rotate(-90deg);color:transparent!important;font-size:0;flex:none;filter:drop-shadow(0 1px 1px #000a)}
+.idlebar{${T};height:22px!important;overflow:visible!important}
+.idlebar i{${Fl};position:absolute;left:-8px;top:-8px;height:6px!important;max-width:100%}
+.idlebar i[style^="width:0%"]{display:none}
+.idlebar span{inset:-8px!important;line-height:22px!important;z-index:1}`;document.head.appendChild(st);
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='enhance'||G.enTab!='comp')return r;const i=document.querySelector('#screen .trv .trcmp>i:not(.hcar)');if(i&&i.textContent.trim()=='▶')i.classList.add('hcar')}catch(e){console.warn(e)}return r}})();
