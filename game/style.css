@@ -1530,3 +1530,8 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 .pasum .pagot{display:flex;justify-content:space-between;gap:6px}.pasum .bar{margin:4px 4px 0;height:6px}
 #screen .sbody .card.pac0{padding:4px 6px!important;margin:0 0 4px}#screen .sbody .card.pac0>.shhide{display:none!important}#screen .card.pac0 #bpb{margin-top:0!important}
 #screen .sbody .card.pac0{border:0!important;border-image:none!important;background:none!important;box-shadow:none!important;padding:0!important;margin:0 0 4px}#screen .sbody .card.pac0:before,#screen .sbody .card.pac0:after{display:none!important}#screen .card.pac0 #bpb{padding-top:6px;padding-bottom:6px}
+/* r348 pass empty tab */
+#screen .pld.paemp .pll{max-height:none;padding:18px 12px}#screen .pld.paemp .pll:before{display:none}
+#screen .pld.paemp .paempc{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;border-radius:12px;background:#0e1838d8;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #9ab0d888}
+#screen .pld.paemp .paempc img{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 3px #000)}#screen .pld.paemp .paempc b{color:#ffe8a8;font-size:13px}
+#screen .pld.paemp{background:url(assets/bg_pass_road.jpg) 50% 30%/cover no-repeat,#8ac8ff}

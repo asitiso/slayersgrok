@@ -2809,7 +2809,7 @@ st.textContent=`
 #screen .shead .back{width:30px!important;height:30px!important;margin:3px 0 0 3px;background:radial-gradient(#3a1a14,#140806)!important;border:none!important;box-shadow:inset 0 0 6px #000!important;color:#ffd890!important}
 #screen .shead b{color:#ffe6b0!important}
 #screen .shead .chip{background:linear-gradient(#2a1a10,#140a06)!important;border:1px solid #8a6a3a!important;box-shadow:inset 0 1px 0 #ffffff1a!important}
-#screen${TH} .sbody .card{background:none!important;border-style:solid!important;border-width:10px!important;border-image:url(assets/ui_panel.png) 30 fill stretch!important;border-radius:0!important;box-shadow:0 4px 10px #0008!important;padding:4px 4px!important}
+#screen${TH} .sbody .card:not(.pac0){background:none!important;border-style:solid!important;border-width:10px!important;border-image:url(assets/ui_panel.png) 30 fill stretch!important;border-radius:0!important;box-shadow:0 4px 10px #0008!important;padding:4px 4px!important}
 #screen${TH} .sbody .pill:not(.off),#screen${TH} .sbody .btn{border:1.5px solid #d8b060!important;box-shadow:inset 0 1px 0 #fff6,inset 0 -2px 0 #0006,0 2px 3px #0008!important;text-shadow:0 1px 1px #000a}
 #screen${TH} .sbody .card .row{background:rgba(24,12,6,.5)!important;border-color:#6a4a24!important}#screen${TH} .entabs span,#screen${TH} .duntabs span{background:linear-gradient(#3a2614,#1c1008)!important;border:1.5px solid #8a6a3a!important;box-shadow:inset 0 1px 0 #ffffff22!important;color:#e8d0a0!important}
 #screen${TH} .entabs span.on,#screen${TH} .duntabs span.on{background:linear-gradient(#f2d080,#b07a2a)!important;border-color:#ffe9a8!important;color:#2a1600!important;box-shadow:0 0 8px #ffc94a88,inset 0 1px 0 #fff8!important}`;document.head.appendChild(st);
@@ -4566,6 +4566,6 @@ const pas=sc=>{const sb=sc.querySelector('.sbody'),d=sb&&sb.querySelector('.pld'
  {const c0=sb.querySelector('.card');if(c0&&c0!==sm){const tt=c0.querySelector('.ttl small'),br=c0.querySelector('.bar'),xs=[...c0.children].find(e=>e.tagName=='SMALL');const cap=[tt&&tt.textContent,xs&&(xs.textContent.split('·')[1]||'').trim()].filter(Boolean).join(' · ');
   if(br)sm.insertBefore(br,sm.querySelector('.pagot'));sm.querySelector('.pagot').innerHTML=`<span>${cap}</span><span>받은 보상 ${got}개</span>`;[...c0.children].forEach(e=>{if(!e.matches('#bpb,.pill'))e.classList.add('shhide')});c0.classList.add('pac0');sm.after(bar);c0.before(bar);bar.after(sm);sm.after(c0)}}
  rows.forEach((r,t)=>r.classList.toggle('shhide',!!i0&&K[t]!=i0));
- if(i0&&!K.includes(i0))d.querySelector('.pll').insertAdjacentHTML('afterbegin','<div class="card acemp"><b>표시할 보상이 없습니다</b></div>');
+ if(i0&&!K.includes(i0)){d.classList.add('paemp');d.querySelector('.pll').insertAdjacentHTML('afterbegin',`<div class=paempc><img src="assets/${TB[i0][1]}"><b>표시할 보상이 없습니다</b></div>`)}
  bar.querySelectorAll('[data-pa]').forEach(e=>e.onclick=()=>{if(+e.dataset.pa===G.paT)return;G.paT=+e.dataset.pa;renderScreen()})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(sc){if(G.screen=='ach')ach(sc);if(G.screen=='pass')pas(sc)}}catch(e){console.warn(e)}return r}})();
