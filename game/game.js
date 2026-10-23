@@ -4295,7 +4295,7 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);const P=G._
 })();
 
 ;(()=>{/* r315: companion ult cut-in art. If assets/cut/<k>_ult.png is listed in ULT and decoded, the field cut-in (ccFrame, non-boss) draws a Lina-style tilted band with the full art sliding in; otherwise the arch-banner portrait as before. Boss fights keep the slim strip. Off under low graphics / fx off (portrait banner), and R.opt.cut=off already suppresses the cut-in. Art decoded at idle. Display only. */
-const ULT={gourry:1,amelia:1,lyra:1,zelgadis:1,xellos:1,pip:1,borin:1},IM={};/* r319: +xellos; r320: +pip, borin *//* r316: +amelia, lyra; r318: +zelgadis */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
+const ULT={gourry:1,amelia:1,lyra:1,zelgadis:1,xellos:1,pip:1,borin:1,sera:1,rhea:1,kaede:1,noel:1},IM={};/* r319: +xellos; r320: +pip, borin; r321: +sera, rhea, kaede, noel *//* r316: +amelia, lyra; r318: +zelgadis */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
 const low=()=>document.body.classList.contains('tglite')||document.body.classList.contains('nofx')||(R.opt&&R.opt.fx===false);
 const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)i._ok=1})}return i};
 const pre=Object.keys(ULT);const step=()=>{const k=pre.shift();if(!k)return;ric(()=>{get(k);setTimeout(step,400)},{timeout:4000})};setTimeout(step,3000);
