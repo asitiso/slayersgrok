@@ -4511,6 +4511,18 @@ const mail=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.m
  const card=g.closest('.card');(card||g).before(bar);
  const vis=T[t][1].map(m=>m.k);g.querySelectorAll('.mgc').forEach(e=>e.classList.toggle('shhide',!vis.includes(e.dataset.mk)));
  if(LV.length&&!vis.length)g.insertAdjacentHTML('beforeend',`<div class=mlemp2><b>도착한 우편이 없습니다</b><small>새 우편이 오면 알려 드릴게요</small></div>`);
- const ma=sb.querySelector('#mailAll');if(ma&&LV.length)ma.classList.toggle('off',!un(T[0][1]));
+ const ma=sb.querySelector('#mailAll');if(ma&&LV.length)ma.classList.toggle('off',!un(T[0][1]));if(ma&&t>0){const w=document.createTreeWalker(ma,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())if(n.textContent.includes('모두 받기')&&!n.textContent.includes('전체 모두 받기')){n.textContent=n.textContent.replace('모두 받기','전체 모두 받기');break}}/* r344 label only; still claims all */
  bar.querySelectorAll('[data-mt]').forEach(e=>e.onclick=()=>{if(+e.dataset.mt===G.mlT)return;G.mlT=+e.dataset.mt;renderScreen()})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='mail'){const sc=document.querySelector('#screen');if(sc)mail(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r344: 업적 status tabs (전체/받기 가능/진행 중/완료 from existing achList state) + summary card + stage chip; display only, no new rewards */
+const ach=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.actab'))return;const rows=[...sb.querySelectorAll('.achr')];if(!rows.length)return;const L=C.achList();if(L.length!=rows.length)return;
+ const F=[a=>1,a=>a.can,a=>!a.can&&!a.done,a=>a.done],t=G.acT=G.acT||0;
+ const T=[['전체','ic3_trophy.png'],['받기 가능','it2_gem.png'],['진행 중','ic3_quest.png'],['완료','ic3_podium.png']];
+ const bar=document.createElement('div');bar.className='entabs actab';bar.innerHTML=T.map((x,i)=>{const n=L.filter(F[i]).length;return `<span class="${i==t?'on':''}" data-at=${i}><img src="assets/${x[1]}">${x[0]}<small>${n}</small>${i==1&&n?'<i class=dot></i>':''}</span>`}).join('');
+ const lvS=L.reduce((a,x)=>a+x.lv,0),lvT=D.ACH.reduce((a,x)=>a+x.g.length,0),gem=L.filter(a=>a.can).reduce((a,x)=>a+x.gem,0);
+ const sm=document.createElement('div');sm.className='card acsum';sm.innerHTML=`<div class=acst2><div><img src="assets/ic3_trophy.png"><small>업적 점수</small><b>${fmt(C.achScore())}</b></div><div><img src="assets/ic3_podium.png"><small>달성 단계</small><b>${lvS}/${lvT}</b></div><div><img src="assets/it2_gem.png"><small>받을 보상</small><b>${fmt(gem)}</b></div><div><img src="assets/ic3_quest.png"><small>칭호</small><b>${C.titlesOwned().length}/${D.TITLES.length}</b></div></div>`;
+ const first=sb.querySelector('#achAll')||rows[0];first.before(bar);bar.after(sm);
+ rows.forEach((r,i)=>{const a=L[i],D0=D.ACH[i];r.classList.toggle('shhide',!F[t](a));const f=r.querySelector('.f>b');if(f&&D0&&!r.querySelector('.acstg'))f.insertAdjacentHTML('beforeend',`<span class=acstg>${Math.min(a.lv+(a.done?0:1),D0.g.length)}/${D0.g.length}단계</span>`)});
+ if(!rows.some(r=>!r.classList.contains('shhide')))rows[rows.length-1].insertAdjacentHTML('afterend',`<div class="card acemp"><b>표시할 업적이 없습니다</b></div>`);
+ bar.querySelectorAll('[data-at]').forEach(e=>e.onclick=()=>{if(+e.dataset.at===G.acT)return;G.acT=+e.dataset.at;renderScreen()})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='ach'){const sc=document.querySelector('#screen');if(sc)ach(sc)}}catch(e){console.warn(e)}return r}})();
