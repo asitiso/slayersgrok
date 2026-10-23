@@ -1504,3 +1504,13 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 #screen.acx2 .acsum{padding:2px 4px!important;margin:0 0 4px;border-width:6px!important}#screen.acx2 .acsum .acst2 div{padding:2px 4px}
 .entabs.tttab span img[src$="tt_locked.png"]{width:15px}
 #screen .sbody .acst.acx{height:86px}#screen .acst.acx .ach2{top:3px}#screen .acst.acx .acft{bottom:4px}
+/* r346 */
+#screen .accap{font-size:9.5px;line-height:13px;text-align:center;color:#f0dcb0;margin:0 0 2px;text-shadow:0 1px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.achr .acnx{display:flex;align-items:center;gap:5px;margin-top:2px;font-size:10px;color:#e8d2a0;white-space:nowrap}
+.achr .acnx span{font-weight:800;color:#ffd98a}.achr .acnx i{font-style:normal;display:flex;align-items:center;gap:1px;font-weight:800;color:#fff}.achr .acnx i img{width:14px;height:14px;object-fit:contain}
+.achr .acnx em{font-style:normal;color:#cbb58a;margin-left:auto;font-size:9.5px}.achr .acnx.last{color:#ffd98a;font-weight:800}
+#screen .tthero{position:relative;height:96px;margin:-4px -4px 4px;border-radius:14px;overflow:hidden;border:2px solid #0b0d0f;box-shadow:0 4px 10px #0008}
+#screen .tthero .tbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%}
+#screen .tthero .ttcap{position:absolute;left:6px;right:6px;bottom:5px;z-index:2;text-align:center;font-size:9.5px;line-height:13px;color:#fff;background:#1a0e08b8;border-radius:8px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#screen .accap{display:block;width:max-content;max-width:100%;margin:0 auto 2px;background:#1a0e08c8;border-radius:8px;padding:1px 8px;color:#fff}
+#screen .tthero{height:86px}#screen .entabs.tttab{padding:2px 2px 2px!important;margin:0 0 4px}#screen .ttsum{padding:5px 10px!important;margin-bottom:6px}

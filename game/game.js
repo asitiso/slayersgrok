@@ -4540,3 +4540,14 @@ const ttl=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.tt
  if(!rows.some(r=>!r.classList.contains('shhide')))rows[rows.length-1].insertAdjacentHTML('afterend',`<div class="card acemp"><b>표시할 칭호가 없습니다</b></div>`);
  bar.querySelectorAll('[data-tt]').forEach(e=>e.onclick=()=>{if(+e.dataset.tt===G.ttT)return;G.ttT=+e.dataset.tt;renderScreen()})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(sc){sc.classList.remove('acx2');if(G.screen=='ach')ach(sc);if(G.screen=='title')ttl(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r346: 칭호 hero (bg_title_hall) + 업적 next-stage reward preview (existing gem/t/st arrays) + 업적 caption restored; display only */
+const ach=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.accap'))return;const h=sb.querySelector('.acst');const c0=sb.querySelector('.card.shhide'),cap=c0&&c0.querySelector('small');
+ if(h&&cap){const d=document.createElement('div');d.className='accap';d.textContent=cap.textContent;h.after(d)}
+ const L=C.achList();const rows=[...sb.querySelectorAll('.achr')];if(rows.length!=L.length)return;
+ rows.forEach((r,i)=>{const a=D.ACH[i],x=L[i];if(!a||r.querySelector('.acnx'))return;const n=x.lv+1,f=r.querySelector('.f');if(!f)return;
+  if(x.done||n>=a.g.length){f.insertAdjacentHTML('beforeend','<div class="acnx last">최종 단계</div>');return}
+  f.insertAdjacentHTML('beforeend',`<div class=acnx><span>다음 단계</span><i><img src="assets/it2_gem.png">${fmt(a.gem[n])}</i>${a.t&&a.t[n]?`<i><img src="assets/it2_ticket.png">${fmt(a.t[n])}</i>`:''}${a.st&&a.st[n]?`<i><img src="assets/it2_stone.png">${fmt(a.st[n])}</i>`:''}<em>목표 ${fmt(a.g[n])}</em></div>`)})};
+const ttl=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.tthero'))return;const c0=sb.querySelector('.card.ttin');const tx=c0&&c0.textContent.trim();
+ const h=document.createElement('div');h.className='tthero';h.innerHTML=`<img class=tbg src="assets/bg_title_hall.jpg">${tx?`<small class=ttcap>${tx}</small>`:''}`;
+ (c0||sb.firstElementChild).before(h);if(c0)c0.classList.add('shhide')};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(sc){if(G.screen=='ach')ach(sc);if(G.screen=='title')ttl(sc)}}catch(e){console.warn(e)}return r}})();
