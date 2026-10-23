@@ -3125,3 +3125,27 @@ new Image().src=A+"wave_ribbon.png";R._wrq=()=>{q.length=0;busy=0;if(cur){cur.re
 const ok=C.ev.kill;C.ev.kill=function(e){const r=ok&&ok.apply(this,arguments);try{document.querySelectorAll('#battle .wclr').forEach(f=>{if(f._rb)return;f._rb=1;const t=f.querySelector('b');if(t){t.remove();R.waveRib('WAVE CLEAR')}})}catch(_){}return r};
 const os=C.ev.spawn;C.ev.spawn=function(){const k=cur;if(k)k.classList.remove('wvb');/* the base spawn banner code removes every .wvb */let r;try{r=os&&os.apply(this,arguments)}finally{if(k)k.classList.add('wvb')}try{document.querySelectorAll('#battle .wvb:not(.wrib):not(.tgb)').forEach(d=>{const fin=d.classList.contains('fin'),b=d.querySelector('b');d.remove();if(b)R.waveRib(fin?'FINAL WAVE':b.innerHTML,fin)})}catch(_){}return r};
 const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&cut()&&!cur.classList.contains('out'))cur.classList.add('out');if(cur&&cur.classList.contains('bgone')&&!G._fin&&!document.querySelector('.vic,.bsht'))cur.classList.remove('bgone')/* BN mutex: the transient spawn .wvb we swap out must not hide the ribbon */}catch(_){}return r}})();
+
+/* v200: 연계기 duo banner — duo_banner.png frame (340×127) in its own band 470–597 (below callout max 462, clear of cut-in 196–336 / ribbon 244–332 / plaque 341–415); busts clipped in the two windows under the frame; boss keeps the old 548 slot */
+(()=>{const st=document.createElement('style');st.textContent=`
+#battle .combo.duo{left:50%;right:auto;top:470px;width:340px;height:127px;margin-left:-170px;display:block;background:none;border:0;box-shadow:none;animation:duoIn 1.5s ease-out forwards;transform-origin:50% 60%}
+body.bossfight #battle .combo.duo{top:548px;height:127px}
+#battle .combo.duo .fr{position:absolute;inset:0;width:100%;height:100%;margin:0;filter:drop-shadow(0 4px 6px #0007);animation:none;transform:none;object-fit:fill;z-index:1}
+#battle .combo.duo .dw{position:absolute;top:49px;width:50px;height:50px;overflow:hidden;border-radius:7px;background:radial-gradient(circle at 50% 40%,#5a3a9a,#1a0d3a 75%);z-index:0}
+#battle .combo.duo .dw.l{left:22px}#battle .combo.duo .dw.r{left:268px}
+#battle .combo.duo .dw img{position:absolute;left:50%;top:2px;width:62px;height:auto;margin:0;transform:translateX(-50%);filter:none;object-fit:contain;animation:duoB .4s .12s both}
+#battle .combo.duo .dw.r img{transform:translateX(-50%) scaleX(-1)}
+#battle .combo.duo .pl{position:absolute;left:98px;width:146px;top:55px;height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;min-width:0}
+#battle .combo.duo .pl b{font:italic 900 17px Maplestory,"Noto Sans KR",sans-serif;color:#3a1250;white-space:nowrap;max-width:146px;overflow:hidden;text-shadow:1px 1px 0 #fff8e4,-1px -1px 0 #fff8e4,1px -1px 0 #fff8e4,-1px 1px 0 #fff8e4}
+#battle .combo.duo .pl i{font:700 9.5px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#6a4a2a;margin-top:1px;white-space:nowrap}
+#battle .combo.duo .gm{position:absolute;left:146px;top:-12px;width:48px;height:48px;border-radius:50%;background:radial-gradient(#f4d8ffee,#c070ff88 35%,#8a30ff00 70%);mix-blend-mode:screen;z-index:3;animation:duoG .9s .2s ease-in-out 2 both}
+@keyframes duoIn{0%{opacity:0;transform:translateX(-40px) scaleX(.4)}14%{opacity:1;transform:translateX(4px) scaleX(1.05)}22%{transform:none}86%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-10px)}}
+@keyframes duoB{from{opacity:0;top:16px}to{opacity:1;top:2px}}
+@keyframes duoG{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1.15)}}`;document.head.appendChild(st);
+const bust=(src,img)=>{const k=(D.COMPS.find(c=>src.endsWith(c.img))||{}).k;const i=new Image();i.alt='';if(k){i.src=A+'cutc/'+k+'.png';i.onerror=()=>{i.onerror=null;i.src=src}}else i.src=src;return i};
+const dress=n=>{if(n._duo)return;n._duo=1;const l=n.querySelector('.cl'),r=n.querySelector('.cr'),b=n.querySelector('.cm b'),it=n.querySelector('.cm i');if(!l||!r||!b)return;
+const nm=b.textContent,sub=it?it.textContent:'';n.classList.add('duo');n.innerHTML='';
+for(const [s,c] of [[l.getAttribute('src'),'l'],[r.getAttribute('src'),'r']]){const w=document.createElement('div');w.className='dw '+c;w.appendChild(bust(s));n.appendChild(w)}
+n.insertAdjacentHTML('beforeend',`<img class="fr" src="${A}duo_banner.png" alt=""><div class="pl"><b>${nm}</b><i>${sub}</i></div><span class="gm"></span>`)};
+new Image().src=A+'duo_banner.png';
+const go=()=>{const b=document.getElementById('battle');if(!b)return setTimeout(go,300);new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('combo'))try{dress(n)}catch(_){}}).observe(b,{childList:true})};go()})();

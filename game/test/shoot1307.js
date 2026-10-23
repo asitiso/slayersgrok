@@ -1,0 +1,21 @@
+// r249: v200 duo banner — 1307 alone, 1308 with cut-in + plaque + callout (High)
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+await p.goto(U);await sl(4000);const clr=()=>p.evaluate(()=>document.querySelectorAll('#notice,.tut,.sty,.modal').forEach(x=>x.remove()));
+await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};const s=G.S();s.autoBoss=false;C.selectStage(s.si)});await sl(2500);
+const cut=k=>p.evaluate(k=>{const cp=D.COMPS.find(x=>x.k==k),ci=D.CSKI&&D.CSKI[k];R.ccut={t:0,bust:1,img:'cutc/'+k+'.png',n:cp.n,sk:ci?ci[1]:'스킬',rc:(D.RAR[cp.g]||{}).c};R.ccCd=6},k);
+await p.evaluate(()=>{setInterval(()=>{if(!window._ac)R.ccut=null},16);const or=Element.prototype.remove;Element.prototype.remove=function(){if(window._hold&&this.classList&&(this.classList.contains('combo')||this.classList.contains('mkb')))return;return or.call(this)}});
+const mk=()=>p.evaluate(()=>{const b=document.getElementById('battle');b.querySelectorAll('.mkb').forEach(x=>x.remove());const d=document.createElement('div');d.className='mkb k3';d.innerHTML='<b>TRIPLE KILL</b>';d.style.animationDelay='-.3s';b.appendChild(d);setTimeout(()=>d.style.animationPlayState='paused',60)});
+const el=()=>p.evaluate(()=>{R.elT={t:.02,n:'독기 서리 정령'}});
+const frz=()=>p.evaluate(()=>{window._hold=1;document.querySelectorAll('#battle .combo,#battle .combo *').forEach(d=>d.style.animationPlayState='paused')});
+const unf=()=>p.evaluate(()=>{window._hold=0;document.querySelectorAll('#battle .combo').forEach(x=>x.remove())});
+const ready=async()=>{for(let i=0;i<60;i++){if(await p.evaluate(()=>C.alive().length>=3&&!document.querySelector('#battle .wrib')&&!C.B.boss))return;await sl(100)}};
+const box=()=>p.evaluate(()=>{const q=s=>{const m=document.querySelector(s),r=m&&m.getBoundingClientRect();return r&&[Math.round(r.top),Math.round(r.bottom),Math.round(r.left),Math.round(r.right)]};const ims=[...document.querySelectorAll('#battle .combo.duo img')].map(i=>i.naturalWidth);return{duo:q('#battle .combo.duo'),txt:(document.querySelector('#battle .combo.duo .pl')||{}).innerText,ims,mk:q('#battle .mkb'),rib:q('#battle .wrib'),elon:document.getElementById('battle').classList.contains('elon'),ccon:document.getElementById('battle').classList.contains('ccon')}});
+await clr();await ready();await p.evaluate(()=>{R.ccut=null;R.ccCd=99;G.comboTest('lyra','amelia')});await sl(450);await frz();
+const s1=await box();await p.screenshot({path:'../screenshots/1307_duo_banner.jpg',type:'jpeg',quality:85});
+await unf();await sl(1500);await clr();
+await ready();await p.evaluate(()=>{R.ccCd=0;window._ac=1});await cut('amelia');await el();await sl(250);await mk();await p.evaluate(()=>G.comboTest('gourry','zelgadis'));await sl(450);await frz();
+const s2=await box();await p.screenshot({path:'../screenshots/1308_duo_banner_busy.jpg',type:'jpeg',quality:85});
+await unf();await ready();await p.evaluate(()=>{window._ac=0;R.ccut=null;R._wrq&&R._wrq();R.waveRib('WAVE CLEAR');G.comboTest('lyra','pip')});await sl(400);const s3=await box();
+console.log(JSON.stringify({s1,s2,s3_ribbon:s3,errs}));await b.close()})();
