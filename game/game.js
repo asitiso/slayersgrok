@@ -3233,7 +3233,7 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&
 new Image().src=A+'achv_plate.png';
 const q=[];let cur=null,busy=0,endT=0,seen=null;const HOLD=2000;
 const bat=()=>document.getElementById('battle');
-const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd,.vic,.bsht');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd,.vic,.bsht,.bwarn');
 const list=()=>{const o=[];D.ACH.forEach(a=>{const v=C.achVal(a.k);a.g.forEach((g,i)=>{if(v>=g)o.push({id:'a'+a.k+i,t:'업적 달성',h:a.n+' '+(i+1)+'단계',gem:a.gem[i],tk:a.t&&a.t[i],sto:a.st&&a.st[i]})})});C.titlesOwned().forEach(t=>o.push({id:'t'+t.k,t:'칭호 획득',h:'「'+t.n+'」',rw:'공격력 +'+t.atk+'%'+(t.gold?' · 골드 +'+t.gold+'%':'')}));return o};
 const fin=()=>{const d=cur;if(!d)return;if(R._acHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
 const show=it=>{const b=bat();if(!b){busy=0;return}const rw=it.rw||[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">소환권 ${it.tk}`:'',it.sto?'강화석 '+it.sto:''].filter(Boolean).join(' ');
@@ -3266,7 +3266,7 @@ new Image().src=A+'loot_card.png';
 const q=[];let cur=null,busy=0,endT=0;const HOLD=1800;
 const bat=()=>document.getElementById('battle');
 const away=()=>G.screen||G.storyOn||(G.tab&&G.tab!='battle');
-const blk=()=>!!document.querySelector('#battle .combo,#battle .acp,.vic,.bsht');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .acp,.vic,.bsht,.bwarn');
 const fin=()=>{const d=cur;if(!d)return;if(R._lcHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
 const show=it=>{const b=bat();if(!b){busy=0;return}const rr=D.RAR[it.r]||{},sl=D.SLOTS.find(x=>x.k==it.slot)||{};
  const d=document.createElement('div');d.className='lcd r'+it.r;d.style.setProperty('--rc',rr.c||'#b07cff');d.innerHTML=`<div class=in><img class=fr src="${A}loot_card.png" alt=""><span class=wn></span><img class=ic src="${A}${sl.img}" alt="" style="${sl.f?'filter:'+sl.f+' drop-shadow(0 0 4px '+rr.c+')':''}"><div class=lb>${rr.n} 장비 획득</div><div class=nm></div>${it.more?`<div class=mo>외 ${it.more}건</div>`:''}</div>`;d.querySelector('.nm').textContent=it.name;
@@ -3275,3 +3275,32 @@ const pump=()=>{if(busy||!q.length)return;busy=1;let w=0;const go=()=>{if(away()
 R.lootCard=it=>{if(q.length>=3){const l=q[q.length-1];l.more=(l.more||0)+1;return}q.push(it);pump()};R._lcq=()=>{q.length=0;clearTimeout(endT);if(cur){cur.remove();cur=null}busy=0};
 const ro=C.rollOnce;C.rollOnce=function(){const r=ro.apply(this,arguments);try{if(r&&r.r>=4)R.lootCard({r:r.r,slot:r.slot,name:r.name})}catch(_){}return r};
 const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&document.querySelector('#battle .combo')){clearTimeout(endT);fin()}}catch(_){}return r}})();
+
+/* v205: boss WARNING banner — upgrades the existing bossWarn (.bwarn) with boss_warning.png art: stripe bars slide in from opposite sides, plaque pops with WARNING + real boss name, red edge vignette + skull glow; hands off to the VS splash; other toasts hidden while up (visual only) */
+;(()=>{const st=document.createElement('style');
+const TB='polygon(0 14%,36% 14%,36% 31%,16.5% 31%,16.5% 52%,0 52%)',TB2='polygon(64% 14%,100% 14%,100% 52%,83.5% 52%,83.5% 31%,64% 31%)',BB='polygon(0 68%,16.5% 68%,16.5% 92%,83.5% 92%,83.5% 68%,100% 68%,100% 100%,0 100%)',PL='polygon(16.5% 31%,36% 31%,36% 0,64% 0,64% 31%,83.5% 31%,83.5% 92%,16.5% 92%)';
+st.textContent=`.bwarn.bw2{display:block;animation:bwin .12s both}.bwarn.bw2.out{animation:bw2o .38s ease-in both}
+.bw2 .bwe{box-shadow:inset 0 0 70px 14px rgba(255,24,24,.6);animation:bw2v .5s ease-in-out .1s 3 alternate both}
+.bw2 .bwb{position:absolute;left:0;top:calc(50% - 128px);width:390px;height:143px;filter:drop-shadow(0 6px 10px #0009)}
+.bw2 .ly{position:absolute;inset:0;background:url(assets/boss_warning.png) 0 0/100% 100% no-repeat}
+.bw2 .ta{clip-path:${TB};animation:bw2L .34s cubic-bezier(.2,.9,.3,1) both}.bw2 .tb{clip-path:${TB2};animation:bw2L .34s cubic-bezier(.2,.9,.3,1) both}
+.bw2 .bb{clip-path:${BB};animation:bw2R .34s cubic-bezier(.2,.9,.3,1) both}
+.bw2 .pl{clip-path:${PL};animation:bw2P .4s .26s cubic-bezier(.3,1.6,.5,1) both}
+.bw2 .sg{position:absolute;left:50%;top:15px;width:48px;height:44px;margin-left:-24px;border-radius:50%;background:radial-gradient(#ff5a3a,#ff3a2a00 70%);mix-blend-mode:screen;animation:bw2G .45s .55s ease-in-out 3 alternate both}
+.bw2 .tx{position:absolute;left:92px;width:206px;top:58px;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:bw2T .3s .5s cubic-bezier(.3,1.5,.5,1) both}
+.bw2 .tx b{font:900 27px/1 Maplestory,"Noto Sans KR",sans-serif;font-style:italic;letter-spacing:2px;background:linear-gradient(#fffbe0,#ffd23a 55%,#ff8a1a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #3a0400) drop-shadow(0 0 6px #ff2a1a)}
+.bw2 .tx span{margin-top:5px;max-width:200px;white-space:nowrap;overflow:hidden;font:900 14px/1.1 Maplestory,"Noto Sans KR",sans-serif;color:#fff4e0;text-shadow:0 0 5px #ff2a1a,0 0 2px #ff2a1a,0 2px 1px #000}
+.bw2 .tx small{font:700 10px Maplestory,"Noto Sans KR",sans-serif;color:#ffb0a0;margin-right:5px}
+.bw2.lite .ta,.bw2.lite .tb,.bw2.lite .bb,.bw2.lite .pl,.bw2.lite .tx{animation:bwin .15s both}.bw2.lite .bwe,.bw2.lite .sg{display:none}
+@keyframes bw2L{0%{transform:translateX(-105%)}100%{transform:none}}@keyframes bw2R{0%{transform:translateX(105%)}100%{transform:none}}
+@keyframes bw2P{0%{opacity:0;transform:scale(.35)}100%{opacity:1;transform:none}}@keyframes bw2T{0%{opacity:0;transform:scale(1.8)}100%{opacity:1;transform:none}}
+@keyframes bw2G{0%{opacity:0;transform:scale(.8)}100%{opacity:.85;transform:scale(1.15)}}@keyframes bw2v{0%{opacity:.25}100%{opacity:1}}
+@keyframes bw2o{to{opacity:0;transform:translateX(-50%) scale(1.04)}}
+body:has(.bwarn.bw2:not(.out)) :is(#toastQ,#battle .acp,#battle .lcd,#battle .qsc,#battle .tdmg,#battle .tlw,#battle .mkb){opacity:0!important;transition:opacity .12s}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const ob=bossWarn;bossWarn=function(i){const r=ob.apply(this,arguments);try{const d=document.querySelector('.bwarn:not(.bw2)');if(!d||document.body.classList.contains('wbon'))return r;const pl=D.BOSSPLAN[Math.floor(i/7)],b=pl&&D.BOSSES[pl[i%7==6?1:0]];if(!b)return r;
+ d.classList.add('bw2');if(lite())d.classList.add('lite');d.innerHTML=`<div class=bwe></div><div class=bwb><i class="ly ta"></i><i class="ly tb"></i><i class="ly bb"></i><i class="ly pl"></i><i class=sg></i><div class=tx><b>WARNING</b><span><small>${i%7==6?'챕터 보스 등장':'보스 등장'}</small>${b.n}</span></div></div>`;
+ const T=lite()?1000:0;if(T){setTimeout(()=>d.classList.add('out'),T);setTimeout(()=>d.remove(),T+380)}}catch(e){}return r};
+// hand off to the VS splash: banner exits as soon as the VS card appears (no stacking)
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{const d=document.querySelector('.bwarn.bw2:not(.out)');if(d&&!R._bwHold&&document.querySelector('#battle .vsx')){d.classList.add('out');setTimeout(()=>d.remove(),380)}}catch(_){}return r};
+})();
