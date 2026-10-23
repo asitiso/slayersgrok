@@ -4203,3 +4203,14 @@ const S=':is(#_a,#_b,div):is(#_c,#_d,div)';const st=document.createElement('styl
 #battle #mission${S}{top:643px!important;bottom:auto!important}
 #battle #bctl${S}{top:644px!important;bottom:auto!important}`;document.head.appendChild(st);
 })();
+;(()=>{/* v251 r300 (visual only): (A) hc_statplate backing (navy + gold rim, reads over moving monsters better than the light tt_plate) behind the 방치보상 label + timer;
+ (B) top HUD: stage title on an hc_statplate name plate (was cream text straight over the bright field), timer + 웨이브 row on its own plate and moved right of the boss button (x 92-136 used to cover the ⏱ icon / timer bar) */
+const S=':is(#_a,#_b,div):is(#_c,#_d,div)',P=`border:solid transparent;border-width:5px 7px;border-image:url(assets/hc_statplate.png) 46 52 fill/5px 7px stretch;filter:drop-shadow(0 1px 2px #0008)`;const st=document.createElement('style');st.textContent=`
+#battle #idleBtn${S}::before{content:'';position:absolute;left:-7px;right:-7px;top:40px;height:31px;box-sizing:border-box;z-index:-1;pointer-events:none;${P}}
+#battle #idleBtn${S} b,#battle #idleBtn${S} small{position:relative;text-shadow:0 1px 0 #000,0 0 3px #000}
+#stagebar #stName:is(#_a,#_b,b):is(#_c,#_d,b){color:#fff;text-shadow:0 1px 0 #000,0 0 3px #000c}
+#stagebar #stName:is(#_a,#_b,b):is(#_c,#_d,b)::before{content:'';position:absolute;left:-6px;right:-6px;top:-2px;bottom:-3px;box-sizing:border-box;z-index:-1;pointer-events:none;${P}}
+#stagebar .trow${S}{position:relative;z-index:1;margin-left:30px!important;padding-right:4px;width:126px!important;max-width:none!important;flex:none!important;white-space:nowrap}#stagebar #stInfo{white-space:nowrap;flex:1 0 auto!important;max-width:none!important}
+#stagebar .trow${S}::before{content:'';position:absolute;left:-6px;right:-2px;top:-3px;bottom:-3px;box-sizing:border-box;z-index:-1;pointer-events:none;${P}}
+body.tglite #battle #idleBtn::before,body.tglite #stagebar #stName::before,body.tglite #stagebar .trow::before{filter:none}`;document.head.appendChild(st);
+})();
