@@ -1406,3 +1406,18 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 .dcell.sold>img:not(.dfr),.dcell.sold>b{opacity:.45;filter:grayscale(.8)}
 .dcell .shst{width:54px;height:54px;margin:-27px 0 0 -27px}
 .shc2:has(.shlm) .shcur{top:30px}
+/* r339 일일 특가 strip */
+.deals.scv .dgrid{margin-top:6px!important}
+.dlst{display:flex;align-items:center;gap:6px;margin:6px 0 0;padding:4px 6px;border-radius:10px;background:linear-gradient(90deg,#1a0e08d8,#1a0e0890);border:1px solid #ffdf9a40;min-height:56px}
+.dlst .dlnp{width:48px;height:56px;object-fit:cover;object-position:top;border-radius:8px;background:#3a2414;border:1.5px solid #c9953f;flex:none}
+.dlst .dlbb{flex:1;min-width:0;background:#fff8ec;color:#4a2a10;font-size:11px;font-weight:700;border-radius:10px;padding:5px 8px;position:relative;line-height:1.25}
+.dlst .dlbb:before{content:'';position:absolute;left:-6px;top:50%;margin-top:-5px;border:5px solid transparent;border-right-color:#fff8ec;border-left:0}
+.dlst .dlbb small{display:block;font-size:9.5px;color:#a0602a;font-weight:900;margin-top:1px}
+.deals.scv .dlst .dtim{margin:0!important;flex:none;display:flex;flex-direction:column;align-items:center;padding:3px 8px!important;border-radius:9px;font-size:9px;line-height:1.1}
+.deals.scv .dlst .dtim b{font-size:13px;font-family:Maplestory,sans-serif}
+.deals.scv .dlst .dtim img{display:none}
+/* r339 가방 tabs */
+#screen .entabs.bgtab{display:flex;position:sticky;top:0;z-index:6;margin:4px 0 8px;padding:16px 2px 4px!important;background:linear-gradient(#1a0e08f0,#1a0e08c0 80%,#1a0e0800)}
+#screen .entabs.bgtab span{position:relative;display:flex;align-items:center;justify-content:center;gap:2px;font-size:12.5px;cursor:pointer}
+#screen .entabs.bgtab span img{width:17px;height:17px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a)}
+#screen .entabs.bgtab span small{font-size:9px;color:#ffd25a;margin-left:1px}

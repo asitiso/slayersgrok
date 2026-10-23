@@ -4441,3 +4441,16 @@ const shop=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.s
  G3.forEach((x,i)=>x[2].forEach(e=>e.classList.toggle('shhide',i!=t)));
  bar.querySelectorAll('[data-st]').forEach(e=>e.onclick=()=>{if(+e.dataset.st===G.shT)return;G.shT=+e.dataset.st;renderScreen();const b2=document.querySelector('#screen .sbody');if(b2)b2.scrollTop=0})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(!sc)return r;if(G.screen=='event')att(sc);if(G.screen=='shop')shop(sc)}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r339: 일일 특가 strip (merchant line + existing refresh timer moved into the counter strip) + 가방 tabs 전체/재화/소모품/장비 (filters the existing cards). Display only */
+const CUR=/it2_gold|it2_gem|it2_exp|it3_guildcoin|it3_arenatoken|it3_mileagestar/;
+const deals=sc=>{const dl=sc.querySelector('.deals.scv');if(!dl||dl.querySelector('.dlst'))return;const tm=dl.querySelector('.dtim'),g=dl.querySelector('.dgrid');if(!tm||!g)return;const d=C.deals(),left=(d.it||[]).filter(x=>!x.b).length;
+ const st=document.createElement('div');st.className='dlst';st.innerHTML=`<img class=dlnp src="assets/npc_merchant.png"><div class=dlbb>오늘의 특가는 05시에 바뀌어요.<small>남은 특가 ${left}/${(d.it||[]).length}</small></div>`;st.appendChild(tm);g.before(st)};
+const bag=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.bgtab'))return;const cards=[...sb.querySelectorAll(':scope>.card')];if(cards.length<2)return;
+ const items=[...cards[0].querySelectorAll('.bagg .bi')].map(b=>({b,c:CUR.test((b.querySelector('img')||{}).getAttribute?.('src')||'')?1:2})),ng=cards[1].querySelectorAll('.bagg .bi').length;
+ const T=[['전체','bg_backpack.png',items.length+ng],['재화','it2_gold.png',items.filter(x=>x.c==1).length],['소모품','it2_hp.png',items.filter(x=>x.c==2).length],['장비','bg_slot.png',ng]];
+ const t=G.bgT=G.bgT||0;const bar=document.createElement('div');bar.className='entabs bgtab';bar.innerHTML=T.map((x,i)=>`<span class="${i==t?'on':''}" data-bt=${i}><img src="assets/${x[1]}">${x[0]}<small>${x[2]}</small></span>`).join('');
+ const h=sb.querySelector(':scope>.bghero');h?h.after(bar):sb.prepend(bar);
+ cards[0].classList.toggle('shhide',t==3);cards[1].classList.toggle('shhide',t==1||t==2);items.forEach(x=>x.b.classList.toggle('shhide',(t==1&&x.c!=1)||(t==2&&x.c!=2)));
+ const tt=cards[0].querySelector('.ttl');if(tt&&(t==1||t==2)){const n=[...tt.childNodes].find(z=>z.nodeType==3&&z.textContent.trim());if(n)n.textContent=t==1?'재화':'소모품'}
+ bar.querySelectorAll('[data-bt]').forEach(e=>e.onclick=()=>{if(+e.dataset.bt===G.bgT)return;G.bgT=+e.dataset.bt;renderScreen();const b2=document.querySelector('#screen .sbody');if(b2)b2.scrollTop=0})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(!sc)return r;if(G.screen=='shop')deals(sc);if(G.screen=='bag')bag(sc)}catch(e){console.warn(e)}return r}})();
