@@ -3012,3 +3012,48 @@ R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth
  cx.font='900 15px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';const sx2=tx+nw+6,sk=c.sk+'!';cx.strokeText(sk,sx2,ty);cx.fillStyle='#fff6d8';cx.fillText(sk,sx2,ty);
  cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
 })();
+
+/* v196: boss-clear chest moment — closed chest drops on the boss spot, bounces, bursts open, drops fly to header (visual only; fits the 2.7s clear card; respects 스킬 연출 setting) */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.bchest{position:fixed;z-index:990;width:118px;height:118px;margin:-118px 0 0 -59px;pointer-events:none}
+.bchest img{position:absolute;left:0;bottom:0;width:100%;height:auto;transform-origin:50% 100%;filter:drop-shadow(0 4px 3px #0006)}
+.bchest .bco{animation:bcdrop .62s cubic-bezier(.45,0,.6,1) both}
+.bchest.sh .bco{animation:bcshake .2s linear both}
+.bchest .bcp{opacity:0}
+.bchest.op .bco{display:none}.bchest.op .bcp{opacity:1;animation:bcpop .32s cubic-bezier(.2,1.6,.4,1) both}
+.bchest .bcsh{position:absolute;left:14px;right:14px;bottom:-6px;height:14px;border-radius:50%;background:radial-gradient(#0007,#0000 70%);animation:bcshd .62s both}
+.bchest .bcg{position:absolute;left:50%;top:44%;width:230px;height:230px;margin:-115px 0 0 -115px;border-radius:50%;opacity:0;background:radial-gradient(#fff8d8 0,#ffd24a99 28%,#ffb02e33 52%,#0000 70%)}
+.bchest.op .bcg{animation:bcglow 1.4s ease-out both}
+.bchest .bcr{position:absolute;left:50%;top:40%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid #fff1b8;opacity:0;box-shadow:0 0 12px #ffcf4a}
+.bchest.op .bcr{animation:bcring .55s ease-out both}
+.bchest.out{animation:bcout .35s ease-in forwards}
+@keyframes bcdrop{0%{transform:translateY(-190px) scale(.85);opacity:0}12%{opacity:1}55%{transform:translateY(0) scale(1.06,.9)}70%{transform:translateY(-26px) scale(.97,1.04)}84%{transform:translateY(0) scale(1.03,.95)}92%{transform:translateY(-6px)}100%{transform:none}}
+@keyframes bcshd{0%{transform:scale(.3);opacity:0}55%{transform:scale(1.1);opacity:1}70%{transform:scale(.8)}100%{transform:none;opacity:1}}
+@keyframes bcshake{0%,100%{transform:none}20%{transform:rotate(-5deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-4deg) scale(1.04)}80%{transform:rotate(3deg) scale(1.06)}}
+@keyframes bcpop{0%{transform:scale(1.25,.8)}60%{transform:scale(.94,1.1)}100%{transform:none}}
+@keyframes bcglow{0%{opacity:0;transform:scale(.3)}20%{opacity:1;transform:scale(1.1)}100%{opacity:.35;transform:scale(1)}}
+@keyframes bcring{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(9)}}
+@keyframes bcout{to{opacity:0;transform:translateY(8px) scale(.9)}}
+.bcl{position:fixed;z-index:1000;width:30px;height:30px;margin:-15px 0 0 -15px;pointer-events:none;will-change:transform}
+.bcl img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 4px #ffe58a) drop-shadow(0 2px 1px #0007)}
+.bcl b{position:absolute;left:50%;top:100%;transform:translateX(-50%);font:900 11px Maplestory,sans-serif;color:#fff3c0;-webkit-text-stroke:2.5px #3a1a00;paint-order:stroke;white-space:nowrap}
+.hdpulse{animation:hdpulse .3s ease-out}@keyframes hdpulse{50%{transform:scale(1.25);filter:brightness(1.6)}}
+`;document.head.appendChild(st);
+let last=null;const ok=C.ev.kill;C.ev.kill=function(e){try{if(e&&e.boss&&!e.wb){const q=R._ES&&R._ES().get(e),c=document.querySelector('#battle canvas'),r=c&&c.getBoundingClientRect();last={x:(r?r.left:0)+(q?q.x:240),y:(r?r.top:0)+(q?q.y:520),t:performance.now()}}}catch(_){}return ok&&ok.apply(this,arguments)};
+const T=[],at=(f,ms)=>T.push(setTimeout(f,ms));
+G.chestMoment=(w)=>{T.splice(0).forEach(clearTimeout);document.querySelectorAll('.bchest,.bcl').forEach(x=>x.remove());
+ if(!w||(R.opt&&R.opt.fx===false)||G.screen||C.B.br||C.B.rb||C.B.wb||G.storyOn||!last||performance.now()-last.t>6000)return 0;
+ const s=C.S(),b=G._bs||{},W=innerWidth,x=Math.max(70,Math.min(W-70,last.x)),y=innerHeight-216/* ground line under the clear card, above the fever bar */;last=null;
+ const dg=Math.max(0,s.gold-(b.g||s.gold)),ds=Math.max(0,(s.stone||0)-(b.st||0));
+ const L=[['it2_gold.png','+'+fmt(dg),'#cGold'],['it2_gem.png','+'+((D.BAL||{}).bossGems||15),'#cGem'],['it_orb.png','+'+((D.BAL||{}).bossOrbs||5),'#cGem']];if(ds)L.push(['it2_stone.png','+'+ds,'#cGold']);
+ const ch=document.createElement('div');ch.className='bchest';ch.style.left=x+'px';ch.style.top=y+'px';
+ ch.innerHTML=`<i class=bcsh></i><i class=bcg></i><i class=bcr></i><img class=bco src="${A}chest_closed.png"><img class=bcp src="${A}chest_open.png">`;document.body.appendChild(ch);G._chestN=(G._chestN||0)+1;
+ at(()=>ch.classList.add('sh'),640);
+ at(()=>{ch.classList.remove('sh');ch.classList.add('op');G.sfx&&G.sfx('coin');R.hs=Math.max(R.hs||0,.15)},860);
+ at(()=>{L.forEach(([ic,tx,sel],i)=>{const n=document.createElement('div');n.className='bcl';n.innerHTML=`<img src="${A}${ic}"><b>${tx}</b>`;n.style.left=x+'px';n.style.top=(y-50)+'px';document.body.appendChild(n);
+  const dx=(i-(L.length-1)/2)*40,tg=document.querySelector(sel),tr=tg&&tg.getBoundingClientRect(),tx2=tr?tr.left+12-x:-x+60,ty2=tr?tr.top+tr.height/2-(y-50):-(y-70);
+  const a=n.animate([{transform:'translate(0,10px) scale(.3)',opacity:0},{transform:`translate(${dx}px,-46px) scale(1.15)`,opacity:1,offset:.3},{transform:`translate(${dx}px,-40px) scale(1)`,opacity:1,offset:.45},{transform:`translate(${tx2}px,${ty2}px) scale(.55)`,opacity:.9}],{duration:1000+i*70,easing:'cubic-bezier(.5,0,.75,.4)',fill:'forwards'});
+  a.onfinish=()=>{n.remove();if(tg){tg.classList.remove('hdpulse');void tg.offsetWidth;tg.classList.add('hdpulse')}}})},1120);
+ at(()=>ch.classList.add('out'),2250);at(()=>ch.remove(),2620);return 1};
+const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w&&document.querySelector('.vic.win:not(.out)'))G.chestMoment(w)}catch(_){}return r};
+G._bossLoot=()=>{}/* v110 loot burst superseded by the chest moment */})();
