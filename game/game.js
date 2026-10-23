@@ -3461,3 +3461,28 @@ const show=c=>{const L=lite(),d=document.createElement('div');d.className='rgb'+
 const tick=()=>{const m=mxc();for(let c=0;c<=m;c++)if(!seen[c]){seen[c]=1;sv(seen);q.push(c)}
  if(q.length&&!on&&!busy())show(q.shift())};
 setInterval(()=>{try{tick()}catch(e){console.warn(e)}},300);G.regionBanner=show;G._rbSeen=seen;})();
+
+/* v212: 화룡전식 fog over locked regions on the world map — 2–3 fog_cloud.png instances per locked chapter (varied scale/flip) with a slow CSS-only drift. The next locked chapter's clouds sit behind its pin so the v210 gate + scroll stay on top; farther chapters are covered more fully (one cloud over the pin, small gate peeking). On a real unlock (v210 gate-break playing on that pin) the clouds part outward and fade before the lock drops; the v211 banner keeps its timing. Lite (스킬 연출 off / 절전 graphics): static clouds, no parting — they're simply gone once unlocked. Visual only. */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.wmin .wpin{z-index:3}.wmin .wpin.nxt{z-index:5}.wmin .wlina{z-index:6}.wmin .wpin:has(.wgo){z-index:6}
+.wfog{position:absolute;pointer-events:none;z-index:2;margin:0;will-change:transform}
+.wfog.ov{z-index:4}
+.wfog i{display:block;width:100%;height:100%;background:url(assets/fog_cloud.png) center/100% 100% no-repeat;animation:wfgD var(--d,18s) ease-in-out var(--dl,0s) infinite alternate}
+.wfog.fl i{transform:scaleX(-1);animation-name:wfgDf}
+@keyframes wfgD{from{transform:translateX(calc(var(--a,12px)*-1))}to{transform:translateX(var(--a,12px))}}
+@keyframes wfgDf{from{transform:scaleX(-1) translateX(calc(var(--a,12px)*-1))}to{transform:scaleX(-1) translateX(var(--a,12px))}}
+.wfog.lite i{animation:none!important}
+.wfog.pt{z-index:7;animation:wfgP 1.05s cubic-bezier(.3,0,.6,1) both}
+.wfog.pt i{animation:none}
+@keyframes wfgP{0%{transform:translate(0) scale(1);opacity:1}100%{transform:translate(var(--px,0),var(--py,0)) scale(1.18);opacity:0}}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+// [dx,dy,w,flip,over-pin] around the pin centre (px in world space)
+const NX=[[-125,-8,250,0,0],[118,18,236,1,0],[-10,64,300,0,0]],FR=[[-112,-18,250,1,0],[104,12,244,0,0],[0,-2,190,0,1]];
+const put=(wm,p,lay,cls,L,k)=>{const x=parseFloat(p.style.left)/100*wm.clientWidth,y=parseFloat(p.style.top)/100*wm.clientHeight;
+ lay.forEach(([dx,dy,w,fl,ov],j)=>{const h=Math.round(w*.432),e=document.createElement('div');e.className=`wfog ${cls}${fl?' fl':''}${ov?' ov':''}${L?' lite':''}`;e.dataset.ch=p.dataset.ch;
+  e.style.cssText=`left:${Math.round(x+dx-w/2)}px;top:${Math.round(y+dy-h/2)}px;width:${w}px;height:${h}px;--d:${15+((k*3+j)*7)%9}s;--dl:-${((k+j)*5)%11}s;--a:${10+j*4}px;--px:${dx<0?-110:dx>0?110:0}px;--py:${dy<0?-40:30}px`+(ov?';opacity:.8':'');
+  e.innerHTML='<i></i>';wm.insertBefore(e,wm.firstChild.nextSibling)})};
+const deco=()=>{if(G.screen!='map')return;const wm=document.querySelector('#screen .wmin');if(!wm||wm.querySelector('.wfog'))return;const L=lite();
+ [...wm.querySelectorAll('.wpin[data-ch]')].forEach((p,k)=>{if(p.classList.contains('nxt'))put(wm,p,NX,'',L,k);else if(p.classList.contains('far'))put(wm,p,FR,'',L,k);
+  else if(p.querySelector('.wgo')){put(wm,p,NX,'pt',L,k);setTimeout(()=>wm.querySelectorAll('.wfog.pt').forEach(x=>x.remove()),1200)}})};
+G.fogDeco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();

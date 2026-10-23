@@ -1,0 +1,20 @@
+// r261: v212 world-map fog. Real bigsave (maxSi 34). 1331: fog over 제6장 (next, gate on top) and 제7장 (far). Then a real unlock: kill the 제5장 boss in battle (maxSi 34→35 opens 제6장; v211 banner plays there), open the world map → 1332 the 제6장 clouds parting with the gate-break. Lite check at the end.
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+await p.goto(U);await sl(4000);
+const clean=()=>p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};C.S().autoBoss=false});
+const world=async sx=>{await p.evaluate(sx=>{openScreen('map');document.querySelector('#wBtn').click();document.querySelector('#mapw').scrollLeft=sx;window._t0=performance.now()},sx)};
+const inf=()=>p.evaluate(()=>({t:Math.round(performance.now()-window._t0),fog:[...document.querySelectorAll('.wfog')].map(e=>[e.dataset.ch,e.className,Math.round(+getComputedStyle(e).opacity*100)/100]),pins:[...document.querySelectorAll('.wpin')].map(x=>[x.dataset.ch,x.className,getComputedStyle(x).zIndex,!!x.querySelector('.wgo')]).filter(x=>x[1].includes('lk')||x[3]),rgb:!!document.querySelector('.rgb'),anim:document.getAnimations().length}));
+await clean();await world(760);await sl(1500);console.log('fog',JSON.stringify(await inf()));
+await p.screenshot({path:'../screenshots/1331_map_fog.jpg',type:'jpeg',quality:88});
+await p.evaluate(()=>openScreen(null));await sl(300);
+await p.evaluate(()=>{const s=C.S();s.wave=BAL.waves;s.failPow=0;C.startBoss()});
+for(let i=0;i<80;i++){if(await p.evaluate(()=>C.alive().some(e=>e.boss)&&!document.querySelector('#battle .vsx')&&!(G._vsT&&performance.now()<G._vsT)))break;await sl(100)}await sl(600);
+await p.evaluate(()=>{C.alive().find(e=>e.boss).hp=1});await sl(14000);
+console.log('after boss',JSON.stringify(await p.evaluate(()=>({si:C.S().si,maxSi:C.S().maxSi,rb:G._rbLog,gs:localStorage.getItem('slayers_gateseen')}))));
+await clean();await p.addStyleTag({content:'#battle .bcut{display:none!important}'});/* test-only: hide the background battle's skill cut-in so it doesn't cover the map shot */await world(700);await sl(330);console.log('part',JSON.stringify(await inf()));
+await p.screenshot({path:'../screenshots/1332_map_fog_clear.jpg',type:'jpeg',quality:88});await sl(2500);console.log('settled',JSON.stringify(await inf()));
+await p.evaluate(()=>{const s=G.loadSet();s.fx=0;G.applySet&&G.applySet();R.opt&&(R.opt.fx=false);openScreen(null)});await sl(300);await world(700);await sl(300);
+console.log('lite',JSON.stringify(await p.evaluate(()=>[...document.querySelectorAll('.wfog')].map(e=>[e.dataset.ch,e.className,getComputedStyle(e.firstChild).animationName]))));
+console.log('errs',JSON.stringify(errs));await b.close()})();
