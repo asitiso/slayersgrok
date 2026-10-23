@@ -4526,3 +4526,17 @@ const ach=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.ac
  if(!rows.some(r=>!r.classList.contains('shhide')))rows[rows.length-1].insertAdjacentHTML('afterend',`<div class="card acemp"><b>표시할 업적이 없습니다</b></div>`);
  bar.querySelectorAll('[data-at]').forEach(e=>e.onclick=()=>{if(+e.dataset.at===G.acT)return;G.acT=+e.dataset.at;renderScreen()})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='ach'){const sc=document.querySelector('#screen');if(sc)ach(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r345: compact 업적 header (hero strip holds 칭호 row + 모두 받기) and 칭호 status tabs + equipped summary; display only */
+const ach=sc=>{const sb=sc.querySelector('.sbody'),h=sb&&sb.querySelector('.acst');if(!h||h.classList.contains('acx'))return;h.classList.add('acx');sc.classList.add('acx2');
+ const tr=sb.querySelector('.ttlrow'),aa=sb.querySelector('#achAll'),c0=tr&&tr.closest('.card');const ft=document.createElement('div');ft.className='acft';if(tr)ft.appendChild(tr);if(aa)ft.appendChild(aa);h.appendChild(ft);if(c0&&c0!==h)c0.classList.add('shhide')};
+const OWN=()=>C.titlesOwned().map(t=>t.k);
+const ttl=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.tttab'))return;const rows=[...sb.querySelectorAll('.ttlr')];if(rows.length!=D.TITLES.length)return;
+ const own=OWN(),F=[t=>1,t=>own.includes(t.k),t=>!own.includes(t.k)],i0=G.ttT=G.ttT||0,cur=C.titleCur();
+ const T=[['전체','ic3_quest.png'],['보유','ic3_podium.png'],['미해금','tt_locked.png']];
+ const bar=document.createElement('div');bar.className='entabs tttab';bar.innerHTML=T.map((x,i)=>`<span class="${i==i0?'on':''}" data-tt=${i}><img src="assets/${x[1]}" onerror="this.remove()">${x[0]}<small>${D.TITLES.filter(F[i]).length}</small></span>`).join('');
+ const sm=document.createElement('div');sm.className='card ttsum';sm.innerHTML=`<div class=tts1><small>장착 중</small><span class="tbadge r${cur?cur.r:0}">${cur?cur.n:'칭호 없음'}</span><small class=tts2>${cur?`공격력 +${cur.atk}%${cur.gold?` · 골드 +${cur.gold}%`:''}`:'-'}</small></div><div class=tts3><small>보유</small><b>${own.length}/${D.TITLES.length}</b></div>`;
+ const c0=sb.querySelector('.card');(c0||rows[0]).after(bar);bar.after(sm);if(c0)c0.classList.add('ttin');
+ rows.forEach((r,i)=>r.classList.toggle('shhide',!F[i0](D.TITLES[i])));
+ if(!rows.some(r=>!r.classList.contains('shhide')))rows[rows.length-1].insertAdjacentHTML('afterend',`<div class="card acemp"><b>표시할 칭호가 없습니다</b></div>`);
+ bar.querySelectorAll('[data-tt]').forEach(e=>e.onclick=()=>{if(+e.dataset.tt===G.ttT)return;G.ttT=+e.dataset.tt;renderScreen()})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(sc){sc.classList.remove('acx2');if(G.screen=='ach')ach(sc);if(G.screen=='title')ttl(sc)}}catch(e){console.warn(e)}return r}})();

@@ -1479,3 +1479,28 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 .achr .acstg{margin-left:6px;font-size:9.5px;font-weight:800;color:#2a1600;background:linear-gradient(#ffe08a,#d89a20);border-radius:6px;padding:0 5px;vertical-align:middle}
 #screen .sbody .achr.shhide{display:none!important}.acemp{text-align:center;padding:22px 8px!important;border:1px dashed #d8b06077}.acemp b{color:#ffe8a8}
 #screen .sbody .acst{height:180px}
+/* r345 업적 compact header */
+#screen .sbody .acst.acx{height:112px;margin-bottom:4px}#screen .acst.acx .asc{display:none}
+#screen .acst.acx .abg{object-position:50% 38%}#screen .acst.acx:after{background:linear-gradient(#0000 25%,#1a1006e0)}
+#screen .acst.acx .ach2{top:6px;font-size:10px;padding:2px 6px}#screen .acst.acx .ach2 img{height:15px}
+.acst .acft{position:absolute;left:6px;right:6px;bottom:6px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.acst .acft .ttlrow{margin:0;gap:5px}.acst .acft .ttlrow .tbadge{font-size:10.5px;padding:1px 7px}.acst .acft .ttlrow .pill{font-size:11px;padding:4px 9px}
+.acst .acft #achAll{margin:0!important;width:auto!important;flex:none;font-size:12px;padding:5px 12px}
+#screen.acx2 .entabs.actab{padding:4px 2px 4px!important;margin:2px 0 4px}
+#screen.acx2 .acsum{padding:4px!important;margin:0 0 6px}#screen.acx2 .acsum .acst2{gap:4px}
+#screen.acx2 .acsum .acst2 div{display:grid;grid-template-columns:22px 1fr;grid-template-rows:auto auto;column-gap:3px;align-items:center;padding:3px 4px}
+#screen.acx2 .acsum .acst2 img{width:22px;height:22px;grid-row:1/3}#screen.acx2 .acsum .acst2 small{font-size:9px;line-height:11px}#screen.acx2 .acsum .acst2 b{font-size:12.5px;line-height:14px}
+/* r345 칭호 */
+#screen .entabs.tttab{display:flex;position:sticky;top:0;z-index:6;margin:4px 0 6px;padding:8px 2px 4px!important;background:linear-gradient(#1a0e08f0,#1a0e08c0 80%,#1a0e0800)}
+#screen .entabs.tttab span{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;font-size:12px;cursor:pointer;white-space:nowrap}
+#screen .entabs.tttab span img{width:17px;height:17px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a)}#screen .entabs.tttab span small{font-size:9.5px;color:#ffd25a;margin-left:2px}
+.ttsum{display:flex;align-items:center;gap:8px;padding:8px 10px!important}
+.ttsum .tts1{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ttsum .tts1>small:first-child{color:#e8d2a0;font-size:10px}.ttsum .tts2{color:#ffe08a;font-weight:800;font-size:11px}
+.ttsum .tts3{display:flex;flex-direction:column;align-items:center;padding:3px 10px;border-radius:10px;background:linear-gradient(#3a2c1a,#241a0e);box-shadow:inset 0 0 0 1px #c9a25a88}
+.ttsum .tts3 small{font-size:9.5px;color:#e8d2a0}.ttsum .tts3 b{font-size:14px;color:#ffe08a}
+#screen .sbody .ttlr.shhide{display:none!important}#screen .sbody .card.ttin{padding:6px 8px!important;margin-top:6px}
+#screen .sbody .acst.acx{height:96px;margin-bottom:2px}#screen .acst.acx .ach2{top:4px}#screen .acst.acx .acft{bottom:5px}
+#screen.acx2 .entabs.actab{padding:2px 2px 2px!important;margin:0 0 2px}#screen.acx2 .entabs.actab span{min-height:0;padding-top:4px;padding-bottom:4px}
+#screen.acx2 .acsum{padding:2px 4px!important;margin:0 0 4px;border-width:6px!important}#screen.acx2 .acsum .acst2 div{padding:2px 4px}
+.entabs.tttab span img[src$="tt_locked.png"]{width:15px}
+#screen .sbody .acst.acx{height:86px}#screen .acst.acx .ach2{top:3px}#screen .acst.acx .acft{bottom:4px}
