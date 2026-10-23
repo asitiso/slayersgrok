@@ -3959,3 +3959,26 @@ st.textContent=`#screen [data-gm]${Y}{${B('btn_gold.png','#5a3006')};padding:2px
 #screen .gmem .gmc em{display:flex!important;align-items:center;justify-content:center;gap:1px}
 #screen .gmem .gmc em img.gmpw{width:13px;height:13px;margin:0;border-radius:0;background:none;object-fit:contain;display:inline-block}
 #screen :is([data-gm],#gco,#gch,#gsend,#gleave)${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}`;document.head.appendChild(st)})();
+;(()=>{/* v242 r291: guild lower cards — 황금룡 토벌 card on r266 panel_stage + gem (boss_dragon art kept), thin red-tinted raid HP gauge (sld_*_s), 토벌 참여 btn_red (btn_grey when out of tries); 일일 기부 tiles on hc_statplate with btn_green 기부 / btn_grey 완료; 협회 상점 .gsc tiles on hc_statplate with btn_gold buy (guild-coin icon) / btn_grey when unaffordable or sold out. Visual only */
+const X=':is(#_r1,#_r2,div):is(#_r3,#_r4,div)',Y=':is(#_r5,#_r6,span):is(#_r7,#_r8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+B=(f,c,w=9)=>`background:none!important;border:${w}px solid transparent!important;border-image:url(${A}${f}) 30 fill/${w}px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:${ol(c)}!important;filter:drop-shadow(0 2px 2px #0007)`,G2=`border-image-source:url(${A}btn_grey.png)!important;color:#eee!important;text-shadow:${ol('#2a2a2a')}!important`,
+P=(a,b)=>`background:none!important;border:solid transparent!important;border-width:${a}px ${b}px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/${a}px ${b}px stretch!important;border-radius:0!important;box-shadow:none!important`,
+R='#screen .sbody>.card'+X+':has(#raid)',DN='#screen .sbody>.card'+X+':has([data-d])>div>div',SC='#screen .gx .gsc'+X,st=document.createElement('style');
+st.textContent=`${R}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:4px 2px 2px!important;position:relative;margin-top:24px!important;overflow:visible!important}
+${R}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
+${R} b{text-shadow:0 2px 2px #000}${R} small{color:#efe4cc;text-shadow:0 1px 2px #000}
+${R} .bar{height:0!important;min-height:0!important;box-sizing:content-box!important;border:6px solid transparent!important;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch!important;background:none!important;border-radius:0!important;overflow:visible!important;position:relative;box-shadow:none!important;margin:8px 0!important}
+${R} .bar>i{position:absolute!important;left:-6px;top:-6px;height:0!important;max-width:100%;box-sizing:content-box!important;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch;background:none!important;border-radius:0!important;filter:hue-rotate(-38deg) saturate(1.6)}
+${R} #raid${Y}{${B('btn_red.png','#4a0606',10)};padding:4px 6px!important;min-height:44px;display:flex!important;align-items:center;justify-content:center;font-size:15px!important}
+${R} #raid.off${Y}{${G2}}
+${DN}{${P(10,12)};padding:2px 0!important;color:#efe4cc;filter:drop-shadow(0 2px 2px #0008)}
+${DN} small{color:#e8dcc2}${DN} b{text-shadow:0 1px 2px #000}
+${DN} [data-d]${Y}{${B('btn_green.png','#0b3510')};padding:1px 14px!important;display:inline-block}
+${DN} [data-d].off${Y}{${G2}}
+${SC}{${P(10,12)};padding:0 0 2px!important;color:#efe4cc;filter:drop-shadow(0 2px 2px #0008)}
+${SC}.sold{opacity:1!important}${SC}.sold>img{filter:grayscale(.8) brightness(.7)}
+${SC} b{text-shadow:0 1px 2px #000}${SC} small{opacity:.85!important}
+${SC} [data-gs]${Y}{${B('btn_gold.png','#5a3006',8)};padding:0 2px!important;display:flex!important;align-items:center;justify-content:center;gap:2px;min-height:26px;font-size:12px!important}
+${SC} [data-gs].off${Y}{${G2}}
+${SC} [data-gs] img.ci{height:15px!important;width:15px!important;margin:0!important;vertical-align:middle}
+#screen :is(#raid,[data-d],[data-gs])${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}`;document.head.appendChild(st)})();
