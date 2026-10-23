@@ -10,7 +10,7 @@ const S=C.init(saved);const B=C.B;setTimeout(()=>{const e=document.querySelector
 const G={C,S:()=>C.S(),speed:1,tab:'battle',screen:null};window.G=G;
 const tfmt=s=>{s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
 function toast(t){let q=$('#toastQ');if(!q){q=document.createElement('div');q.id='toastQ';$('#app').appendChild(q)}const old=[...q.children].find(x=>x.innerHTML==t);if(old)old.remove();while(q.children.length>=3)q.firstChild.remove();const d=document.createElement('div');d.className='toast';d.innerHTML=t;q.appendChild(d);setTimeout(()=>d.remove(),1800)}
-function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';if(/^LEVEL UP/.test(t)){d.classList.add('lvb');G._dloOn&&G._dloOn()}setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
+function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';if(/^LEVEL UP/.test(t)){if(document.querySelector('#battle .combo.dlo:not(.cbq):not(.cbo)'))d.classList.add('lvu');else{d.classList.add('lvb');G._dloOn&&G._dloOn()}}setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
 function modal(html,cb){const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class=card>${html}<span class="btn wide" style="margin-top:12px">확인</span></div>`;m.onclick=e=>{if(e.target.closest('.btn')||e.target==m){m.remove();cb&&cb()}};$('#app').appendChild(m);return m}
 // core events -> renderer/UI
 Object.assign(C.ev,{hit:R.hit,kill:(e,...a)=>{R.kill(e,...a);if(e&&e.boss){R.hs=Math.max(R.hs||0,.6);if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash';document.body.appendChild(f);setTimeout(()=>f.remove(),700)}}},atk:R.atk,eatk:R.atk,dmgAlly:R.dmgAlly,heal:R.heal,spell:R.spell,walk:R.walk,banner,toast,clear:()=>{renderPanel();resultPop(1)},fail:()=>{renderPanel();resultPop(0)}});
@@ -2457,9 +2457,13 @@ const st=document.createElement('style');st.textContent=`#sumModal.srm>.card{bac
 .srm .srf.leg.open .sumcard{box-shadow:0 0 18px #ffd86a,0 0 34px #ffb02a!important}
 .srm .srnw{position:absolute;right:-9px;top:-10px;z-index:4;width:30px;height:32px;display:grid;place-items:center;opacity:0;transform:scale(.3);transition:.3s .35s}.srm .srnw img{position:absolute;inset:0;width:100%;height:100%}.srm .srnw b{position:relative;margin-top:-3px;font:italic 900 8px Maplestory,sans-serif;color:#fff;text-shadow:0 1px 0 #600}
 .srm .srf.open .srnw{opacity:1;transform:scale(1)}
+/* r329: 10-pull as a balanced 5x2 grid (화룡전 style), no lone tenth card */
+#sumModal.srm .srg.ten{display:grid;grid-template-columns:repeat(5,56px);justify-content:center;gap:10px 6px}
+.srm .srg.ten .srf{width:56px}.srm .srg.ten .sumcard{padding:2px 1px}.srm .srg.ten .sumcard img{height:54px!important;max-width:100%;object-fit:contain}
+.srm .srg.ten .sumcard b{font-size:10px;white-space:nowrap}.srm .srg.ten .sumcard small{font-size:9px;white-space:nowrap}
 .srm .srall{display:block;margin:10px auto 0;width:60%;text-align:center;padding:8px;border-radius:10px;font-weight:900;color:#3a1a00;background:linear-gradient(#ffe08a,#e0a020);border:2px solid #0b0d0f;box-shadow:0 3px 0 #5a3a00;cursor:pointer}`;document.head.appendChild(st);
 const os=summon;summon=function(n){os(n);const got=G._sumGot,m=document.getElementById('sumModal');if(!got||!m||m.classList.contains('srm'))return;m.classList.add('srm');
- const cards=[...m.querySelectorAll('.sumcard')],wrap=cards[0]&&cards[0].parentNode;if(!wrap)return;wrap.className='srg';wrap.removeAttribute('style');
+ const cards=[...m.querySelectorAll('.sumcard')],wrap=cards[0]&&cards[0].parentNode;if(!wrap)return;wrap.className='srg'+(cards.length==10?' ten':'');wrap.removeAttribute('style');
  const fs=cards.map((c,i)=>{const k=got[i],cp=D.COMPS.find(x=>x.k==k),f=document.createElement('div');f.className='srf'+(cards.length==1?' one':'')+(cp&&cp.g>=4?' leg':'');c.before(f);
   if(cp&&cp.g>=4)f.insertAdjacentHTML('beforeend',`<img class=srbu src="${A}sr_burst.png">`);f.appendChild(c);f.insertAdjacentHTML('beforeend',`<img class=srbk src="${A}sr_back.png">`);
   const nw=[...c.querySelectorAll('.snew')].find(e=>e.textContent.trim()=='NEW');if(nw){nw.remove();f.insertAdjacentHTML('beforeend',`<span class=srnw><img src="${A}sr_new.png"><b>NEW</b></span>`)}return f});
@@ -4271,6 +4275,8 @@ body.scron .bwarn,body.scron #battle .vsx,body.scron #battle .wvb,body.scron #ba
 body:has(.modal) .bwarn,body:has(.modal) #battle .vsx,body:has(.modal) #battle .wvb,body:has(.modal) #battle .bcut,body:has(.modal) #battle .banner,body:has(.modal) #battle .combo,body:has(.modal) #bubL,body:has(.modal) .vic{visibility:hidden!important;animation-play-state:running}
 /* r328: LEVEL UP banner sits in the low band (numbers there fade via R._dloB), clear of kill banners at 238-300 */
 #battle .banner.lvb{top:212px!important}
+/* r329: while a lowered duo banner holds 362-474, LEVEL UP takes the upper slot (~238) */
+#battle .banner.lvu{top:68px!important}
 /* r328: speech bubble faded while it overlaps the ally strip / lowered duo band */
 #bubL .bub.bfd{opacity:.15!important}`;document.head.appendChild(st);
 const go=()=>{if(!G._phase)return setTimeout(go,300);const op=G._phase;G._phase=function(){R._phT=performance.now();return op.apply(this,arguments)}};go();
