@@ -1314,7 +1314,7 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#st
 /* v72 보스 도전 기록 */
 (()=>{const C=G.C,rec=()=>{const s=C.S();return s.brec=s.brec||{}};
 const sb=C.startBoss;C.startBoss=(...a)=>{const was=C.B.boss,r=sb(...a);if(!was&&C.B.boss){G._brSi=C.S().si;G._brT=Date.now()}return r};
-const fin=w=>{if(G._bs)G._bs.kt=Date.now();const i=G._brSi;if(i==null)return;G._brSi=null;const o=rec()[i]=rec()[i]||{n:0,w:0};o.n++;if(w){o.w++;const t=Math.round((Date.now()-((G._bs&&G._bs.t)||G._brT))/100)/10;if(!o.t||t<o.t){if(o.t)G._brPut();o.t=t}}};
+const fin=w=>{if(G._bs)G._bs.kt=Date.now();const i=G._brSi;if(i==null)return;G._brSi=null;const o=rec()[i]=rec()[i]||{n:0,w:0};o.n++;if(w){o.w++;const t=Math.round((Date.now()-((G._bs&&G._bs.t)||G._brT))/100)/10;if(!o.t||t<o.t){if(o.t)G._brPut(t,o.t);o.t=t}}};
 const oc=C.ev.clear;C.ev.clear=function(){fin(1);return oc&&oc.apply(this,arguments)};
 const of=C.ev.fail;C.ev.fail=function(){fin(0);return of&&of.apply(this,arguments)};
 G._brPut=()=>{let k=0;const put=()=>{const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop();if(v){v.querySelector('.nrec')||v.insertAdjacentHTML('afterbegin','<div class=nrec>🏆 최단 기록 갱신!</div>');return}if(k++<40)setTimeout(put,100)};put()};
@@ -3327,4 +3327,22 @@ const up=d=>{if(d.classList.contains('ko2'))return;G._koT=performance.now();/* c
  d.innerHTML=`<i class=fl></i>${sh}<div class=kb><img src="assets/ko_stamp.png"><div class=kt><b>격파!</b>${nm?`<small>${nm}</small>`:''}</div></div>`;
  if(!L&&(!R.opt||R.opt.shake!==false))setTimeout(()=>{const c=document.querySelector('#battle canvas');if(!c)return;c.classList.remove('bdshk');void c.offsetWidth;c.classList.add('bdshk');setTimeout(()=>c.classList.remove('bdshk'),260)},420)};
 const b=document.getElementById('battle');if(b)new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('bsht'))up(n)}).observe(b,{childList:true});
+})();
+
+/* v207: NEW RECORD badge — the existing "🏆 최단 기록 갱신!" pill (only when a stored 최단 record existed and was beaten) becomes record_badge.png stamped onto the victory card: NEW RECORD on the ribbon, new time in the teal centre, old time small; stamp-in overshoot + tilt + code sparkle ring (visual only; rides on the card, never delays chest/clear timing) */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.vic .nrb{position:absolute;right:-40px;top:138px;width:116px;height:83px;z-index:5;pointer-events:none;transform:rotate(9deg);animation:nrbI .42s cubic-bezier(.25,1.7,.5,1) .75s both}
+.vic .nrb img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 4px 5px #0009)}
+.vic .nrb .nt{position:absolute;left:50%;top:41%;transform:translate(-50%,-50%);font:900 15px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;white-space:nowrap;text-shadow:0 0 3px #003a40,0 1px 0 #003a40,0 0 6px #4ff}
+.vic .nrb .nl{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%) rotate(-8deg);font:900 11.5px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;letter-spacing:.5px;white-space:nowrap;-webkit-text-stroke:3px #6a0010;paint-order:stroke fill}
+.vic .nrb .no{position:absolute;left:50%;top:86%;transform:translate(-50%,-50%);font:800 7.5px/1 Maplestory,"Noto Sans KR",sans-serif;color:#c8f4ff;white-space:nowrap;text-shadow:0 1px 1px #002a30}
+.vic .nrb .ring{position:absolute;left:50%;top:45%;width:10px;height:10px;margin:-5px;border-radius:50%;border:3px solid #fff6c0;box-shadow:0 0 10px 3px #ffd23a,inset 0 0 6px #ffd23a;opacity:0;animation:nrbR .6s ease-out .9s both}
+.vic .nrb .sp{position:absolute;left:50%;top:45%;width:9px;height:9px;margin:-4.5px;background:radial-gradient(#fff,#ffe27a 40%,#ffe27a00 70%);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0;animation:nrbS .7s ease-out both}
+.vic .nrb.lite{animation:nrbL .2s .5s both}@keyframes nrbL{from{opacity:0}to{opacity:1}}.vic .nrb.lite .ring,.vic .nrb.lite .sp{display:none}
+@keyframes nrbI{0%{opacity:0;transform:rotate(-6deg) scale(2.2)}55%{opacity:1;transform:rotate(11deg) scale(.88)}80%{transform:rotate(8deg) scale(1.06)}100%{opacity:1;transform:rotate(9deg) scale(1)}}
+@keyframes nrbR{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(16)}}
+@keyframes nrbS{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.3) rotate(90deg)}}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+G._brPut=(t,old)=>{let k=0;const put=()=>{const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop();if(v){if(v.querySelector('.nrb,.nrec'))return;const L=lite();let sp='';if(!L)for(let i=0;i<12;i++){const a=i/12*6.283,r=58+(i%2)*14;sp+=`<i class=sp style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r*.8)}px;animation-delay:${(.92+(i%3)*.04).toFixed(2)}s"></i>`}
+ const f=x=>x==null?'':(+x).toFixed(1)+'초';v.insertAdjacentHTML('beforeend',`<div class="nrb${L?' lite':''}"><i class=ring></i>${sp}<img src="assets/record_badge.png"><b class=nt>${t!=null?f(t):'최단'}</b><b class=nl>NEW RECORD</b>${old!=null?`<span class=no>이전 ${f(old)}</span>`:''}</div>`);return}if(k++<40)setTimeout(put,100)};put()};
 })();
