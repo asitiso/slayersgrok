@@ -4268,3 +4268,9 @@ const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const
 #partycol .pp.ugf::before{content:'';position:absolute;left:-2px;top:-2px;width:44px;height:40px;border-radius:7px;border:2px solid #9ae8ff;box-shadow:0 0 10px 2px #4ab8ff,inset 0 0 8px #4ab8ffaa;pointer-events:none;z-index:2;animation:ugP .6s ease-in-out infinite alternate}
 @keyframes ugP{from{opacity:.6}to{opacity:1}}
 body:is(.tglite,.nofx) #partycol .pp.ugf::before,body:is(.tglite,.nofx) #partycol .pp.ugf>.ugb${X}>i,body:is(.tglite,.nofx) #partycol .pp.ugf::after{animation:none!important}`;document.head.appendChild(st)})();
+
+;(()=>{/* r312 stutter: pre-decode boss-entry art off the frame path. 4x-throttle trace showed sync 'Decode Image' on the boss VS card / cut-in frame (12 decodes, ~32ms) - now decoded at idle ahead of the fight, plus the neighbouring stage backgrounds. Display only. */
+const K={},ric=window.requestIdleCallback||(f=>setTimeout(f,200));
+const want=()=>{const s=C.S(),i=s.si|0,L=['assets/vs_bg.jpg','assets/'+((s.job||0)>=3?'cut/lina_ult_job3.png':(s.job||0)>=2?'cut/lina_ult_job2.png':'cut/lina_ult.png')];try{const pl=D.BOSSPLAN[Math.floor(i/7)];if(pl){for(const j of [0,1]){const b=D.BOSSES[pl[j]];if(b&&b.img)L.push('assets/'+b.img)}}}catch(_){}try{const n=D.FIELDS.length;for(const d of [0,1,-1]){const f=D.FIELDS[((i+d)%n+n)%n];if(f)L.push('assets/bg_f_'+f+'.jpg')}}catch(_){}return L};
+let busy=0;const step=()=>{if(busy||document.hidden)return;let u=null;for(const x of want())if(!K[x]){u=x;break}if(!u)return;busy=1;ric(()=>{const im=new Image();K[u]=im;im.decoding='async';im.src=u;const done=()=>{busy=0;setTimeout(step,50)};(im.decode?im.decode():Promise.reject()).then(done,done)},{timeout:3000})};
+G._pdc=()=>Object.keys(K);setTimeout(step,2500);setInterval(step,2000)})();
