@@ -539,7 +539,7 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=document.que
  ctx.restore()}catch(err){}}})();
 ;(()=>{// v17 break gauge + crit juice
 const FT2=[];
-C.ev.grog=e=>{R.hs=Math.max(R.hs||0,.35);const s=R._ES().get(e);FT2.push({t:0,x:s?s.x:200,y:s?s.y-120:300});if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash grogfl';document.body.appendChild(f);setTimeout(()=>f.remove(),120)}(!G.screen)&&toast('<b style="color:#ffd25a">그로기!</b> 보스가 무력화되었습니다 · 피해 +50%')};
+C.ev.grog=e=>{R.hs=Math.max(R.hs||0,.35);const s=R._ES().get(e);FT2.push({t:0,x:s?s.x:200,y:s?(e.boss?s.y-20*(e.sc||1):s.y-120):300});/* r366: BREAK! sits at the boss's lower body, not on its face - the band above the head is taken by the 그로기 notice that comes with it */if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash grogfl';document.body.appendChild(f);setTimeout(()=>f.remove(),120)}(!G.screen)&&toast('<b style="color:#ffd25a">그로기!</b> 보스가 무력화되었습니다 · 피해 +50%')};
 C.ev.grogEnd=()=>{};
 {const oh=C.ev.hit;C.ev.hit=(e,d,cr)=>{oh(e,d,cr);if(cr&&!C._dot&&e&&(e.boss||Math.random()<.35)){R.hs=Math.max(R.hs||0,e.boss?.07:.04)}}}
 const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const bo=C.alive().find(e=>e.boss&&!e.wb);const c=document.querySelector('#battle canvas');if(!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,W=c.clientWidth,T=performance.now()/1000;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
@@ -4910,4 +4910,8 @@ const upd=()=>{const n=b.querySelector(SEL);el=n;if(!n){K[2]=0;return}const r=n.
 const tick=()=>{tm=0;upd();if(el)tm=setTimeout(tick,250)};
 new MutationObserver(()=>{if(!tm)tick()}).observe(b,{childList:true,subtree:false,attributes:false});
 G._kbTest=()=>K.slice()/* console probe only */;
+})();
+
+;(()=>{/* r366 v316 boss readability + WAVE CLEAR tidy: when the WAVE CLEAR ribbon goes up, damage numbers still in flight from the cleared wave fade out (render.js R._txtClr, event-driven, no per-frame work). Boss halo/ring/shadow moved off the boss layer, crit / BREAK! numbers above the boss head: render.js + grog hook. Visual only. */
+if(!R||typeof R.waveRib!=='function')return;const o=R.waveRib;R.waveRib=function(t){try{if(typeof t==='string'&&t.indexOf('CLEAR')>=0&&R._txtClr)R._txtClr()}catch(_){}return o.apply(this,arguments)};
 })();
