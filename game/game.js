@@ -3807,3 +3807,23 @@ ${Q} b{text-shadow:-1px 0 #1b1008,1px 0 #1b1008,0 -1px #1b1008,0 1px #1b1008,0 2
 ${Q} small{color:#f0e6d0!important;text-shadow:0 1px 1px #000,0 0 2px #000}
 ${Q}.on small{color:#fff0c8!important}
 `;document.head.appendChild(S)}catch(e){console.warn(e)}})();
+
+/* v233 r282: dungeon screen dressing with existing art only: r267 btn_gold/btn_grey on 일괄 소탕 (.swall / .off), btn_green 도전 (#brGo, tier 도전 pills), btn_grey 랭킹; r266 panel_stage(+gem) on 보스 러시 (.brc); hc_statplate on 고대 유적 row (.dgfr); tab_on/tab_off plates on .dgtier (cleared = tab_on). Visual only */
+(function(){try{const S=document.createElement('style');const I=(t)=>`:is(#_r1,#_r2,${t}):is(#_r3,#_r4,${t})`;
+const btn=(sel,img,ol)=>`${sel}{background:none!important;border:10px solid transparent!important;border-image:url(${A}${img}) 30 fill / 10px stretch!important;border-radius:0!important;box-shadow:none!important;filter:drop-shadow(0 2px 2px #0007)!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:-1px 0 ${ol},1px 0 ${ol},0 -1px ${ol},0 1px ${ol},0 2px ${ol}!important}${sel}:active{transform:scale(.95);filter:brightness(.8)!important}`;
+const SW=`#screen .swall${I('div')}`,GO=`#screen :is(#brGo,.dtb .pill.green[data-ch]:not(.off))${I('span')}`,RK=`#screen #brRk${I('span')}`,BR=`#screen .card.brc${I('div')}`,FR=`#screen .dgfr${I('div')}`,TG=`#screen .dgcard .dgtier${I('span')}`;
+S.textContent=btn(`${SW}:not(.off)`,'btn_gold.png','#5a3006')+btn(`${SW}.off`,'btn_grey.png','#2a2a2a')+btn(GO,'btn_green.png','#0b3510')+btn(RK,'btn_grey.png','#3a2a1a')+`
+${SW}{padding:2px 8px!important;margin:6px 0 8px!important;font-size:15px!important}
+${SW}.off{filter:drop-shadow(0 2px 2px #0007)!important;opacity:.9}
+${SW} small{color:#fff0c8;opacity:.9}
+${GO},${RK}{padding:1px 6px!important;line-height:20px}
+${BR}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:4px 2px 2px!important;position:relative;margin-top:16px}
+${BR}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
+${BR} .brs span{color:#efe4cc}
+${FR}{background:none!important;border:12px solid transparent!important;border-width:12px 14px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/12px 14px stretch!important;border-radius:0!important;padding:0 2px 0 6px!important;margin-bottom:8px}
+${FR}.on{filter:drop-shadow(0 0 5px var(--dc))}
+${FR} b,${FR} em{text-shadow:0 1px 1px #000,0 0 2px #000}
+${TG}{background:none!important;border:5px solid transparent!important;border-width:5px 7px!important;border-image:url(${A}tab_off.png) 46 56 fill/5px 7px stretch!important;border-radius:0!important;padding:0 2px!important;font-family:Maplestory,sans-serif;font-size:9.5px!important;line-height:12px;color:#e9dcc0!important;text-shadow:-1px 0 #1b1410,1px 0 #1b1410,0 -1px #1b1410,0 1px #1b1410}
+${TG}.cl{border-image-source:url(${A}tab_on.png)!important;color:#fff0c8!important;text-shadow:-1px 0 #3a0c06,1px 0 #3a0c06,0 -1px #3a0c06,0 1px #3a0c06}
+`;document.head.appendChild(S);
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='dungeon')document.querySelectorAll('#screen .dgtier').forEach(t=>t.classList.toggle('cl',!/^미/.test(t.textContent.trim())))}catch(e){console.warn(e)}return r}}catch(e){console.warn(e)}})();
