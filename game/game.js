@@ -3643,3 +3643,16 @@ const st=document.createElement('style');st.textContent=base(G9,'btn_green.png',
 #screen .cbar>.btn{padding:0 2px!important;min-height:30px}
 .schm .srw .btn[data-sc]:not(.off),#panel .btn[data-m]:not(.off),#panel .btn[data-w]:not(.off){padding:0 8px!important;min-height:22px;display:inline-flex;align-items:center;justify-content:center}
 .schm .btn[data-x]{padding:1px 0!important}`;document.head.appendChild(st)})();
+
+/* v219: 화룡전식 settings toggles. .tog track = tgl_on.png / tgl_off.png, knob = tgl_knob.png (≈115% of track height), knob slides via transform (150ms). Settings re-render on click, so the clicked toggle's new knob starts at the old side (.tgf) and transitions over — toggle logic untouched. No transition in low graphics. Visual only. */
+(function(){const st=document.createElement('style');st.textContent=`
+#screen .tog,#screen .stpaper .tog{width:50px!important;height:28px!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:url(assets/tgl_off.png) center/100% 100% no-repeat!important;overflow:visible!important;flex:0 0 auto}
+#screen .tog.on,#screen .stpaper .tog.on{background:url(assets/tgl_on.png) center/100% 100% no-repeat!important}
+#screen .tog i{left:-3px!important;top:-2px!important;width:32px!important;height:32px!important;border-radius:0!important;background:url(assets/tgl_knob.png) center/contain no-repeat!important;filter:drop-shadow(0 2px 2px #0008);transform:translateX(0);transition:transform .15s ease-out}
+#screen .tog.on i{left:-3px!important;transform:translateX(24px)}
+#screen .tog.on.tgf i{transform:translateX(0);transition:none}
+#screen .tog:not(.on).tgf i{transform:translateX(24px);transition:none}
+body.tglite #screen .tog i{transition:none!important}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (typeof R!='undefined'&&R.opt&&R.opt.fx===false)||s.gq=='save'};let last=null;
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('#screen .tog[data-set]');if(t)last=t.dataset.set},true);
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{const L=lite();document.body.classList.toggle('tglite',L);if(G.screen=='settings'&&last&&!L){const t=document.querySelector(`#screen .tog[data-set="${last}"]`);if(t){t.classList.add('tgf');void t.offsetWidth;requestAnimationFrame(()=>t.classList.remove('tgf'))}}last=null}catch(_){}return r}})();
