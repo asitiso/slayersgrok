@@ -1,0 +1,17 @@
+// r297: 동료 승급 restyle (real save, read-only, selection only) + 코스튬 job-unlock labels (in-memory TEST DATA)
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));await p.goto(U);await sl(4000);
+const lab=()=>p.evaluate(()=>{const t=document.createElement('div');t.id='tdl';t.textContent='TEST DATA · 메모리 전용';t.style.cssText='position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#c00d;color:#fff;font:900 13px sans-serif;padding:4px 10px;border-radius:6px;z-index:99999;pointer-events:none';document.body.appendChild(t)});
+const prep=()=>p.evaluate(()=>{G.noSave=1;document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};C.S().autoBoss=false;document.body.classList.add('hs-sh');if(G.screen)closeScreen()});
+// A: 동료 승급 — pick the highest-star owned comp (selection only, no data change)
+await prep();const sel=await p.evaluate(()=>{const s=C.S();const o=D.COMPS.filter(x=>s.comps[x.k]).sort((a,b)=>s.comps[b.k]-s.comps[a.k]);G.stSel=o[0]&&o[0].k;openScreen('star');document.querySelectorAll('.wcsl,.ccut,.modal').forEach(x=>x.remove());return G.stSel+' ★'+s.comps[G.stSel]+' sh'+((s.csh||{})[G.stSel]||0)});await sl(800);
+console.log('sel',sel,await p.evaluate(()=>'glyph:'+(document.querySelector('#screen').innerText.match(/\p{Extended_Pictographic}|[★☆]/gu)||[]).join('')+' cards:'+document.querySelectorAll('#screen .sbody>.card').length+' lad:'+document.querySelectorAll('#screen .slad>div').length));
+await p.screenshot({path:'../screenshots/1374_promote.jpg',type:'jpeg',quality:86});
+await p.evaluate(()=>{document.querySelector('#screen .sbody').scrollTop=9999});await sl(300);await p.screenshot({path:'/workspace/tmpv/v297_low.jpg',type:'jpeg',quality:80});
+// B: 코스튬 with in-memory test state (job skins not owned)
+await prep();await p.evaluate(()=>{const S=C.S();S.gems=450;S.skins={base:1,ice:1};S.skin='ice';S.cown={gourry:1};S.cskin={gourry:1};openScreen('skin');document.querySelectorAll('.wcsl,.ccut,.modal').forEach(x=>x.remove())});await sl(800);
+console.log(await p.evaluate(()=>'emoji:'+(document.querySelector('#screen').innerText.match(/\p{Extended_Pictographic}/gu)||[]).join('')+' skj:'+[...document.querySelectorAll('#screen .skj')].map(e=>e.textContent).join('|')+' gem0:'+[...document.querySelectorAll('#screen .skp')].filter(e=>e.textContent.trim()=='0').length));
+await p.evaluate(()=>{const s=document.querySelector('.skstrip')||document.querySelector('#screen .skg');const sb=document.querySelector('#screen .sbody');const c=document.querySelector('#screen .skn[data-sk=job2]');if(c){c.scrollIntoView({block:'center',inline:'center'})}});await lab();await sl(300);
+await p.screenshot({path:'../screenshots/1374b_costume_unlock.jpg',type:'jpeg',quality:86});
+console.log('ERRS',JSON.stringify(errs));await b.close()})();

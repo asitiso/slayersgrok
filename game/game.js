@@ -4120,3 +4120,57 @@ function deco(){const el=$('#screen');if(G.screen!='skin'){el.classList.remove('
   if(gi){const n=gi.nextSibling,cost=parseInt((n&&n.textContent||'').trim(),10)||0;const p=document.createElement('span');p.className='skp'+(g<cost?' off':'');p.innerHTML=`<img class=kt src="${A}sk_tag.png">`;gi.replaceWith(p);p.appendChild(gi);if(n){p.appendChild(document.createTextNode(String(cost)));n.remove()}}
   if(c.dataset.cs){const o=(s.cown||{})[c.dataset.cs];if(!o&&!c.querySelector('.klk')){c.classList.add('lk');c.insertAdjacentHTML('beforeend',`<img class=klk src="${A}sk_lock.png">`)}if(c.classList.contains('on')&&!c.querySelector('.kon'))c.insertAdjacentHTML('beforeend',`<img class=kon src="${A}sk_star.png">`)}})}
 })();
+;(()=>{/* v248 r297: (A) job-change costumes (cost 0, unlocked by 전직) show their real unlock condition "N차 전직 시 해금 · Lv.X 전직 시련" (from G.JOB) instead of a gem-0 price, dimmed + sk_lock; (B) 동료 승급 — hero tiles on hc_statplate (rarity glow, selected gold glow, star_gold count), hero + 승급 cards on panel_stage + gem, name on r277 hc_name_g* plate, star_gold stars (empty = dimmed), 공격 배율 row on hc_statplate, thin sld gauge for 조각, 승급/각성 btn_gold (btn_grey when unavailable), ★ glyphs → star_gold; new 성급 효과 card listing the real core.js ladder (★n: 공격·체력 +10%/성, 필요 조각 10×n; 각성 ◆: +15%, 조각 60+40a, 골드 5000×3^a). Visual only; static CSS, DOM touch only on render */
+const X=':is(#_s1,#_s2,div):is(#_s3,#_s4,div)',Zb=':is(#_s9,#_sa,b):is(#_sb,#_sc,b)',Zs=':is(#_sd,#_se,small):is(#_sf,#_sg,small)',Y=':is(#_s5,#_s6,span):is(#_s7,#_s8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+SP=(v,h)=>`background:none!important;border:solid transparent!important;border-width:${v}px ${h}px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/${v}px ${h}px stretch!important;border-radius:0!important;box-shadow:none!important`,
+B=(f,o,w=9)=>`background:none!important;border:${w}px solid transparent!important;border-image:url(${A}${f}) 30 fill/${w}px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900!important;text-shadow:${ol(o)}!important`,
+N={g2:[34,55,34,125,.3],g3:[34,55,34,125,.3],g4:[42,75,42,132,.28]},gk=g=>g<=2?'g2':g>=4?'g4':'g3',
+K='#screen.stx .sbody>.card'+X,L='#screen.stx .stlist .stc'+X;
+let css=`${K}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px!important;position:relative;margin-top:28px!important;overflow:visible!important}
+${K}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
+${K} .ttl{text-shadow:0 2px 2px #000}${K} small{color:#efe4cc!important;text-shadow:0 1px 2px #000;opacity:1!important}
+#screen.stx .sthero${X}{display:flex;gap:6px;align-items:center}#screen.stx .sthero${X}>img{height:132px!important;width:auto!important;flex:none;filter:drop-shadow(0 4px 4px #0009)}
+#screen.stx .sthero .f>b${Zb}{display:inline-flex;align-items:center;gap:4px;border:solid transparent;padding:0 6px 0 2px;filter:drop-shadow(0 2px 2px #0008);text-shadow:${ol('#0a1430')};font-family:Maplestory,sans-serif;line-height:18px}
+#screen.stx .sthero${X}>.f{flex:1 1 auto!important;min-width:0!important;max-width:100%;overflow:visible}#screen.stx .sthero .f>small:not(.sxr){white-space:normal!important}#screen.stx .sthero .f>b${Zb}{max-width:100%;box-sizing:border-box}#screen.stx .sthero .f>b .fac{background:#0008;text-shadow:none}
+#screen.stx .xsk${X}{gap:1px!important;margin:5px 0 4px!important}#screen.stx .xsk${X} i{width:21px!important;height:21px!important}#screen.stx .xsk i .xso{display:none}
+#screen.stx .xsk i .xg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 1px 1px #0009)}#screen.stx .xsk i.off .xg{filter:grayscale(1) brightness(.45);opacity:.8}
+#screen.stx .sthero .f>small.sxr${Zs}{display:flex;align-items:center;gap:4px;${SP(7,9)};padding:0 4px!important;margin:2px 0;color:#fff!important;font-weight:800;white-space:nowrap;font-size:11.5px!important;width:max-content;max-width:100%;box-sizing:border-box}
+#screen.stx .sthero .sxr img{height:18px;margin:-3px 0}#screen.stx .sthero .sxr .up{color:#9dff7a!important;font-style:normal}
+${L}{${SP(8,9)};border-width:8px 9px 10px!important;padding:0 0 2px!important;flex:0 0 66px!important;width:66px!important;filter:drop-shadow(0 0 2px var(--rc)) drop-shadow(0 2px 2px #0008)}
+${L}.on{filter:drop-shadow(0 0 3px #ffe08a) drop-shadow(0 0 5px #ffc040) drop-shadow(0 2px 2px #0008)}
+${L} small{display:flex;align-items:center;gap:1px;color:#fff!important;font:900 11px Maplestory,sans-serif;text-shadow:${ol('#1a1430')}}${L} small img{height:13px}
+${L} .dot{top:-6px!important;right:-6px!important}
+#screen.stx .card>.bar.xsb${X}{height:0!important;min-height:0!important;box-sizing:content-box!important;border:6px solid transparent!important;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch!important;background:none!important;border-radius:0!important;overflow:visible!important;position:relative;box-shadow:none!important;margin:12px 0 10px 18px!important}
+#screen.stx .card>.bar.xsb${X}>i{position:absolute!important;left:-6px;top:-6px;height:0!important;max-width:100%;box-sizing:content-box!important;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch;background:none!important;border-radius:0!important}
+#screen.stx .card>.bar.xsb${X}>i.ok{border-image-source:url(${A}sld_fill_green_s.png)}#screen.stx .card>.bar.xsb${X}>img{left:-22px!important;height:26px!important}
+#screen.stx :is(#stUp,#stAw)${Y}{${B('btn_gold.png','#5a3006',10)};display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;white-space:nowrap;align-items:center;justify-content:center;gap:2px;min-height:34px;padding:0 4px 0 34px!important;font-size:14px!important}
+#screen.stx :is(#stUp,#stAw)${Y}.off{border-image-source:url(${A}btn_grey.png)!important;text-shadow:${ol('#2a2a2a')}!important;color:#e8e2d8!important}
+#screen.stx :is(#stUp,#stAw)${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8)!important}
+#screen.stx img.sg{flex:none;height:15px;width:15px;vertical-align:-2px}
+#screen.stx .slad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px 4px;margin-top:6px}
+#screen.stx .slad>div{${SP(7,8)};padding:0!important;display:flex;flex-direction:column;align-items:center;min-width:0;color:#fff;font:800 11px Maplestory,sans-serif;text-shadow:0 1px 2px #000;line-height:14px}
+#screen.stx .slad>div>span{display:flex;align-items:center;gap:0;height:16px}#screen.stx .slad>div>span img.sg{height:12px;width:12px}#screen.stx .slad>div>em{font-style:normal;color:#ffe7a8;font-size:10px}#screen.stx .slad>div>u{text-decoration:none;color:#cfe0ff;font-size:9.5px}
+#screen.stx .slad>div.sok{opacity:.72}#screen.stx .slad>div.scur{filter:drop-shadow(0 0 3px #ffe08a) drop-shadow(0 0 4px #ffc040)}#screen.stx .slad>div.scur>em{color:#9dff7a}
+#screen.stx .slad>div.sno span img{filter:grayscale(1) brightness(.5)}#screen.stx .slad .aw{color:#c8a8ff}
+#screen.skx .skg .skn .skj${Y}{display:inline-flex;flex-direction:column;align-items:center;margin-top:3px;${SP(6,8)};padding:0 2px!important;color:#ffe7a8!important;font:900 10.5px Maplestory,sans-serif!important;line-height:12px;text-shadow:${ol('#2a1a08')};white-space:nowrap}
+#screen.skx .skg .skn .skj u{text-decoration:none;color:#cfe0ff;font-size:9.5px}
+body.tglite ${L},body.tglite ${L}.on,body.tglite #screen.stx .slad>div.scur,body.tglite #screen.stx .sthero${X}>img{filter:none}\n`;
+for(const g in N){const [t,r,b,l,k]=N[g];css+=`#screen.stx .sthero.${g} .f>b${Zb}{border-width:${(t*k).toFixed(1)}px ${(r*k).toFixed(1)}px ${(b*k).toFixed(1)}px ${(l*k).toFixed(1)}px;border-image:url(${A}hc_name_${g}.png) ${t} ${r} ${b} ${l} fill/${(t*k).toFixed(1)}px ${(r*k).toFixed(1)}px ${(b*k).toFixed(1)}px ${(l*k).toFixed(1)}px stretch}\n`}
+const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+const SG=`<img class=sg src="${A}star_gold.png">`,star=t=>t.replace(/★/g,SG);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='star')dStar();else if(G.screen=='skin')dSkin()}catch(e){console.warn(e)}return r};
+function dSkin(){const el=$('#screen'),s=C.S(),J=G.JOB||[];el.querySelectorAll('.skg .skn[data-sk]').forEach(c=>{if(c.dataset.v248)return;c.dataset.v248=1;const k=c.dataset.sk,sk=D.SKINS.find(x=>x.k==k);if(!sk||!sk.job||(s.skins||{})[k])return;
+ const t=parseInt(k.slice(3),10)-1,j=J[t];if(!j)return;const sm=c.querySelector('small');if(sm)sm.innerHTML=`<span class=skj>${t+1}차 전직 시 해금<u>Lv.${j.lv} 전직 시련</u></span>`;c.classList.add('lk');if(!c.querySelector('.klk'))c.insertAdjacentHTML('beforeend',`<img class=klk src="${A}sk_lock.png">`)})}
+function dStar(){const el=$('#screen'),s=C.S(),k=G.stSel,c=D.COMPS.find(x=>x.k==k);
+ el.querySelectorAll('.stlist .stc').forEach(t=>{if(t.dataset.v248)return;t.dataset.v248=1;const sm=t.querySelector('small');if(sm)sm.innerHTML=star(sm.innerHTML)});
+ const h=el.querySelector('.sthero');if(!h||h.dataset.v248||!c)return;h.dataset.v248=1;h.classList.add(gk(c.g));
+ h.querySelectorAll('.xsk i').forEach(i=>{const f=i.querySelector('.fl');if(f)f.remove();i.insertAdjacentHTML('beforeend',`<img class=xg src="${A}star_gold.png">`)});
+ const sm=h.querySelector('.f>small');if(sm&&/공격 배율/.test(sm.textContent)){sm.classList.add('sxr');sm.insertAdjacentHTML('afterbegin',`<img src="${A}st_atk.png">`)}
+ const cards=el.querySelectorAll('.sbody>.card'),c2=cards[1];if(!c2)return;
+ const bar=c2.querySelector('.bar'),fi=bar&&bar.querySelector('i');if(fi){const w=parseFloat(fi.style.width)||0,f=Math.min(1,w/100);fi.style.width=`max(0px,calc(${f.toFixed(3)} * (100% + 12px) - 12px))`;if(f>=1)fi.classList.add('ok');if(f<=0)fi.style.display='none'}
+ ['#stUp','#stAw'].forEach(q=>{const b=c2.querySelector(q);if(b)b.innerHTML=star(b.innerHTML)});
+ const st=s.comps[k]||1,aw=(s.caw||{})[k]||0,m0=C.compMul(k),base=m0/(1+.1*(st-1))/(1+.15*aw),mx=C.STARMAX,AM=C.AWMAX;let rows='';
+ for(let n=1;n<=mx;n++){const m=base*(1+.1*(n-1)),cl=n<st||(n==st&&aw)?'sok':n==st?'scur':'sno';rows+=`<div class=${cl}><span>${SG.repeat(n)}</span><em>공격 ×${m.toFixed(2)}</em><u>${n==1?'기본':`체력 +${(n-1)*10}% · 조각 ${10*(n-1)}`}</u></div>`}
+ const b6=base*(1+.1*(mx-1));for(let a=1;a<=AM;a++){const m=b6*(1+.15*a),cl=a<aw?'sok':a==aw?'scur':'sno';rows+=`<div class=${cl}><span class=aw>각성 ${'◆'.repeat(a)}</span><em>공격 ×${m.toFixed(2)}</em><u>조각 ${60+40*(a-1)} · 골드 ${fmt(Math.floor(5000*Math.pow(3,a-1)))}</u></div>`}
+ c2.insertAdjacentHTML('afterend',`<div class=card><div class=ttl>성급 효과 <small>현재 ${SG}${st}${aw?' · 각성 '+'◆'.repeat(aw):''}</small></div><div class=slad>${rows}</div></div>`)}
+})();
