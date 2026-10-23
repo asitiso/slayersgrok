@@ -3538,9 +3538,8 @@ const st=document.createElement('style');st.textContent=`
 @keyframes wscO{0%{transform:scale(.6) rotate(-8deg)}60%{transform:scale(1.35)}100%{transform:scale(1);opacity:.55}}`;document.head.appendChild(st);
 const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
 const html=c=>{const s=C.S(),sc=s.schest||{},n=G.chStars(c);return T.map((t,j)=>{const dn=sc[c+'_'+j],ok=!dn&&n>=t;return `<i data-sc=${j} class="${dn?'dn':ok?'ok':'lo'}"><img src="assets/${dn?'schest_open':'schest_'+(j+1)}.png" alt=""><u>${dn?'✓':'★'+t}</u></i>`}).join('')};
-const fly=(w,from)=>{const app=document.getElementById('app'),ar=app.getBoundingClientRect(),sc=ar.width/390,tg=document.querySelector('#screen .shead .chip:last-child')||document.querySelector('#screen .shead');if(!tg)return;const t=tg.getBoundingClientRect(),f=from.getBoundingClientRect();
- Object.keys(IC).filter(k=>w[k]).forEach((k,q)=>{const c=document.createElement('img');c.src='assets/'+IC[k];c.className='atfly scfly';c.style.left=((f.left-ar.left)/sc+f.width/sc/2-18+q*10)+'px';c.style.top=((f.top-ar.top)/sc-10)+'px';c.style.animationDelay=(q*.12)+'s';c.style.setProperty('--dx',((t.left+t.width/2-f.left-f.width/2)/sc-q*10)+'px');c.style.setProperty('--dy',((t.top+t.height/2-f.top)/sc+10)+'px');app.appendChild(c);setTimeout(()=>c.remove(),1100+q*120)});
- setTimeout(()=>{tg.classList.add('pop');setTimeout(()=>tg.classList.remove('pop'),400)},750)};
+const fly=(w,from)=>{const app=document.getElementById('app'),ar=app.getBoundingClientRect(),sc=ar.width/390,f=from.getBoundingClientRect();/* v215: per-currency target */
+ Object.keys(IC).filter(k=>w[k]).forEach((k,q)=>{const tg=(G.curTarget&&G.curTarget(k))||document.querySelector('#screen .shead');if(!tg)return;const t=tg.getBoundingClientRect();if(G.curHold)G.curHold(k,850+q*120);const c=document.createElement('img');c.src='assets/'+IC[k];c.className='atfly scfly';c.style.left=((f.left-ar.left)/sc+f.width/sc/2-18+q*10)+'px';c.style.top=((f.top-ar.top)/sc-10)+'px';c.style.animationDelay=(q*.12)+'s';c.style.setProperty('--dx',((t.left+t.width/2-f.left-f.width/2)/sc-q*10)+'px');c.style.setProperty('--dy',((t.top+t.height/2-f.top)/sc+10)+'px');app.appendChild(c);setTimeout(()=>c.remove(),1100+q*120)})};
 const nm={gems:'젬',stone:'강화석',orbs:'경험 구슬',tk:'티켓'};
 const tap=(c,j,el,pin)=>{const r=G.starClaim(c,j);if(typeof r!='object'){if(r=='need')toast(`★${T[j]} 달성 시 수령 (현재 ★${G.chStars(c)}/21)`);else toast('이미 수령한 보상입니다');return}
  const L=lite();el.className='dn'+(L?'':' opn');el.querySelector('img').src='assets/schest_open.png';el.querySelector('u').textContent='✓';if(!L)fly(r,el);G.lastSC={c,j,r};
@@ -3550,3 +3549,55 @@ const deco=()=>{if(G.screen!='map'||!G.chStars)return;const sc=document.querySel
   d.onclick=e=>{e.stopPropagation();const i=e.target.closest('[data-sc]');if(i)tap(c,+i.dataset.sc,i,p)}})};
 G.schDeco=deco;
 const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
+
+/* v215: 화룡전식 map header currencies + stage info panel. (1) World map / chapter header shows real gold · 젬 · 강화석 · 티켓 (it2_* icons) instead of gold only; reward flies (v214 star chests) target the matching chip (경험 구슬 → the existing orb counter #navroll; unknown → gold), the number ticks up on arrival with a pulse. (2) Tapping an unlocked stage node opens a stage panel first (real data: C.stageReq vs C.POW, D.FIELDMON monsters, stage boss from D.BOSSPLAN, C.goldKill, first-clear gems rule of v41 (30 / 100 on x-7, until cleared), ★ from G.stStar) with 이동 → the original select-stage action. Visual only. */
+;(()=>{const CUR=[['gold','it2_gold.png',s=>s.gold],['gems','it2_gem.png',s=>s.gems],['stone','it2_stone.png',s=>s.stone||0],['tk','it2_ticket.png',s=>s.tickets||0]];
+const st=document.createElement('style');st.textContent=`
+#screen .shead .mcur{display:flex;gap:3px;margin-left:auto;flex:none}
+#screen .shead .mcur .mc{display:flex;align-items:center;gap:2px;height:22px;padding:0 6px 0 2px;border-radius:11px;background:linear-gradient(#11161b,#262c33);border:1px solid #c9953f99;font:700 11px/1 Maplestory,sans-serif;color:#fff3d0;white-space:nowrap;box-shadow:inset 0 1px 0 #ffffff1a}
+#screen .shead .mcur .mc img{width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a)}
+#screen .shead .mcur .mc.pz{animation:mcP .45s ease-out}
+#screen .shead.hasmc{justify-content:flex-start!important;gap:6px}
+#screen .shead.hasmc b{flex:1 1 auto!important;min-width:0;font-size:17px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#screen .shead.hasmc>.chip{display:none!important}
+@keyframes mcP{0%{transform:scale(1)}35%{transform:scale(1.28);box-shadow:0 0 10px #ffd860}100%{transform:scale(1)}}
+#navroll.pz{animation:mcP .45s ease-out}
+.spv{position:fixed;inset:0;z-index:9400;background:#0007;display:flex;align-items:flex-end;justify-content:center;animation:rpvB .18s ease-out both}
+.spv .sp{position:relative;width:370px;margin-bottom:96px;border-radius:16px;background:linear-gradient(#3a3226,#241d15);border:2px solid #c9953f;box-shadow:0 0 0 2px #000,0 10px 24px #000c,inset 0 1px 0 #ffffff22;padding:12px 14px 12px;color:#fff3d0;font-family:Maplestory,sans-serif;animation:spU .3s cubic-bezier(.2,1.2,.4,1) both}
+.spv.lite,.spv.lite .sp{animation:none}
+.spv .sp .h{display:flex;align-items:center;gap:8px}
+.spv .sp .h b{font-size:19px;font-weight:900;color:#ffe9a8;text-shadow:0 2px 0 #000}
+.spv .sp .h small{font-size:12px;color:#d9c7a0}
+.spv .sp .h .st{margin-left:auto;font-size:17px;letter-spacing:1px}.spv .sp .h .st i{font-style:normal;color:#5a4a36}.spv .sp .h .st i.on{color:#ffd23a;text-shadow:0 0 4px #ff9a00}
+.spv .sp .x{position:absolute;right:-8px;top:-10px;width:28px;height:28px;border-radius:50%;background:radial-gradient(#6a4a2a,#2a1a0a);border:2px solid #e0b860;color:#ffe9b0;font:900 14px/24px sans-serif;text-align:center;cursor:pointer}
+.spv .pw{margin:8px 0;display:flex;gap:6px}.spv .pw div{flex:1;border-radius:9px;background:#0006;padding:5px 8px;font-size:11px;color:#cdb98f}.spv .pw div b{display:block;font-size:15px;color:#fff}.spv .pw .up b{color:#7dff8a}.spv .pw .dn b{color:#ff6a5a}
+.spv .lb{font-size:11px;font-weight:700;color:#e0b860;margin:6px 0 4px}
+.spv .mons{display:flex;gap:5px}.spv .mons span{position:relative;width:52px;height:52px;border-radius:10px;background:radial-gradient(#5a6a7a,#25303a);border:1px solid #9aa8b688;overflow:hidden}
+.spv .mons span img{width:100%;height:100%;object-fit:contain}
+.spv .mons span.bs{background:radial-gradient(#8a3a2a,#3a1410);border-color:#ff8a5a}.spv .mons span.bs:after{content:'BOSS';position:absolute;left:0;right:0;bottom:0;font:900 9px/13px sans-serif;text-align:center;background:#c0201ad0;color:#fff}
+.spv .rw{display:flex;gap:6px;flex-wrap:wrap}.spv .rw span{display:flex;align-items:center;gap:3px;font-size:12px;padding:3px 8px 3px 4px;border-radius:9px;background:#0006}.spv .rw span img{width:20px;height:20px}.spv .rw span small{color:#cdb98f;font-size:10px}.spv .rw span.dn{opacity:.5}
+.spv .go{margin-top:10px;display:flex;gap:8px}.spv .go span{flex:1;text-align:center;padding:9px 0;border-radius:11px;font-weight:900;font-size:15px;cursor:pointer}
+.spv .go .ok{background:linear-gradient(#5fd35a,#2f9a2b);border:2px solid #1d5e1a;color:#fff;text-shadow:0 1px 0 #0008}.spv .go .no{background:linear-gradient(#6a6258,#463f37);border:2px solid #2a241e;color:#eee}
+@keyframes spU{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+// ---- currencies
+const hold={};G.curHold=(k,ms)=>{const c=CUR.find(c=>c[0]==k);if(!c||lite())return;const s=C.S(),el=document.querySelector(`#screen .mc[data-k=${k}]`);hold[k]={v:el?el.dataset.v:null};setTimeout(()=>{delete hold[k];paint();const e=document.querySelector(`#screen .mc[data-k=${k}]`);if(e){e.classList.remove('pz');void e.offsetWidth;e.classList.add('pz')}},ms)};
+G.curTarget=k=>{if(k=='orbs'){const n=document.getElementById('navroll');if(n){setTimeout(()=>{if(lite())return;n.classList.remove('pz');void n.offsetWidth;n.classList.add('pz')},850);return n}}return document.querySelector(`#screen .mc[data-k=${k}]`)||document.querySelector('#screen .mc[data-k=gold]')};
+const paint=()=>{const s=C.S();document.querySelectorAll('#screen .mc[data-k]').forEach(e=>{const k=e.dataset.k;if(hold[k])return;const v=CUR.find(c=>c[0]==k)[2](s);e.dataset.v=v;const t=fmt(v);if(e.lastChild.textContent!=t)e.lastChild.textContent=t})};
+const head=()=>{const h=document.querySelector('#screen .shead');if(!h||h.querySelector('.mcur'))return;h.classList.add('hasmc');const d=document.createElement('div');d.className='mcur';d.innerHTML=CUR.map(([k,ic])=>`<span class=mc data-k=${k}><img src="assets/${ic}" alt=""><i></i></span>`).join('');d.querySelectorAll('.mc i').forEach(i=>i.replaceWith(document.createTextNode('')));h.appendChild(d);
+ if(G.mapCh>=0){const b=h.querySelector('b');if(b)b.textContent='제'+(G.mapCh+1)+'장'}paint()};
+setInterval(()=>{if(G.screen=='map')paint()},400);
+// ---- stage panel
+const panel=i=>{document.querySelectorAll('.spv').forEach(x=>x.remove());const s=C.S(),req=C.stageReq?C.stageReq(i):0,pw=C.POW(),fk=D.FIELDS[i%D.FIELDS.length],pool=(D.FIELDMON[fk]||[]).map(k=>D.MONS.find(m=>m.k==k)).filter(Boolean),
+ pl=D.BOSSPLAN[Math.floor(i/7)],bo=pl&&D.BOSSES[pl[i%7==6?1:0]],n=G.stStar?G.stStar(i):0,fcd=i<(s.fcl==null?s.maxSi:s.fcl),fg=i%7==6?100:30,L=lite();
+ const d=document.createElement('div');d.className='spv'+(L?' lite':'');
+ d.innerHTML=`<div class=sp><span class=x>✕</span><div class=h><b>${C.stageName(i)}</b><small>${D.CH[Math.floor(i/7)]}${i%7==6?' · 챕터 보스':''}</small><span class=st>${[0,1,2].map(j=>`<i class="${j<n?'on':''}">★</i>`).join('')}</span></div>
+ <div class=pw>${req?`<div class="${pw>=req?'up':'dn'}">권장 전투력<b>${fmt(req)}</b></div>`:''}<div>내 전투력<b>${fmt(pw)}</b></div></div>
+ <div class=lb>출현 몬스터</div><div class=mons>${pool.map(m=>`<span title="${m.n}"><img src="assets/${m.img}" alt=""></span>`).join('')}${bo?`<span class=bs title="${bo.n}"><img src="assets/${bo.img}" alt=""></span>`:''}</div>
+ <div class=lb>보상</div><div class=rw><span><img src=assets/it2_gold.png>${fmt(C.goldKill(i))}<small>/처치</small></span><span class="${fcd?'dn':''}"><img src=assets/it2_gem.png>${fg}<small>${fcd?'최초 클리어 · 수령 완료':'최초 클리어'}</small></span></div>
+ <div class=go><span class=no>닫기</span><span class=ok>${i==s.si?'진행 중':'이동'}</span></div></div>`;
+ d.onclick=e=>{const t=e.target;if(t===d||t.classList.contains('x')||t.classList.contains('no')){d.remove();return}if(t.classList.contains('ok')){d.remove();C.selectStage(i);toast(C.stageName(i)+' 으로 이동');closeScreen()}};document.body.appendChild(d);return d};
+G.stagePanel=panel;
+const deco=()=>{if(G.screen!='map')return;head();const s=C.S();document.querySelectorAll('#screen .snode[data-n]').forEach(n=>{const i=+n.dataset.n;if(n._sp||i>s.maxSi)return;n._sp=1;n.onclick=()=>panel(i)})};
+const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
+setInterval(()=>{if(G.screen!='map')document.querySelectorAll('.spv').forEach(x=>x.remove())},500);})();
