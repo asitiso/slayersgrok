@@ -6,7 +6,7 @@ await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorag
 await p.goto(U);await sl(4000);
 const clr=()=>p.evaluate(()=>{G.noSave=1;document.querySelectorAll('.modal,.tut,#notice,.sty,.bwarn').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};C.S().autoBoss=false;try{closeScreen()}catch(_){}});
 await clr();await sl(2500);await clr();
-const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await sl(1500);
+const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:+(process.env.THR||4)});await sl(1500);
 const mk=n=>p.evaluate(n=>{performance.mark('step:'+n)},n);
 // save replica: same work as saveNow (stringify + setItem x2 + remove) on a scratch key so the real save path stays off (G.noSave)
 const sv=(idle)=>p.evaluate(idle=>{const f=()=>{performance.mark('sv0');const j=JSON.stringify(C.S());localStorage.setItem('_probe_tmp',j);localStorage.setItem('_probe',j);localStorage.removeItem('_probe_tmp');performance.measure('probe-save','sv0')};if(idle)requestIdleCallback(f,{timeout:1000});else f()},idle);

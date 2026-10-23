@@ -78,3 +78,15 @@ print('by cause',sorted(tot.items()))
 for k in [m[1] for m in marks]:
   if k in per:print(' step',k,dict(per[k]),dict(cats[k]))
 for d,s,t,c in sorted(long,reverse=True)[:14]:print(' %.1fms %s %s %s'%(d,s,t,[(k,round(v/1000,1)) for k,v in c]))
+
+# r313: forced style/layout inside script (FunctionCall/TimerFire/rAF) - the layout-thrash cost
+fc=sorted([(x[0],x[1]) for x in X if x[2] in('FunctionCall','TimerFire','FireAnimationFrame','EventDispatch','FireIdleCallback')])
+fs=[a for a,b in fc];fz=0;fn=0;allS=0
+for s0,e0,nm,a in X:
+  if nm not in('UpdateLayoutTree','Layout'):continue
+  if not(t_beg<=s0<=t_end):continue
+  allS+=e0-s0
+  j=bisect.bisect_right(fs,s0)-1
+  for k in range(j,max(-1,j-40),-1):
+    if fc[k][0]<=s0<=fc[k][1]:fz+=e0-s0;fn+=1;break
+print('forced style/layout in script: %d x, %.0f ms ; all style/layout %.0f ms'%(fn,fz/1000,allS/1000))
