@@ -4091,3 +4091,32 @@ const LIM=5,dec=()=>{if(G.screen!='fish')return;const sb=$('#screen');
  const m=sb.querySelector('.catch span.i');if(m&&m.textContent.includes('💨'))m.outerHTML=`<img class="i fmi" src="${A}fs_bobber.png">`};
 let busy=0;new MutationObserver(()=>{if(busy)return;busy=1;try{dec()}catch(_){}busy=0}).observe(document.getElementById('screen')||document.body,{childList:true});
 const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{dec()}catch(_){}return r}})();
+;(()=>{/* v247 r296: 코스튬 — dressing-room name plate + 보유 chip on hc_statplate; 리나 코스튬 / 동료 축제 코스튬 cards on panel_stage + gem; costume tiles on hc_statplate (worn = gold glow + sk_star badge, not owned = dimmed + sk_lock); prices wrapped into a btn_gold pill with a small sk_tag (btn_grey when gems < cost, real s.gems); emoji-free. Visual only, static CSS, DOM touch only on render */
+const X=':is(#_k1,#_k2,div):is(#_k3,#_k4,div)',Y=':is(#_k5,#_k6,span):is(#_k7,#_k8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+SP=(v,h)=>`background:none!important;border:solid transparent!important;border-width:${v}px ${h}px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/${v}px ${h}px stretch!important;border-radius:0!important;box-shadow:none!important`,
+K='#screen.skx .sbody>.card'+X,T='#screen.skx .skg .skn'+X,st=document.createElement('style');
+st.textContent=`#screen.skx .skst .knm${X}{${SP(10,12)};padding:1px 10px 2px!important;filter:drop-shadow(0 3px 3px #0009)}
+#screen.skx .skst .knm${X} b{text-shadow:0 2px 2px #000}#screen.skx .skst .knm${X} small{color:#efe4cc;text-shadow:0 1px 2px #000}
+#screen.skx .skst .kcnt${Y}{${SP(6,8)};padding:0 4px!important;filter:drop-shadow(0 2px 2px #0008);text-shadow:0 1px 2px #000}
+${K}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px!important;position:relative;margin-top:28px!important;overflow:visible!important}
+${K}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
+${K} .ttl{text-shadow:0 2px 2px #000}${K} .ttl small{color:#efe4cc;text-shadow:0 1px 2px #000}
+#screen.skx .skstrip{padding:8px 4px 10px!important}
+${T}{${SP(9,10)};border-width:9px 10px 12px!important;padding:2px 0 4px!important;filter:drop-shadow(0 2px 2px #0008)}
+${T} b{color:#fff;text-shadow:0 1px 2px #000}${T} small{color:#ffe7a8!important;text-shadow:0 1px 2px #000;opacity:1!important}
+${T}.on{filter:drop-shadow(0 0 3px #ffe08a) drop-shadow(0 0 5px #ffc040) drop-shadow(0 0 3px #ffb03a) drop-shadow(0 2px 2px #0008)}${T}.on b{color:#ffe08a}
+${T}.lk>img:first-child{filter:brightness(.55) saturate(.5)!important}${T}.lk b{color:#cfc6b4}
+${T} .klk{position:absolute;right:-2px!important;top:-4px!important;height:24px;z-index:2;filter:drop-shadow(0 2px 2px #000a)}
+${T} .kon{position:absolute;left:-4px!important;top:-6px!important;height:24px;z-index:2;filter:drop-shadow(0 1px 2px #000a)}
+${T} .skp${Y}{display:inline-flex;align-items:center;gap:2px;margin-top:3px;background:none!important;border:7px solid transparent!important;border-image:url(${A}btn_gold.png) 30 fill/7px stretch!important;color:#fff!important;font:900 12px Maplestory,sans-serif!important;line-height:1!important;padding:0 3px!important;text-shadow:${ol('#5a3006')}!important;white-space:nowrap}
+${T} .skp${Y}.off{border-image-source:url(${A}btn_grey.png)!important;text-shadow:${ol('#2a2a2a')}!important;color:#eee!important}
+${T} .skp img.kt{height:16px;width:auto;margin:-3px 1px -3px -4px;filter:drop-shadow(0 1px 1px #0008)}${T} .skp img.ci{height:13px!important;width:13px!important;margin:0!important}
+${T}:active .skp:not(.off){filter:brightness(.8)}
+body.tglite ${T},body.tglite ${T}.on,body.tglite #screen.skx .skst .knm${X}{filter:none}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
+function deco(){const el=$('#screen');if(G.screen!='skin'){el.classList.remove('skx');return}el.classList.add('skx');
+ const s=C.S(),g=s.gems||0;
+ el.querySelectorAll('.skg .skn').forEach(c=>{if(c.dataset.v247)return;c.dataset.v247=1;const sm=c.querySelector('small'),gi=sm&&sm.querySelector('img.ci');
+  if(gi){const n=gi.nextSibling,cost=parseInt((n&&n.textContent||'').trim(),10)||0;const p=document.createElement('span');p.className='skp'+(g<cost?' off':'');p.innerHTML=`<img class=kt src="${A}sk_tag.png">`;gi.replaceWith(p);p.appendChild(gi);if(n){p.appendChild(document.createTextNode(String(cost)));n.remove()}}
+  if(c.dataset.cs){const o=(s.cown||{})[c.dataset.cs];if(!o&&!c.querySelector('.klk')){c.classList.add('lk');c.insertAdjacentHTML('beforeend',`<img class=klk src="${A}sk_lock.png">`)}if(c.classList.contains('on')&&!c.querySelector('.kon'))c.insertAdjacentHTML('beforeend',`<img class=kon src="${A}sk_star.png">`)}})}
+})();
