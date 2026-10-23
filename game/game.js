@@ -2992,3 +2992,23 @@ const tick=()=>{try{const bt=document.getElementById('battle'),ev=document.getEl
  let w=document.getElementById('bossWk');if(!w){bt.insertAdjacentHTML('beforeend',`<img id=bossWk src="${A}ic_weak.png" alt="약점">`);w=document.getElementById('bossWk')}
  const bo=C.B.boss&&C.alive().find(e=>e.boss&&!e.wb);let on=false;if(bo&&bo.fac){const fs=new Set([{k:'lina'},...(C.B.allies||[]).filter(a=>a.hp>0)].map(a=>C.allyFac(a)).filter(Boolean));fs.forEach(f=>{if(D.COUNTER[f]==bo.fac)on=true})}w.classList.toggle('on',on)}catch(_){}};
 setInterval(tick,250);tick()})();
+
+/* v195: boss-fight companion skill strip — during a boss fight the full-width cut-in becomes a slim framed strip under the boss bar (0.9s, small portrait in the socket); outside boss fights the normal banner plays (visual only) */
+;(()=>{const C=G.C;const fr=new Image();fr.src=A+'strip_frame.png';const IM={};const img=s=>{let i=IM[s];if(!i){i=IM[s]=new Image();i.src=A+s}return i};
+// source slices in strip_frame.png (452x132): capL 0-130, stretch 130-228, diamond 228-256, stretch 256-368, capR 368-452; socket centre (61,66) r34; band rows 31-104
+const SW=452,SH=132,SL=[[0,130,0],[130,228,1],[228,256,0],[256,368,1],[368,452,0]];
+R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth)return false;if(!C.alive().some(e=>e.boss&&!e.wb))return false;
+ const c=R.ccut;c.t+=dt/.9;const t=Math.min(1,c.t),ein=Math.min(1,t/.14),eo=t>.78?(1-t)/.22:1,a=Math.max(0,Math.min(ein,eo));
+ const h=52,k=h/SH,w=Math.min(W-28,330),x0=(W-w)/2-(1-ein)*40,y0=296;
+ const fixed=SL.filter(q=>!q[2]).reduce((s,q)=>s+(q[1]-q[0])*k,0),strW=(w-fixed)/2;
+ cx.save();cx.globalAlpha=a;
+ // portrait behind the socket
+ const pi=img(c.img);const scx=x0+61*k,scy=y0+66*k,sr=34*k+1;
+ if(pi.complete&&pi.naturalWidth){cx.save();cx.beginPath();cx.arc(scx,scy,sr,0,6.283);cx.closePath();cx.fillStyle='#2a1830';cx.fill();cx.clip();const iw=pi.naturalWidth,ih=pi.naturalHeight,side=Math.min(iw*(c.bust?.5:.62),ih*.55),sx=(iw-side)/2+(c.bust?iw*.06:0),sy=ih*(c.bust?.06:.06);cx.drawImage(pi,sx,sy,side,side,scx-sr,scy-sr,sr*2,sr*2);cx.restore()}
+ let x=x0;const sn=v=>Math.round(v*2)/2;for(const [s0,s1,st] of SL){const dw=st?strW:(s1-s0)*k,xa=sn(x),xb=sn(x+dw);cx.drawImage(fr,s0,0,s1-s0,SH,xa,y0,xb-xa,h);x+=dw}
+ // text in the band
+ const tx=x0+136*k,ty=y0+(31+104)/2*k+1;cx.textBaseline='middle';cx.textAlign='left';
+ cx.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';cx.fillStyle=c.rc||'#ffd77a';const nw=cx.measureText(c.n).width;cx.lineWidth=3;cx.strokeStyle='#000a';cx.strokeText(c.n,tx,ty);cx.fillText(c.n,tx,ty);
+ cx.font='900 15px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';const sx2=tx+nw+6,sk=c.sk+'!';cx.strokeText(sk,sx2,ty);cx.fillStyle='#fff6d8';cx.fillText(sk,sx2,ty);
+ cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
+})();
