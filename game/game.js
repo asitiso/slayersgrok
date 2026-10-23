@@ -3113,7 +3113,7 @@ const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{if(di
 #battle.ccon.elon .mkb{top:424px!important}
 #battle.ccon.elon .tdmg{top:452px!important}`;document.head.appendChild(st);
 const PW=600,PH=184,DW=240,CY=378;let fr=null,on=0,seen=0;
-const cls=v=>{if(on===v)return;on=v;const b=document.getElementById('battle');b&&b.classList.toggle('elon',!!v)};
+const cls=v=>{if(on===v)return;on=v;const b=document.getElementById('battle');b&&b.classList.toggle('elon',!!v);R._elB=!!v/* r365: elite plaque band 341-415 for the number fade */};
 R.elPlq=(cx,c,W,t,a)=>{try{if(C.B.boss)return false;fr=fr||Object.assign(new Image(),{src:A+'elite_plaque.png'});if(!fr.complete||!fr.naturalWidth)return false;seen=performance.now();cls(1);
  const k=DW/PW,sc=t<.1?.6+t*6.5:t<.22?1.25-(t-.1)*2.1:1,fo=t>1.3?1+(t-1.3)*.12:1;cx.save();cx.globalAlpha=Math.max(0,a);cx.translate(W/2,CY);cx.scale(sc*fo,sc*fo);
  cx.drawImage(fr,-DW/2,-PH*k/2,DW,PH*k);
@@ -4887,4 +4887,27 @@ const st=document.createElement('style');st.textContent=`
 body.tglite #screen .sucd.rate364 .sug2{box-shadow:0 0 0 1px #0b0d0f!important}`;document.head.appendChild(st);
 const deco=()=>{const k=document.querySelector('#screen .sucd');if(!k)return;const on=G.suT==2&&!!k.querySelector('.sug2');k.classList.toggle('rate364',on);if(!on)return;k.classList.add('sel363');k.querySelectorAll('.sug2').forEach(g=>{const c=g.querySelector('.sug');if(c)g.style.setProperty('--rc',c.style.getPropertyValue('--rc'))})};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='summon')deco()}catch(e){console.warn(e)}return r};
+})();
+
+;(()=>{// r365 v315 소환 탭 마감: 소환 확률 카드 gold frame + ribbon title, 마일리지 row framed strip, 보유 재화 tiles framed with ribbon labels. Display only (existing values).
+const A='assets/',st=document.createElement('style');st.textContent=`
+#screen .card.prc365{position:relative;margin-top:22px!important;border:3px solid transparent!important;border-radius:12px!important;background:linear-gradient(#22183a,#0f0b1a) padding-box,linear-gradient(135deg,#fff6c0,#e8b030 28%,#8a5a10 50%,#ffe08a 72%,#e8b030) border-box!important;box-shadow:0 0 0 2px #0b0d0f,0 3px 8px #0008!important;padding-top:20px!important}
+#screen .card.prc365>.ttl,#screen .sucd.cur365>.ttl{position:absolute;left:50%;top:-18px;transform:translateX(-50%);justify-content:center;width:170px;height:34px;line-height:30px;margin:0;padding:0;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;color:#fff8e0;font-size:14px;text-shadow:0 1px 0 #3a1a00,0 0 6px #ffb84a;filter:drop-shadow(0 2px 3px #000a);white-space:nowrap}
+#screen .card.prc365 .milebar{padding:6px 10px;margin-top:6px;border:2px solid transparent;border-radius:9px;background:linear-gradient(#2c1c4c,#140a26) padding-box,linear-gradient(90deg,#8a5a10,#ffe08a 50%,#8a5a10) border-box;box-shadow:0 0 0 1px #0b0d0f}
+#screen .card.prc365 .milebar>span{color:#ffe8a0;font-weight:900}
+#screen .sucd.cur365{position:relative;margin-top:24px;padding-top:22px;border:3px solid transparent!important;border-radius:12px;background:linear-gradient(#1c1f28,#0e1015) padding-box,linear-gradient(135deg,#fff6c0,#e8b030 28%,#8a5a10 50%,#ffe08a 72%,#e8b030) border-box!important;box-shadow:0 0 0 2px #0b0d0f}
+#screen .sucd.cur365 .sucur>div{position:relative;border:2px solid transparent!important;border-radius:10px!important;background:radial-gradient(110% 80% at 50% 30%,#3a2c5a,#120e1c 75%) padding-box,linear-gradient(135deg,#fff8,#c8962a 35%,#3a2a10 55%,#c8962a 80%,#fff8) border-box!important;box-shadow:0 0 0 1px #0b0d0f,0 0 8px #ffc44a33!important;padding:8px 2px 4px!important}
+#screen .sucd.cur365 .sucur>div:before{content:'';position:absolute;left:50%;top:-6px;width:9px;height:9px;margin-left:-6px;transform:rotate(45deg);background:linear-gradient(135deg,#fff6c0,#e0a020);border:2px solid #0b0d0f;border-radius:2px}
+#screen .sucd.cur365 .sucur>div>small{display:block;align-self:stretch;margin:3px -4px 0;height:19px;line-height:19px;text-align:center;background:linear-gradient(#ffe08a,#c8962a 50%,#7a5010);clip-path:polygon(0 0,100% 0,93% 50%,100% 100%,0 100%,7% 50%);color:#fff!important;font-weight:900;text-shadow:0 1px 0 #000,0 0 3px #000a;opacity:1!important}
+body.tglite #screen .card.prc365,body.tglite #screen .sucd.cur365{box-shadow:0 0 0 2px #0b0d0f!important}body.tglite #screen .card.prc365>.ttl,body.tglite #screen .sucd.cur365>.ttl{filter:none}`;document.head.appendChild(st);
+const deco=()=>{const sc=document.querySelector('#screen');if(!sc)return;const bn=sc.querySelector('.sumban'),c=bn&&bn.nextElementSibling;if(c&&c.classList.contains('card')&&c.querySelector('.milebar'))c.classList.add('prc365');const k=sc.querySelector('.sucd');if(k)k.classList.toggle('cur365',!!k.querySelector('.sucur'))};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='summon')deco()}catch(e){console.warn(e)}return r};
+})();
+
+;(()=>{/* r365 v315 battle readability: the mid-field kill / FEVER / 광폭화 / wave banners (.mkb .fevban .enrb .wclr .wvb) were drawn over by in-flight damage numbers and BLOCK labels (frames 1441_battle_*). While one is up, its own rect (measured once on insert, then re-read every 0.25s so the .mkb top shifts are followed) becomes R._kbB and numbers inside that band fade to .15 like the r306/r327 bands. One pooled 3-slot array, no per-frame allocation, no DOM read per frame. */
+const b=document.getElementById('battle');if(!b||!R._kbB)return;const SEL='.mkb:not(.bgone),.fevban:not(.bgone),.enrb:not(.bgone),.wclr:not(.bgone),.wvb:not(.bgone)';const K=R._kbB;let el=null,tm=0;
+const upd=()=>{const n=b.querySelector(SEL);el=n;if(!n){K[2]=0;return}const r=n.getBoundingClientRect(),o=b.getBoundingClientRect();if(!(r.height>0)){K[2]=0;return}K[0]=r.top-o.top-4;K[1]=r.bottom-o.top+4;K[2]=1};
+const tick=()=>{tm=0;upd();if(el)tm=setTimeout(tick,250)};
+new MutationObserver(()=>{if(!tm)tick()}).observe(b,{childList:true,subtree:false,attributes:false});
+G._kbTest=()=>K.slice()/* console probe only */;
 })();
