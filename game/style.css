@@ -1551,3 +1551,12 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 #screen .gjhero .gjnpc{position:absolute;right:6px;bottom:-34px;height:182px;z-index:2;filter:drop-shadow(0 4px 4px #0009)}
 #screen .gjhero .gjtx{position:absolute;left:14px;top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:62%}
 #screen .gjhero .gjtx img{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 2px #000)}#screen .gjhero .gjtx b{font-size:16px;color:#ffe8a8;text-shadow:0 1px 2px #000,0 0 6px #000}#screen .gjhero .gjtx small{font-size:11px;color:#f0e6d0;text-shadow:0 1px 2px #000}
+/* r351 world boss */
+#screen.wb3 .wbst{height:262px}#screen.wb3 .wbst .wbboss{top:30px;height:200px}
+#screen.wb3 #wbGo.wbgo3{margin:0 0 8px!important}
+#screen .wbnx{display:flex;align-items:center;gap:8px;margin:6px 0 4px;padding:6px 8px;border-radius:10px;background:#0e1838d8;border:1.5px solid #0b0d0f;box-shadow:inset 0 0 0 1px #9ab0d866}
+#screen .wbnx .wbg{flex:0 0 auto;min-width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:radial-gradient(#5a3a10,#2a1a06);border:2px solid #ffd36a;font:900 14px Maplestory,sans-serif;color:#ffe8a8}
+#screen .wbnx .f{flex:1;min-width:0}#screen .wbnx small{font-size:11px;color:#dfe6f4}#screen .wbnx small b{color:#ffd36a}
+#screen .wbnx i{display:block;height:8px;margin-top:4px;border-radius:4px;background:#0008;overflow:hidden;box-shadow:inset 0 0 0 1px #fff2}#screen .wbnx i s{display:block;height:100%;background:linear-gradient(90deg,#ff9a3a,#ffd36a)}
+#screen .wbt div.nx{border-color:#7ad0ff;box-shadow:0 0 0 1px #7ad0ff88,0 0 8px #7ad0ff66;background:#10284acc}
+#screen.wb3 .wbt div small:last-child{white-space:nowrap;font-size:9px;letter-spacing:-.4px}#screen.wb3 .wbt div small:last-child img.ci{width:11px;height:11px;margin:0}

@@ -1290,7 +1290,7 @@ const H={map:['지도','클리어한 스테이지를 골라 다시 사냥할 수
  relic:['기보','기보를 모아 강화하면 공격력·체력 %가 올라요.'],
  explore:['탐험','동료를 보내 일정 시간 후 보상을 받아요. 오프라인에도 진행돼요.'],
  summon:['동료 소환','다이아 또는 소환권으로 동료를 소환해요. 10회 소환은 1회 보너스.','소환할 때마다 마일리지가 쌓여 원하는 동료와 교환할 수 있어요.'],
- party:['편성','최대 3명의 동료와 함께 싸워요. 상성(빛·혼돈·자연)이 맞으면 피해 증가.','같은 진영 동료를 모으면 시너지 보너스가 발동해요.'],
+ party:['편성','최대 4명의 동료와 함께 싸워요. 상성(빛·혼돈·자연)이 맞으면 피해 증가.','같은 진영 동료를 모으면 시너지 보너스가 발동해요.'],
  enhance:['강화 · 육성','장비 +1 강화마다 능력치 +10%. 단계가 높을수록 성공률이 낮아져요.','실패해도 장비는 사라지지 않고 재료만 소모돼요.','동료 육성과 스킬 편성도 여기서 할 수 있어요.'],
  codex:['도감','동료·몬스터·펫·장비를 처음 얻으면 등록하고 다이아를 받아요.','수집 수에 따라 공격력·체력 보너스가 영구 적용돼요.'],
  tower:['무한의 탑','층을 올라갈수록 강해지는 적과 싸워요. 10층마다 보스.','최고 층 기준으로 매일 보상을 받을 수 있어요.'],
@@ -4585,3 +4585,13 @@ const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments)
 const gh=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.gjhero'))return;const c=sb.querySelector(':scope>.card');if(!c||!c.querySelector('img[src$="ic3_guild.png"]'))return;
  const t=c.querySelector('.ttl'),m=c.querySelector('small');c.classList.add('gjhero');c.innerHTML=`<img class=gjbg src="assets/bg_guild_hall2.jpg"><img class=gjnpc src="assets/npc_guildgirl.png"><div class=gjtx><img src="assets/ic3_guild.png"><b>${t?t.textContent:''}</b><small>${m?m.textContent:''}</small></div>`};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='guild'&&!G.C.S().gj){const sc=document.querySelector('#screen');if(sc)gh(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r351 월드 보스: 도전 button under the stage, compact stage, next-tier progress on 오늘의 기록 (existing C.WB / wbRef / wbState only) */
+const wb=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.wbnx'))return;const st=sb.querySelector('.wbst'),go=sb.querySelector('#wbGo');if(!st)return;
+ sc.classList.add('wb3');if(go){st.after(go);go.classList.add('wbgo3')}
+ const bs=st.querySelector('.wbbest em');const w=C.wbState(),d=w.today||0;if(bs&&!d)bs.style.display='none';
+ const tc=[...sb.querySelectorAll('.card')].find(c=>c.querySelector('.wbt'));if(!tc)return;const ref=C.wbRef(),T=C.WB.tiers,cells=[...tc.querySelectorAll('.wbt>div')];
+ let ni=T.findIndex(t=>d<ref*t[1]);cells.forEach((c,i)=>{if(i===ni)c.classList.add('nx')});
+ const prev=ni<0?ref*T[T.length-1][1]:ni?ref*T[ni-1][1]:0,goal=ni<0?prev:ref*T[ni][1],pc=ni<0?100:Math.max(0,Math.min(100,(d-prev)/(goal-prev)*100));
+ const cur=ni<0?T[T.length-1][0]:ni?T[ni-1][0]:'-';
+ tc.querySelector('.wbt').insertAdjacentHTML('beforebegin',`<div class=wbnx><span class=wbg>${cur}</span><div class=f><small>${ni<0?'최고 등급 달성':`다음 등급 <b>${T[ni][0]}</b>까지 ${fmt(Math.max(0,goal-d))}`}</small><i><s style="width:${pc.toFixed(1)}%"></s></i></div></div>`)};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='wboss'){const sc=document.querySelector('#screen');if(sc)wb(sc)}}catch(e){console.warn(e)}return r}})();
