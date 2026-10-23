@@ -1,0 +1,7 @@
+// r238: per-section render cost with forced raster flush (R.PROF=2 -> getImageData after each section). Absolute values inflated by readback; use relative shares.
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');const TH=+(process.argv[2]||4),SEC=+(process.argv[3]||10);
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:180000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:'+(process.env.PORT||18791)+'/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+await p.goto(U);await sl(4000);await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0});const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:TH});await sl(1500);
+await p.evaluate(P=>{R._pa={};R.PROF=P;window.__n=0;const f=()=>{__n++;requestAnimationFrame(f)};requestAnimationFrame(f)},+(process.env.P||2));await sl(SEC*1000);
+console.log(await p.evaluate(()=>{const o=Object.entries(R._pa).sort((a,b)=>b[1]-a[1]),n=__n;return o.map(([k,v])=>k.padEnd(10)+(v/n).toFixed(2)).join('\n')+'\nframes '+n}));await b.close()})();

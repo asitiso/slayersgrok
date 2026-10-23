@@ -1,0 +1,8 @@
+// r237: late-game battle frame interval median/p90 at Nx throttle, High mode (no profiler)
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');const TH=+(process.argv[2]||4),SEC=+(process.argv[3]||20);
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new',protocolTimeout:180000});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:'+(process.env.PORT||18791)+'/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+if(process.env.SNIP)await p.evaluateOnNewDocument(new Function(process.env.SNIP));if(process.env.NOFC)await p.evaluateOnNewDocument(()=>{window.__NOFC=1});
+await p.goto(U);await sl(4000);await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;if(window.__NOFC){R.noFC=1;R.noBW=1}});const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:TH});await sl(2000);
+await p.evaluate(()=>{window.__f=[];let l=performance.now();const f=()=>{const n=performance.now();__f.push(n-l);l=n;requestAnimationFrame(f)};requestAnimationFrame(f)});await sl(SEC*1000);
+console.log(await p.evaluate(()=>{const a=__f.slice(1).sort((x,y)=>x-y),q=k=>a[Math.floor(a.length*k)].toFixed(1);return JSON.stringify({n:a.length,med:q(.5),p90:q(.9),p99:q(.99),max:a[a.length-1].toFixed(0),dpr:devicePixelRatio,qLvl:R.qLvl,mode:R.qMode,boss:!!R._bossL})}));await b.close()})();
