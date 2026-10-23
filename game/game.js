@@ -3486,3 +3486,35 @@ const deco=()=>{if(G.screen!='map')return;const wm=document.querySelector('#scre
  [...wm.querySelectorAll('.wpin[data-ch]')].forEach((p,k)=>{if(p.classList.contains('nxt'))put(wm,p,NX,'',L,k);else if(p.classList.contains('far'))put(wm,p,FR,'',L,k);
   else if(p.querySelector('.wgo')){put(wm,p,NX,'pt',L,k);setTimeout(()=>wm.querySelectorAll('.wfog.pt').forEach(x=>x.remove()),1200)}})};
 G.fogDeco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
+
+/* v213: (fix) background-battle skill cut-ins (.bcut) no longer draw over full screens (map/menus), notices or story — same body.hs-* flags the toasts use; the battle keeps running underneath.
+   + 화룡전식 locked-region preview: tapping a locked world-map pin opens region_preview.png with a darkened silhouette of that chapter's real end boss (D.BOSSPLAN[c][1] → D.BOSSES img; "?" emblem if the art is missing), "제N장 {D.CH}" and the real unlock rule on the parchment. Pop-in + breathing violet rim glow; lite = static. Close: tap outside or ✕. Visual only. */
+;(()=>{const st=document.createElement('style');st.textContent=`
+body:is(.hs-scr,#_x.hs_x) .bcut,body.hs-nt .bcut,body.hs-sty .bcut,body.hs-mod .bcut{display:none!important}
+.rpv{position:fixed;inset:0;z-index:9500;background:#0009;display:flex;align-items:center;justify-content:center;animation:rpvB .2s ease-out both}
+.rpv .rc{position:relative;width:300px;height:435px;animation:rpvP .42s cubic-bezier(.2,1.4,.4,1) both}
+.rpv .rc>img.fr{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 10px 18px #000c)}
+.rpv .win{position:absolute;left:12%;right:12%;top:19%;bottom:42%;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:18px}
+.rpv .win img{max-width:92%;max-height:96%;object-fit:contain;filter:brightness(0) drop-shadow(0 0 3px #c9a2ff) drop-shadow(0 0 9px #8a5cff);animation:rpvG 2.6s ease-in-out infinite}
+.rpv .win .q{align-self:center;font:900 92px/1 Maplestory,sans-serif;color:#1a0f2e;text-shadow:0 0 6px #c9a2ff,0 0 16px #8a5cff;animation:rpvG 2.6s ease-in-out infinite}
+.rpv .pt{position:absolute;left:14%;right:14%;top:66%;bottom:9%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;color:#4a2a0e;font-family:Maplestory,sans-serif}
+.rpv .pt small{font-weight:900;font-size:11px;letter-spacing:2px;color:#7a5326}
+.rpv .pt b{font-weight:900;font-size:18px;line-height:1.15}
+.rpv .pt span{font-weight:700;font-size:13px;padding:3px 10px;border-radius:9px;background:#5a3a1a1c;border:1px solid #7a532655}
+.rpv .x{position:absolute;right:-4px;top:-4px;width:30px;height:30px;border-radius:50%;background:radial-gradient(#6a4a2a,#2a1a0a);border:2px solid #e0b860;color:#ffe9b0;font:900 15px/26px sans-serif;text-align:center;cursor:pointer;box-shadow:0 2px 5px #000a;z-index:2}
+.rpv.lite,.rpv.lite .rc{animation:none}.rpv.lite .win img,.rpv.lite .win .q{animation:none}
+@keyframes rpvB{from{opacity:0}to{opacity:1}}
+@keyframes rpvP{0%{transform:scale(.55);opacity:0}100%{transform:none;opacity:1}}
+@keyframes rpvG{0%,100%{filter:brightness(0) drop-shadow(0 0 2px #c9a2ff) drop-shadow(0 0 6px #8a5cff);transform:scale(1)}50%{filter:brightness(0) drop-shadow(0 0 4px #e0ccff) drop-shadow(0 0 14px #a77bff);transform:scale(1.025)}}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const open=c=>{document.querySelectorAll('.rpv').forEach(x=>x.remove());const pl=(D.BOSSPLAN||[])[c],bo=pl&&D.BOSSES&&D.BOSSES[pl[1]],L=lite();
+ const d=document.createElement('div');d.className='rpv'+(L?' lite':'');
+ d.innerHTML=`<div class=rc><img class=fr src="assets/region_preview.png" alt=""><span class=x>✕</span><div class=win>${bo&&bo.img?`<img src="assets/${bo.img}" alt="">`:'<span class=q>?</span>'}</div><div class=pt><small>잠긴 지역</small><b>제${c+1}장 ${D.CH[c]||''}</b><span>제${c}장 보스 처치 시 개방</span></div></div>`;
+ const im=d.querySelector('.win img');if(im)im.onerror=()=>{im.replaceWith(Object.assign(document.createElement('span'),{className:'q',textContent:'?'}))};
+ d.onclick=e=>{if(e.target===d||e.target.classList.contains('x'))d.remove()};document.body.appendChild(d);return d};
+G.regionPreview=open;
+const deco=()=>{if(G.screen!='map')return;const s=C.S(),mx=Math.floor(Math.min(s.maxSi,D.FIELDS.length-1)/7);
+ document.querySelectorAll('#screen .wpin[data-ch]').forEach(p=>{const c=+p.dataset.ch;if(c>mx&&!p._rpv){p._rpv=1;p.onclick=()=>open(c)}})};
+const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
+// leaving the map closes the preview
+setInterval(()=>{if(G.screen!='map')document.querySelectorAll('.rpv').forEach(x=>x.remove())},500);})();
