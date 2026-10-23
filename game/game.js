@@ -1214,7 +1214,7 @@ const I={it2_gold:['골드','장비 강화·마력 수련·영지 건설에 쓰�
  it3_arenatoken:['투기장 토큰','투기장 상점에서 쓰는 토큰.',[['arena','투기장','사용']],[['arena','투기장 대전']]],
  it3_mileagestar:['마일리지','동료 소환 시 쌓이며, 일정량 모으면 원하는 동료와 교환.',[['summon','동료 소환','사용']],[['summon','동료 소환 1회당 1']]]};
 const go=k=>{document.querySelectorAll('.modal').forEach(m=>m.remove());if(k=='battle'){if(G.screen)closeScreen();return}if(G.screen)closeScreen();menuGo(k)};
-G.itemInfo=img=>{const d=I[img];if(!d)return;const s=C.S(),own={it2_gold:s.gold,it2_gem:s.gems,it2_exp:s.orbs,it2_ticket:s.tickets||0,it2_hp:s.pot||0,it2_mp:s.mpot||0,it2_stone:s.stone||0,it3_dungeonkey:s.dkey||0,it3_guildcoin:s.gcoin||0,it3_arenatoken:s.atoken||0,it3_mileagestar:s.mile||0}[img]||0;
+G.itemData=I;/* r340: read-only handle for the 가방 detail card */G.itemInfo=img=>{const d=I[img];if(!d)return;const s=C.S(),own={it2_gold:s.gold,it2_gem:s.gems,it2_exp:s.orbs,it2_ticket:s.tickets||0,it2_hp:s.pot||0,it2_mp:s.mpot||0,it2_stone:s.stone||0,it3_dungeonkey:s.dkey||0,it3_guildcoin:s.gcoin||0,it3_arenatoken:s.atoken||0,it3_mileagestar:s.mile||0}[img]||0;
  modal(`<div class=iih><img src="${A}${img}.png"><div><b>${d[0]}</b><small>보유 ${fmt(own)}</small></div></div><p class=iid>${d[1]}</p><div class=iis>사용처</div><div class=iig>${d[2].map(x=>`<span class=iigo data-g=${x[0]}>${x[1]} ▶</span>`).join('')}</div><div class=iis>획득처</div><div class=iig>${d[3].map(x=>`<span class=iigo data-g=${x[0]}>${x[1]} ▶</span>`).join('')}</div>`);
  document.querySelectorAll('.iigo').forEach(e=>e.onclick=()=>go(e.dataset.g))};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='bag'){$('#screen').querySelectorAll('.bagg .bi').forEach(b=>{const im=b.querySelector('img');if(!im)return;const m=(im.getAttribute('src')||'').match(/(it\d_[a-z]+)\.png$/);if(m&&I[m[1]]){b.classList.add('tap');b.onclick=()=>G.itemInfo(m[1])}})}}catch(_){}return r};
@@ -4454,3 +4454,38 @@ const bag=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.bg
  const tt=cards[0].querySelector('.ttl');if(tt&&(t==1||t==2)){const n=[...tt.childNodes].find(z=>z.nodeType==3&&z.textContent.trim());if(n)n.textContent=t==1?'재화':'소모품'}
  bar.querySelectorAll('[data-bt]').forEach(e=>e.onclick=()=>{if(+e.dataset.bt===G.bgT)return;G.bgT=+e.dataset.bt;renderScreen();const b2=document.querySelector('#screen .sbody');if(b2)b2.scrollTop=0})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(!sc)return r;if(G.screen=='shop')deals(sc);if(G.screen=='bag')bag(sc)}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r340: 가방 detail card on 재화/소모품/장비 tabs (selected item; existing item text / gear fields only; defaults to first visible item) */
+const OWN=s=>({it2_gold:s.gold,it2_gem:s.gems,it2_exp:s.orbs,it2_ticket:s.tickets||0,it2_hp:s.pot||0,it2_mp:s.mpot||0,it2_stone:s.stone||0,it3_dungeonkey:s.dkey||0,it3_guildcoin:s.gcoin||0,it3_arenatoken:s.atoken||0,it3_mileagestar:s.mile||0});
+const chips=L=>L.map(x=>`<span>${x[1]}</span>`).join('');
+const det=(sb,t)=>{sb.querySelectorAll('.bgdt').forEach(x=>x.remove());const s=C.S(),cards=[...sb.querySelectorAll(':scope>.card')];let h='';
+ if(t==3){const gs=Object.values(s.gear||{}).filter(Boolean);if(!gs.length)return;const i=Math.min(G.bgSelG||0,gs.length-1),x=gs[i],R=D.RAR[x.r]||{},SL=D.SLOTS.find(q=>q.k==x.slot)||{};
+  [...cards[1].querySelectorAll('.bagg .bi')].forEach((b,j)=>b.classList.toggle('bgsel',j==i));
+  h=`<div class=bgdh><div class=bgdi style="--rc:${R.c}"><img src="${A}${SL.img}"></div><div class=f><b style="color:${R.c}">${x.name}</b><small><em style="background:${R.c}">${R.n}</em>${SL.n||''} · Lv.${x.lv}${x.en?` · 강화 +${x.en}`:''}</small></div></div>
+  <div class=bgst><span><small>${x.st=='atk'?'공격력':'체력'}</small><b>+${fmt(x.v)}</b></span><span><small>전투력</small><b>${fmt(C.itemPow(x))}</b></span></div>
+  <span class=bggo data-go=enhance>장비 강화 ▶</span>`}
+ else{const vis=[...cards[0].querySelectorAll('.bagg .bi:not(.shhide)')];if(!vis.length)return;const key=b=>((b.querySelector('img')||{}).getAttribute?.('src')||'').match(/(it\d_[a-z]+)\.png/)?.[1];
+  let sel=vis.find(b=>key(b)==G.bgSel)||vis[0];const k=key(sel),d=(G.itemData||{})[k];vis.forEach(b=>b.classList.toggle('bgsel',b==sel));
+  const nm=d?d[0]:(sel.querySelector('small')||{}).textContent||'',own=OWN(s)[k];
+  h=`<div class=bgdh><div class=bgdi><img src="${A}${k}.png"></div><div class=f><b>${nm}</b><small>보유 <i>${fmt(own==null?0:own)}</i></small></div></div>${d?`<p class=bgds>${d[1]}</p><div class=bgsec><small>사용처</small><div>${chips(d[2])}</div></div><div class=bgsec><small>획득처</small><div>${chips(d[3])}</div></div><span class=bggo data-ii=${k}>바로 가기 ▶</span>`:''}`}
+ const c=document.createElement('div');c.className='card bgdt';c.innerHTML=h;(t==3?cards[1]:cards[0]).after(c);
+ const g=c.querySelector('.bggo');if(g)g.onclick=()=>{if(g.dataset.ii)G.itemInfo(g.dataset.ii);else{closeScreen();menuGo(g.dataset.go)}}};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='bag')return r;const sb=document.querySelector('#screen .sbody'),t=G.bgT||0;if(!sb||!sb.querySelector('.bgtab')||t==0||sb.querySelector('.bgdt'))return r;
+ const cards=[...sb.querySelectorAll(':scope>.card')];
+ if(t==3)cards[1].querySelectorAll('.bagg .bi').forEach((b,j)=>b.onclick=()=>{G.bgSelG=j;det(sb,3)});
+ else cards[0].querySelectorAll('.bagg .bi').forEach(b=>{const k=((b.querySelector('img')||{}).getAttribute?.('src')||'').match(/(it\d_[a-z]+)\.png/)?.[1];b.onclick=()=>{G.bgSel=k;det(sb,t)}});
+ det(sb,t)}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r340: 동료 소환 tabs (소환 / 선택 소환 / 확률 정보) + cards; display only, existing data and actions */
+const sum=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.sutab'))return;const ch=[...sb.children],rc=ch.find(c=>c.classList.contains('card'));if(!rc||!sb.querySelector('.sumbtns'))return;
+ const s=C.S(),mile=s.mile||0,t=G.suT=G.suT||0;
+ const T=[['소환','it2_ticket.png',''],['선택 소환','it3_mileagestar.png',mile+'/100'],['확률 정보','it2_gem.png','']];
+ const bar=document.createElement('div');bar.className='entabs sutab';bar.innerHTML=T.map((x,i)=>`<span class="${i==t?'on':''}" data-st=${i}><img src="assets/${x[1]}">${x[0]}${x[2]?`<small>${x[2]}</small>`:''}${i==1&&mile>=100?'<i class=dot></i>':''}</span>`).join('');sb.prepend(bar);
+ ch.forEach(c=>c.classList.toggle('shhide',t==2||(t==1&&c!==rc)));
+ const k=document.createElement('div');k.className='card sucd';
+ if(t==0){k.innerHTML=`<div class=ttl>보유 재화</div><div class=sucur><div><img src="assets/it2_ticket.png"><b>${s.tickets||0}</b><small>동료 소환권</small></div><div><img src="assets/it2_gem.png"><b>${fmt(s.gems)}</b><small>다이아</small></div><div><img src="assets/it3_mileagestar.png"><b>${mile}/100</b><small>마일리지</small></div></div>`;
+  const sm=ch.filter(c=>c.tagName=='SMALL').pop();if(sm)sm.classList.add('shhide');sb.appendChild(k)}
+ if(t==1){k.innerHTML=`<div class=ttl>선택 소환 <small>${mile>=100?'원하는 동료 선택':'마일리지 '+mile+'/100'}</small></div><div class=sugrid>${D.COMPS.map(c=>`<div class="sug ${mile>=100?'':'lock'}" data-sk=${c.k} style="--rc:${D.RAR[c.g].c}"><img src="assets/${c.img}"><b>${c.n}</b><small>${D.RAR[c.g].n}</small></div>`).join('')}</div><small class=sunote>소환 1회당 마일리지 +1 · 100 달성 시 원하는 동료 선택 소환</small>`;
+  rc.querySelectorAll('.chips').forEach(x=>x.classList.add('shhide'));rc.after(k);
+  k.querySelectorAll('[data-sk]').forEach(e=>e.onclick=()=>{const o=rc.querySelector(`[data-mile="${e.dataset.sk}"]`);if(o)o.click();else toast('마일리지 100 필요')})}
+ if(t==2){const r=C.rates();k.innerHTML=`<div class=ttl>소환 확률 정보</div>${[4,3,2].map(g=>{const L=r.filter(x=>x.g==g),tt=L.reduce((a,x)=>a+x.p,0);return `<div class=sug2><div class=surh style="color:${D.RAR[g].c}">${D.RAR[g].n} <span>${tt.toFixed(1)}%</span></div><div class=sugrid>${L.map(x=>{const c=D.COMPS.find(q=>q.k==x.k);return `<div class="sug ${x.up?'up':''}" style="--rc:${D.RAR[g].c}"><img src="assets/${c.img}"><b>${x.n}</b><small>${x.p.toFixed(2)}%</small>${x.up?'<em>UP!</em>':''}</div>`}).join('')}</div></div>`}).join('')}<small class=sunote>${C.PITY}회 소환 내 전설 미획득 시 다음 소환 전설 확정 (50% 확률로 「${(D.COMPS.find(c=>c.k==C.RU)||{}).n}」)</small>`;sb.appendChild(k)}
+ bar.querySelectorAll('[data-st]').forEach(e=>e.onclick=()=>{if(+e.dataset.st===G.suT)return;G.suT=+e.dataset.st;renderScreen();const b2=document.querySelector('#screen .sbody');if(b2)b2.scrollTop=0})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='summon'){const sc=document.querySelector('#screen');if(sc)sum(sc)}}catch(e){console.warn(e)}return r}})();
