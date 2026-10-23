@@ -4010,3 +4010,16 @@ body.tglite ${F}.cur{filter:drop-shadow(0 0 5px #ffd060)}body.tglite ${F}{filter
 #screen .twd #twD.off${Y}{${G2}}
 #screen .twd #twD${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8)!important}`;document.head.appendChild(st);
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='tower'){const d=document.querySelector('#screen .twd');if(d&&!d.querySelector('.twtr'))d.insertAdjacentHTML('afterbegin',`<img class=twtr src="${A}ic3_trophy.png">`)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* v244 r293: 랭킹 — list rows (.rkrow) on hc_statplate with light text; own row gold glow (same as guild .gmc.me); top-3 rank numbers on ac_medal (gold / silver / bronze via static CSS filter on a ::before layer so the number stays untinted); podium rank badges on ac_medal too + tt_crown over the #1 avatar (rk_laurel kept). No tabs or gauges on this screen; entries/numbers untouched. Visual only */
+const X=':is(#_q1,#_q2,div):is(#_q3,#_q4,div)',R='#screen .rkrow'+X,st=document.createElement('style'),
+MF=['none','grayscale(1) brightness(1.18) contrast(1.05)','sepia(1) saturate(1.5) hue-rotate(-18deg) brightness(.82)'];
+st.textContent=`${R}{background:none!important;border:solid transparent!important;border-width:10px 12px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/10px 12px stretch!important;border-radius:0!important;box-shadow:none!important;padding:0 2px!important;margin:3px 0!important;color:#efe4cc;filter:drop-shadow(0 2px 2px #0008)}
+${R} .f{line-height:1.1;padding:3px 0 1px}${R} .f b{color:#fff;text-shadow:0 1px 2px #000}${R} .f small{color:#e8dcc2;opacity:1!important}${R} .rp{text-shadow:0 1px 2px #000}
+${R}.me{filter:drop-shadow(0 0 4px #ffd77a) drop-shadow(0 0 3px #ffb03a) drop-shadow(0 2px 2px #0008)}${R}.me .rp{color:#fff2a8}${R}.me .f b{color:#ffe08a}
+${R} .rn{color:#fff;text-shadow:0 1px 2px #000}
+${[1,2,3].map(n=>`${R}:nth-child(${n}) .rn{position:relative;width:26px;height:40px;line-height:50px;font-size:13px!important;color:#3a2000!important;text-shadow:0 0 2px #fff8!important;z-index:0}
+${R}:nth-child(${n}) .rn::before{content:'';position:absolute;inset:0;background:url(${A}ac_medal.png) center/contain no-repeat;filter:${MF[n-1]};z-index:-1}`).join('\n')}
+#screen .rkst>.rkp .rno${X.replace(/div/g,'i')}{background:none!important;border:0!important;border-radius:0!important;width:26px;height:40px;top:-18px;left:-10px;line-height:50px;display:block;text-align:center;font-size:13px;color:#3a2000;text-shadow:0 0 2px #fff8;font-style:normal}
+#screen .rkst>.rkp .rno::before{content:'';position:absolute;inset:0;background:url(${A}ac_medal.png) center/contain no-repeat;z-index:-1;filter:drop-shadow(0 2px 2px #0009)}
+${[2,3].map(n=>`#screen .rkst>.rkp:nth-of-type(${n}) .rno::before{filter:${MF[n-1]} drop-shadow(0 2px 2px #0009)}`).join('\n')}
+#screen .rkst>.rttl{left:8px!important;transform:none!important;top:8px!important}#screen .rkst>.rkp:nth-of-type(1) .rav::after{content:'';position:absolute;left:50%;top:-26px;width:46px;height:33px;margin-left:-23px;background:url(${A}tt_crown.png) center/contain no-repeat;filter:drop-shadow(0 2px 2px #0009);z-index:3;pointer-events:none}`;document.head.appendChild(st)})();

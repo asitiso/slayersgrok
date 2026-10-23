@@ -1,0 +1,9 @@
+// r293: 랭킹 hc_statplate rows, medals, crown with existing art (in-memory TEST DATA)
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');const F=process.argv[2]||'1370_ranking.jpg';
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));await p.goto(U);await sl(4000);
+await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};C.S().autoBoss=false;document.body.classList.add('hs-sh');if(G.screen)closeScreen();openScreen('rank');document.querySelectorAll('.wcsl,.ccut,.modal').forEach(x=>x.remove())});await sl(800);
+const info=await p.evaluate(()=>[...document.querySelectorAll('#screen .rkrow')].map(e=>(e.classList.contains('me')?'*':'')+e.querySelector('.rn').textContent).join(' ')+' tabs:'+document.querySelectorAll('#screen .entabs,#screen [class*=tab]').length+' bars:'+document.querySelectorAll('#screen .bar').length);console.log(info);
+await p.screenshot({path:'../screenshots/'+F,type:'jpeg',quality:86,clip:{x:0,y:0,width:390,height:844}});
+await p.evaluate(()=>{document.querySelector('#screen .sbody').scrollTop=9999});await sl(300);await p.screenshot({path:'/workspace/tmpv/v293_low.jpg',type:'jpeg',quality:80});
+console.log('ERRS',JSON.stringify(errs));await b.close()})();
