@@ -3982,3 +3982,31 @@ ${SC} [data-gs]${Y}{${B('btn_gold.png','#5a3006',8)};padding:0 2px!important;dis
 ${SC} [data-gs].off${Y}{${G2}}
 ${SC} [data-gs] img.ci{height:15px!important;width:15px!important;margin:0!important;vertical-align:middle}
 #screen :is(#raid,[data-d],[data-gs])${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}`;document.head.appendChild(st)})();
+;(()=>{/* v243 r292: 무한의 탑 — floor markers on new tw_plaque art (3-part: fixed crystal/gold end caps tw_plaque_l/r + stretched stone middle tw_plaque_m, single element multi-background, no pseudo/no per-frame cost), dark readable text; current floor warm gold glow (static, no animation), cleared floors slightly dimmed, locked floors desaturated/dimmed, boss floors red glow; 최고 층 + 일일 탑 보상 cards on r266 panel_stage + gem with ic3_trophy; 도전 btn_green (btn_red when under recommended power — still tappable; btn_grey if .off); 일일 보상 btn_gold / btn_grey. Visual only */
+const X=':is(#_w1,#_w2,div):is(#_w3,#_w4,div)',Y=':is(#_w5,#_w6,span):is(#_w7,#_w8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+B=(f,c,w=9)=>`background:none!important;border:${w}px solid transparent!important;border-image:url(${A}${f}) 30 fill/${w}px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:${ol(c)}!important;filter:drop-shadow(0 2px 2px #0007)`,G2=`border-image-source:url(${A}btn_grey.png)!important;color:#eee!important;text-shadow:${ol('#2a2a2a')}!important`,
+F='#screen .twst .tfl'+X,CW=31,st=document.createElement('style');
+st.textContent=`${F}{height:46px!important;box-sizing:border-box;padding:0 ${CW-2}px 0 ${CW-4}px!important;border:0!important;border-radius:0!important;box-shadow:none!important;animation:none!important;
+background:url(${A}tw_plaque_l.png) left center/auto 100% no-repeat,url(${A}tw_plaque_r.png) right center/auto 100% no-repeat,url(${A}tw_plaque_m.png) center/calc(100% - ${2*CW-6}px) 100% no-repeat!important;color:#2a2418!important;filter:drop-shadow(0 3px 3px #0009)}
+${F} b{color:#3a2408!important;text-shadow:0 1px 0 #fff8!important;font-family:Maplestory,sans-serif;font-size:17px!important}
+${F} small{color:#2c3446!important;opacity:1!important;font-weight:800;font-size:11px!important;text-shadow:0 1px 0 #fff6}
+${F} .ti{height:30px!important}
+${F}.done{filter:brightness(.88) saturate(.8) drop-shadow(0 3px 3px #0009)}${F}.done b{color:#24486a!important}
+${F}.up{filter:grayscale(.55) brightness(.72) drop-shadow(0 3px 3px #0009)}
+${F}.boss b{color:#8a1010!important}${F}.boss:not(.up){filter:drop-shadow(0 0 5px #ff4030) drop-shadow(0 3px 3px #0009)}${F}.boss.up{filter:grayscale(.3) brightness(.78) drop-shadow(0 0 4px #ff4030aa)}
+${F}.cur{background:url(${A}tw_plaque_l.png) left center/auto 100% no-repeat,url(${A}tw_plaque_r.png) right center/auto 100% no-repeat,linear-gradient(#ffe7a066,#ffc24a55) center/calc(100% - ${2*CW+2}px) 60% no-repeat,url(${A}tw_plaque_m.png) center/calc(100% - ${2*CW-6}px) 100% no-repeat!important;filter:sepia(.25) saturate(1.3) drop-shadow(0 0 6px #ffd060) drop-shadow(0 0 12px #ffb02088)}
+${F}.cur{padding-right:92px!important}${F}.cur b{color:#5a2a00!important}${F}.cur small{color:#4a2400!important}
+body.tglite ${F}.cur{filter:drop-shadow(0 0 5px #ffd060)}body.tglite ${F}{filter:none}
+#screen .twst #twGo2${Y}{${B('btn_green.png','#0b3510',10)};padding:2px 16px!important;min-width:180px;font-size:18px!important;line-height:1.15}
+#screen .twst #twGo2.hard${Y}{border-image-source:url(${A}btn_red.png)!important;text-shadow:${ol('#4a0606')}!important}
+#screen .twst #twGo2.off${Y}{${G2}}
+#screen .twst #twGo2 small{font-size:10px!important;font-weight:800}
+#screen .twst #twGo2${Y}:not(.off):active{transform:translateX(-50%) scale(.94)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}
+#screen .sbody>:is(.twh,.twd).card${X}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px 2px!important;position:relative;margin-top:26px!important;overflow:visible!important}
+#screen .sbody>:is(.twh,.twd).card${X}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
+#screen .sbody>:is(.twh,.twd).card${X} small{color:#efe4cc!important;text-shadow:0 1px 2px #000}#screen .sbody>:is(.twh,.twd).card${X} b{text-shadow:0 2px 2px #000}
+#screen .twd img.twtr,#screen .twh img.twtr{width:44px!important;height:44px;object-fit:contain;filter:drop-shadow(0 2px 2px #000)}
+#screen .twd #twD${Y}{${B('btn_gold.png','#5a3006')};padding:2px 10px!important}
+#screen .twd #twD.off${Y}{${G2}}
+#screen .twd #twD${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8)!important}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='tower'){const d=document.querySelector('#screen .twd');if(d&&!d.querySelector('.twtr'))d.insertAdjacentHTML('afterbegin',`<img class=twtr src="${A}ic3_trophy.png">`)}}catch(e){console.warn(e)}return r}})();
