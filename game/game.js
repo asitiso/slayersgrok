@@ -3346,3 +3346,24 @@ const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false
 G._brPut=(t,old)=>{let k=0;const put=()=>{const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop();if(v){if(v.querySelector('.nrb,.nrec'))return;const L=lite();let sp='';if(!L)for(let i=0;i<12;i++){const a=i/12*6.283,r=58+(i%2)*14;sp+=`<i class=sp style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r*.8)}px;animation-delay:${(.92+(i%3)*.04).toFixed(2)}s"></i>`}
  const f=x=>x==null?'':(+x).toFixed(1)+'초';v.insertAdjacentHTML('beforeend',`<div class="nrb${L?' lite':''}"><i class=ring></i>${sp}<img src="assets/record_badge.png"><b class=nt>${t!=null?f(t):'최단'}</b><b class=nl>NEW RECORD</b>${old!=null?`<span class=no>이전 ${f(old)}</span>`:''}</div>`);return}if(k++<40)setTimeout(put,100)};put()};
 })();
+
+/* v208: 화룡전식 3-star crest on stage-map nodes — uses the real saved v42 rating (G.stStar(i)==3: boss beaten with no ally lost in <60s); ★1-2 nodes keep their star row. A node seen ★3 for the first time pops + one shine sweep (seen-set kept in localStorage, not the save; first run seeds silently). Visual only. */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.snode .ncr{position:absolute;left:50%;top:-10px;margin-left:12px;width:30px;height:32px;z-index:3;pointer-events:none;filter:drop-shadow(0 2px 2px #000a)}
+.snode.bs .ncr{top:-6px;margin-left:16px;width:34px;height:36px}
+.snode .ncr img{width:100%;height:100%;display:block}
+.snode .ncr::after{content:'';position:absolute;inset:0;-webkit-mask:url(assets/crest_3star.png) center/100% 100%;mask:url(assets/crest_3star.png) center/100% 100%;background:linear-gradient(110deg,#fff0 35%,#fffbe0e6 50%,#fff0 65%) -60px 0/200% 100% no-repeat;opacity:0}
+.snode.s3 small{visibility:hidden}
+.snode .ncr.nw{animation:ncrP .55s cubic-bezier(.3,1.8,.5,1) .25s both}
+.snode .ncr.nw::after{animation:ncrS .9s ease-in-out .75s both}
+.snode .ncr.nw i{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px;border-radius:50%;border:2px solid #fff3b0;box-shadow:0 0 6px #ffd23a;opacity:0;animation:ncrR .55s ease-out .45s both}
+@keyframes ncrP{0%{opacity:0;transform:scale(2.4) rotate(-14deg)}60%{opacity:1;transform:scale(.85) rotate(4deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes ncrS{0%{opacity:1;background-position:-60px 0}100%{opacity:1;background-position:60px 0}}
+@keyframes ncrR{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(6)}}
+.snode .ncr.lite,.snode .ncr.lite::after{animation:none}.snode .ncr.lite i{display:none}`;document.head.appendChild(st);
+const K='slayers_s3seen',ld=()=>{try{return JSON.parse(localStorage.getItem(K))}catch(_){return null}},sv=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(_){}};
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const deco=()=>{if(G.screen!='map'||!G.stStar)return;let seen=ld();const first=!seen;if(first){seen={};const s=C.S();for(let i=0;i<D.FIELDS.length;i++)if(G.stStar(i)>=3)seen[i]=1}
+ let ch=0;const L=lite();document.querySelectorAll('#screen .snode').forEach(n=>{const i=+n.dataset.n;if(n.classList.contains('lk')||G.stStar(i)<3||n.querySelector('.ncr'))return;const nw=!seen[i];seen[i]=1;if(nw)ch=1;n.classList.add('s3');
+  n.insertAdjacentHTML('beforeend',`<span class="ncr${nw?' nw':''}${L?' lite':''}" title="★3 완전 클리어">${nw?'<i></i>':''}<img src="assets/crest_3star.png" alt="★3"></span>`)});if(first||ch)sv(seen)};
+G.s3Deco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
