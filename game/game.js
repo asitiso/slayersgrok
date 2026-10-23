@@ -3518,3 +3518,35 @@ const deco=()=>{if(G.screen!='map')return;const s=C.S(),mx=Math.floor(Math.min(s
 const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
 // leaving the map closes the preview
 setInterval(()=>{if(G.screen!='map')document.querySelectorAll('.rpv').forEach(x=>x.remove())},500);})();
+
+/* v214: 화룡전식 chapter star chests on the world map — visualises the existing v42 star-reward system (thresholds ★7/★14/★21, rewards and claim via G.starClaim; nothing new granted). Each unlocked chapter pin gets a row of 3 chests (schest_1/2/3.png): locked = dim + "★t", claimable = glow bounce + red dot, claimed = schest_open.png dimmed. Tap claimable → real G.starClaim, lid-open pop + reward icons fly to the HUD (.atfly) + toast. Lite = no bounce/open/fly. */
+;(()=>{const T=[7,14,21],IC={gems:'it2_gem.png',stone:'it2_stone.png',orbs:'it2_exp.png',tk:'it2_ticket.png'};
+const st=document.createElement('style');st.textContent=`
+.wpin .wsc{position:absolute;left:50%;top:100%;margin-top:22px;transform:translateX(-50%);display:flex;gap:1px;z-index:4;pointer-events:auto}
+.wpin .wsc i{position:relative;display:block;width:30px;height:28px;font-style:normal;cursor:pointer}
+.wpin .wsc i img{width:30px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 2px #0008)}
+.wpin .wsc i u{position:absolute;left:0;right:0;bottom:-7px;text-align:center;font:900 9px/1 Maplestory,sans-serif;color:#fff3c0;text-decoration:none;text-shadow:0 0 2px #000,0 1px 2px #000}
+.wpin .wsc i.lo img{filter:grayscale(.55) brightness(.72) drop-shadow(0 2px 2px #0008)}
+.wpin .wsc i.lo u{color:#cfc6b0}
+.wpin .wsc i.dn img{opacity:.55;filter:grayscale(.35) drop-shadow(0 2px 2px #0006)}
+.wpin .wsc i.dn u{color:#bfe8a0}
+.wpin .wsc i.ok img{filter:drop-shadow(0 0 4px #ffe066) drop-shadow(0 0 9px #ffb820);animation:wscB 1.1s ease-in-out infinite}
+.wpin .wsc i.ok:after{content:'';position:absolute;right:-1px;top:-2px;width:9px;height:9px;border-radius:50%;background:#ff3b3b;border:1.5px solid #fff;box-shadow:0 0 3px #f00}
+.wpin .wsc i.opn img{animation:wscO .55s cubic-bezier(.2,1.6,.4,1) both}
+.lite-sc .wpin .wsc i.ok img,.lite-sc .wpin .wsc i.opn img{animation:none}
+@keyframes wscB{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-4px) scale(1.08)}60%{transform:translateY(-1px) scale(1.02)}}
+@keyframes wscO{0%{transform:scale(.6) rotate(-8deg)}60%{transform:scale(1.35)}100%{transform:scale(1);opacity:.55}}`;document.head.appendChild(st);
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const html=c=>{const s=C.S(),sc=s.schest||{},n=G.chStars(c);return T.map((t,j)=>{const dn=sc[c+'_'+j],ok=!dn&&n>=t;return `<i data-sc=${j} class="${dn?'dn':ok?'ok':'lo'}"><img src="assets/${dn?'schest_open':'schest_'+(j+1)}.png" alt=""><u>${dn?'✓':'★'+t}</u></i>`}).join('')};
+const fly=(w,from)=>{const app=document.getElementById('app'),ar=app.getBoundingClientRect(),sc=ar.width/390,tg=document.querySelector('#screen .shead .chip:last-child')||document.querySelector('#screen .shead');if(!tg)return;const t=tg.getBoundingClientRect(),f=from.getBoundingClientRect();
+ Object.keys(IC).filter(k=>w[k]).forEach((k,q)=>{const c=document.createElement('img');c.src='assets/'+IC[k];c.className='atfly scfly';c.style.left=((f.left-ar.left)/sc+f.width/sc/2-18+q*10)+'px';c.style.top=((f.top-ar.top)/sc-10)+'px';c.style.animationDelay=(q*.12)+'s';c.style.setProperty('--dx',((t.left+t.width/2-f.left-f.width/2)/sc-q*10)+'px');c.style.setProperty('--dy',((t.top+t.height/2-f.top)/sc+10)+'px');app.appendChild(c);setTimeout(()=>c.remove(),1100+q*120)});
+ setTimeout(()=>{tg.classList.add('pop');setTimeout(()=>tg.classList.remove('pop'),400)},750)};
+const nm={gems:'젬',stone:'강화석',orbs:'경험 구슬',tk:'티켓'};
+const tap=(c,j,el,pin)=>{const r=G.starClaim(c,j);if(typeof r!='object'){if(r=='need')toast(`★${T[j]} 달성 시 수령 (현재 ★${G.chStars(c)}/21)`);else toast('이미 수령한 보상입니다');return}
+ const L=lite();el.className='dn'+(L?'':' opn');el.querySelector('img').src='assets/schest_open.png';el.querySelector('u').textContent='✓';if(!L)fly(r,el);G.lastSC={c,j,r};
+ toast('별 보상 획득! '+Object.keys(nm).filter(k=>r[k]).map(k=>nm[k]+' +'+r[k]).join(' · '));try{updateHud()}catch(_){}};
+const deco=()=>{if(G.screen!='map'||!G.chStars)return;const sc=document.querySelector('#screen');sc.classList.toggle('lite-sc',lite());
+ sc.querySelectorAll('.wpin[data-ch]:not(.lk)').forEach(p=>{if(p.querySelector('.wsc'))return;const c=+p.dataset.ch;const d=document.createElement('div');d.className='wsc';d.innerHTML=html(c);p.appendChild(d);
+  d.onclick=e=>{e.stopPropagation();const i=e.target.closest('[data-sc]');if(i)tap(c,+i.dataset.sc,i,p)}})};
+G.schDeco=deco;
+const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
