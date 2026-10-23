@@ -3868,3 +3868,22 @@ body:is(.tglite,.nofx) #screen .sumbtns .pill.red${X}{filter:drop-shadow(0 3px 3
 #screen .smp .bar${D}>span{inset:-8px!important;line-height:16px!important;z-index:1}
 #screen :is(.milebar,.smp) .bar${D}>i:is([style^="width:0%"],[style^="width:0;"],[style^="width:NaN"]){display:none!important}`;
 document.head.appendChild(st)})();
+;(()=>{/* v236 r285 마법 상점: r279 tab_on/tab_off (+tab_gem on active) on 상인 header section tabs (.shtb; active = last tapped / section in view, rAF-throttled passive scroll, no per-frame work); r267 btn_gold on 일일 특가 새로고침 (#dealRef), btn_grey when .off. Visual only */
+const X=':is(#_h1,#_h2,span):is(#_h3,#_h4,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,st=document.createElement('style');
+st.textContent=`#screen .shtb{gap:3px;bottom:8px;flex-wrap:nowrap}
+#screen .shtb span${X}{position:relative;flex:0 1 auto;min-width:0;white-space:nowrap;background:none!important;border:7px solid transparent!important;border-width:7px 9px!important;border-image:url(${A}tab_off.png) 46 56 fill/7px 9px stretch!important;border-radius:0!important;box-shadow:none!important;padding:0 1px 1px!important;line-height:16px;font:700 12px Maplestory,sans-serif!important;letter-spacing:-.4px;color:#e9dcc0!important;text-shadow:${ol('#1b1410')};filter:drop-shadow(0 2px 2px #0008);transition:transform .12s}
+#screen .shtb span.on${X}{border-image-source:url(${A}tab_on.png)!important;color:#fff0c8!important;transform:translateY(-2px);text-shadow:${ol('#3a0c06')}}
+#screen .shtb span.on${X}::before{content:'';position:absolute;left:50%;top:-20px;width:22px;height:19px;margin-left:-11px;background:url(${A}tab_gem.png) center/contain no-repeat;pointer-events:none}
+#screen .shtb span${X}:active{transform:scale(.95)}
+#screen #dealRef${X}{background:none!important;border:10px solid transparent!important;border-image:url(${A}btn_gold.png) 30 fill/10px stretch!important;border-radius:0!important;box-shadow:none!important;padding:1px 0!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:${ol('#5a3006')}!important;filter:drop-shadow(0 2px 2px #0007);opacity:1}
+#screen #dealRef.off${X}{border-image-source:url(${A}btn_grey.png)!important;text-shadow:${ol('#3a2a1a')}!important;filter:drop-shadow(0 2px 2px #0007)!important;opacity:.92}
+#screen #dealRef${X}:active{transform:scale(.95);filter:brightness(.8) drop-shadow(0 1px 1px #0007)}
+#screen #dealRef${X} .ci{vertical-align:-2px}`;document.head.appendChild(st);
+let tabs=null,secs=null,body=null,pend=0;
+const pick=i=>{if(!tabs)return;for(let k=0;k<tabs.length;k++)tabs[k].classList.toggle('on',k==i)};
+const sync=()=>{pend=0;if(!tabs||!body||!body.isConnected||G.screen!='shop')return;const top=body.getBoundingClientRect().top+60;let a=0;for(let k=0;k<secs.length;k++)if(secs[k].getBoundingClientRect().top<=top)a=k;if(body.scrollTop>0&&body.scrollTop+body.clientHeight>=body.scrollHeight-4)a=secs.length-1;pick(a)};
+const onS=()=>{if(!pend)pend=requestAnimationFrame(sync)};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='shop')return r;const b=document.querySelector('#screen .sbody'),h=b&&b.querySelector('.shtb');if(!h||h.dataset.v236)return r;h.dataset.v236=1;
+tabs=[...h.querySelectorAll('[data-sc]')];secs=[...b.querySelectorAll(':scope > .card, :scope > div')].filter(c=>!c.classList.contains('shh')&&(c.matches('.ttl')?c:c.querySelector('.ttl'))&&(c.matches('.ttl')?c:c.querySelector('.ttl')).firstChild&&(c.matches('.ttl')?c:c.querySelector('.ttl')).firstChild.textContent.trim()).slice(0,tabs.length);
+tabs.forEach((t,i)=>t.addEventListener('click',()=>pick(i)));if(body)body.removeEventListener('scroll',onS);body=b;
+const sc=b.scrollHeight>b.clientHeight+4?b:document.querySelector('#screen');if(sc){sc.removeEventListener('scroll',onS);sc.addEventListener('scroll',onS,{passive:true});body=sc}sync();if(!tabs.some(t=>t.classList.contains('on')))pick(0)}catch(e){console.warn(e)}return r}})();
