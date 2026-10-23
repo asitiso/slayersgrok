@@ -26,7 +26,7 @@ function updateHud(){const s=C.S();
   else if(B.boss){$sw(bar.style,'width','100%');bar._bg=undefined;bar.style.background='linear-gradient(90deg,#8e1a1a,#ff4a3a)';$st($('#stInfo'),'보스 등장!')}
   else{{const pe=bar.parentElement;if(pe._bg!==''){pe._bg='';pe.style.removeProperty('background')}if(bar._bg!==''){bar._bg='';bar.style.removeProperty('background')}}{const hx=$('#hpx');if(hx)$sd(hx,'none')}$sw($('#tBar').style,'width','100%');$sw(bar.style,'width',Math.min(100,s.wave/BAL.waves*100)+'%');$st($('#stInfo'),s.wave>=BAL.waves?(C.canAutoBoss()?'보스 도전!':'보스 재도전 대기'):`웨이브 ${Math.min(s.wave+1,BAL.waves)}/${BAL.waves} · 적 ${C.alive().length+C.reserve()}`)}
   document.querySelectorAll('.sk').forEach(el=>{const sp=D.SPELLS.find(x=>x.k==el.dataset.k);if(el.classList.contains('lock'))return;const c=B.cds[sp.k]||0;$sw(el.querySelector('.cd').style,'height',(Math.round(c/sp.cd*1000)/10)+'%');$st(el.querySelector('.t'),c>0?Math.ceil(c):'');el.classList.toggle('ready',c<=0)});
-  C.daily();const md=D.MISSIONS.some(m=>(s.mp[m.k]||0)>=m.goal&&!s.mc[m.k]);const n=$('#sidemission .dot');if(n)$sd(n,md?'':'none');
+  C.daily();const md=D.MISSIONS.some(m=>(s.mp[m.k]||0)>=m.goal&&!s.mc[m.k]);C.weekly();const wd=(D.WMISS||[]).some(m=>((s.wk.p||{})[m.k]||0)>=m.goal&&!(s.wk.c||{})[m.k]);const n=$('#sidemission .dot');if(n)$sd(n,md||wd?'':'none');/* r336: weekly 받기 also lights 임무 */
   C.bUpdate();const bd=['vault','mine'].some(k=>s.bld[k].acc>=C.bRate(k)*BAL.store*.5);const hb=$('#sidebase .dot');if(hb)$sd(hb,bd?'':'none');
   const ad=s.arena.tickets>0||s.arena.pend;const ha=$('#sidearena .dot');if(ha)$sd(ha,ad?'':'none');
   const gd=s.raid.tries<BAL.raid.tries||Object.keys(s.guild.don).length<2||!!(G.gRed&&G.gRed());const hg=$('#sideguild .dot');if(hg)$sd(hg,gd?'':'none');
@@ -4361,3 +4361,61 @@ let on=false;const of=R.frame;R.frame=function(dt){const r=of.apply(this,argumen
 (()=>{const F=document.getElementById('sideF');if(!F)return;const upd=G._sfDot=()=>{const m=document.querySelector('#sidemore .dot');if(!m)return;let on=false;F.querySelectorAll('.dot').forEach(d=>{if(d.style.display!=='none')on=true});const v=on?'':'none';if(m.style.display!==v)m.style.display=v};
 new MutationObserver(upd).observe(F,{subtree:true,childList:true,attributes:true,attributeFilter:['style']});upd();
 document.addEventListener('pointerdown',e=>{if(F.classList.contains('on')&&!F.contains(e.target)&&!e.target.closest('#sidemore'))F.classList.remove('on')},true)})();
+
+;(()=>{/* r336 화룡전-style 임무 sheet: 일일/주간/업적 tabs, sld_track_s/sld_fill_s bars, btn_gold glow on claimable, btn_grey otherwise. Same data (D.MISSIONS/D.WMISS/D.ACH) and same claim calls (C.claimMission/C.claimW/C.achClaim). No milestone chests exist in data, so none are drawn. Display only */
+try{TITLES.mission='임무'}catch(_){}
+const IC={kill:'ic4/skull.png',roll:'it2_exp.png',train:'ic3_train.png',spell:'sk/fire.png',boss:'ic4/crown.png',arena:'ic3_arena.png',donate:'ic3_guild.png',collect:'ic3_castle.png'};
+const st=document.createElement('style');st.textContent=`
+#panel .mqtabs{display:flex;gap:4px;margin:0 0 8px}
+#panel .mqtabs span{flex:1;position:relative;text-align:center;padding:7px 0 6px;font-weight:900;font-size:13px;color:#e8d8b8;border:8px solid transparent;border-image:url(${A}btn_grey.png) 30 fill/8px stretch;filter:drop-shadow(0 2px 2px #0007);cursor:pointer}
+#panel .mqtabs span.on{border-image-source:url(${A}btn_green.png);color:#fff;text-shadow:0 1px 0 #1a4a10,0 0 2px #1a4a10}
+#panel .mqtabs span .dot{position:absolute;right:-6px;top:-8px;display:block}
+#panel .mqsum{display:flex;align-items:center;gap:10px;padding:8px 10px;margin-bottom:8px}
+#panel .mqsum>img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 2px 2px #0008)}
+#panel .mqsum .f{flex:1;min-width:0}#panel .mqsum b{font-size:14px;color:#ffe8b0}#panel .mqsum .f>small{display:block;font-size:10.5px;color:#cbb;white-space:nowrap}
+#panel .mqsum .mcall{margin:0;flex:none}
+#panel .mqb{height:0;box-sizing:content-box;border:6px solid transparent;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch;position:relative;margin:5px 0 2px}
+#panel .mqb>i{position:absolute;left:-6px;top:-6px;height:0;box-sizing:content-box;max-width:100%;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch}
+#panel .mqb>i.ok{border-image-source:url(${A}sld_fill_green_s.png)}
+#panel .mqr{display:flex;align-items:center;gap:9px;padding:7px 9px;margin-bottom:6px}
+#panel .mqr.cl{opacity:.55}
+#panel .mqr.rd{box-shadow:inset 0 0 0 2px #ffd25a,0 0 10px #ffb03a88}
+#panel .mqr>.mqi{width:40px;height:40px;flex:none;border-radius:10px;background:radial-gradient(#5a4024,#2a1a0c);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #c9a25a99;display:flex;align-items:center;justify-content:center}
+#panel .mqr>.mqi img{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a)}
+#panel .mqr .f{flex:1;min-width:0}#panel .mqr .f b{font-size:12.5px}#panel .mqr .mqv{font-size:10px;color:#ddd;display:flex;justify-content:space-between}
+#panel .mqr .mqrw{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:900;color:#fff}#panel .mqr .mqrw img{width:16px;height:16px}
+#panel .mqr .btn{flex:none;min-width:58px;text-align:center}
+#panel .mqr .btn.off{background:none!important;border:10px solid transparent!important;border-image:url(${A}btn_grey.png) 30 fill/10px stretch!important;border-radius:0!important;box-shadow:none!important;color:#eee!important;padding:0 8px!important;min-height:22px;display:inline-flex;align-items:center;justify-content:center;opacity:1!important}
+#panel .mqr .btn[data-ach]:not(.off){background:none!important;border:10px solid transparent!important;border-image:url(${A}btn_gold.png) 30 fill/10px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;padding:0 8px!important;min-height:22px;display:inline-flex;align-items:center;justify-content:center}
+#panel .mqr.rd .btn:not(.off){animation:mqg 1.3s ease-in-out infinite}
+@keyframes mqg{0%,100%{filter:drop-shadow(0 2px 2px #0007) drop-shadow(0 0 2px #ffd25a)}50%{filter:drop-shadow(0 2px 2px #0007) drop-shadow(0 0 9px #ffc030)}}
+body.tglite #panel .mqr.rd .btn,body.nofx #panel .mqr.rd .btn{animation:none}
+#panel .mqmore{display:block;text-align:center;font-size:12px;font-weight:800;color:#ffd77a;padding:6px;cursor:pointer}
+#panel .mqnote{font-size:10px;color:#bba;text-align:center;margin:2px 0 6px}
+`;document.head.appendChild(st);
+const row=(o)=>`<div class="card mqr ${o.cl?'cl':o.done?'rd':''}"><div class=mqi><img src="${A}${o.ic}"></div><div class=f><b>${o.n}</b><div class=mqb><i class="${o.done?'ok':''}" style="width:${Math.min(1,o.v/o.goal)*100}%"></i></div><div class=mqv><span>${fmt(o.v)}/${fmt(o.goal)}</span><span class=mqrw>${o.rw}</span></div></div><span class="btn ${o.cl||!o.done?'p off':''}" ${o.attr}>${o.cl?'완료':o.done?'받기':'진행 중'}</span></div>`;
+const gem=n=>`<img src=assets/it2_gem.png>${n}`,tk=n=>n?` <img src=assets/it2_ticket.png>${n}`:'';
+const ordr=(a)=>a.map((x,i)=>[x,i]).sort((p,q)=>{const r=x=>x.cl?2:x.done?0:1;return r(p[0])-r(q[0])||p[1]-q[1]}).map(x=>x[0]);
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab!=='mission')return r;const p=$('#panel'),s=C.S();C.daily();C.weekly();
+ const T=G.mqT=G.mqT||'d';
+ const D1=D.MISSIONS.map(m=>{const v=Math.min(m.goal,s.mp[m.k]||0);return{n:m.n,ic:IC[m.k]||'ic3_quest.png',v,goal:m.goal,done:v>=m.goal,cl:!!s.mc[m.k],rw:gem(m.gem),attr:`data-m=${m.k}`}});
+ const W1=(D.WMISS||[]).map(m=>{const v=Math.min(m.goal,s.wk.p[m.k]||0);return{n:m.n,ic:IC[m.k]||'ic3_quest.png',v,goal:m.goal,done:v>=m.goal,cl:!!s.wk.c[m.k],rw:gem(m.gem)+tk(m.tk),attr:`data-w=${m.k}`}});
+ const A1=C.achList?C.achList().map(a=>({n:a.n+(a.done?'':` ${a.lv+1}단계`),ic:a.ic||'ic3_trophy.png',v:Math.min(a.v,a.goal),goal:a.goal,done:a.done||a.can,cl:a.done,rw:a.done?'':gem(a.gem),attr:`data-ach=${a.k}`})):[];
+ const dD=D1.some(x=>x.done&&!x.cl),dW=W1.some(x=>x.done&&!x.cl),dA=A1.some(x=>x.done&&!x.cl);
+ const L=T=='w'?W1:T=='a'?A1:D1,nd=L.filter(x=>x.cl).length,nr=L.filter(x=>x.done&&!x.cl).length;
+ const sub=T=='d'?'매일 05:00 초기화 (KST)':T=='w'?'월요일 초기화':'단계별 영구 보상';
+ const ttl=T=='d'?'일일 지령':T=='w'?'주간 임무':'업적';
+ const allN=T=='a'?nr:(T=='d'?D1:W1).filter(x=>x.done&&!x.cl).length+0;
+ p.innerHTML=`<div class=mqtabs>${[['d','일일',dD],['w','주간',dW],['a','업적',dA]].map(([k,n,d])=>`<span class="${T==k?'on':''}" data-mq=${k}>${n}${d?'<i class=dot></i>':''}</span>`).join('')}</div>
+ <div class="card mqsum"><img src="${A}fr_gift.png"><div class=f><b>${ttl} ${nd}/${L.length}</b> <small>${sub}</small><div class=mqb><i class="${nd>=L.length?'ok':''}" style="width:${L.length?nd/L.length*100:0}%"></i></div></div>${T!='a'?`<span class="mcall ${dD||dW?'':'off'}" id=mqAll>모두 받기${(D1.concat(W1)).filter(x=>x.done&&!x.cl).length?` <small>${(D1.concat(W1)).filter(x=>x.done&&!x.cl).length}</small>`:''}</span>`:`<span class="mcall ${nr?'':'off'}" id=mqAch>모두 받기${nr?` <small>${nr}</small>`:''}</span>`}</div>
+ ${ordr(L).map(row).join('')}${T=='a'?`<span class=mqmore id=mqAchS>업적의 전당 · 칭호 보기 ›</span>`:''}`;
+ p.querySelectorAll('[data-mq]').forEach(b=>b.onclick=()=>{G.mqT=b.dataset.mq;renderPanel()});
+ p.querySelectorAll('[data-m]').forEach(el=>el.onclick=()=>{if(el.classList.contains('off'))return;C.claimMission(el.dataset.m);try{updateHud()}catch(_){}renderPanel()});
+ p.querySelectorAll('[data-w]').forEach(el=>el.onclick=()=>{if(el.classList.contains('off'))return;C.claimW(el.dataset.w);try{updateHud()}catch(_){}renderPanel()});
+ p.querySelectorAll('[data-ach]').forEach(el=>el.onclick=()=>{if(el.classList.contains('off'))return;const sn=resSnap();if(C.achClaim(el.dataset.ach)){try{updateHud()}catch(_){}renderPanel();diffPop(sn,'업적 달성')}});
+ const ma=p.querySelector('#mqAll');if(ma)ma.onclick=()=>{G.missionClaimAll&&G.missionClaimAll();renderPanel()};
+ const mh=p.querySelector('#mqAch');if(mh)mh.onclick=()=>{const sn=resSnap();let n=0;for(let i=0;i<50;i++){let any=0;C.achList().forEach(a=>{if(a.can&&C.achClaim(a.k)){n++;any=1}});if(!any)break}if(n){try{updateHud()}catch(_){}renderPanel();diffPop(sn,'업적 '+n+'개 달성')}};
+ const ms=p.querySelector('#mqAchS');if(ms)ms.onclick=()=>openScreen('ach');
+}catch(e){console.warn(e)}return r};
+})();
+;(()=>{const st=document.createElement('style');st.textContent=`#panel .mqsum .mcall{background:none;border:10px solid transparent;border-image:url(${A}btn_gold.png) 30 fill/10px stretch;border-radius:0;box-shadow:none;color:#fff;text-shadow:0 1px 0 #5a3006,0 0 2px #5a3006;padding:0 6px;font-size:12px;filter:drop-shadow(0 2px 2px #0007)}#panel .mqsum .mcall.off{border-image-source:url(${A}btn_grey.png);text-shadow:0 1px 0 #3a2a1a}#panel .mqsum .mcall:not(.off){animation:mqg 1.3s ease-in-out infinite}body.tglite #panel .mqsum .mcall,body.nofx #panel .mqsum .mcall{animation:none}#panel .mqsum .mcall small{background:#d02a2a;border-radius:8px;padding:0 5px;margin-left:3px;font-size:10px;color:#fff}`;document.head.appendChild(st)})();
