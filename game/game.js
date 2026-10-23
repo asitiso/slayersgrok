@@ -3611,3 +3611,25 @@ const st=document.createElement('style');st.textContent=`
 .snode:not(.bs) .ncr{margin-left:10px!important}
 .snode.bs:not(.lk)>img:not(.sbimg){filter:drop-shadow(0 0 7px #ff3a20) drop-shadow(0 0 14px #ff5a2088) drop-shadow(0 3px 4px #000)!important}
 .snode>img.nt+b{margin-top:-6px}`;document.head.appendChild(st);})();
+
+/* v217: 화룡전식 stage-info frame. assets/panel_stage.png = dark-wood/gold 9-slice (gem patched out of the top edge so it can stretch), assets/panel_stage_gem.png = red-gem crest overlaid unstretched at top centre. Also: chapter-view 월드맵 button uses ic_map.png instead of the emoji; non-boss crest flips to the node's left when it would overlap another node's label (e.g. 5-6 vs 5-7). Visual only. */
+(function(){const st=document.createElement('style');st.textContent=`
+.spv .sp{background:none!important;border:30px solid transparent!important;border-image:url(assets/panel_stage.png) 64 fill / 30px stretch!important;border-radius:0!important;box-shadow:none!important;filter:drop-shadow(0 10px 16px #000b);padding:2px 4px 2px!important;width:370px;box-sizing:border-box}
+.spv .sp:before{content:'';position:absolute;left:50%;top:-47px;width:40px;height:48px;margin-left:-19px;background:url(assets/panel_stage_gem.png) center/contain no-repeat;pointer-events:none;z-index:2}
+.spv .sp .x{right:-30px!important;top:-34px!important;z-index:3}
+.spv .sp .h b{color:#ffe7a0!important;text-shadow:0 2px 0 #2a1206,0 0 6px #000a!important}
+.spv .sp .h small{color:#f3dcae!important;text-shadow:0 1px 0 #2a1206}
+.spv .sp .h .st i{color:#3a2010!important;text-shadow:0 0 1px #d9a650}
+.spv .pw div{background:#2a120899!important;box-shadow:inset 0 0 0 1px #d9a65055;color:#f0d9a8!important}
+.spv .pw div b{color:#fff7e0!important;text-shadow:0 1px 0 #000}
+.spv .pw .up b{color:#8dff96!important}.spv .pw .dn b{color:#ff8070!important}
+.spv .lb{color:#ffd77a!important;text-shadow:0 1px 0 #2a1206}
+.spv .rw span{background:#2a120899!important;box-shadow:inset 0 0 0 1px #d9a65044;color:#fff3d0}
+.spv .rw span small{color:#f0d9a8!important}
+#wBtn img.wmi{width:22px;height:22px;object-fit:contain;filter:drop-shadow(0 1px 1px #0008)}
+.snode:not(.bs) .ncr.ncl{margin-left:-44px!important}`;document.head.appendChild(st);
+const deco=()=>{if(G.screen!='map')return;const w=document.querySelector('#screen #wBtn');if(w&&!w.querySelector('img.wmi')){w.innerHTML='<img class=wmi src="assets/ic_map.png" alt="">월드맵'}
+ const ns=[...document.querySelectorAll('#screen .snode')];const labs=ns.map(n=>[n,[...n.querySelectorAll('b,small,em')].map(e=>e.getBoundingClientRect())]);
+ ns.forEach(n=>{if(n.classList.contains('bs'))return;const c=n.querySelector('.ncr');if(!c||c.classList.contains('ncl'))return;const r=c.getBoundingClientRect();if(!r.width)return;
+  const hit=labs.some(([m,rs])=>m!=n&&rs.some(q=>q.width&&r.left<q.right&&r.right>q.left&&r.top<q.bottom&&r.bottom>q.top));if(hit)c.classList.add('ncl')})};
+const sc=document.getElementById('screen');if(sc)new MutationObserver(()=>requestAnimationFrame(deco)).observe(sc,{childList:true,subtree:true});G.mapDeco217=deco})();
