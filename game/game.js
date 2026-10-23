@@ -4617,3 +4617,46 @@ walk(document.body);G.emiSwap=()=>walk(document.body)})();
 const fix=()=>{if(G.screen!='friend')return;const b=document.querySelector('#screen .frst .ftp b');if(!b||b.classList.contains('frchip'))return;const v=(b.textContent||'').replace(/[\u{1F497}\uFE0F\s]/gu,'');b.classList.add('frchip');b.innerHTML=`<img src="assets/bd_heart_full.png" alt=""><em>우정 포인트</em>${v}`};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{fix()}catch(e){console.warn(e)}return r};
 const sc=document.getElementById('screen');if(sc)new MutationObserver(()=>{try{fix()}catch(_){}}).observe(sc,{childList:true})})();
+;(()=>{// r355 v305 전투력 부족 · 떠돌이 상인 화룡전 스타일 (표시 전용)
+const A='assets/',st=document.createElement('style');st.textContent=`
+.pwwarn .mbox{position:relative;width:332px;padding:34px 14px 14px;background:linear-gradient(#3a1e22f2,#221216f2);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #b0403a,inset 0 0 0 4px #2a0e10,inset 0 0 40px #ff3a2a33,0 10px 30px #000c;overflow:visible;margin-top:24px}
+.pwwarn .pwhd{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:258px;height:64px;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;gap:6px;padding-top:6px;filter:drop-shadow(0 3px 3px #000a)}
+.pwwarn .pwhd img{width:26px;height:26px;object-fit:contain}.pwwarn .pwhd b{font:900 19px Maplestory,sans-serif;color:#ffd0c0;text-shadow:0 2px 0 #3a0a08,0 0 8px #ff4a3a88}
+.pwwarn .pwcmp{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
+.pwwarn .pwc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:10px;background:#0006;border:1px solid #ffffff1a}
+.pwwarn .pwc small{font-size:11px;color:#d8c8c0;display:flex;align-items:center;gap:3px}.pwwarn .pwc small img{width:16px;height:16px}
+.pwwarn .pwc b{font:900 20px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #000}.pwwarn .pwc.me b{color:#ff6a5a}
+.pwwarn .pwvs{font:900 14px Maplestory,sans-serif;color:#ffb04a;text-shadow:0 2px 0 #000}
+.pwwarn .pwbar{position:relative;height:14px;border-radius:7px;background:#120708;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 1px #ff6a5a55;overflow:hidden}
+.pwwarn .pwbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#ff9a7a,#e0402a 60%,#a02018);border-radius:5px}
+.pwwarn .pwgap{display:flex;justify-content:space-between;font-size:11px;color:#d8c8c0;margin:4px 2px 10px}.pwwarn .pwgap b{color:#ff8a7a;font-weight:900}
+.pwwarn .pwnote{display:block;font-size:12px;line-height:1.6;color:#e8dcd4;background:#0005;border-radius:8px;padding:6px 8px}
+.pwwarn .pwbtn{margin-top:12px}
+.mshop .mbox{position:relative;width:344px;padding:0 10px 12px;background:linear-gradient(#000a,#000c),url(${A}bg_shop_counter.jpg) center/cover;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #c98a3a,inset 0 0 0 4px #3a2410,0 10px 30px #000c;margin-top:56px;overflow:visible}
+.mshop .mshd{position:relative;height:96px;margin:0 -10px 6px}
+.mshop .mshd .mnpc{position:absolute;left:2px;bottom:-4px;width:108px;height:118px;object-fit:contain;object-position:bottom;filter:drop-shadow(0 3px 3px #000a)}
+.mshop .mshd .mplt{position:absolute;left:112px;top:-16px;width:180px;height:44px;background:url(${A}gl_plate.png) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;font:900 17px Maplestory,sans-serif;color:#3a2008;text-shadow:0 1px 0 #ffe8b0;filter:drop-shadow(0 2px 2px #000a)}
+.mshop .mshd .msub{position:absolute;left:116px;right:12px;top:36px;margin:0;padding:7px 10px;background:#fff8e8;color:#4a3018;font:700 12px/1.45 Maplestory,sans-serif;text-align:left;border-radius:12px;border:2px solid #0b0d0f;box-shadow:0 2px 0 #0006}
+.mshop .mshd .msub:before{content:'';position:absolute;left:-9px;top:14px;border:6px solid transparent;border-right:8px solid #0b0d0f}.mshop .mshd .msub:after{content:'';position:absolute;left:-5px;top:15px;border:5px solid transparent;border-right:6px solid #fff8e8}
+.mshop .mrow{gap:7px}
+.mshop .moff{background:linear-gradient(#4a3420,#2a1a10);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 3px #5a3a14,0 3px 0 #0008;padding:16px 4px 6px;gap:5px;border-radius:12px}
+.mshop .moff>img{width:52px;height:52px;object-fit:contain;padding:4px;border-radius:50%;background:radial-gradient(#fff4c055,#ffd24a22 55%,transparent 70%);filter:drop-shadow(0 2px 2px #0008)}
+.mshop .moff b{font:900 12px Maplestory,sans-serif;color:#fff;text-shadow:0 1px 2px #000}
+.mshop .moff span{align-self:stretch;justify-content:center;margin:2px 2px 0;padding:4px 0;border-radius:9px;border:2px solid #0b0d0f;background:linear-gradient(#ffe27a,#f2a81c 55%,#c77a0a);box-shadow:inset 0 2px 0 #fff4c0,0 2px 0 #7a4a05;color:#fff;font:900 13px Maplestory,sans-serif;text-shadow:0 1px 2px #6a3a00}
+.mshop .moff span img{width:18px;height:18px}
+.mshop .moff s{top:-10px;background:linear-gradient(#ff7a5a,#d0301e);border:2px solid #0b0d0f;font:900 11px Maplestory,sans-serif;padding:1px 8px}
+.mshop .mtmr{display:flex;align-items:center;gap:6px;margin:12px 4px 10px}.mshop .mtmr img{width:20px;height:20px}
+.mshop .mtmr .mtb{flex:1;height:10px;border-radius:5px;background:#120a04;border:2px solid #0b0d0f;overflow:hidden}.mshop .mtmr .mtb i{display:block;height:100%;background:linear-gradient(#fff0a0,#ffc23a 60%,#d08a10);border-radius:3px}
+.mshop .mtmr .mleft{margin:0;font:900 12px Maplestory,sans-serif;color:#ffe8b0;white-space:nowrap}
+.mshop .mone{display:block;text-align:center;font-size:11px;color:#c9b89a;margin:-4px 0 8px}`;document.head.appendChild(st);
+const C=G.C;
+const orb=G.rbRun;G.rbRun=function(o,done){const pw=C.POW(),r=orb.apply(this,arguments);try{if(o&&pw<o.req){const m=[...document.querySelectorAll('.modal.pwwarn')].pop();if(m&&!m.dataset.r355){m.dataset.r355=1;const bx=m.querySelector('.mbox'),t=bx.querySelector('.ttl'),row=bx.querySelector('.pwrow'),sm=bx.querySelector('small');
+ const hd=document.createElement('div');hd.className='pwhd';hd.innerHTML=`<img src="${A}ui_warn.png"><b>전투력 부족</b>`;t.replaceWith(hd);
+ const pc=Math.max(3,Math.min(100,pw/o.req*100));const cmp=document.createElement('div');cmp.innerHTML=`<div class=pwcmp><div class=pwc><small><img src="${A}st_atk.png">권장 전투력</small><b>${fmt(o.req)}</b></div><span class=pwvs>VS</span><div class="pwc me"><small><img src="${A}st_atk.png">내 전투력</small><b>${fmt(pw)}</b></div></div><div class=pwbar><i style="width:${pc.toFixed(1)}%"></i></div><div class=pwgap><span>달성률 <b>${Math.floor(pw/o.req*100)}%</b></span><span>부족 <b>${fmt(o.req-pw)}</b></span></div>`;
+ row.replaceWith(...cmp.children);if(sm)sm.className='pwnote'}}}catch(_){}return r};
+let tmI=0;const deco=m=>{if(m.dataset.r355)return;m.dataset.r355=1;const bx=m.querySelector('.mbox');if(!bx)return;const t=bx.querySelector('.ttl'),sub=bx.querySelector('.msub'),lf=bx.querySelector('.mleft');
+ const hd=document.createElement('div');hd.className='mshd';hd.innerHTML=`<img class=mnpc src="${A}${G._merchImg||'merchant.png'}"><div class=mplt>떠돌이 상인</div>`;if(sub){sub.innerHTML=sub.textContent.replace('! ','!<br>');hd.appendChild(sub)}t.replaceWith(hd);
+ if(lf){const w=document.createElement('div');w.className='mtmr';w.innerHTML=`<img src="${A}ui_timer.png"><div class=mtb><i></i></div>`;lf.before(w);w.appendChild(lf);const one=document.createElement('small');one.className='mone';one.textContent='방문당 한 가지만 구매할 수 있습니다';w.after(one);
+  const bar=w.querySelector('i'),upd=()=>{if(!m.isConnected){clearInterval(tmI);tmI=0;return}const q=document.querySelector('#battle .merch .mtm'),wd=q&&q.style.width?parseFloat(q.style.width):0,off=/마쳤/.test(lf.textContent);bar.style.width=(off?0:wd)+'%';if(!off&&q)lf.textContent='남은 시간 '+Math.max(0,Math.ceil(wd*.6))+'초'};upd();if(tmI)clearInterval(tmI);tmI=setInterval(upd,250)}};
+const app=document.getElementById('app');if(app)new MutationObserver(ms=>{for(const x of ms)for(const n of x.addedNodes)if(n.nodeType==1&&n.classList.contains('mshop'))deco(n)}).observe(app,{childList:true});
+})();
