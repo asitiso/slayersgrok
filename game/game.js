@@ -3116,7 +3116,7 @@ const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const
 @keyframes wrib{0%{opacity:0;transform:scaleX(.06) scaleY(.75)}16%{opacity:1;transform:scaleX(1.1) scaleY(1.03)}26%{transform:scale(.98)}32%{transform:scale(1)}78%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-16px)}}
 @keyframes wribo{to{opacity:0;transform:scaleX(.6)}}`;document.head.appendChild(st);
 const q=[];let busy=0,cur=null,w=0;
-const cut=()=>(!C.B.boss&&R.ccut&&R.ccut.t<1)||!!document.querySelector(".wcsl");const lvb=()=>!!document.querySelector("#battle .lvem:not(.out)");
+const cut=()=>(!C.B.boss&&R.ccut&&R.ccut.t<1)||!!document.querySelector(".wcsl");const lvb=()=>!!document.querySelector("#battle .lvem,#battle .qsc");
 const show=it=>{const b=document.getElementById('battle');if(!b||C.B.boss||G.screen||G.storyOn){busy=0;return pump()}
 b.querySelectorAll('.mkb,.wvb:not(.tgb)').forEach(x=>x.remove());const d=document.createElement('div');d.className='wvb wrib'+(it.fin?' fin':'');d.innerHTML=`<img src="${A}wave_ribbon.png" alt=""><span>${it.h}</span>`;b.appendChild(d);cur=d;
 const end=()=>{if(R._wrHold)return setTimeout(end,100);if(cur!==d)return;cur=null;d.remove();busy=0;pump()};setTimeout(end,1150)};
@@ -3169,7 +3169,7 @@ const go=()=>{const b=document.getElementById('battle');if(!b)return setTimeout(
 new Image().src=A+'levelup_emblem.png';R.lvNoTxt=1;
 let cur=null,endT=0,p0=0,lv=0,pend=null,w=0;const HOLD=1500;
 const bat=()=>document.getElementById('battle');
-const busy=()=>(!C.B.boss&&R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||!!document.querySelector('.wcsl,#battle .wvb.wrib:not(.out),.vic,.bsht');
+const busy=()=>(!C.B.boss&&R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||!!document.querySelector('.wcsl,#battle .wvb.wrib:not(.out),.vic,.bsht,#battle .qsc');
 const sub=()=>{const g=C.POW()-p0;return 'Lv.'+lv+(g>0?' · 전투력 +'+fmt(g):'')};
 const fin=()=>{const d=cur;if(!d)return;if(R._lvHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;const b=bat();b&&b.classList.remove('lvon')}},360)};
 const show=()=>{pend=null;const b=bat();if(!b||G.screen||G.storyOn)return;const d=document.createElement('div');d.className='lvem';d.innerHTML=`<div class=ry></div><img src="${A}levelup_emblem.png" alt=""><div class=tx><b>LEVEL UP</b><i></i></div>`;b.appendChild(d);b.classList.add('lvon');cur=d;d.querySelector('i').textContent=sub();clearTimeout(endT);endT=setTimeout(fin,HOLD+420)};
@@ -3180,4 +3180,37 @@ R._lvq=()=>{pend=null;clearTimeout(endT);if(cur){cur.remove();cur=null}const b=b
 const ob=C.ev.banner||banner;C.ev.banner=function(t){const r=ob.apply(this,arguments);try{if(/^LEVEL UP/.test(t)){document.querySelectorAll('#battle .banner').forEach(x=>{if(/^LEVEL UP/.test(x.textContent)||x.classList.contains('rplv'))x.remove()});R.lvEmb(+((t.match(/Lv\.(\d+)/)||[])[1])||0)}}catch(_){}return r};
 /* 전투력 +N float during a level-up toast is absorbed into the gain line */
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('powup')&&(cur&&!cur.classList.contains('out')||pend)){n.remove();if(cur)cur.querySelector('i').textContent=sub()}}).observe(document.body,{childList:true});
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&((!C.B.boss&&R.ccut&&R.ccut.t<.5)||(R.cut&&R.cut.t<.5))){clearTimeout(endT);fin()}if(cur&&cur.classList.contains('bgone')&&!G._fin&&!document.querySelector('.vic,.bsht'))cur.classList.remove('bgone')}catch(_){}return r}})();
+
+/* v202: 지령/주간 임무 objective complete → "임무 완료" scroll toast (quest_scroll.png 260×94, band 214–308 in the shared top band: queues behind cut-in / wave ribbon / LEVEL UP emblem, they queue behind it; yields on cut-in); unroll → wax-seal stamp thump → hold → fade; quest bar flash; DOM/CSS only, 500 ms poll of real mission progress */
+(()=>{const C=G.C;const st=document.createElement('style');st.textContent=`
+#battle .qsc{position:absolute;left:50%;top:214px;width:260px;height:94px;margin-left:-130px;z-index:9;pointer-events:none;animation:qsIn .45s cubic-bezier(.25,1.3,.5,1) both}
+#battle .qsc>img.sc{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 4px 5px #0007)}
+#battle .qsc .sl{position:absolute;left:12px;top:-1px;width:48px;height:55px;background:url(${A}quest_scroll.png) -12px 1px/260px 94px no-repeat;-webkit-mask:radial-gradient(circle at 50% 35%,#000 50%,#0000 62%);mask:radial-gradient(circle at 50% 35%,#000 50%,#0000 62%);animation:qsSt .32s .42s cubic-bezier(.5,0,.6,1.4) both;transform-origin:50% 40%}
+#battle .qsc .rg{position:absolute;left:14px;top:-4px;width:44px;height:44px;border-radius:50%;border:3px solid #ffd76a;opacity:0;animation:qsRg .5s .7s ease-out both}
+#battle .qsc .tx{position:absolute;left:62px;width:150px;top:21px;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.25;text-align:center}
+#battle .qsc .tx em{font:900 10px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#a3201a;letter-spacing:1px}
+#battle .qsc .tx b{font:900 15px Maplestory,"Noto Sans KR",sans-serif;color:#4a2a10;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+#battle .qsc .tx i{font:700 9.5px Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#7a5530;white-space:nowrap}
+#battle .qsc .tx i img{height:11px;vertical-align:-2px;margin:0 1px}
+#battle .qsc.out{animation:qsOut .35s ease-in forwards}
+#battle.qson .mkb{top:362px!important}#battle.qson.elon .mkb{top:424px!important}#battle.qson .tdmg{top:392px!important}#battle.qson.elon .tdmg{top:452px!important}
+#mission.qflash{animation:qsFl 1.2s ease-out}
+@keyframes qsIn{0%{opacity:0;transform:scaleX(.08)}25%{opacity:1}100%{opacity:1;transform:scaleX(1)}}
+@keyframes qsSt{0%{opacity:0;transform:scale(1.9)}70%{opacity:1;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+@keyframes qsRg{0%{opacity:.9;transform:scale(.8)}100%{opacity:0;transform:scale(1.7)}}
+@keyframes qsOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes qsFl{0%,100%{filter:none}20%{filter:brightness(1.5) drop-shadow(0 0 8px #ffd76a)}50%{filter:brightness(1.2) drop-shadow(0 0 5px #ffd76a)}}`;document.head.appendChild(st);
+new Image().src=A+'quest_scroll.png';
+const q=[];let cur=null,busy=0,endT=0,seen=null;const HOLD=1800;
+const bat=()=>document.getElementById('battle');
+const blk=()=>(!C.B.boss&&R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||!!document.querySelector('.wcsl,#battle .wrib,#battle .lvem,.vic,.bsht');
+const list=()=>{const s=C.S(),o=[];D.MISSIONS.forEach((m,i)=>{if((s.mp[m.k]||0)>=m.goal&&!s.mc[m.k])o.push({id:'d'+m.k,t:'지령 '+(i+1),h:m.n,gem:m.gem})});const w=s.wk;if(w&&w.p)D.WMISS.forEach(m=>{if((w.p[m.k]||0)>=m.goal&&!(w.c||{})[m.k])o.push({id:'w'+m.k,t:'주간',h:m.n,gem:m.gem,tk:m.tk})});return o};
+const fin=()=>{const d=cur;if(!d)return;if(R._qsHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;const b=bat();b&&b.classList.remove('qson');busy=0;pump()}},360)};
+const show=it=>{const b=bat();if(!b){busy=0;return}const rw=[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">${it.tk}`:''].filter(Boolean).join(' ');
+ const d=document.createElement('div');d.className='qsc';d.innerHTML=`<img class=sc src="${A}quest_scroll.png" alt=""><span class=sl></span><span class=rg></span><div class=tx><em>${it.t} · 임무 완료</em><b></b>${rw?`<i>보상 ${rw}</i>`:''}</div>`;d.querySelector('b').textContent=it.h+(it.more?' 외 '+it.more+'건':'');
+ b.appendChild(d);b.classList.add('qson');cur=d;const ms=document.getElementById('mission');if(ms&&ms.getClientRects().length&&getComputedStyle(ms).opacity!=="0"){ms.classList.remove('qflash');void ms.offsetWidth;ms.classList.add('qflash');setTimeout(()=>ms.classList.remove('qflash'),1300)}endT=setTimeout(fin,HOLD+450)};
+const pump=()=>{if(busy||!q.length)return;busy=1;let w=0;const go=()=>{if((G.screen||G.storyOn||blk())&&w<6000){w+=150;setTimeout(go,150)}else{const it=q.shift();if(q.length){it.more=q.length;q.length=0}show(it)}};go()};
+R.questToast=it=>{if(q.length>=3)return;q.push(it);pump()};R._qsq=()=>{q.length=0;clearTimeout(endT);if(cur){cur.remove();cur=null}busy=0;const b=bat();b&&b.classList.remove('qson')};
+setInterval(()=>{try{if(!C.S)return;const l=list(),ids=new Set(l.map(x=>x.id));if(!seen){seen=ids;return}l.forEach(x=>{if(!seen.has(x.id))R.questToast(x)});seen=ids}catch(_){}},500);
 const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&((!C.B.boss&&R.ccut&&R.ccut.t<.5)||(R.cut&&R.cut.t<.5))){clearTimeout(endT);fin()}if(cur&&cur.classList.contains('bgone')&&!G._fin&&!document.querySelector('.vic,.bsht'))cur.classList.remove('bgone')}catch(_){}return r}})();
