@@ -4813,3 +4813,28 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
   return `<div class="bsc ${sel==k?'on':''}" data-bs=${k}><span class=lv>Lv.${b.lv}</span><img src="${A}${ic}" alt=""><b>${n}</b><small>${ri?`<img src="${A}${ri}" alt="">`:''}${out}</small>${pc!=null?`<div class=sb><i style="width:${Math.min(100,pc)}%"></i></div>`:''}${up?'<em class=up>업그레이드 중</em>':k!='tower'&&b.acc>=1?'<em>수확 가능</em>':''}</div>`}).join('');
  if(!cs)return r;const w=document.createElement('div');w.className='bstrip';w.innerHTML=cs;card.after(w);w.querySelectorAll('[data-bs]').forEach(e=>e.onclick=()=>{G.baseSel=e.dataset.bs;renderScreen()})}catch(e){console.warn(e)}return r};
 })();
+;(()=>{// r361 v311 소환 결과 grade frames + rarity glow reveal (영웅 purple / 전설·신화 gold; flip, or fade on 스킬 연출 off / low graphics; CSS-only, no per-frame JS) · 영지 strip castle + barracks cards (real levels / existing 준비 중 text). Display only
+const A='assets/',st=document.createElement('style');st.textContent=`
+.srm .srf{--gw:transparent}.srm .srf.g3{--gw:#b07cff}.srm .srf.g4{--gw:#ffc44a}.srm .srf.g5{--gw:#ffb02a}
+.srm .srf::before{content:'';position:absolute;inset:-11px;border-radius:14px;background:radial-gradient(closest-side,var(--gw),transparent);opacity:0;z-index:0;pointer-events:none}
+.srm .srf.g3.open::before,.srm .srf.g4.open::before,.srm .srf.g5.open::before{animation:gw361 .6s .3s ease-out both,gp361 1.6s 1s ease-in-out infinite alternate}
+@keyframes gw361{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.15)}100%{opacity:.85;transform:scale(1)}}@keyframes gp361{from{opacity:.85}to{opacity:.45}}
+.srm .srf .sumcard .gr{display:inline-block;margin-top:2px;padding:0 6px;border-radius:7px;background:linear-gradient(color-mix(in srgb,var(--rc) 80%,#fff),var(--rc));color:#fff!important;text-shadow:0 1px 0 #000a;border:1px solid #0b0d0f;line-height:13px}
+.srm .srf.g3 .sumcard{border-color:#c99cff!important;box-shadow:inset 0 0 0 1px #fff8,0 0 0 1px #2a0e4a,0 0 12px #b07cffcc!important}
+.srm .srf.g4 .sumcard,.srm .srf.g5 .sumcard{border:3px solid transparent!important;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--rc) 55%,#000),#1a0e08) padding-box,linear-gradient(135deg,#fff6c0,#e8b030 28%,#8a5a10 50%,#ffe08a 72%,#b07010) border-box!important}
+.srm .srf.g5 .sumcard{background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--rc) 55%,#000),#1a0808) padding-box,linear-gradient(135deg,#fff6c0,#ff8a3a 28%,#8a1a10 50%,#ffe08a 72%,#c03010) border-box!important}
+.srm .srf .gm361{position:absolute;left:50%;top:-6px;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg) scale(.2);border:2px solid #0b0d0f;border-radius:2px;z-index:3;opacity:0;transition:opacity .2s .4s,transform .3s .4s;pointer-events:none}
+.srm .srf.g3 .gm361{background:linear-gradient(135deg,#f0d8ff,#9a5aff)}.srm .srf.g4 .gm361,.srm .srf.g5 .gm361{background:linear-gradient(135deg,#fff6c0,#e0a020)}
+.srm .srf.open .gm361{opacity:1;transform:rotate(45deg) scale(1)}
+.srm .srf.g3.open,.srm .srf.g4.open,.srm .srf.g5.open{animation:sp361 .35s .4s ease-out both}@keyframes sp361{0%{transform:scale(1)}45%{transform:scale(1.08)}100%{transform:scale(1)}}
+body:is(.nofx,.tglite) .srm .sumcard{transform:none!important;opacity:0;transition:opacity .25s!important}body:is(.nofx,.tglite) .srm .srbk{transform:none!important;opacity:1;transition:opacity .25s!important}
+body:is(.nofx,.tglite) .srm .srf.open .sumcard{opacity:1}body:is(.nofx,.tglite) .srm .srf.open .srbk{opacity:0}
+body:is(.nofx,.tglite) .srm .srf.open::before{animation:none!important;opacity:.7}body:is(.nofx,.tglite) .srm .srf.open{animation:none!important}body:is(.nofx,.tglite) .srm .srbu{display:none!important}body:is(.nofx,.tglite) .srm .gm361{transition:none}
+.bstrip{display:flex!important;flex-wrap:wrap;justify-content:center}.bstrip .bsc{width:calc((100% - 12px)/3);box-sizing:border-box}
+.bstrip .bsc.lk{cursor:default;background:linear-gradient(#2a2a2cee,#16161aee);box-shadow:inset 0 0 0 1px #5a5a60,0 4px 10px #0008}.bstrip .bsc.lk b{color:#b8bcc4}.bstrip .bsc.lk small{color:#9a9ea6}.bstrip .bsc.lk img{filter:drop-shadow(0 2px 2px #000a) brightness(.9)}`;document.head.appendChild(st);
+const os=summon;summon=function(n){const r=os.apply(this,arguments);try{const got=G._sumGot,m=document.getElementById('sumModal');if(got&&m&&!m.classList.contains('r361'))[...m.querySelectorAll('.srf')].forEach((f,i)=>{const cp=D.COMPS.find(x=>x.k==got[i]);if(!cp)return;f.classList.add('g'+cp.g);if(cp.g>=3)f.insertAdjacentHTML('beforeend','<i class=gm361></i>')}),m.classList.add('r361')}catch(e){console.warn(e)}return r};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen!='base')return r;const w=document.querySelector('#screen .bstrip');if(!w||w.querySelector('[data-bs=castle]'))return r;const s=C.S(),B=s.bld||{};
+ const tot=Object.values(B).reduce((a,x)=>a+(x.lv||0),0),lv=k=>B[k]?B[k].lv:0;
+ w.insertAdjacentHTML('beforeend',`<div class=bsc data-bs=castle><span class=lv>Lv.${tot}</span><img src="${A}ic3_castle.png" alt=""><b>영주성</b><small>광산 ${lv('vault')} · 농장 ${lv('mine')} · 마탑 ${lv('tower')}</small></div><div class="bsc lk" data-bs=barracks><img src="${A}tw_lock.png" alt=""><b>병영</b><small>준비 중입니다</small></div>`);
+ w.querySelector('[data-bs=castle]').onclick=()=>{const p=document.querySelector('#screen [data-bh=castle]');if(p)p.click()};w.querySelector('[data-bs=barracks]').onclick=()=>toast('병영은 준비 중입니다')}catch(e){console.warn(e)}return r};
+})();
