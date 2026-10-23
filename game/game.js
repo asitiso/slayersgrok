@@ -3433,3 +3433,31 @@ const deco=()=>{if(G.screen!='map')return;const pins=[...document.querySelectorA
   if(!seen[c]){seen[c]=1;ch=1;if(!L)p.insertAdjacentHTML('beforeend',`<div class=wgo><img class=wl src="assets/gate_locked.png"><img class=wr src="assets/gate_locked.png"><i class=wf></i></div>`);const g=p.querySelector('.wgo');g&&setTimeout(()=>g.remove(),1700)}});
  if(first||ch)sv(seen)};
 G.gateDeco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
+
+/* v211: 화룡전식 "새 지역 개방" region banner (assets/region_banner.png) — once per chapter, only when a chapter really newly opens (maxSi crosses c*7; same rule as the world-map lock). In battle it waits until the boss-clear flow (KO stamp, VICTORY card, chest, chapter card, content-unlock pop) is gone; on the world map it waits for the v210 gate-break. Unfurl → light sweep → fade (~2.4 s); lite (스킬 연출 off / 절전 graphics): plain fade, no sweep. Tracked in localStorage slayers_rbseen (first run seeds silently). Visual only. */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.rgb{position:fixed;left:50%;top:31%;width:372px;height:139px;margin-left:-186px;z-index:9000;pointer-events:none;animation:rgbIn .55s cubic-bezier(.2,1.3,.4,1) both,rgbOut .45s ease-in 2.0s forwards}
+.rgb>img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 6px 10px #000c)}
+.rgb .sw{position:absolute;left:19%;right:13%;top:27%;bottom:25%;overflow:hidden;border-radius:10px/40%}
+.rgb .sw:after{content:'';position:absolute;top:-20%;bottom:-20%;left:-40%;width:35%;background:linear-gradient(100deg,#fff0,#fff8 50%,#fff0);transform:skewX(-18deg);animation:rgbSw .8s ease-in-out .55s both}
+.rgb .tx{position:absolute;left:19%;right:13%;top:27%;bottom:25%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center}
+.rgb .tx small{font:900 11.5px Maplestory,sans-serif;color:#ffd96a;letter-spacing:2px;text-shadow:0 1px 0 #5a3a00,0 0 4px #000a}
+.rgb .tx b{font:900 21px/1.1 Maplestory,sans-serif;color:#fff6dc;white-space:nowrap;-webkit-text-stroke:1px #1a1030;paint-order:stroke fill;text-shadow:0 2px 0 #10082a,0 0 6px #0008;animation:rgbT .5s ease-out .3s both}
+.rgb.lite{animation:rgbF .25s ease-out both,rgbOut .35s ease-in 1.8s forwards}.rgb.lite .sw{display:none}.rgb.lite .tx b{animation:none}
+@keyframes rgbIn{0%{opacity:0;transform:scaleX(.08) scaleY(.6);clip-path:inset(0 46% 0 46%)}60%{opacity:1;clip-path:inset(0 0 0 0)}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0)}}
+@keyframes rgbSw{0%{left:-40%}100%{left:120%}}
+@keyframes rgbT{0%{opacity:0;transform:translateY(6px) scale(.9)}100%{opacity:1;transform:none}}
+@keyframes rgbF{from{opacity:0}to{opacity:1}}
+@keyframes rgbOut{to{opacity:0;transform:translateY(-14px) scale(.96)}}`;document.head.appendChild(st);
+const K='slayers_rbseen',ld=()=>{try{return JSON.parse(localStorage.getItem(K))}catch(_){return null}},sv=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(_){}};
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const mxc=()=>{const s=C.S();return Math.floor(Math.min(s.maxSi||0,D.FIELDS.length-1)/7)};
+let seen=ld();if(!seen){seen={};for(let c=0;c<=mxc();c++)seen[c]=1;sv(seen)}
+let q=[],on=0,pend=0,vicT=0;G._rbLog=[];
+/* the chapter card is queued at stage advance but only shows after VICTORY clears — hold the banner until that card has appeared (or 16 s safety) */
+if(typeof chapterCard=='function'){const oc=chapterCard;chapterCard=function(){pend=performance.now();return oc.apply(this,arguments)}}
+const busy=()=>{const n=performance.now();if(document.querySelector('.vic:not(.out)'))vicT=n;if(pend&&(document.querySelector('.chap')||n-pend>16000))pend=0;return pend||n-vicT<900||bz()};const bz=()=>G.storyOn||(G.screen&&G.screen!='map')||(C.B&&C.B.boss)||performance.now()-(G._koT||-1e9)<2500||document.querySelector('.vic:not(.out),.bchest,.chap,.rwpop,.modal,.unl,.sty,.bsht,.wgo,.rgb');
+const show=c=>{const L=lite(),d=document.createElement('div');d.className='rgb'+(L?' lite':'');d.innerHTML=`<img src="assets/region_banner.png" alt=""><div class=sw></div><div class=tx><small>새 지역 개방</small><b>제${c+1}장 ${D.CH[c]||''}</b></div>`;document.body.appendChild(d);G._rbLog.push([c,Math.round(performance.now()),L?'lite':'full']);on=1;setTimeout(()=>{d.remove();on=0},L?2200:2500)};
+const tick=()=>{const m=mxc();for(let c=0;c<=m;c++)if(!seen[c]){seen[c]=1;sv(seen);q.push(c)}
+ if(q.length&&!on&&!busy())show(q.shift())};
+setInterval(()=>{try{tick()}catch(e){console.warn(e)}},300);G.regionBanner=show;G._rbSeen=seen;})();
