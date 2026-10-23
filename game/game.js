@@ -3085,3 +3085,22 @@ R.ccFrame=(dt,W,H)=>{try{if(C.B.boss||C.B.wb)return false;fr=fr||img('cutin_fram
  cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
 const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{if(dirty&&!(R.ccut&&R.ccut.t<1&&!C.B.boss))clear()}catch(_){}return r};
 })();
+
+/* v198: 정예 출현 → framed crimson plaque in a fixed slot (pop-in, skull glow pulse, fade); shared slot with kill callouts + swarm cut-in (visual only; boss fights unchanged) */
+;(()=>{const st=document.createElement('style');st.textContent=`
+#battle.elon .mkb{top:236px!important}
+#battle.ccon.elon .mkb{top:424px!important}
+#battle.ccon.elon .tdmg{top:452px!important}`;document.head.appendChild(st);
+const PW=600,PH=184,DW=240,CY=378;let fr=null,on=0,seen=0;
+const cls=v=>{if(on===v)return;on=v;const b=document.getElementById('battle');b&&b.classList.toggle('elon',!!v)};
+R.elPlq=(cx,c,W,t,a)=>{try{if(C.B.boss)return false;fr=fr||Object.assign(new Image(),{src:A+'elite_plaque.png'});if(!fr.complete||!fr.naturalWidth)return false;seen=performance.now();cls(1);
+ const k=DW/PW,sc=t<.1?.6+t*6.5:t<.22?1.25-(t-.1)*2.1:1,fo=t>1.3?1+(t-1.3)*.12:1;cx.save();cx.globalAlpha=Math.max(0,a);cx.translate(W/2,CY);cx.scale(sc*fo,sc*fo);
+ cx.drawImage(fr,-DW/2,-PH*k/2,DW,PH*k);
+ // skull glow pulse (eyes ≈ frame px 88,98)
+ const gx=-DW/2+88*k,gy=-PH*k/2+97*k,p=.55+.45*Math.sin(t*14);cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(gx,gy,0,gx,gy,22);g.addColorStop(0,`rgba(255,70,40,${.55*p})`);g.addColorStop(.45,`rgba(255,40,20,${.22*p})`);g.addColorStop(1,'rgba(255,0,0,0)');cx.fillStyle=g;cx.fillRect(gx-24,gy-24,48,48);cx.restore();
+ // text centred on plate (plate centre ≈ frame px 330)
+ const tx=-DW/2+330*k;cx.textAlign='center';cx.textBaseline='middle';cx.font='italic 900 19px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=5;cx.strokeStyle='#3a0006';cx.strokeText('정예 출현!',tx,-7,140);const tg=cx.createLinearGradient(0,-17,0,3);tg.addColorStop(0,'#fff8d0');tg.addColorStop(1,'#ffc23a');cx.fillStyle=tg;cx.fillText('정예 출현!',tx,-7,140);
+ cx.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=3;cx.strokeStyle='#2a0004';const sub=(c.n||'정예')+' · 처치 시 보상 4배';cx.strokeText(sub,tx,12,140);cx.fillStyle='#ffe9c8';cx.fillText(sub,tx,12,140);
+ cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
+const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const ek=!C.B.boss&&R.ekT&&R.ekT.t>0&&R.ekT.t<1.3,el=!C.B.boss&&R.elT&&R.elT.t>0&&R.elT.t<1.6&&performance.now()-seen<250;cls(ek||el?1:0)}catch(_){}return r};/* 정예 처치 text (y≈392) shares the plaque slot */
+})();
