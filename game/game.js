@@ -4230,3 +4230,17 @@ const S=':is(#_a,#_b,span):is(#_c,#_d,span)';const st=document.createElement('st
 :is(body.tglite,body.nofx) #battle #bossBtn${S}:not(.off):not(.fight){animation:none!important;box-shadow:0 0 0 1.5px #7a4a12,0 0 9px 2px #ffcf5a,inset 0 0 6px #000c!important}`;document.head.appendChild(st);
 let last=null;setInterval(()=>{try{const b=document.getElementById('bossBtn');if(!b)return;const s=C.S(),i=s.si,pl=D.BOSSPLAN[Math.floor(i/7)],bo=pl&&D.BOSSES[pl[i%7==6?1:0]],im=bo&&bo.img?'assets/'+bo.img:'';const k=im+'|'+(b._bk||'');if(im===last&&b._bk===1)return;last=im;b._bk=1;if(im){b.style.setProperty('--bsi',`url("${im}")`);b.classList.add('bsp')}else{b.style.removeProperty('--bsi');b.classList.remove('bsp')}}catch(_){}},500);
 })();
+;(()=>{/* v253 r302 (visual only): duo / skill-cast banner (.combo, .combo.duo) in a fixed slot at the top of the field (y 238-357, below the 증원 / buff row; 280-399 in boss fights, below #bossFr) instead of mid-field (466) or over the bottom strip in boss fights (548).
+ It never shares the screen with the WAVE CLEAR ribbon (244-332) or the boss WARNING: a banner that arrives while either is up waits hidden + paused (max 2.6s, then it is dropped), and a ribbon / WARNING that arrives over a live banner fades it out in .16s.
+ The original slide-in (duoIn) is kept; 스킬 연출 / low graphics gating stays with the code that creates the banner */
+const st=document.createElement('style');st.textContent=`
+#battle .combo:is(#_a,#_b,div):is(#_c,#_d,div){top:238px!important}body.bossfight #battle .combo:is(#_a,#_b,div):is(#_c,#_d,div){top:280px!important}/* boss fight: below the boss name/HP frame #bossFr (202-275) */
+#battle .combo.cbq{visibility:hidden!important}#battle .combo.cbq,#battle .combo.cbq *{animation-play-state:paused!important}
+#battle .combo.cbo{opacity:0!important;transition:opacity .16s ease-in!important}`;document.head.appendChild(st);
+const blk=()=>!!document.querySelector('#battle .wvb.wrib:not(.out),.bwarn:not(.out),.vsx,#battle .bcut');/* + the boss VS card and boss cut-in */
+const pos=n=>{const t=C.B&&C.B.boss?'280px':'238px';if(n._tp!==t){n._tp=t;n.style.setProperty('top',t,'important')}};/* boss state read when the banner shows (body.bossfight lands a beat later than C.B.boss) */
+const arm=n=>{if(n._cq)return;n._cq=1;pos(n);if(!blk())return;const rm0=n.remove.bind(n);n.classList.add('cbq');n.remove=()=>{};const t0=performance.now();const w=()=>{if(!n.isConnected)return;if(blk()){if(performance.now()-t0>2600){rm0();return}setTimeout(w,100);return}pos(n);n.classList.remove('cbq');R._cbQ=(R._cbQ||0)+1;setTimeout(rm0,1500)};setTimeout(w,100)};
+const hide=()=>document.querySelectorAll('#battle .combo:not(.cbq)').forEach(c=>{if(c._co)return;c._co=1;c.classList.add('cbo');const r=c.remove.bind(c);setTimeout(()=>{try{Element.prototype.remove.call(c)}catch(_){}},180)});
+const go=()=>{const b=document.getElementById('battle');if(!b)return setTimeout(go,300);new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(!n.classList)continue;if(n.classList.contains('combo'))arm(n);else if(n.classList.contains('wrib')||n.classList.contains('bcut')||n.classList.contains('vsx'))hide()}}).observe(b,{childList:true});
+new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&(n.classList.contains('bwarn')||n.classList.contains('vsx')))hide()}).observe(document.body,{childList:true})};go();
+})();
