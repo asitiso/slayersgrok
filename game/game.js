@@ -4688,3 +4688,37 @@ const orp=rewardPop;rewardPop=function(items,sub){const r=last,x=orp.apply(this,
  const cr=document.createElement('div');cr.className='rwcr';const hd=document.createElement('div');hd.className='pwhd';hd.innerHTML='<b>도전 성공!</b>';bx.prepend(cr,hd);
  const w=document.createElement('div');w.innerHTML=cards(r.req,C.POW());const s=bx.querySelector('.rws')||bx.querySelector('.rwt');s.after(...w.children)}}}catch(_){}return x};
 })();
+;(()=>{// r357 v307 전직 시련 · 보스 러시 결과 화룡전 스타일 (리본 + 카드) · 표시 전용
+const A='assets/',st=document.createElement('style');st.textContent=`
+.brend.rs357{gap:0}
+.brend.rs357 .rsbx{position:relative;width:332px;padding:42px 14px 16px;border-radius:14px;background:linear-gradient(#3a2a14f4,#201608f4);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 4px #3a2410,inset 0 0 40px #ffc24a33,0 10px 30px #000c;text-align:center;margin-top:30px}
+.rs357 .pwhd{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:258px;height:64px;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;gap:6px;padding-top:6px;filter:drop-shadow(0 3px 3px #000a)}
+.rs357 .pwhd img{width:26px;height:26px;object-fit:contain}.rs357 .pwhd b{font:900 19px Maplestory,sans-serif;color:#ffe08a;text-shadow:0 2px 0 #3a2008,0 0 8px #ffb02e88;font-style:normal}
+.rs357 .rsst{display:block;font:900 13px Maplestory,sans-serif;color:#ffe0b0;margin:0 0 8px;text-shadow:0 1px 0 #000}
+.rs357 .rscd{display:flex;gap:6px;margin:8px 0}
+.rs357 .pwc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:10px;background:#0006;border:1px solid #ffffff1a}
+.rs357 .pwc small{font:700 11px 'Noto Sans KR',sans-serif;color:#e0d4b8;display:flex;align-items:center;gap:3px;white-space:nowrap}.rs357 .pwc small img{width:18px;height:18px;object-fit:contain}
+.rs357 .pwc b{font:900 19px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #000}
+.rs357 .pwc.big{padding:10px 4px;background:radial-gradient(circle at 50% 40%,#6a4a1acc,#2a1a08cc);border:2px solid #e8b860}.rs357 .pwc.big b{font-size:34px;color:#ffe08a}.rs357 .pwc.big b small{display:inline;font-size:14px;color:#ffe08a}
+.brend.rs357 .brnew{display:inline-block;margin:2px 0 4px;padding:2px 12px;border-radius:10px;background:linear-gradient(#ff7a5a,#d0301e);border:2px solid #0b0d0f;font:900 13px Maplestory,sans-serif;color:#fff;animation:none}
+.brend.rs357 #brOk{display:flex;justify-content:center;margin-top:10px}
+.jobfx .jt.rs357{width:332px;margin-top:36px;padding:40px 14px 14px;border-radius:14px;background:linear-gradient(#3a2a14ee,#201608ee);border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 4px #3a2410,0 10px 30px #000c}
+.jobfx .jt.rs357>b{font:900 28px Maplestory,sans-serif}
+.modal.rsfail.rs357 .card.mbox{padding-top:40px!important}`;document.head.appendChild(st);
+const C=G.C,card=(ic,l,v,c)=>`<div class="pwc ${c||''}"><small>${ic?`<img src="${A}${ic}">`:''}${l}</small><b>${v}</b></div>`;
+/* 보스 러시 종료 (.brrun > .brend) */
+const deBr=e=>{if(e.dataset.r357)return;e.dataset.r357=1;const vt=e.querySelector('.vt'),sc=e.querySelector('.brsc'),sub=e.querySelector('.brsub'),nw=e.querySelector('.brnew'),ok=e.querySelector('#brOk');if(!vt||!sc||!sub||!ok)return;
+ const m=/처치\s*([\d.]+)\s*·\s*(?:주간|순위)\s*([\d,]+)위/.exec(sub.textContent);const bx=document.createElement('div');bx.className='rsbx';
+ bx.innerHTML=`<div class=pwhd><img src="${A}ui_timer.png"><b>${vt.textContent}</b></div><small class=rsst>보스 러시 결과</small><div class=rscd>${card('ic_trophy.png','점수',sc.innerHTML,'big')}</div>`+(m?`<div class=rscd>${card('wb_skull.png','처치',m[1])}${card('tt_crown.png','주간 순위',m[2]+'위')}</div>`:'');
+ if(!m)bx.appendChild(sub);if(nw)bx.querySelector('.rsst').after(nw);bx.appendChild(ok);e.classList.add('rs357');vt.remove();sc.remove();if(m)sub.remove();e.appendChild(bx)};
+/* 전직 완료 (.jobfx .jt) */
+const deJob=f=>{if(f.dataset.r357)return;f.dataset.r357=1;const jt=f.querySelector('.jt');if(!jt)return;const s=jt.querySelector('small'),sp=jt.querySelector('span');const J=(G.JOB||[])[G.jobT?G.jobT():0]||{};
+ jt.classList.add('rs357');if(s){const h=document.createElement('div');h.className='pwhd';h.innerHTML=`<b>${s.textContent}</b>`;s.replaceWith(h)}
+ if(sp){const ps=sp.textContent.split('·').map(x=>x.trim());const w=document.createElement('div');w.className='rscd';w.innerHTML=card('st_atk.png','공격력',ps[0].replace(/^공격력\s*/,''))+(ps[1]?card(J.ic||'',ps[1].replace(/\s*획득$/,''),'획득'):'');sp.replaceWith(w)}};
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1)continue;if(n.classList.contains('jobfx'))deJob(n);else if(n.classList.contains('brrun')){const e=n.querySelector('.brend');if(e)deBr(e)}else if(n.classList.contains('brend'))deBr(n)}}).observe(document.getElementById('app'),{childList:true,subtree:true});
+/* 전직 시련 실패: 기존 토스트 문구를 r356 실패 카드로 표시 */
+let sup=0;const ots=toast;toast=function(t){if(sup&&/^시련 실패/.test(String(t)))return;return ots.apply(this,arguments)};
+const orb=G.rbRun;G.rbRun=function(o,done){if(o&&/전직 시련/.test(o.title||'')&&typeof done=='function'){const req=o.req,title=o.title,d0=done;arguments[1]=function(won){if(won)return d0.apply(this,arguments);sup=1;let r;try{r=d0.apply(this,arguments)}finally{sup=0}try{const J=(G.JOB||[])[(G.jobT?G.jobT():0)+1]||{},pw=C.POW();
+ const m=document.createElement('div');m.className='modal pwwarn rsfail rs357';m.innerHTML=`<div class="card mbox"><div class=pwhd><img src="${A}ui_warn.png"><b>${title} 실패</b></div><small class=rsst>${J.bn||''}</small><div class=pwcmp>${card('st_atk.png','권장 전투력',fmt(req))}<span class=pwvs>VS</span>${card('st_atk.png','내 전투력',fmt(pw),pw<req?'me':'')}</div><small class=pwnote>시련 실패… 더 강해져서 다시 도전하세요</small><span class="btn wide" style="margin-top:12px">확인</span></div>`;
+ m.onclick=e=>{if(e.target.closest('.btn')||e.target==m)m.remove()};document.getElementById('app').appendChild(m)}catch(_){}return r}}return orb.apply(this,arguments)};
+})();
