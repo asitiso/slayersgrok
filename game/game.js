@@ -3007,6 +3007,9 @@ R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth
  const pi=img(c.img);const scx=x0+61*k,scy=y0+66*k,sr=34*k+1;
  if(pi.complete&&pi.naturalWidth){cx.save();cx.beginPath();cx.arc(scx,scy,sr,0,6.283);cx.closePath();cx.fillStyle='#2a1830';cx.fill();cx.clip();const iw=pi.naturalWidth,ih=pi.naturalHeight,side=Math.min(iw*(c.bust?.5:.62),ih*.55),sx=(iw-side)/2+(c.bust?iw*.06:0),sy=ih*(c.bust?.06:.06);cx.drawImage(pi,sx,sy,side,side,scx-sr,scy-sr,sr*2,sr*2);cx.restore()}
  let x=x0;const sn=v=>Math.round(v*2)/2;for(const [s0,s1,st] of SL){const dw=st?strW:(s1-s0)*k,xa=sn(x),xb=sn(x+dw);cx.drawImage(fr,s0,0,s1-s0,SH,xa,y0,xb-xa,h);x+=dw}
+ /* r322: ult art panel at the right end of the strip, inside 304-356 (looked up once per cut-in) */
+ if(c._sa===undefined)c._sa=R._ultStripArt?R._ultStripArt(c.k):null;
+ if(c._sa){const ph=h-6,pw=ph*2,px=x0+w-pw-12+(1-ein)*24;cx.drawImage(c._sa,px,y0+3,pw,ph)}
  // text in the band
  const tx=x0+136*k,ty=y0+(31+104)/2*k+1;cx.textBaseline='middle';cx.textAlign='left';
  cx.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';cx.fillStyle=c.rc||'#ffd77a';const nw=cx.measureText(c.n).width;cx.lineWidth=3;cx.strokeStyle='#000a';cx.strokeText(c.n,tx,ty);cx.fillText(c.n,tx,ty);
@@ -4300,6 +4303,11 @@ const low=()=>document.body.classList.contains('tglite')||document.body.classLis
 const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)i._ok=1})}return i};
 const pre=Object.keys(ULT);const step=()=>{const k=pre.shift();if(!k)return;ric(()=>{get(k);setTimeout(step,400)},{timeout:4000})};setTimeout(step,3000);
 G._ultArt=()=>Object.keys(IM).filter(k=>IM[k]._ok);
+/* r322: boss-strip panel — the ult art's upper figure cut once into a small canvas per companion (left edge feathered), cached; R.ccStrip asks once per cut-in and draws it at the strip's right end. null (portrait-only strip) if not listed/decoded or low graphics. */
+const PN={};R._ultStripArt=k=>{if(!ULT[k]||low())return null;const i=IM[k];if(!i||!i._ok){get(k);return null}let c=PN[k];if(c)return c;
+ c=PN[k]=document.createElement('canvas');const w=c.width=192,h=c.height=96,x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(i,20,0,400,200,0,0,w,h);
+ x.globalCompositeOperation='destination-out';const g=x.createLinearGradient(0,0,46,0);g.addColorStop(0,'#000');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,46,h);
+ const g2=x.createLinearGradient(0,h-14,0,h);g2.addColorStop(0,'rgba(0,0,0,0)');g2.addColorStop(1,'#000');x.fillStyle=g2;x.fillRect(0,h-14,w,14);return c};
 const FN1='bold 14px Maplestory,"Noto Sans KR",sans-serif',FN2='900 28px Maplestory,"Noto Sans KR",sans-serif';
 R._ccUlt=(cx,c,t,a,W,H)=>{if(!c||!c.k||!ULT[c.k]||low())return false;const im=get(c.k);if(!im._ok||!im.naturalWidth)return false;
  const e=1-Math.pow(1-Math.min(1,t/.18),3),cy=262,bh=96,h2=bh*1.8,w2=h2*im.naturalWidth/im.naturalHeight;
