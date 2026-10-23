@@ -1,0 +1,9 @@
+// r240: High-mode visual check shots 1292 battle swarm, 1293 boss (no throttle)
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+await p.goto(U);await sl(4000);await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};const s=G.S();s.autoBoss=false;C.selectStage(s.si)});
+let best=0;for(let i=0;i<30;i++){await sl(250);const n=await p.evaluate(()=>C.alive().length);if(n>=6){best=n;break}}await sl(400);
+await p.evaluate(()=>document.querySelectorAll('#notice,.tut,.sty').forEach(x=>x.remove()));await p.screenshot({path:'../screenshots/1292_battle_high.jpg',type:'jpeg',quality:85});
+await p.evaluate(()=>C.startBoss());await sl(1200);for(let i=0;i<20;i++){await sl(300);if(!(await p.evaluate(()=>document.querySelectorAll('.vsx').length)))break}await sl(1500);console.log(await p.evaluate(()=>JSON.stringify({t:performance.now()|0,vsx:document.querySelectorAll('.vsx').length,boss:C.alive().some(e=>e.boss)})));await p.evaluate(()=>document.querySelectorAll('#notice,.tut,.sty').forEach(x=>x.remove()));await p.screenshot({path:'../screenshots/1293_boss_high.jpg',type:'jpeg',quality:85});
+console.log(JSON.stringify({swarmN:best,mode:await p.evaluate(()=>R.qMode+"/"+R.qLvl),errs}));await b.close()})();
