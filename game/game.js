@@ -3782,3 +3782,14 @@ S.textContent=`
 #screen .entabs span${X} .dot{top:-21px;right:-10px;transform:scale(.75)}
 #screen .entabs:has(>span:nth-child(5)) span.on${X}::before{top:-22px;width:22px;height:19px;margin-left:-11px}
 `;document.head.appendChild(S)}catch(e){console.warn(e)}})();
+
+/* v231 r280: thin 12px gauges (sld_track_s/sld_fill_s/sld_fill_green_s, box-downscaled from r269 sld_*) on in-screen progress .bar rows (missions/achievements/codex/pass/base); HUD bars untouched; codex tab .dot moved off the label. Visual only */
+(function(){try{const S=document.createElement('style');const X=':is(#_b1,#_b2,div):is(#_b3,#_b4,div)',Q=`#screen :is(.f,.card)>.bar${X}:not(:has(>i[style*=background]))`;
+S.textContent=`
+${Q}{height:0!important;min-height:0!important;box-sizing:content-box!important;border:6px solid transparent!important;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch!important;background:none!important;border-radius:0!important;overflow:visible!important;position:relative;box-shadow:none!important}
+${Q}>i{position:absolute!important;left:-6px;top:-6px;height:0!important;max-width:100%;box-sizing:content-box!important;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch;background:none!important;border-radius:0!important}
+${Q}>i.ok{border-image-source:url(${A}sld_fill_green_s.png)}
+${Q}>i[style^="width:0%"],${Q}>i[style^="width:0;"],${Q}>i[style^="width:NaN"]{display:none}
+#screen .entabs span:is(#_t1,#_t2,span):is(#_t3,#_t4,span) .dot{top:-22px!important;right:-13px!important;transform:scale(.72)!important;z-index:2}
+`;document.head.appendChild(S);
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.getElementById('screen');if(sc)sc.querySelectorAll(':is(.f,.card)>.bar>i').forEach(i=>{const w=parseFloat(i.style.width);i.classList.toggle('ok',w>=99.999)})}catch(e){console.warn(e)}return r}}catch(e){console.warn(e)}})();
