@@ -3725,3 +3725,6 @@ const s=document.getElementById('screen');if(s)new MutationObserver(()=>{if(SC[G
 
 /* v225 (r274): hit kind for the battle hit-burst sprites (render.js r274 pool) - magic for spells/storm/caster allies, none for DoT ticks; visual only */
 (()=>{const MAG={lina:1,amelia:1,xellos:1,sera:1,noel:1};const oh=C.hitEnemy;C.hitEnemy=(e,d,cr,src)=>{const pk=R._hk;R._hk=(src&&src.dot!=null&&!src.storm)||C._dot?'d':src&&(src.sp||src.storm||MAG[src.k])?'m':src?'p':'m';try{return oh(e,d,cr,src)}finally{R._hk=pk}}})();
+
+/* v226 (r275): wave ribbon (wrib, r248 BN priority queue untouched) - full strength for the first ~0.6s, then thins to half opacity and lifts away so a busy final-wave fight shows through; visual only */
+(()=>{const st=document.createElement('style');st.textContent='@keyframes wrib{0%{opacity:0;transform:scaleX(.06) scaleY(.75)}16%{opacity:1;transform:scaleX(1.1) scaleY(1.03)}26%{transform:scale(.98)}32%{transform:scale(1)}52%{opacity:1;transform:translateY(0)}70%{opacity:.5;transform:translateY(-4px) scale(.96)}100%{opacity:0;transform:translateY(-16px) scale(.94)}}';document.head.appendChild(st)})();
