@@ -1,0 +1,9 @@
+// r238: A/B pixel parity of a frozen frame: node test/parity.js "<A setup js>" "<B setup js>"  (rAF stopped, Math.random fixed, R.frame(0))
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');const A=process.argv[2]||'',B=process.argv[3]||'';
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});
+const U='http://127.0.0.1:'+(process.env.PORT||18791)+'/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+await p.goto(U);await sl(4000);await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0});
+for(let trial=0;trial<+(process.env.N||4);trial++){await sl(+(process.env.GAP||900));
+const r=await p.evaluate(async(A,B)=>{const raf=window.requestAnimationFrame;const H=[];window.requestAnimationFrame=f=>{H.push(f);return 0};await new Promise(r=>setTimeout(r,120));const mr=Math.random;Math.random=()=>.5;const c=document.querySelector('#battle canvas'),x=c.getContext('2d');
+const snap=()=>x.getImageData(0,0,c.width,c.height).data;const run=js=>{eval(js);R.frame(0);return snap()};const d0=run(A),d1=run(A),d2=run(B);eval(A);Math.random=mr;window.requestAnimationFrame=raf;H.forEach(f=>raf(f));
+const cmp=(p,q)=>{let n=0,mx=0;for(let i=0;i<p.length;i++){const e=Math.abs(p[i]-q[i]);if(e){n++;if(e>mx)mx=e}}return [n,mx]};return JSON.stringify({AA:cmp(d0,d1),AB:cmp(d1,d2),dec:(window.R&&R._decN)||null})},A,B);console.log(r)}await b.close()})();
