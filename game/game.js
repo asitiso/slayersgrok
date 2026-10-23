@@ -638,7 +638,7 @@ const mvOf=e=>RNG[e.img]?(RNG[e.img]=='orb'||RNG[e.img]=='wisp'||RNG[e.img]=='fi
 const ot=C.tick;C.tick=dt=>{ot(dt);if(B.wb)return;C.alive().forEach(e=>{if(!e.el||e.boss||e.hp<=0)return;if(e.esk==null)e.esk=3+Math.random()*2;
   const held=!!(e.st&&e.st.stun&&e.st.stun.t>0&&(e.eskW==null||e.st.stun.t>(e._stun0||0)));e._stun0=e.st&&e.st.stun?e.st.stun.t:0;
   if(e.eskW!=null){if(held&&Math.random()<.5){LB.push({e,t:0,txt:'저항!',c:'#ffd25a'})}else if(held){e.eskW=null;LB.push({e,t:0,txt:'기술 저지!',c:'#9ef'});return}e.eskW-=dt;if(e.eskW<=0){e.eskW=null;fireMv(e)}return}
-  if(!held)e.esk-=dt;if(e.esk<=0){e.esk=7+Math.random()*3;e.eskW=.85;e.mv=mvOf(e);LB.push({e,t:0,txt:'⚠ '+MV[e.mv].n,c:MV[e.mv].col,warn:1})}})};
+  if(!held)e.esk-=dt;if(e.esk<=0){e.esk=7+Math.random()*3;e.eskW=.85;e.mv=mvOf(e);LB.push({e,t:0,txt:MV[e.mv].n,c:MV[e.mv].col,warn:1})}})};
 const fireMv=e=>{const al=C.aliveAllies();if(!al.length)return;const M=MV[e.mv],tg=M.all?al:[al[0]];G.eskN++;C._esk=1;
  tg.forEach(t=>{const d=Math.max(1,e.atk*M.m*(1-Math.min(.6,C.stat('def')/200)));t.hp-=d;C.ev.dmgAlly(t,d,'');if(G.HA)G.HA.set(t.k,{t:0,T:e.mv=='charge'?.6:.42,pow:e.mv=='charge'?28:16,up:e.mv=='charge'?1:0});if(t.hp<=0){t.hp=0;t.dead=true;C.ev.allyDead&&C.ev.allyDead(t)}});C._esk=0;
  const s=R._ES().get(e);if(s)RINGS.push({x:M.all?150:s.x-60,y:(s.y||500),t:0,c:M.col,big:M.all});R.hs=Math.max(R.hs||0,.06)};
@@ -4595,3 +4595,17 @@ const wb=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.wbn
  const cur=ni<0?T[T.length-1][0]:ni?T[ni-1][0]:'-';
  tc.querySelector('.wbt').insertAdjacentHTML('beforebegin',`<div class=wbnx><span class=wbg>${cur}</span><div class=f><small>${ni<0?'최고 등급 달성':`다음 등급 <b>${T[ni][0]}</b>까지 ${fmt(Math.max(0,goal-d))}`}</small><i><s style="width:${pc.toFixed(1)}%"></s></i></div></div>`)};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='wboss'){const sc=document.querySelector('#screen');if(sc)wb(sc)}}catch(e){console.warn(e)}return r}})();
+
+/* r353 v303: game-wide emoji → existing borderless icon swap (visual only). Text-node swap on body (skips canvas/inputs/chat log),
+   deferred to one rAF per mutation burst; glyphs with no matching art yet (⚠ ❓ 🎉) are stripped until icons are generated. */
+;(function(){const IM={'💗':'bd_heart_full','💌':'fr_heart_send','🎁':'fr_gift','✔':'pass_check','☑':'pass_check','☐':'dc_off','⚔':'ic3_arena','🔒':'sk_lock','⚡':'ui_bolt','⏱':'ui_timer','💎':'it2_gem','🗺':'ic_map','🎣':'fs_bobber','🧺':'bd_harvest','🥚':'pt_egg','✏':'ic_quill','📢':'ic_horn','🌙':'ic_moon','📋':'ic3_quest','👑':'ic4/crown','🏆':'ic3_trophy','💥':'fx_crit','⏩':'ic_speed','✨':'fx_success','🧳':'npc_merchant','🪙':'it2_gold','💾':'pp_save','📜':'rl_fragment','💪':'st_atk','🌼':'bd_flower','🍪':'bd_cookie','🔥':'st/burn','❄':'st/frz','💫':'st/stun','☠':'st/psn','🍳':'fs_board','💨':'fs_bobber'},STRIP='⚠❓🎉';
+const keys=Object.keys(IM).concat([...STRIP]);const src='('+keys.join('|')+')\\uFE0F?',RT=new RegExp(src,'u'),RS=new RegExp(src+'\\s?','gu');
+const st=document.createElement('style');st.textContent=`img.emi{height:1.25em;width:auto;vertical-align:-.28em;margin:0 .1em;filter:drop-shadow(0 1px 1px #0008);pointer-events:none;display:inline-block}
+.frh .frp img.emi{height:44px;vertical-align:middle}img.emi.e_dc_off{height:1.05em;vertical-align:-.15em;filter:none}
+#biGo{flex-direction:row!important;align-items:center;gap:2px}`;document.head.appendChild(st);
+const skip=n=>{const p=n.parentNode;return !p||p.nodeType!==1||p.closest('script,style,textarea,input,canvas,.chl,#chatT')};
+const conv=n=>{const v=n.nodeValue;if(!v||!RT.test(v)||skip(n))return;const f=document.createDocumentFragment();let last=0;v.replace(RS,(m,g,o)=>{if(o>last)f.appendChild(document.createTextNode(v.slice(last,o)));last=o+m.length;const im=IM[g];if(im){const i=document.createElement('img');i.className='emi e_'+im.replace('/','_');i.src='assets/'+im+'.png';i.alt='';f.appendChild(i);if(m.length>g.length+(m.includes('\uFE0F')?1:0))f.appendChild(document.createTextNode(' '))}return m});if(last<v.length)f.appendChild(document.createTextNode(v.slice(last)));n.parentNode.replaceChild(f,n)};
+const walk=r=>{if(r.nodeType===3)return conv(r);if(r.nodeType!==1||!RT.test(r.textContent))return;const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT),L=[];while(w.nextNode())if(RT.test(w.currentNode.nodeValue))L.push(w.currentNode);L.forEach(conv)};
+const Q=new Set();let qd=0;const run=()=>{qd=0;Q.forEach(n=>{if(n.isConnected)try{walk(n)}catch(_){}});Q.clear()};
+new MutationObserver(ms=>{for(let i=0;i<ms.length;i++){const m=ms[i];if(m.type==='characterData'){if(RT.test(m.target.nodeValue))Q.add(m.target)}else for(let j=0;j<m.addedNodes.length;j++){const a=m.addedNodes[j];if(a.nodeType===3?RT.test(a.nodeValue):a.nodeType===1&&RT.test(a.textContent))Q.add(a)}}if(Q.size&&!qd){qd=1;requestAnimationFrame(run)}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+walk(document.body);G.emiSwap=()=>walk(document.body)})();
