@@ -4497,8 +4497,20 @@ const rel=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.rl
  const bar=document.createElement('div');bar.className='entabs rltab';bar.innerHTML=T.map((x,i)=>`<span class="${i==t?'on':''}" data-rt=${i}><img src="assets/${x[1]}">${x[0]}<small>${x[2].filter(r=>lv(r.k)).length}/${x[2].length}</small></span>`).join('');
  const h=sb.querySelector('.relhero');h?h.after(bar):sb.prepend(bar);
  const sm=document.createElement('div');sm.className='card rlsum';sm.innerHTML=`<div class=ttl>기보 효과</div><div class=rlst><div><img src="assets/rl_tome.png"><small>복원</small><b>${L.filter(r=>lv(r.k)).length}/${L.length}</b></div><div><img src="assets/st_atk.png"><small>공격력</small><b>+${Math.round(C.relicB('atk')*100)}%</b></div><div><img src="assets/st_hp.png"><small>체력</small><b>+${Math.round(C.relicB('hp')*100)}%</b></div><div><img src="assets/rl_fragment.png"><small>조각</small><b>${fmt(s.frag||0)}</b></div></div>`;bar.after(sm);
- g.querySelectorAll('.rel').forEach((el,i)=>{const R=L[i];if(!R)return;el.classList.toggle('shhide',!!F[t]&&R.st!=F[t]);el.classList.add(R.st=='atk'?'ratk':'rhp');
+ g.querySelectorAll('.rel').forEach((el,i)=>{const R=L[i];if(!R)return;el.classList.toggle('shhide',!!F[t]&&R.st!=F[t]);el.classList.add(R.st=='atk'?'ratk':'rhp');const bi=el.querySelector('.rimg img');if(bi){bi.src=A+'rl_b'+(i+1)+'.png';bi.style.filter=(lv(R.k)?'':'grayscale(.8) brightness(.55) ')+'drop-shadow(0 3px 3px #000a)'}/* r343 per-relic book art */
   el.insertAdjacentHTML('afterbegin',`<span class=rllv>Lv.${lv(R.k)}</span><span class=rlstp>${R.d}</span>`);
   const sm2=el.querySelector(':scope>small');if(sm2)sm2.insertAdjacentHTML('beforeend',`<em>다음 +${Math.round((lv(R.k)+1)*R.per*100)}%</em>`)});
  bar.querySelectorAll('[data-rt]').forEach(e=>e.onclick=()=>{if(+e.dataset.rt===G.rlT)return;G.rlT=+e.dataset.rt;renderScreen()})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='relic'){const sc=document.querySelector('#screen');if(sc)rel(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r343: 우편함 tabs (전체 / 운영 / 이벤트 = existing D.MAILS name prefixes) + per-tab empty card; display only */
+const TY=m=>(m.n.match(/^\[(.+?)\]/)||[])[1]||'';
+const mail=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.mltab'))return;const g=sb.querySelector('.mgg');if(!g)return;const s=C.S(),mc=s.mailc||{};
+ const LV=D.MAILS.filter(m=>C.mailLeft(m.k)>0),types=[...new Set(D.MAILS.map(TY).filter(Boolean))],t=G.mlT=Math.min(G.mlT||0,types.length);
+ const T=[['전체',LV],...types.map(y=>[y,LV.filter(m=>TY(m)==y)])],un=L=>L.filter(m=>!mc[m.k]).length;
+ const bar=document.createElement('div');bar.className='entabs mltab';bar.innerHTML=T.map((x,i)=>`<span class="${i==t?'on':''}" data-mt=${i}><img src="assets/${i==0?'ic3_mail.png':i==1?'ic3_settings.png':'ic3_event.png'}">${x[0]}<small>${un(x[1])}/${x[1].length}</small>${un(x[1])?'<i class=dot></i>':''}</span>`).join('');
+ const card=g.closest('.card');(card||g).before(bar);
+ const vis=T[t][1].map(m=>m.k);g.querySelectorAll('.mgc').forEach(e=>e.classList.toggle('shhide',!vis.includes(e.dataset.mk)));
+ if(LV.length&&!vis.length)g.insertAdjacentHTML('beforeend',`<div class=mlemp2><b>도착한 우편이 없습니다</b><small>새 우편이 오면 알려 드릴게요</small></div>`);
+ const ma=sb.querySelector('#mailAll');if(ma&&LV.length)ma.classList.toggle('off',!un(T[0][1]));
+ bar.querySelectorAll('[data-mt]').forEach(e=>e.onclick=()=>{if(+e.dataset.mt===G.mlT)return;G.mlT=+e.dataset.mt;renderScreen()})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='mail'){const sc=document.querySelector('#screen');if(sc)mail(sc)}}catch(e){console.warn(e)}return r}})();
