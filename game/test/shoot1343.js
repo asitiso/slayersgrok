@@ -1,0 +1,28 @@
+// r266b: v218 button art. 1343: stage panel (green 이동 / grey 닫기) + pressed crop; 1344: chapter bar (green); extras: star-chest modal (gold 수령 / grey 닫기), mission tab (gold 받기). Logs computed border-image + lite.
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s);localStorage.setItem('slayers_set',JSON.stringify({gq:'high',story:0}))},fs.readFileSync('/tmp/bigsave.json','utf8'));
+await p.goto(U);await sl(4000);
+await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());G.storyOn=0;G.noticeOpen=()=>{};C.S().autoBoss=false;openScreen('map')});await sl(300);
+await p.evaluate(()=>{G.mapCh=4;renderScreen()});await sl(1200);
+const bi=sel=>p.evaluate(sel=>[...document.querySelectorAll(sel)].map(e=>{const c=getComputedStyle(e),r=e.getBoundingClientRect();return e.textContent.trim().slice(0,8)+' '+(c.borderImageSource.match(/btn_\w+/)||['none'])[0]+' '+Math.round(r.width)+'x'+Math.round(r.height)+' '+c.fontFamily.split(',')[0]}),sel);
+console.log('cbar',JSON.stringify(await bi('#screen .cbar>.btn')));
+await p.screenshot({path:'../screenshots/1344_buttons_chapter.jpg',type:'jpeg',quality:86});
+await p.evaluate(()=>G.stagePanel(30));await sl(700);
+console.log('panel',JSON.stringify(await bi('.spv .go span')));
+await p.screenshot({path:'../screenshots/1343_buttons_panel.jpg',type:'jpeg',quality:86});
+const r=await p.evaluate(()=>{const e=document.querySelector('.spv .go .ok').getBoundingClientRect();return [e.x,e.y,e.width,e.height]});
+await p.mouse.move(r[0]+r[2]/2,r[1]+r[3]/2);await p.mouse.down();await sl(120);
+console.log('pressed',await p.evaluate(()=>{const c=getComputedStyle(document.querySelector('.spv .go .ok'));return c.transform+' | '+c.filter}));
+await p.screenshot({path:'../screenshots/1343b_pressed.jpg',type:'jpeg',quality:90,clip:{x:0,y:r[1]-12,width:390,height:r[3]+24}});
+await p.evaluate(()=>{document.querySelectorAll('.spv').forEach(x=>x.remove())});
+await p.evaluate(()=>G.starOpen(4));await sl(900);
+console.log('star',JSON.stringify(await bi('.schm .btn')));
+await p.screenshot({path:'../screenshots/1343c_starchest.jpg',type:'jpeg',quality:86});
+await p.evaluate(()=>{document.querySelectorAll('.modal').forEach(x=>x.remove());closeScreen();const s=C.S();G.tab='mission';renderPanel()});await sl(700);
+console.log('mission',JSON.stringify((await bi('#panel .btn[data-m],#panel .btn[data-w]')).slice(0,8)));
+await p.screenshot({path:'../screenshots/1343d_mission.jpg',type:'jpeg',quality:86});
+await p.evaluate(()=>{G.loadSet().gq='save';openScreen('map');G.mapCh=4;renderScreen()});await sl(400);
+await p.evaluate(()=>G.stagePanel(30));await sl(300);
+console.log('lite',JSON.stringify(await p.evaluate(()=>[document.querySelector('.spv').classList.contains('lite'),getComputedStyle(document.querySelector('.spv .go .ok')).borderImageSource!='none'])));
+console.log('ERRS',JSON.stringify(errs));await b.close()})();

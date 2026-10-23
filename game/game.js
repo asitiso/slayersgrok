@@ -3633,3 +3633,13 @@ const deco=()=>{if(G.screen!='map')return;const w=document.querySelector('#scree
  ns.forEach(n=>{if(n.classList.contains('bs'))return;const c=n.querySelector('.ncr');if(!c||c.classList.contains('ncl'))return;const r=c.getBoundingClientRect();if(!r.width)return;
   const hit=labs.some(([m,rs])=>m!=n&&rs.some(q=>q.width&&r.left<q.right&&r.right>q.left&&r.top<q.bottom&&r.bottom>q.top));if(hit)c.classList.add('ncl')})};
 const sc=document.getElementById('screen');if(sc)new MutationObserver(()=>requestAnimationFrame(deco)).observe(sc,{childList:true,subtree:true});G.mapDeco217=deco})();
+
+/* v218: 화룡전식 button art (9-slice border-image, CSS only). btn_green = primary (stage panel 이동, chapter bar 월드맵/★/일일 던전), btn_grey = 닫기/cancel (stage panel 닫기, star-chest 닫기), btn_gold = claim (star-chest 수령, daily/weekly mission 받기). Pressed = scale .95 + darken. Disabled (.off) claim buttons keep the old look. Visual only. */
+(function(){const G9=':is(.spv .go .ok,#screen .cbar>.btn)',R9=':is(.spv .go .no,.schm .btn[data-x])',Y9=':is(.schm .srw .btn[data-sc]:not(.off),#panel .btn[data-m]:not(.off),#panel .btn[data-w]:not(.off))';
+const base=(sel,img,ol)=>`${sel}{background:none!important;border:10px solid transparent!important;border-image:url(assets/${img}) 30 fill / 10px stretch!important;border-radius:0!important;box-shadow:none!important;filter:drop-shadow(0 2px 2px #0007);color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:-1px 0 ${ol},1px 0 ${ol},0 -1px ${ol},0 1px ${ol},0 2px ${ol}!important}
+${sel}:active{transform:scale(.95)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}`;
+const st=document.createElement('style');st.textContent=base(G9,'btn_green.png','#0b3510')+base(R9,'btn_grey.png','#3a2a1a')+base(Y9,'btn_gold.png','#5a3006')+`
+.spv .go span{padding:1px 0!important;min-height:30px;display:flex;align-items:center;justify-content:center}
+#screen .cbar>.btn{padding:0 2px!important;min-height:30px}
+.schm .srw .btn[data-sc]:not(.off),#panel .btn[data-m]:not(.off),#panel .btn[data-w]:not(.off){padding:0 8px!important;min-height:22px;display:inline-flex;align-items:center;justify-content:center}
+.schm .btn[data-x]{padding:1px 0!important}`;document.head.appendChild(st)})();
