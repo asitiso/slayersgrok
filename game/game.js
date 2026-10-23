@@ -3397,3 +3397,39 @@ const deco=()=>{if(G.screen!='map')return;let seen=ld();const first=!seen;if(fir
   p.insertAdjacentHTML('beforeend',`<span class="wsl${nw?' nw':''}${li}"><img src="assets/seal_conquer_s.png" alt="완전 정복"></span>`)});
  if(first||ch)sv(seen)};
 G.chSealDeco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
+
+/* v210: 화룡전식 locked-region gate on world-map pins — the next locked chapter shows gate_locked.png with its real unlock rule on the scroll (chapter c opens when maxSi reaches c*7, i.e. the previous chapter's boss is beaten — same rule as the map's lock check and its "이전 장의 보스를 처치하세요" toast); further locked chapters get a smaller dim gate. Keyhole glow pulse. A newly unlocked chapter plays a one-time gate-break (shake, keyhole flash, chains/lock drop) tracked in localStorage (first run seeds silently). Respects 스킬 연출 / graphics quality. Visual only. */
+;(()=>{const st=document.createElement('style');st.textContent=`
+.wpin.lk>img:first-child{display:none!important}
+.wpin .wgt{position:relative;display:block;width:100px;height:122px;margin-bottom:-14px;filter:drop-shadow(0 4px 5px #000b);pointer-events:none}
+.wpin .wgt img{width:100%!important;height:100%!important;display:block;filter:none!important;animation:none!important}
+.wpin .wgt .kh{position:absolute;left:49.8%;top:59%;width:16px;height:22px;margin:-11px 0 0 -8px;border-radius:50%;background:radial-gradient(#9ef4ff,#3ab8ff88 45%,#3ab8ff00 72%);mix-blend-mode:screen;animation:wgtK 2.2s ease-in-out infinite}
+.wpin .wgt .gt{position:absolute;left:23%;right:21%;top:73%;height:14%;display:flex;flex-direction:column;align-items:center;justify-content:center;font:900 7.6px/1.05 Maplestory,sans-serif;color:#4a2a0e;text-align:center;white-space:nowrap;letter-spacing:-.2px}
+.wpin.far .wgt{width:54px;height:66px;margin-bottom:-6px;opacity:.72;filter:grayscale(.45) brightness(.8) drop-shadow(0 3px 3px #000a)}
+.wpin.far .wgt .gt{display:none}.wpin.far .wgt .kh{animation:none;opacity:.35}
+.wpin.lk.nxt b{margin-top:0}
+@keyframes wgtK{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.25)}}
+.wpin .wgo{position:absolute!important;left:50%!important;top:0!important;width:100px;height:122px;margin:-30px 0 0 -50px!important;filter:drop-shadow(0 4px 5px #000b);z-index:6;pointer-events:none;animation:wgoS .5s ease-in-out .3s both}
+.wgo img{position:absolute;inset:0;width:100%!important;height:100%!important;filter:none!important;animation:none!important}
+.wgo .wl{clip-path:polygon(0 0,100% 0,100% 72%,0 72%);animation:wgoB .55s ease-in .85s both}
+.wgo .wr{clip-path:polygon(0 72%,100% 72%,100% 100%,0 100%);animation:wgoF .5s ease-in .9s both}
+.wgo .wf{position:absolute;left:49.8%;top:59%;width:20px;height:20px;margin:-10px;border-radius:50%;background:radial-gradient(#fff,#9ef4ff 40%,#3ab8ff00 70%);opacity:0;animation:wgoX .6s ease-out .7s both}
+@keyframes wgoS{0%,100%{transform:translate(0)}20%{transform:translate(-3px,1px) rotate(-2deg)}40%{transform:translate(3px,-1px) rotate(2deg)}60%{transform:translate(-2px,0) rotate(-1deg)}80%{transform:translate(2px,0)}}
+@keyframes wgoB{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(70px) rotate(8deg) scale(.9)}}
+@keyframes wgoF{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(40px) rotate(-6deg)}}
+@keyframes wgoX{0%{opacity:0;transform:scale(.4)}35%{opacity:1;transform:scale(3)}100%{opacity:0;transform:scale(9)}}
+.wgt.lite .kh{animation:none;opacity:.7}
+.wpin.lk span.wgt{filter:drop-shadow(0 4px 5px #000b)!important;opacity:1!important;text-shadow:none!important}
+.wpin.lk.far span.wgt{filter:grayscale(.45) brightness(.8) drop-shadow(0 3px 3px #000a)!important;opacity:.72!important}
+.wpin.lk .wgt span{filter:none!important;opacity:1!important;color:#4a2a0e!important;text-shadow:0 0 1px #f6e2b0!important;font:900 7.6px/1.1 Maplestory,sans-serif!important}
+.wpin.lk .wgt span.gt{display:flex}.wpin.lk.far .wgt span.gt{display:none}`;document.head.appendChild(st);
+const K='slayers_gateseen',ld=()=>{try{return JSON.parse(localStorage.getItem(K))}catch(_){return null}},sv=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(_){}};
+const lite=()=>{const s=G.loadSet?G.loadSet():{};return (R.opt&&R.opt.fx===false)||s.gq=='save'};
+const deco=()=>{if(G.screen!='map')return;const pins=[...document.querySelectorAll('#screen .wpin[data-ch]')];if(!pins.length)return;const s=C.S(),mx=Math.floor(Math.min(s.maxSi,D.FIELDS.length-1)/7),L=lite();
+ let seen=ld();const first=!seen;if(first){seen={};for(let c=0;c<=mx;c++)seen[c]=1}let ch=0;
+ pins.forEach(p=>{const c=+p.dataset.ch;if(p.querySelector('.wgt,.wgo'))return;
+  if(c>mx){const nx=c==mx+1;p.classList.add(nx?'nxt':'far');const im=p.querySelector('img');
+   im.insertAdjacentHTML('afterend',`<span class="wgt${L?' lite':''}"><img src="assets/${nx?'gate_locked.png':'gate_locked_s.png'}" alt="잠김"><i class=kh></i>${nx?`<span class=gt><span>제${c}장 보스</span><span>처치 시 개방</span></span>`:''}</span>`);return}
+  if(!seen[c]){seen[c]=1;ch=1;if(!L)p.insertAdjacentHTML('beforeend',`<div class=wgo><img class=wl src="assets/gate_locked.png"><img class=wr src="assets/gate_locked.png"><i class=wf></i></div>`);const g=p.querySelector('.wgo');g&&setTimeout(()=>g.remove(),1700)}});
+ if(first||ch)sv(seen)};
+G.gateDeco=deco;const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();})();
