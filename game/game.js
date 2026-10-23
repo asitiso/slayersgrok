@@ -3656,3 +3656,21 @@ body.tglite #screen .tog i{transition:none!important}`;document.head.appendChild
 const lite=()=>{const s=G.loadSet?G.loadSet():{};return (typeof R!='undefined'&&R.opt&&R.opt.fx===false)||s.gq=='save'};let last=null;
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('#screen .tog[data-set]');if(t)last=t.dataset.set},true);
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{const L=lite();document.body.classList.toggle('tglite',L);if(G.screen=='settings'&&last&&!L){const t=document.querySelector(`#screen .tog[data-set="${last}"]`);if(t){t.classList.add('tgf');void t.offsetWidth;requestAnimationFrame(()=>t.classList.remove('tgf'))}}last=null}catch(_){}return r}})();
+
+/* v220: (1) settings top cards (#nkRow/#svRow/#ntRow are .card.row, so they inherited the parchment-row dark brown text on the dark card) → cream text + dark shadow. (2) 화룡전식 volume sliders: input[data-vol] wrapped in .sldw with sld_track.png 9-slice track, sld_fill.png 9-slice fill whose width follows the thumb (CSS var --p updated by an extra input listener), sld_knob.png thumb. Slider logic/values untouched. Visual only. */
+(function(){const st=document.createElement('style');st.textContent=`
+#screen :is(#nkRow,#svRow,#ntRow) .f :is(b,small){color:#fff3d8!important;text-shadow:0 1px 2px #000,0 0 3px #000c!important}
+#screen :is(#nkRow,#svRow,#ntRow) .f small{color:#f0dcb4!important;opacity:.95!important}
+#screen .sldw{position:relative;flex:1;height:26px;display:block;margin:0 2px}
+#screen .sldw .sldt,#screen .sldw .sldf{position:absolute;left:0;top:50%;height:16px;margin-top:-8px;box-sizing:border-box;border:8px solid transparent;border-image:url(assets/sld_track.png) 20 fill / 8px stretch;pointer-events:none}
+#screen .sldw .sldt{right:0}
+#screen .sldw .sldf{border-image-source:url(assets/sld_fill.png);width:calc(13px + (100% - 26px) * var(--p,0));min-width:16px}
+#screen .sldw input[type=range]{position:absolute;inset:0;width:100%;height:100%;margin:0;-webkit-appearance:none;appearance:none;background:transparent!important;accent-color:auto;cursor:pointer}
+#screen .sldw input[type=range]::-webkit-slider-runnable-track{background:transparent;height:26px;border:0}
+#screen .sldw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border:0;border-radius:50%;background:url(assets/sld_knob.png) center/contain no-repeat;filter:drop-shadow(0 2px 2px #0009)}
+#screen .sldw input[type=range]::-moz-range-track{background:transparent;border:0}
+#screen .sldw input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:url(assets/sld_knob.png) center/contain no-repeat}
+#screen .sldw input[type=range]:active::-webkit-slider-thumb{filter:brightness(.88) drop-shadow(0 1px 1px #0009)}`;document.head.appendChild(st);
+const wrap=()=>{if(G.screen!='settings')return;document.querySelectorAll('#screen input[type=range][data-vol]').forEach(i=>{if(i.parentElement.classList.contains('sldw'))return;const w=document.createElement('span');w.className='sldw';w.innerHTML='<i class=sldt></i><i class=sldf></i>';i.before(w);w.appendChild(i);
+ const upd=()=>{const mn=+i.min||0,mx=+i.max||100;w.style.setProperty('--p',((+i.value-mn)/(mx-mn)).toFixed(4))};upd();i.addEventListener('input',upd)})};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{wrap()}catch(_){}return r};G.sldWrap=wrap})();
