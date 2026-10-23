@@ -1324,3 +1324,12 @@ body:is(.hs-sh,#_x.hs_x) :is(.mkb,.wvb,.wclr,.fevban,.enrb,.bsht,.stban,.tdmg),b
 #stagebar #strt .nd.cu{animation:none!important;box-shadow:0 0 5px #ffcf5a!important}
 #stagebar #strt .nd.cu::before{content:'';position:absolute;left:-1.2px;top:-1.2px;right:-1.2px;bottom:-1.2px;border-radius:50%;box-shadow:0 0 9px #ffcf5a;opacity:0;animation:strpO 1s ease-in-out infinite alternate;pointer-events:none;will-change:opacity}
 @keyframes strpO{to{opacity:1}}
+
+/* r334 더보기 fold-out panel (existing ui_panel frame, borderless icons) */
+#sideF.side{display:none!important;position:absolute;top:310px!important;right:6px!important;left:auto!important;bottom:auto!important;z-index:30;grid-template-columns:repeat(3,54px);gap:8px 4px!important;padding:12px 10px 10px;border-style:solid;border-width:12px;border-image:url(assets/ui_panel.png) 30 fill stretch;box-shadow:0 6px 16px #000c}
+#sideF.side.on{display:grid!important;animation:sfIn .14s ease-out}
+@keyframes sfIn{from{opacity:0;transform:translateY(-6px) scale(.96)}to{opacity:1;transform:none}}
+#sideF.side::before{content:'';position:absolute;right:62px;top:-22px;border:8px solid transparent;border-bottom-color:#e0b85a}
+.side a .grid.gmore{display:flex!important;align-items:center;justify-content:center;gap:4px}
+.side a .grid.gmore i{display:block;width:6px;height:6px;border-radius:50%;background:#ffe9a8;box-shadow:0 1px 1px #000}
+#sidemore{transition:transform .08s}#sidemore:active,#sideF a:active{transform:scale(.9)}
