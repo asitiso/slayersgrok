@@ -3104,3 +3104,24 @@ R.elPlq=(cx,c,W,t,a)=>{try{if(C.B.boss)return false;fr=fr||Object.assign(new Ima
  cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
 const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const ek=!C.B.boss&&R.ekT&&R.ekT.t>0&&R.ekT.t<1.3,el=!C.B.boss&&R.elT&&R.elT.t>0&&R.elT.t<1.6&&performance.now()-seen<250;cls(ek||el?1:0)}catch(_){}return r};/* 정예 처치 text (y≈392) shares the plaque slot */
 })();
+
+/* v199: WAVE CLEAR / wave-advance ribbon — wave_ribbon.png in fixed band 244–332 (clear of elite plaque 341–415 & 정예 처치 392), waits for swarm cut-in banner, suppresses/clears kill callouts while up (existing .wvb gate) */
+(()=>{const C=G.C;const st=document.createElement('style');st.textContent=`
+.wvb.wrib{left:50%;right:auto;top:244px;width:220px;height:88px;margin-left:-110px;display:block;z-index:8;animation:wrib 1.15s ease-out forwards;transform-origin:50% 55%}
+.wvb.wrib img{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 4px #0006)}
+.wvb.wrib span{position:absolute;left:21%;right:21%;top:49px;transform:translateY(-50%);text-align:center;white-space:nowrap;font:900 italic 19px Maplestory,"Noto Sans KR",sans-serif;letter-spacing:.5px;color:#6e1810;text-shadow:1px 1px 0 #fff7de,-1px -1px 0 #fff7de,1px -1px 0 #fff7de,-1px 1px 0 #fff7de,0 0 4px #fff3c8}
+.wvb.wrib span small{font-size:13px;color:#8a3a18}
+.wvb.wrib.fin span{color:#8a1206}
+.wvb.wrib.out{animation:wribo .2s ease-in forwards}
+@keyframes wrib{0%{opacity:0;transform:scaleX(.06) scaleY(.75)}16%{opacity:1;transform:scaleX(1.1) scaleY(1.03)}26%{transform:scale(.98)}32%{transform:scale(1)}78%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-16px)}}
+@keyframes wribo{to{opacity:0;transform:scaleX(.6)}}`;document.head.appendChild(st);
+const q=[];let busy=0,cur=null,w=0;
+const cut=()=>(!C.B.boss&&R.ccut&&R.ccut.t<1)||!!document.querySelector(".wcsl");
+const show=it=>{const b=document.getElementById('battle');if(!b||C.B.boss||G.screen||G.storyOn){busy=0;return pump()}
+b.querySelectorAll('.mkb,.wvb:not(.tgb)').forEach(x=>x.remove());const d=document.createElement('div');d.className='wvb wrib'+(it.fin?' fin':'');d.innerHTML=`<img src="${A}wave_ribbon.png" alt=""><span>${it.h}</span>`;b.appendChild(d);cur=d;
+const end=()=>{if(R._wrHold)return setTimeout(end,100);if(cur!==d)return;cur=null;d.remove();busy=0;pump()};setTimeout(end,1150)};
+const pump=()=>{if(busy||!q.length)return;busy=1;w=0;const go=()=>{if(C.B.boss){q.length=0;busy=0;return}if(cut()&&w<2500){w+=100;setTimeout(go,100)}else if(w>=2500){q.shift();busy=0;pump()}else show(q.shift())};go()};
+new Image().src=A+"wave_ribbon.png";R._wrq=()=>{q.length=0;busy=0;if(cur){cur.remove();cur=null}};R.waveRib=(h,fin)=>{if(q.length>1)q.shift();q.push({h,fin});pump()};
+const ok=C.ev.kill;C.ev.kill=function(e){const r=ok&&ok.apply(this,arguments);try{document.querySelectorAll('#battle .wclr').forEach(f=>{if(f._rb)return;f._rb=1;const t=f.querySelector('b');if(t){t.remove();R.waveRib('WAVE CLEAR')}})}catch(_){}return r};
+const os=C.ev.spawn;C.ev.spawn=function(){const k=cur;if(k)k.classList.remove('wvb');/* the base spawn banner code removes every .wvb */let r;try{r=os&&os.apply(this,arguments)}finally{if(k)k.classList.add('wvb')}try{document.querySelectorAll('#battle .wvb:not(.wrib):not(.tgb)').forEach(d=>{const fin=d.classList.contains('fin'),b=d.querySelector('b');d.remove();if(b)R.waveRib(fin?'FINAL WAVE':b.innerHTML,fin)})}catch(_){}return r};
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&cut()&&!cur.classList.contains('out'))cur.classList.add('out');if(cur&&cur.classList.contains('bgone')&&!G._fin&&!document.querySelector('.vic,.bsht'))cur.classList.remove('bgone')/* BN mutex: the transient spawn .wvb we swap out must not hide the ribbon */}catch(_){}return r}})();
