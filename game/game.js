@@ -4715,10 +4715,52 @@ const deBr=e=>{if(e.dataset.r357)return;e.dataset.r357=1;const vt=e.querySelecto
 const deJob=f=>{if(f.dataset.r357)return;f.dataset.r357=1;const jt=f.querySelector('.jt');if(!jt)return;const s=jt.querySelector('small'),sp=jt.querySelector('span');const J=(G.JOB||[])[G.jobT?G.jobT():0]||{};
  jt.classList.add('rs357');if(s){const h=document.createElement('div');h.className='pwhd';h.innerHTML=`<b>${s.textContent}</b>`;s.replaceWith(h)}
  if(sp){const ps=sp.textContent.split('·').map(x=>x.trim());const w=document.createElement('div');w.className='rscd';w.innerHTML=card('st_atk.png','공격력',ps[0].replace(/^공격력\s*/,''))+(ps[1]?card(J.ic||'',ps[1].replace(/\s*획득$/,''),'획득'):'');sp.replaceWith(w)}};
-new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1)continue;if(n.classList.contains('jobfx'))deJob(n);else if(n.classList.contains('brrun')){const e=n.querySelector('.brend');if(e)deBr(e)}else if(n.classList.contains('brend'))deBr(n)}}).observe(document.getElementById('app'),{childList:true,subtree:true});
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1)continue;if(n.classList.contains('jobfx'))deJob(n);else if(n.classList.contains('brrun')){const e=n.querySelector('.brend');if(e)deBr(e)}else if(n.classList.contains('brend'))deBr(n)}}).observe(document.getElementById('app'),{childList:true});
 /* 전직 시련 실패: 기존 토스트 문구를 r356 실패 카드로 표시 */
 let sup=0;const ots=toast;toast=function(t){if(sup&&/^시련 실패/.test(String(t)))return;return ots.apply(this,arguments)};
 const orb=G.rbRun;G.rbRun=function(o,done){if(o&&/전직 시련/.test(o.title||'')&&typeof done=='function'){const req=o.req,title=o.title,d0=done;arguments[1]=function(won){if(won)return d0.apply(this,arguments);sup=1;let r;try{r=d0.apply(this,arguments)}finally{sup=0}try{const J=(G.JOB||[])[(G.jobT?G.jobT():0)+1]||{},pw=C.POW();
  const m=document.createElement('div');m.className='modal pwwarn rsfail rs357';m.innerHTML=`<div class="card mbox"><div class=pwhd><img src="${A}ui_warn.png"><b>${title} 실패</b></div><small class=rsst>${J.bn||''}</small><div class=pwcmp>${card('st_atk.png','권장 전투력',fmt(req))}<span class=pwvs>VS</span>${card('st_atk.png','내 전투력',fmt(pw),pw<req?'me':'')}</div><small class=pwnote>시련 실패… 더 강해져서 다시 도전하세요</small><span class="btn wide" style="margin-top:12px">확인</span></div>`;
  m.onclick=e=>{if(e.target.closest('.btn')||e.target==m)m.remove()};document.getElementById('app').appendChild(m)}catch(_){}return r}}return orb.apply(this,arguments)};
+})();
+;(()=>{// r358 v308 스테이지 VICTORY/DEFEAT · 비무대회 승리/패배 · 월드 보스 결과 — 리본 + 카드 (표시 전용, 기존 값만)
+const A='assets/',st=document.createElement('style');st.textContent=`
+.vic.win,.vic.lose{border-radius:14px;border:2px solid #0b0d0f;padding:14px 6px 12px}
+.vic.clr .chcr{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.vic.win{background:linear-gradient(#3a2a14f0,#201608f0);box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 4px #3a2410,inset 0 0 40px #ffc24a33,0 10px 30px #000c}
+.vic.win.clr{background:linear-gradient(#000a,#000c),url(${A}bg_clear.jpg) center/cover;border:2px solid #0b0d0f;box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 4px #3a2410,0 10px 30px #000c}
+.vic.lose{background:linear-gradient(#3a1e22f0,#221216f0);box-shadow:inset 0 0 0 2px #b0403a,inset 0 0 0 4px #2a0e10,inset 0 0 40px #ff3a2a33,0 10px 30px #000c}
+.vic.win .vt,.vic.lose .vt{display:block;width:240px;height:58px;margin:-4px auto 2px;padding-top:6px;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;font:italic 900 26px/52px Maplestory,sans-serif;letter-spacing:1px;filter:drop-shadow(0 3px 3px #000a)}
+.vic.win .vt{color:#ffe08a;text-shadow:0 2px 0 #3a2008,0 0 10px #ffb02e99}.vic.lose .vt{color:#ffd0c0;text-shadow:0 2px 0 #3a0a08,0 0 8px #ff4a3a88}
+.vic.clr .vt{font-size:26px}
+.vic.win .vr .rcd,.vic.win .vr>span:not(.up):not(.fcl){display:inline-flex;align-items:center;gap:3px;padding:5px 10px;border-radius:10px;background:radial-gradient(circle at 50% 35%,#6a4a1acc,#2a1a08cc);border:2px solid #e8b860;box-shadow:0 0 8px #ffb02e55}
+.vic.win .vr .fcl{display:inline-flex;align-items:center;gap:3px;padding:5px 8px;border-radius:10px;background:#0a2a4acc;border:2px solid #7ac8ff}
+.vic.lose .gdhp{background:#0005;border-radius:8px;padding:5px 8px;margin:6px 6px 0}
+.arres.rs358{gap:0;background:#000d}
+.arres.rs358 .rsbx{position:relative;width:320px;padding:40px 14px 14px;border-radius:14px;border:2px solid #0b0d0f;text-align:center}
+.arres.rs358.w .rsbx{background:linear-gradient(#3a2a14f4,#201608f4);box-shadow:inset 0 0 0 2px #e0a84a,inset 0 0 0 4px #3a2410,inset 0 0 40px #ffc24a33,0 10px 30px #000c}
+.arres.rs358.l .rsbx{background:linear-gradient(#3a1e22f4,#221216f4);box-shadow:inset 0 0 0 2px #b0403a,inset 0 0 0 4px #2a0e10,inset 0 0 40px #ff3a2a33,0 10px 30px #000c}
+.rs358 .pwhd{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:250px;height:62px;background:url(${A}ui_ribbon.png) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;gap:6px;padding-top:6px;filter:drop-shadow(0 3px 3px #000a)}
+.rs358 .pwhd img{width:26px;height:26px;object-fit:contain}
+.arres.rs358 .pwhd b{font:900 22px Maplestory,sans-serif!important;text-shadow:0 2px 0 #3a2008,0 0 8px #ffb02e88!important}.arres.rs358.w .pwhd b{color:#ffe08a!important}.arres.rs358.l .pwhd b{color:#ffd0c0!important}
+.rs358 .rsst{display:block;font:900 13px Maplestory,sans-serif;color:#ffe0b0;margin:0 0 6px;text-shadow:0 1px 0 #000}
+.rs358 .rscd{display:flex;gap:6px;margin:6px 0 10px}
+.rs358 .pwc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;border-radius:10px;background:#0006;border:1px solid #ffffff1a;min-width:0}
+.rs358 .pwc small{font:700 11px 'Noto Sans KR',sans-serif!important;color:#e0d4b8!important;display:flex;align-items:center;gap:3px;white-space:nowrap}.rs358 .pwc small img{width:16px;height:16px;object-fit:contain}
+.rs358 .pwc b{font:900 17px Maplestory,sans-serif!important;color:#fff!important;text-shadow:0 2px 0 #000!important;white-space:nowrap}.rs358 .pwc b.dn{color:#ff8a7a!important}.rs358 .pwc b.upv{color:#7aff8a!important}
+.arres.rs358 #arOk{display:flex;justify-content:center;margin:0 auto;width:220px}
+.rwpop.rs358 .rwt{display:none}.rwpop.rs358 .pwhd b{font:900 20px Maplestory,sans-serif;color:#ffe08a;text-shadow:0 2px 0 #3a2008,0 0 8px #ffb02e88;display:flex;align-items:center;gap:6px}
+.rwpop.rs358 .pwhd{top:-22px;z-index:3}.rwpop.rs358 .rscd{margin:40px 8px 2px}.rwpop.rs358 .rwbox{overflow:visible}`;document.head.appendChild(st);
+const card=(ic,l,v,c)=>`<div class=pwc><small>${ic?`<img src="${A}${ic}">`:''}${l}</small><b class="${c||''}">${v}</b></div>`;
+/* 비무대회 결과 (.arres inside .modal.arep) */
+const deAr=e=>{if(e.dataset.r358)return;e.dataset.r358=1;const t=e.querySelector('b'),sm=e.querySelector('small'),ok=e.querySelector('#arOk');if(!t||!ok)return;const w=e.classList.contains('w');
+ const m=sm&&/점수\s*([+-]?\d+)\s*·\s*<img[^>]*>\s*\+?(\d+)\s*·\s*(.+?)\s*리그\s*([\d,]+)점/.exec(sm.innerHTML);const bx=document.createElement('div');bx.className='rsbx';
+ bx.innerHTML=`<div class=pwhd>${w?'':`<img src="${A}ui_warn.png">`}<b>${t.textContent}</b></div><small class=rsst>비무대회 결과</small>`+(m?`<div class=rscd>${card('st_atk.png','점수',(+m[1]>0?'+':'')+(+m[1]),+m[1]<0?'dn':'upv')}${card('it2_gem.png','보석','+'+m[2])}${card('ic_trophy.png',m[3]+' 리그',m[4]+'점')}</div>`:'');
+ if(!m&&sm){sm.classList.add('rsst');bx.appendChild(sm)}bx.appendChild(ok);t.remove();if(m&&sm)sm.remove();e.classList.add('rs358');e.appendChild(bx)};
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1||!n.classList.contains('arep'))continue;const bx=n.querySelector('.arbox');if(!bx)continue;const o=new MutationObserver(()=>{const e=bx.querySelector('.arres');if(e){o.disconnect();deAr(e)}else if(!n.isConnected)o.disconnect()});o.observe(bx,{childList:true})}}).observe(document.getElementById('app'),{childList:true});
+/* 월드 보스 결과 (rewardPop, .rwt = 토벌 종료!) */
+const deWb=d=>{if(d.dataset.r358)return;const bx=d.querySelector('.rwbox'),t=d.querySelector('.rwt'),s=d.querySelector('.rws');if(!bx||!t||!/토벌 종료/.test(t.textContent)||!s)return;d.dataset.r358=1;
+ const m=/^(.+?)\s*·\s*피해\s*(.+?)\s*·\s*오늘\s*(\d+)위$/.exec(s.textContent.trim());if(!m)return;d.classList.add('rwclr','rs358');
+ const cr=document.createElement('div');cr.className='rwcr';const hd=document.createElement('div');hd.className='pwhd';hd.innerHTML=`<b>${t.innerHTML}</b>`;bx.prepend(cr,hd);
+ const w=document.createElement('div');w.className='rscd';w.innerHTML=card('ic_trophy.png','등급',m[1])+card('wb_sword.png','피해',m[2])+card('tt_crown.png','오늘 순위',m[3]+'위');s.replaceWith(w)};
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('rwpop'))deWb(n)}).observe(document.body,{childList:true});
 })();
