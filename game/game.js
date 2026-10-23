@@ -3728,3 +3728,15 @@ const s=document.getElementById('screen');if(s)new MutationObserver(()=>{if(SC[G
 
 /* v226 (r275): wave ribbon (wrib, r248 BN priority queue untouched) - full strength for the first ~0.6s, then thins to half opacity and lifts away so a busy final-wave fight shows through; visual only */
 (()=>{const st=document.createElement('style');st.textContent='@keyframes wrib{0%{opacity:0;transform:scaleX(.06) scaleY(.75)}16%{opacity:1;transform:scaleX(1.1) scaleY(1.03)}26%{transform:scale(.98)}32%{transform:scale(1)}52%{opacity:1;transform:translateY(0)}70%{opacity:.5;transform:translateY(-4px) scale(.96)}100%{opacity:0;transform:translateY(-16px) scale(.94)}}';document.head.appendChild(st)})();
+;(()=>{/* v227 화룡전-style rarity frames on 동료 상세 카드 (.trv): hc_frame_g2..g4 9-slice + separate crest/gem overlays (not stretched); hc_statplate behind 공격 배율 / material rows */
+const F={g2:{W:259,H:493,tb1:31,bb0:457,S:61,cw:137,ch:96,cb:80,gw:33,gh:64,gb:19},g3:{W:255,H:496,tb1:30,bb0:459,S:61,cw:168,ch:106,cb:77,gw:30,gh:63,gb:21},g4:{W:251,H:482,tb1:29,bb0:448,S:75,cw:228,ch:102,cb:73,gw:109,gh:74,gb:26}};
+const K=.72,st=document.createElement('style');let css=`.trv.hcf{position:relative;overflow:visible;border:0;border-radius:0;background:#141a30f0;padding:20px 21px 24px;margin:40px 2px 12px}
+.trv.hcf .trstage{border-radius:6px}.hcfr{position:absolute;inset:-3px;pointer-events:none;z-index:3;border-style:solid}.hccr,.hcgm{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:4}
+.trv.hcf .trcmp,.trv.hcf .trmats{border:solid transparent;border-width:12px 14px;border-image:url(assets/hc_statplate.png) 46 52 fill/12px 14px stretch;background:none;margin:4px 0 0;padding:2px 6px}
+.trv.hcf .trcmp b,.trv.hcf .trcmp small,.trv.hcf .trm small{text-shadow:0 1px 2px #000}`;
+for(const g in F){const f=F[g],T=f.tb1+30,B=f.H-f.bb0+30;css+=`.hcf.${g} .hcfr{border-image:url(assets/hc_frame_${g}.png) ${T} ${f.S} ${B} ${f.S}/${(T*K).toFixed(1)}px ${(f.S*K).toFixed(1)}px ${(B*K).toFixed(1)}px stretch}
+.hcf.${g} .hccr{width:${(f.cw*K).toFixed(1)}px;top:${((f.tb1-f.cb)*K-3).toFixed(1)}px}.hcf.${g} .hcgm{width:${(f.gw*K).toFixed(1)}px;bottom:${((f.H-f.bb0-f.gh+f.gb)*K-3).toFixed(1)}px}\n`}
+st.textContent=css;document.head.appendChild(st);
+const gk=g=>g<=2?'g2':g>=4?'g4':'g3';
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='enhance'||G.enTab!='comp')return r;const v=document.querySelector('#screen .trv');if(!v||v.classList.contains('hcf'))return r;const c=D.COMPS.find(x=>x.k==G.trSel);if(!c)return r;const g=gk(c.g);
+v.classList.add('hcf',g);v.insertAdjacentHTML('beforeend',`<i class=hcfr></i><img class=hccr src="${A}hc_crest_${g}.png"><img class=hcgm src="${A}hc_gem_${g}.png">`)}catch(e){console.warn(e)}return r}})();
