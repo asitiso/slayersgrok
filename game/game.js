@@ -4576,7 +4576,12 @@ const ptab=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.p
  const TB=[['동료','ic3_party.png',rc,[rg]],['세력','fac_human.png',`${on}/${nf}`,[fx,fw]],['프리셋','pp_save.png',`${ns}/${P.length||3}`,[ps]]];
  const i0=G.ptT=TB[G.ptT]?G.ptT:0;const bar=document.createElement('div');bar.className='entabs pttab';
  bar.innerHTML=TB.map((x,i)=>`<span class="${i==i0?'on':''}" data-pt=${i}><img src="assets/${x[1]}">${x[0]}<small>${x[2]}</small></span>`).join('');
+ if(ps&&!ns&&!ps.querySelector('.psemp')){const r=ps.querySelector('.psr');if(r)r.insertAdjacentHTML('beforebegin',`<div class=psemp><img src="assets/pp_save.png"><b>저장된 프리셋이 없습니다</b></div>`)}
  st.after(bar);let at=bar;TB.forEach(x=>x[3].forEach(c=>{if(c){at.after(c);at=c}}));
  const ap=i=>{TB.forEach((x,j)=>x[3].forEach(c=>c&&c.classList.toggle('shhide',j!=i)));bar.querySelectorAll('[data-pt]').forEach(e=>e.classList.toggle('on',+e.dataset.pt==i))};ap(i0);
  bar.querySelectorAll('[data-pt]').forEach(e=>e.onclick=()=>{const i=+e.dataset.pt;if(i===G.ptT)return;G.ptT=i;ap(i);if(sb.scrollTop>bar.offsetTop)sb.scrollTop=bar.offsetTop})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='party'){const sc=document.querySelector('#screen');if(sc)ptab(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r350 협회 가입 hero: guild hall art + receptionist (existing assets), same text */
+const gh=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.gjhero'))return;const c=sb.querySelector(':scope>.card');if(!c||!c.querySelector('img[src$="ic3_guild.png"]'))return;
+ const t=c.querySelector('.ttl'),m=c.querySelector('small');c.classList.add('gjhero');c.innerHTML=`<img class=gjbg src="assets/bg_guild_hall2.jpg"><img class=gjnpc src="assets/npc_guildgirl.png"><div class=gjtx><img src="assets/ic3_guild.png"><b>${t?t.textContent:''}</b><small>${m?m.textContent:''}</small></div>`};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='guild'&&!G.C.S().gj){const sc=document.querySelector('#screen');if(sc)gh(sc)}}catch(e){console.warn(e)}return r}})();
