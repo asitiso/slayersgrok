@@ -10,7 +10,7 @@ const S=C.init(saved);const B=C.B;setTimeout(()=>{const e=document.querySelector
 const G={C,S:()=>C.S(),speed:1,tab:'battle',screen:null};window.G=G;
 const tfmt=s=>{s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
 function toast(t){let q=$('#toastQ');if(!q){q=document.createElement('div');q.id='toastQ';$('#app').appendChild(q)}const old=[...q.children].find(x=>x.innerHTML==t);if(old)old.remove();while(q.children.length>=3)q.firstChild.remove();const d=document.createElement('div');d.className='toast';d.innerHTML=t;q.appendChild(d);setTimeout(()=>d.remove(),1800)}
-function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';if(/^LEVEL UP/.test(t)){if(document.querySelector('#battle .combo.dlo:not(.cbq):not(.cbo)'))d.classList.add('lvu');else{d.classList.add('lvb');G._dloOn&&G._dloOn()}}setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
+function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';if(/^LEVEL UP/.test(t)){if(document.querySelector('#battle .combo.dlo:not(.cbq):not(.cbo)'))d.classList.add('lvp');else{d.classList.add('lvb');G._dloOn&&G._dloOn()}}setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
 function modal(html,cb){const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class=card>${html}<span class="btn wide" style="margin-top:12px">확인</span></div>`;m.onclick=e=>{if(e.target.closest('.btn')||e.target==m){m.remove();cb&&cb()}};$('#app').appendChild(m);return m}
 // core events -> renderer/UI
 Object.assign(C.ev,{hit:R.hit,kill:(e,...a)=>{R.kill(e,...a);if(e&&e.boss){R.hs=Math.max(R.hs||0,.6);if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash';document.body.appendChild(f);setTimeout(()=>f.remove(),700)}}},atk:R.atk,eatk:R.atk,dmgAlly:R.dmgAlly,heal:R.heal,spell:R.spell,walk:R.walk,banner,toast,clear:()=>{renderPanel();resultPop(1)},fail:()=>{renderPanel();resultPop(0)}});
@@ -4276,7 +4276,9 @@ body:has(.modal) .bwarn,body:has(.modal) #battle .vsx,body:has(.modal) #battle .
 /* r328: LEVEL UP banner sits in the low band (numbers there fade via R._dloB), clear of kill banners at 238-300 */
 #battle .banner.lvb{top:212px!important}
 /* r329: while a lowered duo banner holds 362-474, LEVEL UP takes the upper slot (~238) */
-#battle .banner.lvu{top:68px!important}
+/* r330: boss fight with the upper area full: compact LEVEL UP pill just below the lowered duo banner (478-506), over the party area */
+#battle .banner.lvp{top:308px!important;width:fit-content;margin:0 auto;font-size:17px;line-height:24px;height:28px;box-sizing:border-box;padding:0 16px;border-radius:14px;border:2px solid #ffd77a;background:linear-gradient(#7a3a08ee,#3a1a04ee);box-shadow:0 0 0 2px #0b0d0f,0 0 12px #ffb02a99;text-shadow:0 0 6px #ff7a2a,0 2px 0 #5a1a00}
+#battle .banner.lvp.rplv img{height:20px}
 /* r328: speech bubble faded while it overlaps the ally strip / lowered duo band */
 #bubL .bub.bfd{opacity:.15!important}`;document.head.appendChild(st);
 const go=()=>{if(!G._phase)return setTimeout(go,300);const op=G._phase;G._phase=function(){R._phT=performance.now();return op.apply(this,arguments)}};go();
