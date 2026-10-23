@@ -1988,7 +1988,7 @@ const draw=()=>{const el=$('#screen'),s=C.S(),cur=Math.floor(s.si/7),mx=Math.flo
   el.innerHTML=`<img class=sbg src="${A}map_world.jpg" style="filter:blur(6px) brightness(.5)">${head}<div class=cmap style="${G.mapArt[ch]?`background:url(${A}map_ch${ch+1}.jpg) center/cover`:`background-image:url(${A}map_world.jpg);background-size:${bw}px ${bh}px;background-position:-${bx}px -${by}px`}">
   <div class=cban style="background-image:url(${A}chap/ch${ch+1}.jpg)"><small>CHAPTER ${ch+1}</small><b>${D.CH[ch]}</b></div>
   <svg viewBox="0 0 100 100" preserveAspectRatio=none style="position:absolute;inset:0;width:100%;height:100%"><polyline points="${NPx.map(([x,y])=>x+','+y).join(' ')}" fill=none stroke="#fff3c0" stroke-width=.8 stroke-dasharray=".4 2" stroke-linecap=round vector-effect=none /></svg>
-  ${NPx.map(([x,y],j)=>{const i=ch*7+j,lk=i>s.maxSi,bs=j==6,n=G.stStar?G.stStar(i):0;return `<div class="snode ${lk?'lk':''} ${i==s.si?'cur':''} ${bs?'bs':''}" data-n=${i} style="left:${x}%;top:${y}%">${bs?`<img class=sbimg src="${A}${bo.img}">`:''}<img src="assets/node_${lk?'locked':bs?'boss':'normal'}.png"><b>${C.stageName(i)}</b>${lk?'':`<small>${[0,1,2].map(k=>`<i class="${k<n?'on':''}">★</i>`).join('')}</small>`}${bs?`<em>${bo.n}</em>`:''}</div>`}).join('')}
+  ${NPx.map(([x,y],j)=>{const i=ch*7+j,lk=i>s.maxSi,bs=j==6,n=G.stStar?G.stStar(i):0;return `<div class="snode ${lk?'lk':''} ${i==s.si?'cur':''} ${bs?'bs':''}" data-n=${i} style="left:${x}%;top:${y}%">${bs?`<img class=sbimg src="${A}${bo.img}">`:''}<img src="assets/node_${lk?'locked':bs?'boss':(G.nodeTheme?G.nodeTheme(ch):'normal')}.png"${!lk&&!bs&&G.nodeTheme?' class=nt':''}><b>${C.stageName(i)}</b>${lk?'':`<small>${[0,1,2].map(k=>`<i class="${k<n?'on':''}">★</i>`).join('')}</small>`}${bs?`<em>${bo.n}</em>`:''}</div>`}).join('')}
   ${s.si>=ch*7&&s.si<ch*7+7?`<img class=slina src="${A}hero_lina.png" style="left:${NPx[s.si%7][0]}%;top:${NPx[s.si%7][1]}%">`:''}
   <div class=cbar><span class=btn id=wBtn>🗺 월드맵</span><span class="btn schbtn" id=schB><img src=assets/ic3_chest.png>★${G.chStars?G.chStars(ch):0}/21</span><span class=btn id=mapDun2><img src="${A}ic4/gate.png">일일 던전</span></div></div>`;
   $('#wBtn').onclick=()=>{G.mapCh=-1;draw()};$('#schB').onclick=()=>G.starOpen&&G.starOpen(ch);$('#mapDun2').onclick=()=>openScreen('dungeon');
@@ -3601,3 +3601,13 @@ G.stagePanel=panel;
 const deco=()=>{if(G.screen!='map')return;head();const s=C.S();document.querySelectorAll('#screen .snode[data-n]').forEach(n=>{const i=+n.dataset.n;if(n._sp||i>s.maxSi)return;n._sp=1;n.onclick=()=>panel(i)})};
 const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{deco()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
 setInterval(()=>{if(G.screen!='map')document.querySelectorAll('.spv').forEach(x=>x.remove())},500);})();
+
+/* v216: 화룡전식 chapter-themed stage nodes (node_t1..t7.png, oval medallions) replace the generic node_normal per chapter. Mapping by real chapter name + D.FIELDS biome: 1 세이룬 가도 (meadow/town) → leaf · 2 마족의 숲 (forest/darkwood) → mushroom forest · 3 붉은 마왕의 성 → crimson castle · 4 용암 화산 지대 (volcano) → lava fire · 5 얼음 성채 (snow/ice) → ice crystal · 6 천공의 신전 (sky) → cloud+wing · 7 심해 신전 (abyss) → wave+pearl. Extra chapters reuse the nearest biome via D.FIELDS. node_boss / node_locked unchanged; boss gets a stronger red aura so it still stands out. Visual only. */
+;(()=>{const BT={meadow:1,town:1,autumn:1,forest:2,darkwood:2,castle:3,desert:4,volcano:4,beach:4,snow:5,ice:5,sky:6,abyss:7};const FIX=[1,2,3,4,5,6,7];
+G.nodeTheme=c=>{if(c<FIX.length)return 't'+FIX[c];const f=D.FIELDS.slice(c*7,c*7+7),cnt={};f.forEach(k=>{const t=BT[k];if(t)cnt[t]=(cnt[t]||0)+1});const b=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];return b?'t'+b:'normal'};
+const st=document.createElement('style');st.textContent=`
+.snode>img.nt{width:50px!important;height:62px!important;object-fit:contain;filter:drop-shadow(0 3px 4px #000) drop-shadow(0 0 2px #0008)}
+.snode.cur>img.nt{filter:drop-shadow(0 0 6px #fff6b0) drop-shadow(0 0 12px #ffcf40) drop-shadow(0 3px 4px #000)}
+.snode:not(.bs) .ncr{margin-left:10px!important}
+.snode.bs:not(.lk)>img:not(.sbimg){filter:drop-shadow(0 0 7px #ff3a20) drop-shadow(0 0 14px #ff5a2088) drop-shadow(0 3px 4px #000)!important}
+.snode>img.nt+b{margin-top:-6px}`;document.head.appendChild(st);})();
