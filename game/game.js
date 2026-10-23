@@ -4214,3 +4214,19 @@ const S=':is(#_a,#_b,div):is(#_c,#_d,div)',P=`border:solid transparent;border-wi
 #stagebar .trow${S}::before{content:'';position:absolute;left:-6px;right:-2px;top:-3px;bottom:-3px;box-sizing:border-box;z-index:-1;pointer-events:none;${P}}
 body.tglite #battle #idleBtn::before,body.tglite #stagebar #stName::before,body.tglite #stagebar .trow::before{filter:none}`;document.head.appendChild(st);
 })();
+;(()=>{/* v252 r301 (visual only): (A) stage title plate dropped 3px so its top rim clears the HUD bar; (B) #bossBtn = current stage boss portrait (D.BOSSPLAN/D.BOSSES, same pick as core startBoss) in a round gold frame -
+ .off dimmed/greyed, ready = CSS pulse ring (static under low graphics / fx off), .fight red ring; no boss art -> keeps the ϟ glyph on the gold frame. Portrait refreshed by a 500ms check that only writes on change (nothing per frame) */
+const S=':is(#_a,#_b,span):is(#_c,#_d,span)';const st=document.createElement('style');st.textContent=`
+#stagebar #stName:is(#_a,#_b,b):is(#_c,#_d,b){transform:translateY(3px)}
+#stagebar #stName:is(#_a,#_b,b):is(#_c,#_d,b)::before{top:-1px!important;bottom:-2px!important}
+#battle #bossBtn${S}{border-radius:50%!important;box-sizing:border-box!important;border:2.5px solid #ffd76a!important;background:radial-gradient(circle at 50% 40%,#5a2a3a,#1a0a14)!important;box-shadow:0 0 0 1.5px #7a4a12,inset 0 0 6px #000c,0 2px 5px #000a!important;overflow:hidden!important;filter:none!important;opacity:1!important}
+#battle #bossBtn${S}.bsp{background:var(--bsi) 50% 14%/165% auto no-repeat,radial-gradient(circle at 50% 40%,#5a2a3a,#1a0a14)!important}
+#battle #bossBtn${S}.bsp>i{display:none!important}
+#battle #bossBtn${S}::before,#battle #bossBtn${S}::after{display:none!important}
+#battle #bossBtn${S}.off{filter:grayscale(.85) brightness(.62)!important;border-color:#b8a070!important}
+#battle #bossBtn${S}:not(.off):not(.fight){animation:bsbp 1.1s ease-in-out infinite alternate!important}
+#battle #bossBtn${S}.fight{border-color:#ff6a4a!important;box-shadow:0 0 0 1.5px #7a1a12,0 0 8px #ff5a3a,inset 0 0 6px #000c!important}
+@keyframes bsbp{from{box-shadow:0 0 0 1.5px #7a4a12,0 0 4px #ffcf5a,inset 0 0 6px #000c}to{box-shadow:0 0 0 1.5px #7a4a12,0 0 14px 3px #ffcf5a,inset 0 0 6px #000c}}
+:is(body.tglite,body.nofx) #battle #bossBtn${S}:not(.off):not(.fight){animation:none!important;box-shadow:0 0 0 1.5px #7a4a12,0 0 9px 2px #ffcf5a,inset 0 0 6px #000c!important}`;document.head.appendChild(st);
+let last=null;setInterval(()=>{try{const b=document.getElementById('bossBtn');if(!b)return;const s=C.S(),i=s.si,pl=D.BOSSPLAN[Math.floor(i/7)],bo=pl&&D.BOSSES[pl[i%7==6?1:0]],im=bo&&bo.img?'assets/'+bo.img:'';const k=im+'|'+(b._bk||'');if(im===last&&b._bk===1)return;last=im;b._bk=1;if(im){b.style.setProperty('--bsi',`url("${im}")`);b.classList.add('bsp')}else{b.style.removeProperty('--bsi');b.classList.remove('bsp')}}catch(_){}},500);
+})();
