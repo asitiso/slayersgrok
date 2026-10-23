@@ -785,7 +785,7 @@ G.lootN=0;let live=0;
 const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{const q=R._ES().get(e),b=document.getElementById('battle'),tg=document.getElementById('cGold');if(q&&b&&tg&&!G.screen&&live<36){const br=G.rc(b),tr=G.rc(tg),n=e.boss?10:e.el?5:2;
   for(let i=0;i<n;i++){const d=document.createElement('img');d.src='assets/fx_coin.png';d.className='lootc';const x=q.x+(Math.random()-.5)*30,y=q.y-30;d.style.left=x+'px';d.style.top=y+'px';d.style.setProperty('--dx',((Math.random()-.5)*(e.boss?160:70))+'px');d.style.setProperty('--dy',(-30-Math.random()*40)+'px');b.appendChild(d);live++;G.lootN++;
    setTimeout(()=>{d.classList.add('fly');d.style.transform=`translate(${tr.left+tr.width/2-br.left-x}px,${tr.top+tr.height/2-br.top-y}px) scale(.55)`},520+i*45);
-   setTimeout(()=>{d.remove();live--;G.replay(tg,'gbump')},1150+i*45)}}}catch(_){}return ok(e,...a)};
+   setTimeout(()=>{d.remove();live--;G.bump(tg,'gbump')},1150+i*45)}}}catch(_){}return ok(e,...a)};
 })();
 ;(()=>{// v33 companion ultimate: gauge fills, at full fires the companion's own CSKI skill (with its cut-in) + burst. Random procs no longer show the named cut-in.
 G.ultN=0;G._grogT=0;const FX=[];
@@ -794,7 +794,7 @@ const ocs=R.csk;R.csk=(k,s,force)=>{if(force)return ocs(k,s,force);const cc=R.cc
 const busy=()=>R.slowT>0||(R.elT&&R.elT.t<1.6)||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT<1600||C.alive().some(e=>e.boss&&e.grog>0)||(R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||document.querySelector('.bwarn,.combo,.enrb,.vic,.chap');
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');let fired=0;
  B.allies.forEach((a,i)=>{const el=pp[i];if(el&&!el.querySelector('.ugb'))el.insertAdjacentHTML('beforeend','<div class=ugb><i></i></div>');
-  if(!a.c||a.hp<=0||!(D.CSKI||{})[a.k])return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){$sw(el.querySelector('.ugb i').style,'width',(Math.round(a._ug*200)/2)+'%');el.classList.toggle('ugf',a._ug>=1)}
+  if(!a.c||a.hp<=0||!(D.CSKI||{})[a.k])return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){$sw(el.querySelector('.ugb i').style,'transform','scaleX('+(Math.round(a._ug*200)/200)+')');el.classList.toggle('ugf',a._ug>=1)}
   if(fired||a._ug<1||G.screen||(!G.S().autoSpell&&G._ugPick!=a.k)||!C.alive().some(e=>R._ES().get(e))||(G._ugPick&&G._ugPick!=a.k)||busy())return;G._ugPick=null;const q=R._AS().get(a.k);if(!q)return;R.ccCd=0;ocs(a.k,q,true);a._ug=0;G.ultN++;G._ultT=performance.now();fired=1;G.lastUlt=D.CSKI[a.k][1];
   setTimeout(()=>{try{if(a.c.healer){C.aliveAllies().forEach(x=>{const h=x.max*.25;x.hp=Math.min(x.max,x.hp+h);C.ev.heal&&C.ev.heal(x,h)})}
    else{const T=C.alive().slice().sort((p,q)=>(q.boss?1:0)-(p.boss?1:0)).slice(0,a.c.aoe?6:3);T.forEach(t=>C.hitEnemy(t,C.ATK()*C.compMul(a.k)*4,true,{sp:'ult_'+a.k}))}
@@ -1182,7 +1182,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];let gT=0;const lastA={};let 
 const lay=()=>{if(!layer||!layer.isConnected){layer=document.createElement('div');layer.id='bubL';const bt=document.getElementById('battle');bt&&bt.appendChild(layer)}return layer};
 const say=(k,type,vars,force)=>{try{if(G.storyOn||(G.saverState&&G.saverState())||(G.set&&!G.set.bubble))return;const now=performance.now();if(!force&&(now-gT<2600||now-(lastA[k]||0)<7000))return;const T=(L[k]||L._)[type]||L._[type];if(!T)return;const AS=R._AS&&R._AS();if(!AS||!AS.get(k))return;gT=now;lastA[k]=now;
  live.splice(0).forEach(q=>q.d.remove());const d=document.createElement('div');d.className='bub '+type;d.textContent=pick(T).replace('{n}',(vars&&vars.n)||'');lay().appendChild(d);const o={k,d,t:now};live.push(o);setTimeout(()=>{d.classList.add('out');setTimeout(()=>{d.remove();const i=live.indexOf(o);i>=0&&live.splice(i,1)},250)},1700)}catch(_){}};
-const place=()=>{const AS=R._AS&&R._AS();if(AS)live.forEach(o=>{const s=AS.get(o.k);if(!s)return;if(!o.w)o.w=o.d.offsetWidth;const w=o.w||100,x=Math.max(56+w/2,Math.min(328-w/2,s.x)),y=s.y-118;o.d.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`});requestAnimationFrame(place)};requestAnimationFrame(place);
+const place=()=>{const AS=R._AS&&R._AS();if(AS)live.forEach(o=>{const s=AS.get(o.k);if(!s)return;if(!o.w)o.w=o.d.offsetWidth;const w=o.w||100,x=Math.max(56+w/2,Math.min(328-w/2,s.x)),y=s.y-118;$sw(o.d.style,'transform',`translate(${x}px,${y}px) translate(-50%,-100%)`)})};(G._post=G._post||[]).push(place);/* r314: runs after the canvas frame, not in its own earlier rAF */
 const alive=()=>(C.aliveAllies?C.aliveAllies():[]).map(a=>a.k);const rnd=()=>{const a=alive();return a[Math.floor(Math.random()*a.length)]};
 const hook=(n,f)=>{const o=C.ev[n];C.ev[n]=function(){const r=o&&o.apply(this,arguments);try{f.apply(this,arguments)}catch(_){}return r}};
 hook('spell',(sp)=>{if(sp&&!sp.heal&&Math.random()<.35)say('lina','sp',{n:sp.n})});
@@ -1835,7 +1835,7 @@ let live=0,ft=null;const ok=C.ev.kill;C.ev.kill=(e,...a)=>{const r=ok(e,...a);tr
  const cr=cv.getBoundingClientRect(),f=cr.width/cv.clientWidth,tr=tg.getBoundingClientRect(),n=e.boss?8:e.el?4:2;
  for(let i=0;i<n;i++){const d=document.createElement('i');d.className='xpo';document.body.appendChild(d);live++;const x0=cr.left+q.x*f+(Math.random()-.5)*26,y0=cr.top+(q.y-34)*f,mx=x0+(Math.random()-.5)*60,my=y0-40-Math.random()*40,x1=tr.left+tr.width*(.35+Math.random()*.5),y1=tr.top+tr.height/2,D=650+Math.random()*250+i*60;
   const an=d.animate([{transform:`translate(${x0}px,${y0}px) scale(.3)`,opacity:0},{transform:`translate(${mx}px,${my}px) scale(1.15)`,opacity:1,offset:.32},{transform:`translate(${(mx+x1)/2}px,${Math.min(my,y1)-10}px) scale(1)`,opacity:1,offset:.7},{transform:`translate(${x1}px,${y1}px) scale(.5)`,opacity:.9}],{duration:D,delay:120+i*40,easing:'cubic-bezier(.45,.05,.55,.95)',fill:'both'});
-  an.onfinish=()=>{d.remove();live--;tg.classList.add('xpfl');clearTimeout(ft);ft=setTimeout(()=>tg.classList.remove('xpfl'),90)};an.oncancel=()=>{d.remove();live--}}}catch(_){}return r};
+  an.onfinish=()=>{d.remove();live--;G.bump(tg,'xpfl')};an.oncancel=()=>{d.remove();live--}}}catch(_){}return r};
 })();
 
 ;(()=>{// v112b 컷인 중 총 피해 패널 숨김
@@ -2837,7 +2837,7 @@ document.addEventListener('pointerdown',e=>{const a=e.target.closest&&e.target.c
 #skills .sk.rdyfx::before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#fff6d0cc,#ffc94a55 50%,#0000 70%);animation:skflash .4s ease-out forwards;pointer-events:none;z-index:4}
 body.fxoff #skills .sk.rdyfx::after,body.fxoff #skills .sk.rdyfx::before{display:none}`;document.head.appendChild(st);
 const fxOn=()=>!R.opt||R.opt.fx!==false;
-const pulse=e=>{if(!e)return;G.replay(e,'lpop')};
+const pulse=e=>{if(!e)return;G.bump(e,'lpop')};
 let lastG=0,lastO=0;const prev=R.onCoin;
 R.onCoin=k=>{const now=performance.now();if(k=='orb'){if(fxOn()&&now-lastO>90){lastO=now;pulse(document.querySelector('#navroll .cnt'))}return}
  if(!fxOn()){prev&&prev(k);return}if(now-lastG>90){lastG=now;pulse(document.getElementById('cGold'))}};
@@ -4263,7 +4263,7 @@ const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const
 /* r308 v258: ally portrait 필살 gauge readability — reads only the existing a._ug fill (.ugb i width) and .ugf ready class set by the v-ult tick; thicker framed bar, gold when ready, pulsing ready ring (static under low graphics / fx off). No tap or timing change */
 ;(()=>{const X=':is(#_u1,#_u2,div):is(#_u3,#_u4,div)',st=document.createElement('style');st.textContent=`
 #partycol .pp>.ugb${X}{height:4px!important;background:#0a1430!important;border:1px solid #000!important;border-top:0!important;border-radius:0 0 3px 3px!important;overflow:hidden!important}
-#partycol .pp>.ugb${X}>i{background:linear-gradient(90deg,#2a7cff,#7ad8ff 70%,#e0f8ff)!important;box-shadow:0 0 4px #4ab8ff!important;transition:width .25s linear}
+#partycol .pp>.ugb${X}>i{background:linear-gradient(90deg,#2a7cff,#7ad8ff 70%,#e0f8ff)!important;box-shadow:0 0 4px #4ab8ff!important;width:100%!important;transform:scaleX(0);transform-origin:0 50%;transition:transform .25s linear;will-change:transform}/* r314: fill via compositor scaleX, was width */
 #partycol .pp.ugf>.ugb${X}>i{background:linear-gradient(90deg,#ffb02e,#fff2a0)!important;box-shadow:0 0 6px #ffd25a!important;animation:ugP .6s ease-in-out infinite alternate}
 #partycol .pp.ugf::before{content:'';position:absolute;left:-2px;top:-2px;width:44px;height:40px;border-radius:7px;border:2px solid #9ae8ff;box-shadow:0 0 10px 2px #4ab8ff,inset 0 0 8px #4ab8ffaa;pointer-events:none;z-index:2;animation:ugP .6s ease-in-out infinite alternate}
 @keyframes ugP{from{opacity:.6}to{opacity:1}}
@@ -4277,3 +4277,15 @@ const want=()=>{const s=C.S(),i=s.si|0,L=['assets/vs_bg.jpg','assets/'+((s.job||
  L.M=M;return L};
 let busy=0;const step=()=>{if(busy||document.hidden)return;let u=null,lo=0;const W=want();for(const x of W)if(!K[x]){u=x;break}if(!u){for(const x of W.M)if(!K[x]){u=x;lo=1;break}}if(!u)return;busy=1;ric(()=>{const im=new Image();K[u]=im;im.decoding='async';im.src=u;const done=()=>{busy=0;setTimeout(step,lo?250:50)};(im.decode?im.decode():Promise.reject()).then(done,done)},{timeout:3000})};
 G._pdc=()=>Object.keys(K);setTimeout(step,2500);setInterval(step,2000)})();
+
+;(()=>{/* r314: (a) G.bump - HUD bumps as el.animate (no class churn / style invalidation sets), same keyframes as the CSS they replace: gbmp .25s, cpop .25s ease-out + slotglow .45s ease-out on #cGold, xpfl flash (.05s in, lit to 90ms, .35s out). (b) G._post callbacks run after the whole canvas frame so their DOM writes never sit ahead of ctx.font. Display only. */
+const st=document.createElement('style');st.textContent='#battle>.hud #cGold{border-radius:10px!important}';document.head.appendChild(st);
+const CP=[{easing:'ease-out'},{transform:'scale(1.25)',color:'#fff6a0',offset:.4,easing:'ease-out'},{}],SG=[{boxShadow:'0 0 0 0 #ffd77a00',easing:'ease-out'},{boxShadow:'0 0 10px 3px #ffd77acc',offset:.35,easing:'ease-out'},{boxShadow:'0 0 0 0 #ffd77a00'}],GB=[{easing:'ease'},{transform:'scale(1.18)',filter:'brightness(1.5)',offset:.5,easing:'ease'},{}],XF=[{filter:'none'},{filter:'brightness(1.8) drop-shadow(0 0 4px #7fe3ff)',offset:50/440},{filter:'brightness(1.8) drop-shadow(0 0 4px #7fe3ff)',offset:90/440},{filter:'none'}];
+const run=(el,k,kf,o)=>{const m=el._ba||(el._ba={});if(m[k])m[k].cancel();m[k]=el.animate(kf,o)};
+G.bump=(el,k)=>{if(!el)return;if(!el.animate)return G.replay(el,k);try{
+ if(k==='xpfl'){const m=el._ba,a=m&&m.xpfl;if(a&&a.playState==='running'&&a.currentTime>=50&&a.currentTime<=90){a.currentTime=50;return}run(el,'xpfl',XF,{duration:440});return}
+ if(k==='lpop'){el._lp=1;run(el,'cp',CP,{duration:250});if(el.id==='cGold')run(el,'sg',SG,{duration:450});return}
+ if(k==='gbump'){if(el._lp)return;/* CSS: #cGold.lpop rule outranked .gbump once lpop was on, so gbmp only showed before the first coin pulse */run(el,'gb',GB,{duration:250});return}
+ G.replay(el,k)}catch(_){G.replay(el,k)}};
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);const P=G._post;if(P)for(let i=0;i<P.length;i++){try{P[i]()}catch(_){}}return r};
+})();
