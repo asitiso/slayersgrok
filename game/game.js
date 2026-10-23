@@ -3849,3 +3849,22 @@ css+=`body:is(.tglite,.nofx) #screen .aoc.aof{filter:none!important}body:is(.tgl
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='arena')return r;const rf=document.querySelector('#screen #rf');if(rf)rf.classList.add('aorf');
 document.querySelectorAll('#screen .aoc:not(.aof)').forEach(c=>{const d=c.classList.contains('hard')?'hard':c.classList.contains('easy')?'easy':'mid',g=F[d].g;c.classList.add('aof');if(d=='mid')c.classList.add('mid');
 c.insertAdjacentHTML('beforeend',`<i class=aofr></i><img class=aocr src="${A}hc_crest_${g}.png"><img class=aogm src="${A}hc_gem_${g}.png">`)})}catch(e){console.warn(e)}return r}})();
+;(()=>{/* v235 r284 동료 소환: su_blue/su_purple plates (r284 cut, near-native aspect → plain 100% background, no slicing so studs stay crisp) on #su1/#su10 with r267 pressed state; r269 sld gauges on 마일리지 (thin _s) and 확정까지 (full); hc_statplate rate chips. Visual only, real inline widths kept */
+const X=':is(#_s1,#_s2,span):is(#_s3,#_s4,span)',D=':is(#_s5,#_s6,div):is(#_s7,#_s8,div)',st=document.createElement('style');
+const ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`;
+st.textContent=`#screen .sumbtns{gap:8px;margin:8px 0 4px}
+#screen .sumbtns .pill${X}{min-height:60px;border:0!important;border-radius:0!important;background:url(${A}su_blue.png) center/100% 100% no-repeat!important;box-shadow:none!important;padding:8px 16px 8px 44px!important;font-family:Maplestory,sans-serif!important;font-weight:900;color:#fff!important;text-shadow:${ol('#0a1c5a')}!important;filter:drop-shadow(0 3px 3px #0008);transition:transform .08s}
+#screen .sumbtns .pill.red${X}{background-image:url(${A}su_purple.png)!important;text-shadow:${ol('#3a1268')}!important;filter:drop-shadow(0 3px 3px #0008) drop-shadow(0 0 6px #c89aff88)}
+#screen .sumbtns .pill${X}>img.smt{left:12px;height:38px}
+#screen .sumbtns .pill${X} small{font-family:Maplestory,sans-serif;font-size:12px;color:#fff;text-shadow:${ol('#000a')}}
+#screen .sumbtns .pill${X}:active{transform:scale(.95)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}
+body:is(.tglite,.nofx) #screen .sumbtns .pill.red${X}{filter:drop-shadow(0 3px 3px #0008)}
+#screen .smr>div${D}{border:solid transparent!important;border-width:10px 12px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/10px 12px stretch!important;background:none!important;border-radius:0!important;box-shadow:none!important;padding:0 2px 0 5px!important;box-sizing:border-box}
+#screen .smr>div${D} b,#screen .smr>div${D} small{text-shadow:0 1px 2px #000,0 0 2px #000}
+#screen .milebar .bar${D}{height:0!important;box-sizing:content-box!important;border:6px solid transparent!important;border-image:url(${A}sld_track_s.png) 12 fill/6px stretch!important;background:none!important;border-radius:0!important;overflow:visible!important;position:relative;box-shadow:none!important}
+#screen .milebar .bar${D}>i{position:absolute!important;display:block;left:-6px;top:-6px;height:0!important;max-width:100%;box-sizing:content-box!important;border:6px solid transparent;border-image:url(${A}sld_fill_s.png) 12 fill/6px stretch;background:none!important;border-radius:0!important;box-shadow:none!important}
+#screen .smp .bar${D}{height:0!important;box-sizing:content-box!important;border:8px solid transparent!important;border-image:url(${A}sld_track.png) 20 fill/8px stretch!important;background:none!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}
+#screen .smp .bar${D}>i{left:-8px!important;top:-8px!important;bottom:auto!important;height:0!important;max-width:100%;box-sizing:content-box!important;border:8px solid transparent;border-image:url(${A}sld_fill.png) 20 fill/8px stretch;background:none!important;border-radius:0!important;box-shadow:none!important}
+#screen .smp .bar${D}>span{inset:-8px!important;line-height:16px!important;z-index:1}
+#screen :is(.milebar,.smp) .bar${D}>i:is([style^="width:0%"],[style^="width:0;"],[style^="width:NaN"]){display:none!important}`;
+document.head.appendChild(st)})();
