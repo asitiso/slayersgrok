@@ -135,7 +135,11 @@ body,#app{font-family:"Maplestory","Noto Sans KR","Apple SD Gothic Neo",sans-ser
 .av img{width:100%;object-fit:cover;object-position:top}
 .pinfo{background:linear-gradient(90deg,#000a,#0000);padding:2px 30px 3px 6px;border-radius:4px}
 .pinfo b{font-size:14px;color:#c7f36a;display:block}.pinfo small{font-size:12px;font-weight:900;color:#ffe9a8}.pinfo small:before{content:"";display:inline-block;width:13px;height:13px;margin-right:3px;vertical-align:-2px;background:url(assets/wb_sword.png) center/contain no-repeat}
-img.hi{height:1.25em;width:auto;vertical-align:-.25em;margin-right:2px;pointer-events:none;filter:drop-shadow(0 1px 0 #0008)}/* r309: existing-art icons in place of emoji in the battle HUD */
+img.hi{height:1.25em;width:auto;vertical-align:-.25em;margin-right:2px;pointer-events:none}/* r310: no CSS filter (no extra paint layer when the pill text ticks) */
+#bossNm{position:absolute;left:105px;top:226px;width:150px;height:14px;z-index:6;display:flex;align-items:center;gap:3px;pointer-events:none;contain:strict}
+#bossNm img{width:16px;height:11px;flex:none}
+#bossNm b{font:900 10.5px Maplestory,"Noto Sans KR",sans-serif;color:#ffe2a0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;-webkit-text-stroke:0;text-shadow:0 0 2px #1a0004,0 1px 0 #1a0004,1px 0 0 #1a0004,-1px 0 0 #1a0004,0 -1px 0 #1a0004}
+body:not(.bfon) #bossNm{visibility:hidden}/* r309: existing-art icons in place of emoji in the battle HUD */
 :is(#olBtn,#nbBtn,#svBtn,#dpsBtn):is(#olBtn,#nbBtn,#svBtn,#dpsBtn,span){white-space:nowrap!important;flex-wrap:nowrap!important;flex-direction:row!important;align-items:center!important;gap:1px}
 :is(#olBtn,#nbBtn,#svBtn,#dpsBtn) img.hi{height:14px;vertical-align:middle;flex:none}
 .trow img.hi{height:13px}
