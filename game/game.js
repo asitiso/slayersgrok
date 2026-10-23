@@ -3065,7 +3065,9 @@ G._bossLoot=()=>{}/* v110 loot burst superseded by the chest moment */})();
 #battle.ccon .mkb{top:362px!important;transition:top .12s}
 #battle.ccon .tdmg{top:392px!important}
 /* r317: XP orbs (fixed, body-level, z40) flew over the cut-in title; dim them while a field cut-in shows (filter, since the orb's WAAPI flight owns opacity) */
-body.ccon .xpo,body.lcut .xpo{filter:opacity(.35)}`;document.head.appendChild(st);
+body.ccon .xpo,body.lcut .xpo{filter:opacity(.35)}
+/* r319: Lina's full cut-in band spans ~y 240-430, so the multi-kill banner drops below it (doubled id outranks the ccon/elon/lvon/qson rules) */
+body.lcut #battle#battle .mkb{top:448px!important;transition:top .12s}`;document.head.appendChild(st);
 const FW=640,FH=350,Y0=196,BW=270;let lay=null,lx=null,dirty=0,fr=null;
 const IC={},img=s=>IC[s]||(IC[s]=Object.assign(new Image(),{src:A+s}));
 const ensure=(W,H)=>{const b=document.getElementById('battle');if(!b)return null;if(!lay||!lay.isConnected){lay=document.createElement('canvas');lay.id='ccLayer';b.appendChild(lay);lx=lay.getContext('2d')}
@@ -4293,7 +4295,7 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);const P=G._
 })();
 
 ;(()=>{/* r315: companion ult cut-in art. If assets/cut/<k>_ult.png is listed in ULT and decoded, the field cut-in (ccFrame, non-boss) draws a Lina-style tilted band with the full art sliding in; otherwise the arch-banner portrait as before. Boss fights keep the slim strip. Off under low graphics / fx off (portrait banner), and R.opt.cut=off already suppresses the cut-in. Art decoded at idle. Display only. */
-const ULT={gourry:1,amelia:1,lyra:1,zelgadis:1},IM={};/* r316: +amelia, lyra; r318: +zelgadis */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
+const ULT={gourry:1,amelia:1,lyra:1,zelgadis:1,xellos:1},IM={};/* r319: +xellos *//* r316: +amelia, lyra; r318: +zelgadis */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
 const low=()=>document.body.classList.contains('tglite')||document.body.classList.contains('nofx')||(R.opt&&R.opt.fx===false);
 const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)i._ok=1})}return i};
 const pre=Object.keys(ULT);const step=()=>{const k=pre.shift();if(!k)return;ric(()=>{get(k);setTimeout(step,400)},{timeout:4000})};setTimeout(step,3000);
