@@ -3793,3 +3793,17 @@ ${Q}>i[style^="width:0%"],${Q}>i[style^="width:0;"],${Q}>i[style^="width:NaN"]{d
 #screen .entabs span:is(#_t1,#_t2,span):is(#_t3,#_t4,span) .dot{top:-22px!important;right:-13px!important;transform:scale(.72)!important;z-index:2}
 `;document.head.appendChild(S);
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.getElementById('screen');if(sc)sc.querySelectorAll(':is(.f,.card)>.bar>i').forEach(i=>{const w=parseFloat(i.style.width);i.classList.toggle('ok',w>=99.999)})}catch(e){console.warn(e)}return r}}catch(e){console.warn(e)}})();
+
+/* v232 r281: dungeon selector cards (dc_on/dc_off 9-slice on a ::before layer + dc_gem overlay) on .dgcard and legacy .duntabs; layout box unchanged. Visual only */
+(function(){try{const S=document.createElement('style');const X=':is(#_d1,#_d2,div,span):is(#_d3,#_d4,div,span)';const Q=`#screen :is(.dgc>.dgcard,.duntabs>span)${X}`;
+S.textContent=`
+#screen .dgc{padding-top:10px}
+${Q}{position:relative;isolation:isolate;background:none!important;border-color:transparent!important;box-shadow:none!important;border-radius:0!important;padding-top:9px!important;padding-left:7px!important;padding-right:7px!important;filter:drop-shadow(0 3px 3px #0009)}
+${Q}::before{content:'';position:absolute;inset:-2px;z-index:-1;border:24px solid transparent;border-image:url(${A}dc_off.png) 110 fill/24px stretch;pointer-events:none}
+${Q}.on::before{border-image-source:url(${A}dc_on.png)}
+${Q}.on{transform:translateY(-3px);filter:drop-shadow(0 0 6px var(--dc,#ffd25a)) drop-shadow(0 3px 3px #0009)}
+${Q}.on::after{content:'';position:absolute;left:50%;top:-9px;width:28px;height:21px;margin-left:-14px;background:url(${A}dc_gem.png) center/contain no-repeat;pointer-events:none;z-index:2}
+${Q} b{text-shadow:-1px 0 #1b1008,1px 0 #1b1008,0 -1px #1b1008,0 1px #1b1008,0 2px #1b1008!important}
+${Q} small{color:#f0e6d0!important;text-shadow:0 1px 1px #000,0 0 2px #000}
+${Q}.on small{color:#fff0c8!important}
+`;document.head.appendChild(S)}catch(e){console.warn(e)}})();
