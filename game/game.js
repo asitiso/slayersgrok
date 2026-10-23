@@ -1600,7 +1600,7 @@ const price=g=>g.gold?Math.max(50,Math.round(C.goldKill(Math.max(0,C.S().maxSi))
 const line=(k,l)=>{const L=LN[k]||['…','…','…'];return l>=5?L[2]:l>=3?L[1]:L[0]};
 G.bondGive=(k,gk)=>{const s=C.S(),b=st(),g=GF.find(x=>x.k==gk);if(!g||!s.comps[k])return 0;if(lv(k)>=MX)return -1;if((b.n[k]||0)>=LIM)return -2;const p=price(g);if(g.gold?s.gold<p:s.gems<p)return -3;
  if(g.gold)s.gold-=p;else s.gems-=p;b.n[k]=(b.n[k]||0)+1;const l0=lv(k);b.x[k]=Math.min(TH[MX],(b.x[k]||0)+g.e);const l1=lv(k);if(l1>l0)s.gems+=10*(l1-l0);return {up:l1>l0,l:l1}};
-const hearts=l=>Array.from({length:MX},(_,i)=>`<span class="bh ${i<l?'on':''}"><img src="assets/${i<l?'bd_heart':'bd_socket'}.png"></span>`).join('');
+const hearts=l=>Array.from({length:MX},(_,i)=>`<span class="bh ${i<l?'on':''}"><img src="assets/${i<l?'bd_heart_full':'bd_heart_empty'}.png"></span>`).join('');
 const css=document.createElement('style');css.textContent=`
 .bdsel{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}.bdsel::-webkit-scrollbar{display:none}
 .bdc{flex:0 0 62px;border:2px solid #5a4a6a;border-radius:10px;background:linear-gradient(#2a2238,#17121f);text-align:center;padding:3px 0 2px;position:relative}
@@ -1623,12 +1623,12 @@ const CUT={amelia:1,borin:1,gourry:1,noel:1,sera:1,zelgadis:1,xellos:1,rhea:1,ly
 const draw=up=>{const el=$('#screen'),s=C.S(),b=st();const own=D.COMPS.filter(c=>s.comps[c.k]);
  if(!own.length){el.innerHTML=shell('인연','bg_bond_tavern.jpg','<div class=card style="text-align:center">동료를 소환하면 인연을 쌓을 수 있어요</div>');}
  else{if(!s.comps[b.sel])b.sel=own[0].k;const c=D.COMPS.find(x=>x.k==b.sel),l=lv(c.k),x=b.x[c.k]||0,nx=TH[Math.min(MX,l+1)],pv=TH[l],pct=l>=MX?100:Math.round((x-pv)/(nx-pv)*100),F=D.FACTIONS[c.fac];
- const fl=Array.from({length:7},(_,i)=>`<span class=fl style="left:${8+i*13}%;bottom:${10+(i%3)*8}px;animation-delay:${i*.45}s">♥</span>`).join('');
- el.innerHTML=shell('인연','bg_bond_tavern.jpg',`<div class=bdsel>${own.map(o=>`<div class="bdc ${o.k==c.k?'on':''}" data-bk=${o.k}><span class=bdm><img src="${A}${o.img}"><img class=bdmf src="${A}bd_medal.png"></span><b>${o.n}</b><span class=bl>♥${lv(o.k)}</span></div>`).join('')}</div>
- <div class=bdhero>${fl}<img class=pt src="${A}${CUT[c.k]?'cutc/'+c.k+'.png':c.img}"><div class=sp>「${line(c.k,l)}」</div><div class=nm><b>${c.n}</b> <span style="color:${F.c}">${F.n}</span></div>${up?`<div class=bdpop>인연 Lv.${l} 달성! 💎+10</div>`:''}</div>
- <div class="card bdcard"><div class=ttl>인연 Lv.${l} <span>${hearts(l)}</span></div><div class=bdbar><i style="width:${pct}%"></i></div><small>${l>=MX?'인연 최대!':`다음 단계까지 ${nx-x} · 오늘 선물 ${b.n[c.k]||0}/${LIM}`} · 단계 달성마다 💎10</small>
- <div class=bdg>${GF.map(g=>{const p=price(g),ok=l<MX&&(b.n[c.k]||0)<LIM&&(g.gold?s.gold>=p:s.gems>=p);return `<div class="bdgi ${ok?'':'off'}" data-gf=${g.k}><span class=i>${g.ic}</span><b>${g.n}</b><small>${g.gold?'🪙'+fmt(p):'💎'+p} · +${g.e}</small></div>`}).join('')}</div></div>
- <div class=card><div class=ttl>인연 대사</div>${[1,3,5].map(t=>`<div class="bdln ${l>=t?'':'lock'}">♥${t} ${l>=t?'「'+line(c.k,t)+'」':'🔒 인연 Lv.'+t+' 달성 시 해금'}</div>`).join('')}</div>`);}
+ const fl=Array.from({length:7},(_,i)=>`<span class=fl style="left:${8+i*13}%;bottom:${10+(i%3)*8}px;animation-delay:${i*.45}s"><img src="${A}bd_heart_full.png" alt=""></span>`).join('');
+ el.innerHTML=shell('인연','bg_bond_tavern.jpg',`<div class=bdsel>${own.map(o=>`<div class="bdc ${o.k==c.k?'on':''}" data-bk=${o.k}><span class=bdm><img src="${A}${o.img}"><img class=bdmf src="${A}bd_medal.png"></span><b>${o.n}</b><span class=bl><img class=bdi src="${A}bd_heart_full.png">${lv(o.k)}</span></div>`).join('')}</div>
+ <div class=bdhero>${fl}<img class=pt src="${A}${CUT[c.k]?'cutc/'+c.k+'.png':c.img}"><div class=sp>「${line(c.k,l)}」</div><div class=nm><b>${c.n}</b> <span style="color:${F.c}">${F.n}</span></div>${up?`<div class=bdpop>인연 Lv.${l} 달성! <img class=bdi src="${A}it2_gem.png">+10</div>`:''}</div>
+ <div class="card bdcard"><div class=ttl>인연 Lv.${l} <span>${hearts(l)}</span></div><div class=bdbar><i style="width:${pct}%"></i></div><small>${l>=MX?'인연 최대!':`다음 단계까지 ${nx-x} · 오늘 선물 ${b.n[c.k]||0}/${LIM}`} · 단계 달성마다 <img class=bdi src="${A}it2_gem.png">10</small>
+ <div class=bdg>${GF.map(g=>{const p=price(g),ok=l<MX&&(b.n[c.k]||0)<LIM&&(g.gold?s.gold>=p:s.gems>=p);return `<div class="bdgi ${ok?'':'off'}" data-gf=${g.k}><span class=i><img src="${A}${{f:'bd_flower.png',c:'bd_cookie.png',j:'it2_gem.png'}[g.k]||''}" alt=""></span><b>${g.n}</b><small>${g.gold?'<img class=bdi src="'+A+'it2_gold.png">'+fmt(p):'<img class=bdi src="'+A+'it2_gem.png">'+p} · +${g.e}</small></div>`}).join('')}</div></div>
+ <div class=card><div class=ttl>인연 대사</div>${[1,3,5].map(t=>`<div class="bdln ${l>=t?'':'lock'}">${l>=t?'<img class=bdi src="'+A+'bd_heart_full.png">':'<img class=bdi src="'+A+'bd_heart_empty.png">'}${t} ${l>=t?'「'+line(c.k,t)+'」':'<img class=bdi src="'+A+'sk_lock.png"> 인연 Lv.'+t+' 달성 시 해금'}</div>`).join('')}</div>`);}
  const bk=el.querySelector('#sBack');if(bk)bk.onclick=()=>closeScreen();
  el.querySelectorAll('[data-bk]').forEach(e=>e.onclick=()=>{st().sel=e.dataset.bk;draw()});
  el.querySelectorAll('[data-gf]').forEach(e=>e.onclick=()=>{const r=G.bondGive(st().sel,e.dataset.gf);if(r==-1)return toast('인연이 최대예요');if(r==-2)return toast('오늘은 더 선물할 수 없어요');if(r==-3)return toast('재화가 부족해요');if(r){updateHud();draw(r.up)}})};
@@ -3685,3 +3685,15 @@ const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments)
 const IC={nkBtn:'ic_quill',svGo:'ic_moon',ntGo:'ic_horn'},EM=/^\s*(✏️|✏|🌙|📢)\s*/u;
 const deco=()=>{if(G.screen!='settings')return;Object.entries(IC).forEach(([id,ic])=>{const b=document.getElementById(id);if(!b||b.querySelector('img.sbi'))return;const t=b.firstChild;if(t&&t.nodeType==3&&EM.test(t.textContent)){t.textContent=t.textContent.replace(EM,'');b.insertAdjacentHTML('afterbegin',`<img class=sbi src="assets/${ic}.png" alt="">`)}})};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{deco()}catch(_){}return r};G.setIcDeco=deco})();
+
+/* v222: 인연 screen icons — gift cards 🌼/🍪/💎 → bd_flower / bd_cookie / it2_gem; level row bd_socket/bd_heart → bd_heart_empty/full; portrait badge ♥n, dialogue list ♥t (full if unlocked, empty if locked), floating ♥ and 💎/🪙 price/reward glyphs → images; 🔒 → sk_lock. Counts unchanged (same lv()/t values). Visual only. */
+(function(){const st=document.createElement('style');st.textContent=`
+#screen img.bdi{height:1.25em;width:auto;vertical-align:-.28em;margin:0 2px 0 0;filter:drop-shadow(0 1px 1px #0008)}
+#screen .bdc .bl{display:inline-flex;align-items:center;gap:1px;font-weight:900;color:#ffc0d8;text-shadow:0 1px 2px #000}
+#screen .bdc .bl img.bdi{height:13px}
+#screen .bdgi .i img{height:40px;width:auto;display:block;margin:0 auto 2px;filter:drop-shadow(0 2px 2px #0009)}
+#screen .bdgi small img.bdi{height:13px;vertical-align:-2px}
+#screen .bdln{display:flex;align-items:center;gap:3px}#screen .bdln>img.bdi:first-child{height:17px}
+#screen .bdln.lock img.bdi{opacity:.85}#screen .bdln img.bdi[src*=sk_lock]{height:15px;margin-left:5px}
+#screen .bdhero .fl img{width:22px;height:auto;display:block;filter:drop-shadow(0 0 4px #fff8)}
+#screen .bh{width:24px;height:24px}`;document.head.appendChild(st)})();
