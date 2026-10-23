@@ -3063,16 +3063,18 @@ G._bossLoot=()=>{}/* v110 loot burst superseded by the chest moment */})();
 ;(()=>{const st=document.createElement('style');st.textContent=`
 #ccLayer{position:absolute;left:0;top:0;z-index:45;pointer-events:none}
 #battle.ccon .mkb{top:362px!important;transition:top .12s}
-#battle.ccon .tdmg{top:392px!important}`;document.head.appendChild(st);
+#battle.ccon .tdmg{top:392px!important}
+/* r317: XP orbs (fixed, body-level, z40) flew over the cut-in title; dim them while a field cut-in shows (filter, since the orb's WAAPI flight owns opacity) */
+body.ccon .xpo{filter:opacity(.35)}`;document.head.appendChild(st);
 const FW=640,FH=350,Y0=196,BW=270;let lay=null,lx=null,dirty=0,fr=null;
 const IC={},img=s=>IC[s]||(IC[s]=Object.assign(new Image(),{src:A+s}));
 const ensure=(W,H)=>{const b=document.getElementById('battle');if(!b)return null;if(!lay||!lay.isConnected){lay=document.createElement('canvas');lay.id='ccLayer';b.appendChild(lay);lx=lay.getContext('2d')}
  const mc=b.querySelector('canvas:not(#ccLayer)'),dpr=mc&&mc.width?mc.width/W:(devicePixelRatio||1),pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(lay.width!=pw||lay.height!=ph){lay.width=pw;lay.height=ph;lay.style.width=W+'px';lay.style.height=H+'px'}lx.setTransform(dpr,0,0,dpr,0,0);return lx};
-const clear=()=>{if(dirty&&lx){lx.setTransform(1,0,0,1,0,0);lx.clearRect(0,0,lay.width,lay.height);dirty=0;const b=document.getElementById('battle');b&&b.classList.remove('ccon')}};
+const clear=()=>{if(dirty&&lx){lx.setTransform(1,0,0,1,0,0);lx.clearRect(0,0,lay.width,lay.height);dirty=0;const b=document.getElementById('battle');b&&b.classList.remove('ccon');document.body.classList.remove('ccon')}};
 R.ccFrame=(dt,W,H)=>{try{if(C.B.boss||C.B.wb)return false;fr=fr||img('cutin_frame.png');if(!fr.complete||!fr.naturalWidth)return false;const c=R.ccut,cx=ensure(W,H);if(!cx)return false;
  c.t+=dt;const t=c.t;if(t>=1){clear();return true}
  const ein=Math.min(1,t/.16),eo=t>.8?(1-t)/.2:1,a=Math.max(0,Math.min(ein,eo)),k=BW/FW,h=FH*k,e=1-Math.pow(1-ein,3),x0=8-(1-e)*(BW+20)+(t>.8?-(t-.8)/.2*50:0),y0=Y0;
- cx.clearRect(0,0,W,H);dirty=1;{const bt=document.getElementById('battle');if(!bt.classList.contains('ccon'))bt.classList.add('ccon')};if(R._ccUlt&&R._ccUlt(cx,c,t,a,W,H))return true;cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
+ cx.clearRect(0,0,W,H);dirty=1;{const bt=document.getElementById('battle');if(!bt.classList.contains('ccon')){bt.classList.add('ccon');document.body.classList.add('ccon')}};if(R._ccUlt&&R._ccUlt(cx,c,t,a,W,H))return true;cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
  // bust inside arch (clip: semicircle top + rect)
  const pi=img(c.img);
  cx.save();cx.beginPath();cx.moveTo(45,FH);cx.lineTo(45,140);cx.ellipse(134,140,89,86,0,Math.PI,2*Math.PI);cx.lineTo(223,FH);cx.closePath();cx.clip();
