@@ -3233,13 +3233,45 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&
 new Image().src=A+'achv_plate.png';
 const q=[];let cur=null,busy=0,endT=0,seen=null;const HOLD=2000;
 const bat=()=>document.getElementById('battle');
-const blk=()=>!!document.querySelector('#battle .combo,.vic,.bsht');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd,.vic,.bsht');
 const list=()=>{const o=[];D.ACH.forEach(a=>{const v=C.achVal(a.k);a.g.forEach((g,i)=>{if(v>=g)o.push({id:'a'+a.k+i,t:'업적 달성',h:a.n+' '+(i+1)+'단계',gem:a.gem[i],tk:a.t&&a.t[i],sto:a.st&&a.st[i]})})});C.titlesOwned().forEach(t=>o.push({id:'t'+t.k,t:'칭호 획득',h:'「'+t.n+'」',rw:'공격력 +'+t.atk+'%'+(t.gold?' · 골드 +'+t.gold+'%':'')}));return o};
 const fin=()=>{const d=cur;if(!d)return;if(R._acHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
-const show=it=>{const b=bat();if(!b){busy=0;return}const rw=it.rw||[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">${it.tk}`:'',it.sto?'강화석 '+it.sto:''].filter(Boolean).join(' ');
+const show=it=>{const b=bat();if(!b){busy=0;return}const rw=it.rw||[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">소환권 ${it.tk}`:'',it.sto?'강화석 '+it.sto:''].filter(Boolean).join(' ');
  const d=document.createElement('div');d.className='acp';d.innerHTML=`<img src="${A}achv_plate.png" alt=""><span class=sh></span><div class=tx><em>${it.t}</em><b></b>${rw?`<i>${it.rw?'':'보상 '}${rw}</i>`:''}</div>`;d.querySelector('b').textContent=it.h+(it.more?' 외 '+it.more+'건':'');
  b.appendChild(d);cur=d;endT=setTimeout(fin,HOLD+500)};
 const pump=()=>{if(busy||!q.length)return;busy=1;let w=0;const go=()=>{if((G.screen||G.storyOn||blk())&&w<8000){w+=150;setTimeout(go,150)}else{const it=q.shift();if(q.length){it.more=q.reduce((t,x)=>t+1+(x.more||0),0);q.length=0}show(it)}};go()};
 R.achToast=it=>{if(q.length>=3){const l=q[q.length-1];l.more=(l.more||0)+1;return}q.push(it);pump()};R._acq=()=>{q.length=0;clearTimeout(endT);if(cur){cur.remove();cur=null}busy=0};
 setInterval(()=>{try{if(!C.achVal)return;const l=list(),ids=new Set(l.map(x=>x.id));if(!seen){seen=ids;return}l.forEach(x=>{if(!seen.has(x.id))R.achToast(x)});seen=ids}catch(_){}},500);
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&document.querySelector('#battle .combo')){clearTimeout(endT);fin()}}catch(_){}return r}})();
+
+/* v204: 전설/신화 장비 획득 loot card — loot_card.png (84×125) at left 52, top 462–587: measured clear of party column (x≤48), potions (y≥588), callouts (≤462), 방치보상 (x≥165); shares the duo/achievement band → takes turns with .acp and #battle .combo (waits; slides out early on a duo); real drops only: wraps C.rollOnce (the single equipment source, incl. auto-roll / 30연 뽑기) for r≥4 (전설/신화); slot icon in the starburst window (mythic window hue-shifted red-gold), flip-pop + rarity glow pulse, hold 1.8 s, fade; queue 3 → "외 N건"; waits while a sheet/screen is open so drops show on return; chat line untouched; DOM/CSS only */
+(()=>{const C=G.C;const st=document.createElement('style');st.textContent=`
+#battle .lcd{position:absolute;left:52px;top:462px;width:84px;height:125px;z-index:9;pointer-events:none;perspective:300px;--rc:#b07cff}
+#battle .lcd .in{position:absolute;inset:0;animation:lcIn .55s cubic-bezier(.3,1.4,.5,1) both;transform-origin:50% 55%}
+#battle .lcd .in>img.fr{position:absolute;inset:0;width:100%;height:100%;animation:lcGl 1.1s .5s ease-in-out 2 both}
+#battle .lcd .wn{position:absolute;left:11px;top:27px;width:62px;height:64px;border-radius:7px;background:url(${A}loot_card.png) -11px -27px/84px 125px no-repeat}
+#battle .lcd.r5 .wn{filter:hue-rotate(95deg) saturate(1.35) brightness(1.05)}
+#battle .lcd .wn:after{content:'';position:absolute;inset:0;border-radius:7px;background:radial-gradient(circle,#fff6 0,#fff0 60%);animation:lcPu .9s .5s ease-in-out 2 alternate both}
+#battle .lcd .ic{position:absolute;left:21px;top:36px;width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 4px var(--rc)) drop-shadow(0 2px 2px #000a);animation:lcIc .5s .3s cubic-bezier(.3,1.6,.5,1) both}
+#battle .lcd .lb{position:absolute;left:0;right:0;top:15px;text-align:center;font:900 8px Maplestory,"Noto Sans KR",sans-serif;color:#fff;letter-spacing:-.2px;text-shadow:0 0 3px var(--rc),0 1px 0 #000,1px 0 0 #000,-1px 0 0 #000}
+#battle .lcd .nm{position:absolute;left:9px;width:66px;top:96px;height:14px;display:flex;align-items:center;justify-content:center;font:900 8px Maplestory,"Noto Sans KR",sans-serif;color:#fff0c8;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-shadow:0 0 4px var(--rc),0 1px 0 #000}
+#battle .lcd .mo{position:absolute;right:13px;top:79px;padding:1px 4px;border-radius:6px;background:#1a0c22d0;border:1px solid #e8c060;font:900 7.5px Maplestory,"Noto Sans KR",sans-serif;color:#ffe9a8;text-shadow:0 1px 0 #000}
+#battle .lcd.out .in{animation:lcOut .4s ease-in forwards}
+@keyframes lcIn{0%{opacity:0;transform:rotateY(90deg) scale(.5)}60%{opacity:1;transform:rotateY(-8deg) scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes lcGl{0%,100%{filter:drop-shadow(0 2px 3px #000a)}50%{filter:drop-shadow(0 0 7px var(--rc)) drop-shadow(0 2px 3px #000a)}}
+@keyframes lcPu{from{opacity:.2}to{opacity:1}}
+@keyframes lcIc{0%{opacity:0;transform:scale(.3)}100%{opacity:1;transform:none}}
+@keyframes lcOut{to{opacity:0;transform:scale(.85) translateY(6px)}}`;document.head.appendChild(st);
+new Image().src=A+'loot_card.png';
+const q=[];let cur=null,busy=0,endT=0;const HOLD=1800;
+const bat=()=>document.getElementById('battle');
+const away=()=>G.screen||G.storyOn||(G.tab&&G.tab!='battle');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .acp,.vic,.bsht');
+const fin=()=>{const d=cur;if(!d)return;if(R._lcHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
+const show=it=>{const b=bat();if(!b){busy=0;return}const rr=D.RAR[it.r]||{},sl=D.SLOTS.find(x=>x.k==it.slot)||{};
+ const d=document.createElement('div');d.className='lcd r'+it.r;d.style.setProperty('--rc',rr.c||'#b07cff');d.innerHTML=`<div class=in><img class=fr src="${A}loot_card.png" alt=""><span class=wn></span><img class=ic src="${A}${sl.img}" alt="" style="${sl.f?'filter:'+sl.f+' drop-shadow(0 0 4px '+rr.c+')':''}"><div class=lb>${rr.n} 장비 획득</div><div class=nm></div>${it.more?`<div class=mo>외 ${it.more}건</div>`:''}</div>`;d.querySelector('.nm').textContent=it.name;
+ const nm=d.querySelector('.nm');b.appendChild(d);if(nm.scrollWidth>nm.clientWidth+1)nm.style.fontSize=Math.max(6.5,8*nm.clientWidth/nm.scrollWidth)+'px';cur=d;endT=setTimeout(fin,HOLD+550)};
+const pump=()=>{if(busy||!q.length)return;busy=1;let w=0;const go=()=>{if(away()||(blk()&&w<8000)){if(!away())w+=150;setTimeout(go,150)}else{const it=q.shift();if(q.length){it.more=q.reduce((t,x)=>t+1+(x.more||0),0);q.length=0}show(it)}};go()};
+R.lootCard=it=>{if(q.length>=3){const l=q[q.length-1];l.more=(l.more||0)+1;return}q.push(it);pump()};R._lcq=()=>{q.length=0;clearTimeout(endT);if(cur){cur.remove();cur=null}busy=0};
+const ro=C.rollOnce;C.rollOnce=function(){const r=ro.apply(this,arguments);try{if(r&&r.r>=4)R.lootCard({r:r.r,slot:r.slot,name:r.name})}catch(_){}return r};
 const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&&!cur.classList.contains('out')&&document.querySelector('#battle .combo')){clearTimeout(endT);fin()}}catch(_){}return r}})();
