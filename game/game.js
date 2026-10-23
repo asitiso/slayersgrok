@@ -2541,7 +2541,7 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
 const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try{if(G.screen=='bag'){const sb=$('#screen');sb.classList.add('bgx');const bg=sb.querySelector('.sbg');if(bg)bg.src=A+'bg_bag_store.jpg';
 const body=sb.querySelector('.sbody');if(body&&!body.querySelector('.bghero')){const h=document.createElement('div');h.className='bghero';h.innerHTML=`<img src="${A}bg_backpack.png"><div><b>모험가의 창고</b><small>아이템을 눌러 정보 확인</small></div>`;body.prepend(h)}
 const cards=sb.querySelectorAll('.card');const tt=cards[0]&&cards[0].querySelector('.ttl');if(tt&&!tt.querySelector('img'))tt.insertAdjacentHTML('afterbegin',`<img src="${A}bg_pouch.png">`);
-const t2=cards[1]&&cards[1].querySelector('.ttl');if(t2&&!t2.querySelector('img'))t2.insertAdjacentHTML('afterbegin',`<img src="${A}bg_slot.png">`);
+const t2=cards[1]&&cards[1].querySelector('.ttl');if(t2&&!t2.querySelector('img'))t2.insertAdjacentHTML('afterbegin',`<img src="${A}it2_armor.png">`);
 cards.forEach((c,ci)=>c.querySelectorAll('.bagg .bi').forEach(b=>{if(b.querySelector('.sf'))return;const col=ci==1?b.style.borderColor:'';if(ci==1)b.classList.add('gear');const f=document.createElement('img');f.className='sf';f.src=A+'bg_slot.png';if(col)f.style.filter=`drop-shadow(0 0 3px ${col}) drop-shadow(0 0 2px ${col})`;b.appendChild(f)}))}else $('#screen').classList.remove('bgx')}catch(_){}return r}})();
 /* v159 칭호: hall of honours */
 (function(){const st=document.createElement('style');st.textContent=`
@@ -4447,7 +4447,7 @@ const deals=sc=>{const dl=sc.querySelector('.deals.scv');if(!dl||dl.querySelecto
  const st=document.createElement('div');st.className='dlst';st.innerHTML=`<img class=dlnp src="assets/npc_merchant.png"><div class=dlbb>오늘의 특가는 05시에 바뀌어요.<small>남은 특가 ${left}/${(d.it||[]).length}</small></div>`;st.appendChild(tm);g.before(st)};
 const bag=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.bgtab'))return;const cards=[...sb.querySelectorAll(':scope>.card')];if(cards.length<2)return;
  const items=[...cards[0].querySelectorAll('.bagg .bi')].map(b=>({b,c:CUR.test((b.querySelector('img')||{}).getAttribute?.('src')||'')?1:2})),ng=cards[1].querySelectorAll('.bagg .bi').length;
- const T=[['전체','bg_backpack.png',items.length+ng],['재화','it2_gold.png',items.filter(x=>x.c==1).length],['소모품','it2_hp.png',items.filter(x=>x.c==2).length],['장비','bg_slot.png',ng]];
+ const T=[['전체','bg_backpack.png',items.length+ng],['재화','it2_gold.png',items.filter(x=>x.c==1).length],['소모품','it2_hp.png',items.filter(x=>x.c==2).length],['장비','it2_armor.png',ng]];
  const t=G.bgT=G.bgT||0;const bar=document.createElement('div');bar.className='entabs bgtab';bar.innerHTML=T.map((x,i)=>`<span class="${i==t?'on':''}" data-bt=${i}><img src="assets/${x[1]}">${x[0]}<small>${x[2]}</small></span>`).join('');
  const h=sb.querySelector(':scope>.bghero');h?h.after(bar):sb.prepend(bar);
  cards[0].classList.toggle('shhide',t==3);cards[1].classList.toggle('shhide',t==1||t==2);items.forEach(x=>x.b.classList.toggle('shhide',(t==1&&x.c!=1)||(t==2&&x.c!=2)));
@@ -4490,3 +4490,15 @@ const sum=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.su
  if(t==2){const r=C.rates();k.innerHTML=`<div class=ttl>소환 확률 정보</div>${[4,3,2].map(g=>{const L=r.filter(x=>x.g==g),tt=L.reduce((a,x)=>a+x.p,0);return `<div class=sug2><div class=surh style="color:${D.RAR[g].c}">${D.RAR[g].n} <span>${tt.toFixed(1)}%</span></div><div class=sugrid>${L.map(x=>{const c=D.COMPS.find(q=>q.k==x.k);return `<div class="sug ${x.up?'up':''}" style="--rc:${D.RAR[g].c}"><img src="assets/${c.img}"><b>${x.n}</b><small>${x.p.toFixed(2)}%</small>${x.up?'<em>UP!</em>':''}</div>`}).join('')}</div></div>`}).join('')}<small class=sunote>${C.PITY}회 소환 내 전설 미획득 시 다음 소환 전설 확정 (50% 확률로 「${(D.COMPS.find(c=>c.k==C.RU)||{}).n}」)</small>`;sb.appendChild(k)}
  bar.querySelectorAll('[data-st]').forEach(e=>e.onclick=()=>{if(+e.dataset.st===G.suT)return;G.suT=+e.dataset.st;renderScreen();const b2=document.querySelector('#screen .sbody');if(b2)b2.scrollTop=0})};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='summon'){const sc=document.querySelector('#screen');if(sc)sum(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r342: 기보 screen tabs (전체/공격력/체력) + 효과 summary card + compact cards; display only, existing D.RELICS / save data */
+const rel=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.rltab'))return;const g=sb.querySelector('.relgrid');if(!g)return;sc.classList.add('rlx2');
+ const s=C.S(),L=D.RELICS,lv=k=>(s.relic||{})[k]||0,t=G.rlT=G.rlT||0,F=[null,'atk','hp'];
+ const T=[['전체','rl_tome.png',L],['공격력','st_atk.png',L.filter(r=>r.st=='atk')],['체력','st_hp.png',L.filter(r=>r.st=='hp')]];
+ const bar=document.createElement('div');bar.className='entabs rltab';bar.innerHTML=T.map((x,i)=>`<span class="${i==t?'on':''}" data-rt=${i}><img src="assets/${x[1]}">${x[0]}<small>${x[2].filter(r=>lv(r.k)).length}/${x[2].length}</small></span>`).join('');
+ const h=sb.querySelector('.relhero');h?h.after(bar):sb.prepend(bar);
+ const sm=document.createElement('div');sm.className='card rlsum';sm.innerHTML=`<div class=ttl>기보 효과</div><div class=rlst><div><img src="assets/rl_tome.png"><small>복원</small><b>${L.filter(r=>lv(r.k)).length}/${L.length}</b></div><div><img src="assets/st_atk.png"><small>공격력</small><b>+${Math.round(C.relicB('atk')*100)}%</b></div><div><img src="assets/st_hp.png"><small>체력</small><b>+${Math.round(C.relicB('hp')*100)}%</b></div><div><img src="assets/rl_fragment.png"><small>조각</small><b>${fmt(s.frag||0)}</b></div></div>`;bar.after(sm);
+ g.querySelectorAll('.rel').forEach((el,i)=>{const R=L[i];if(!R)return;el.classList.toggle('shhide',!!F[t]&&R.st!=F[t]);el.classList.add(R.st=='atk'?'ratk':'rhp');
+  el.insertAdjacentHTML('afterbegin',`<span class=rllv>Lv.${lv(R.k)}</span><span class=rlstp>${R.d}</span>`);
+  const sm2=el.querySelector(':scope>small');if(sm2)sm2.insertAdjacentHTML('beforeend',`<em>다음 +${Math.round((lv(R.k)+1)*R.per*100)}%</em>`)});
+ bar.querySelectorAll('[data-rt]').forEach(e=>e.onclick=()=>{if(+e.dataset.rt===G.rlT)return;G.rlT=+e.dataset.rt;renderScreen()})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='relic'){const sc=document.querySelector('#screen');if(sc)rel(sc)}}catch(e){console.warn(e)}return r}})();

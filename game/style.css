@@ -1450,3 +1450,16 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 .sucd .sug.lock{filter:grayscale(.75) brightness(.7)}.sucd .sug em{position:absolute;top:2px;right:2px;font-style:normal;font-size:9px;font-weight:800;color:#fff;background:#e0342c;border-radius:5px;padding:0 4px}
 .sucd .sug.up{box-shadow:0 0 8px #ffcf4a}.sucd .surh{margin-top:8px;font-weight:800;font-size:13px}.sucd .surh span{float:right}
 .sucd .sunote{display:block;margin-top:8px;color:#cdb98f;font-size:10.5px;text-align:center}
+/* r342 기보 */
+#screen.rlx2 .shead>b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#screen.rlx2 .relhero{height:150px!important}#screen.rlx2 .relhero small{display:block;margin-top:2px;line-height:1.35}
+#screen .entabs.rltab{display:flex;position:sticky;top:0;z-index:6;margin:4px 0 8px;padding:16px 2px 4px!important;background:linear-gradient(#1a0e08f0,#1a0e08c0 80%,#1a0e0800)}
+#screen .entabs.rltab span{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;font-size:12.5px;cursor:pointer}
+#screen .entabs.rltab span img{width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a)}#screen .entabs.rltab span small{font-size:9px;color:#ffd25a;margin-left:2px}
+.rlsum .rlst{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.rlsum .rlst div{display:flex;flex-direction:column;align-items:center;padding:6px 2px;border-radius:10px;background:linear-gradient(#1e2a4a,#0e1428);box-shadow:inset 0 0 0 1px #d8b06088}
+.rlsum .rlst img{width:28px;height:28px;object-fit:contain}.rlsum .rlst small{font-size:10px;color:#bcd0ff}.rlsum .rlst b{font-size:14px;color:#ffe8a8}
+.rlx2 .rlx .rel .rimg{height:64px!important}.rlx2 .rlx .rel .rimg img{height:60px!important}
+.rlx2 .rel .rllv{position:absolute;left:6px;top:6px;z-index:2;font-size:10px;font-weight:800;color:#fff;background:#000a;border:1px solid #d8b06088;border-radius:6px;padding:0 5px}
+.rlx2 .rel .rlstp{position:absolute;right:6px;top:6px;z-index:2;font-size:10px;font-weight:800;color:#fff;border-radius:6px;padding:0 5px;background:#c0392b}.rlx2 .rel.rhp .rlstp{background:#2e9a4a}
+.rlx2 .rel>small em{display:block;font-style:normal;color:#ffd25a;font-size:10px}
