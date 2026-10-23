@@ -4419,3 +4419,25 @@ const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);t
 }catch(e){console.warn(e)}return r};
 })();
 ;(()=>{const st=document.createElement('style');st.textContent=`#panel .mqsum .mcall{background:none;border:10px solid transparent;border-image:url(${A}btn_gold.png) 30 fill/10px stretch;border-radius:0;box-shadow:none;color:#fff;text-shadow:0 1px 0 #5a3006,0 0 2px #5a3006;padding:0 6px;font-size:12px;filter:drop-shadow(0 2px 2px #0007)}#panel .mqsum .mcall.off{border-image-source:url(${A}btn_grey.png);text-shadow:0 1px 0 #3a2a1a}#panel .mqsum .mcall:not(.off){animation:mqg 1.3s ease-in-out infinite}body.tglite #panel .mqsum .mcall,body.nofx #panel .mqsum .mcall{animation:none}#panel .mqsum .mcall small{background:#d02a2a;border-radius:8px;padding:0 5px;margin-left:3px;font-size:10px;color:#fff}`;document.head.appendChild(st)})();
+;(()=>{/* r338: 출석 cycle progress card under #attC (n/28 bar, 7/14/21/28 markers, next big day read from the rendered board) + 상점 real tabs (일일 특가 / 패키지 / 보석·골드 상점 = existing sections) with sold-out / limit / unaffordable card states. Display only, existing data only */
+const BIG=[7,14,21,28],BXS={7:'s',14:'m',21:'m',28:'l'};
+const att=sc=>{const sb=sc.querySelector('.sbody'),bt=sb&&sb.querySelector('#attC'),g=sb&&sb.querySelector('.attg');if(!bt||!g||sb.querySelector('.atcy'))return;const s=C.S(),n=s.att.n||0,MAX=28,can=!bt.classList.contains('off'),cells=g.children;
+ const amt=d=>{const c=cells[d-1];return c?{im:c.querySelector('img').getAttribute('src'),b:c.querySelector('b').textContent}:null};
+ const nx=BIG.find(d=>d>n),pc=Math.round(n/MAX*100);let nxt='';
+ if(nx){const a=amt(nx),need=nx-n,days=can?need-1:need;nxt=`<div class=atnx><img class=atnb src="assets/at_box_${BXS[nx]}.png"><div class=f><small>다음 큰 보상</small><b>${nx}일차 · <img class=ci src="${a.im}"> ${a.b}</b><em>${days<=0?'오늘 출석하면 획득!':`앞으로 ${need}회 출석 (${days}일 후)`}</em></div></div>`}
+ else nxt=`<div class=atnx><div class=f><b>이번 사이클 보상을 모두 받았습니다</b></div></div>`;
+ bt.insertAdjacentHTML('afterend',`<div class=atcy><div class=atct><b>사이클 ${(s.att.cyc||0)+1} 진행도</b><small>${n} / ${MAX}일 · ${pc}%</small></div><div class=atbar><i style="width:${pc}%"></i>${BIG.map(d=>`<span class="atmk ${n>=d?'got':''} ${d==nx?'nx':''}" style="left:${d/MAX*100}%"><img src="assets/at_box_${BXS[d]}.png"><em>${d}</em></span>`).join('')}</div>${nxt}</div>`)};
+const shop=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.shtab2'))return;const s=C.S();
+ const dl=sb.querySelector(':scope>.deals'),pk=[...sb.children].find(c=>c.querySelector('[data-pkg]')),tt=[...sb.querySelectorAll(':scope>.ttl')].find(x=>/보석/.test(x.textContent)),gr=tt&&tt.nextElementSibling;
+ const G3=[['일일 특가','ic_refresh.png',[dl]],['패키지','sh_chest.png',[pk]],['보석 · 골드','it2_gem.png',[tt,gr]]].filter(x=>x[2].every(Boolean));if(G3.length<2)return;
+ if(gr){[...gr.children].forEach(c=>{const bt=c.querySelector('[data-b]');if(!bt)return;const it=D.SHOP.find(x=>x.k==bt.dataset.b);if(!it)return;const b=s.shop.bought[it.k]||0,p=C.shopPrice(it),sold=it.daily&&b>=it.daily,poor=!sold&&((it.cur=='gems'&&s.gems<p)||(it.cur=='gold'&&s.gold<p));
+  c.classList.add('shc2');if(sold){c.classList.add('sold');bt.innerHTML='품절';c.insertAdjacentHTML('beforeend','<span class=shst><i>품절</i><em>내일 05시</em></span>')}else if(poor)c.classList.add('poor');
+  if(it.cur!='free')c.insertAdjacentHTML('beforeend',`<img class=shcur src="assets/${it.cur=='gems'?'it2_gem':'it2_gold'}.png">`);})}
+ if(dl)dl.querySelectorAll('.dcell.sold').forEach(c=>{if(!c.querySelector('.shst'))c.insertAdjacentHTML('beforeend','<span class=shst><i>품절</i><em>내일 05시</em></span>')});
+ const free=D.SHOP.some(it=>it.cur=='free'&&it.daily&&(s.shop.bought[it.k]||0)<it.daily),dfree=(C.deals().it||[]).filter(x=>!x.b).length;
+ const t=G.shT=Math.min(G.shT||0,G3.length-1);const bar=document.createElement('div');bar.className='entabs shtab2';
+ bar.innerHTML=G3.map((x,i)=>`<span class="${i==t?'on':''}" data-st=${i}><img src="assets/${x[1]}">${x[0]}${x[0]=='보석 · 골드'&&free?'<i class=dot></i>':''}${x[0]=='일일 특가'?`<small>${dfree}/${(C.deals().it||[]).length}</small>`:''}</span>`).join('');
+ const hh=sb.querySelector(':scope>.shh');(hh||sb.firstChild)&&(hh?hh.after(bar):sb.prepend(bar));sc.classList.add('shop2');
+ G3.forEach((x,i)=>x[2].forEach(e=>e.classList.toggle('shhide',i!=t)));
+ bar.querySelectorAll('[data-st]').forEach(e=>e.onclick=()=>{if(+e.dataset.st===G.shT)return;G.shT=+e.dataset.st;renderScreen();const b2=document.querySelector('#screen .sbody');if(b2)b2.scrollTop=0})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(!sc)return r;if(G.screen=='event')att(sc);if(G.screen=='shop')shop(sc)}catch(e){console.warn(e)}return r}})();

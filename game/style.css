@@ -1374,3 +1374,35 @@ body.tglite #screen.att2 #attC,body.nofx #screen.att2 #attC{animation:none}
 #screen.att2 #attC:active{transform:scale(.96)}
 .atc .atst i{position:static;inset:auto;display:block;transform:none;text-shadow:none;color:#d4262e}
 .atc .atst em{display:block}
+/* r338 출석 cycle progress */
+.atcy{margin:10px 6px 0;padding:10px 12px 12px;border-radius:12px;background:linear-gradient(#3a2414f2,#24160cf2);border:2px solid #c9953f;box-shadow:inset 0 0 0 1px #ffdf9a33,0 3px 8px #0008;color:#fff3dc}
+.atct{display:flex;justify-content:space-between;align-items:baseline;font-family:Maplestory,sans-serif}.atct b{font-size:14px;color:#ffe08a}.atct small{font-size:11px;color:#e8d6b0}
+.atbar{position:relative;height:0;border:6px solid transparent;border-image:url(assets/sld_track_s.png) 12 fill/6px stretch;margin:22px 4px 26px}
+.atbar>i{position:absolute;left:-4px;top:-4px;height:0;border:4px solid transparent;border-image:url(assets/sld_fill_s.png) 12 fill/4px stretch;max-width:calc(100% + 8px);box-sizing:border-box;min-width:8px}
+.atmk{position:absolute;top:-6px;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+.atmk img{width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 2px #000a)}.atmk em{font-style:normal;font-size:9px;font-weight:900;color:#ffe9b0;text-shadow:0 1px 0 #000;margin-top:14px;position:absolute;top:16px;white-space:nowrap}
+.atmk.got img{filter:grayscale(.7) brightness(.8)}.atmk.got:after{content:'';position:absolute;top:6px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;border:2px solid #d4262e;transform:rotate(-14deg);background:#fff8}
+.atmk.nx img{width:34px;height:34px;animation:atnxp 1.2s ease-in-out infinite}
+@keyframes atnxp{0%,100%{filter:drop-shadow(0 2px 2px #000a) drop-shadow(0 0 2px #ffc030)}50%{filter:drop-shadow(0 2px 2px #000a) drop-shadow(0 0 10px #ffc030)}}
+body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
+.atnx{display:flex;align-items:center;gap:10px;background:#00000040;border:1px solid #ffdf9a40;border-radius:9px;padding:6px 10px}
+.atnx .atnb{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 2px 3px #000a)}.atnx .f{display:flex;flex-direction:column;gap:1px}
+.atnx small{font-size:10px;color:#e8c890}.atnx b{font-family:Maplestory,sans-serif;font-size:14px;color:#fff}.atnx b .ci{width:16px;height:16px;vertical-align:-3px}.atnx em{font-style:normal;font-size:11px;color:#ffd25a;font-weight:700}
+/* r338 상점 tabs */
+.shhide{display:none!important}
+#screen .entabs.shtab2{display:flex;position:sticky;top:0;z-index:6;margin:4px 0 8px;padding:16px 2px 4px!important;background:linear-gradient(#1a0e08f0,#1a0e08c0 80%,#1a0e0800)}
+#screen .entabs.shtab2 span{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;font-size:13px;cursor:pointer}
+#screen .entabs.shtab2 span img{width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a)}
+#screen .entabs.shtab2 span small{font-size:9px;color:#ffd25a;margin-left:1px}
+#screen .entabs.shtab2 span .dot{position:absolute;top:-6px;right:-6px}
+#screen.shop2 .shtb{display:none!important}
+.shc2{position:relative}
+.shc2 .shcur{position:absolute;left:5px;top:5px;width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a);z-index:2}
+.shc2 .shfree{position:absolute;left:4px;top:4px;z-index:2;font-style:normal;font-size:9px;font-weight:900;color:#fff;background:linear-gradient(#5ad04a,#1f8a2a);border:1px solid #0a3a0a;border-radius:6px;padding:0 5px;line-height:14px}
+.shc2.poor [data-b]{color:#ff8a7a!important}
+.shc2.sold>img,.shc2.sold>b{opacity:.45;filter:grayscale(.8)}
+.shst{position:absolute;left:50%;top:38%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;border:3px solid #d4262e;box-shadow:inset 0 0 0 2px #fff8,inset 0 0 0 5px #d4262e;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-14deg);color:#d4262e;background:radial-gradient(#ffffffb0,#ffffff60 70%);z-index:4;pointer-events:none}
+.shst i{font-style:normal;font-weight:900;font-size:17px;line-height:1;font-family:Maplestory,sans-serif}.shst em{font-style:normal;font-weight:900;font-size:8px;line-height:1;margin-top:2px;border-top:1px solid #d4262e;padding-top:2px}
+.dcell.sold>img:not(.dfr),.dcell.sold>b{opacity:.45;filter:grayscale(.8)}
+.dcell .shst{width:54px;height:54px;margin:-27px 0 0 -27px}
+.shc2:has(.shlm) .shcur{top:30px}
