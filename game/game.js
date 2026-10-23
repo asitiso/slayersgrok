@@ -2999,7 +2999,7 @@ setInterval(tick,250);tick()})();
 const SW=452,SH=132,SL=[[0,130,0],[130,228,1],[228,256,0],[256,368,1],[368,452,0]];
 R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth)return false;if(!C.alive().some(e=>e.boss&&!e.wb))return false;
  const c=R.ccut;c.t+=dt/.9;const t=Math.min(1,c.t),ein=Math.min(1,t/.14),eo=t>.78?(1-t)/.22:1,a=Math.max(0,Math.min(ein,eo));
- const h=52,k=h/SH,w=Math.min(W-28,330),x0=(W-w)/2-(1-ein)*40,y0=296;
+ const h=52,k=h/SH,w=Math.min(W-28,330),x0=(W-w)/2-(1-ein)*40,y0=304;/* r306: 304-356, below the boss HP notice slot (279-301) */
  const fixed=SL.filter(q=>!q[2]).reduce((s,q)=>s+(q[1]-q[0])*k,0),strW=(w-fixed)/2;
  cx.save();cx.globalAlpha=a;
  // portrait behind the socket
@@ -4249,3 +4249,9 @@ new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.cla
 const st=document.createElement('style');st.textContent=`#battle .combo.duo:is(#_a,#_b,div):is(#_c,#_d,div){scale:.86}
 #battle .combo:not(.duo):is(#_a,#_b,div):is(#_c,#_d,div){max-width:290px!important;box-sizing:border-box;margin-inline:auto}
 #toastQ{transition:transform .2s,translate .2s}body:not(.hs-scr):not(.hs-sh):not(.hs-mp):has(#battle .combo:not(.cbq):not(.cbo)) #toastQ{translate:0 118px}`;document.head.appendChild(st)})();
+
+;(()=>{/* v256 r306 (visual only): boss-fight mid-field slots - boss frame 202-275 | boss HP notice (.phx) 279-301 | ally skill strip (canvas, ccStrip) 304-356; while either overlay is up the damage-number floor drops to 358 (R._dtTop2, read by render.js lanes) so crits rise below them instead of through them. One flag + one compare per frame, no allocation */
+const st=document.createElement('style');st.textContent=`body.bossfight #battle .phx:is(#_a,#_b,div):is(#_c,#_d,div){top:279px!important}`;document.head.appendChild(st);
+const go=()=>{if(!G._phase)return setTimeout(go,300);const op=G._phase;G._phase=function(){R._phT=performance.now();return op.apply(this,arguments)}};go();
+const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const on=!!C.B.boss&&((R.ccut&&R.ccut.t<1)||(R._phT>0&&performance.now()-R._phT<1150));R._dtTop2=on?358:0}catch(_){}return r};
+})();
