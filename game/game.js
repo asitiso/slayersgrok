@@ -3827,3 +3827,25 @@ ${TG}{background:none!important;border:5px solid transparent!important;border-wi
 ${TG}.cl{border-image-source:url(${A}tab_on.png)!important;color:#fff0c8!important;text-shadow:-1px 0 #3a0c06,1px 0 #3a0c06,0 -1px #3a0c06,0 1px #3a0c06}
 `;document.head.appendChild(S);
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='dungeon')document.querySelectorAll('#screen .dgtier').forEach(t=>t.classList.toggle('cl',!/^미/.test(t.textContent.trim())))}catch(e){console.warn(e)}return r}}catch(e){console.warn(e)}})();
+;(()=>{/* v234 비무대회 상대 카드 difficulty frames: easy=hc_frame_g2, mid=hc_frame_g4, hard=hc_frame_red (r283 cut) 9-slice + crest/gem overlays (not stretched); difficulty glow kept as drop-shadow; r267 btn_green on 도전, btn_gold on 새로고침 (btn_grey when .off). Visual only, overlays injected once per render */
+const F={easy:{g:'g2',k:.3,W:259,H:493,T:61,R:61,B:66,L:61,tb1:31,cw:137,ch:96,cb:80,gw:33,gh:64,gb:19,bb0:457,c:'#5ad07a'},
+mid:{g:'g4',k:.28,W:251,H:482,T:59,R:75,B:64,L:75,tb1:29,cw:228,ch:102,cb:73,gw:109,gh:74,gb:26,bb0:448,c:'#b07aff'},
+hard:{g:'red',k:.12,W:532,H:626,T:186,R:177,B:190,L:178,cx:124,cy:-64,cw:255,ch:170,gx:212,gy:536,gw:109,gh:111,c:'#ff5a4a'}};
+const X=':is(#_a1,#_a2,span):is(#_a3,#_a4,span)';let css=`#screen .aocg{margin-top:18px;gap:5px}
+#screen .aoc.aof{overflow:visible;border:0!important;border-radius:0;padding:10px 9px 12px;isolation:isolate;background:linear-gradient(#3a2a5a,#1a1230) 7px 7px/calc(100% - 14px) calc(100% - 14px) no-repeat}
+#screen .aoc.aof.hard{background-image:linear-gradient(#4a2230,#1a0e18)}#screen .aoc.aof.easy{background-image:linear-gradient(#22423a,#0e1a18)}
+#screen .aoc .aofr{position:absolute;inset:-2px;pointer-events:none;z-index:3;border-style:solid}
+#screen .aoc .aocr,#screen .aoc .aogm{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:4}
+#screen .aoc.aof .aotg{left:9px;top:9px;z-index:5}#screen .aoc.aof .aon,#screen .aoc.aof .aop,#screen .aoc.aof .aopr{text-shadow:0 1px 2px #000,0 0 2px #000}
+#screen .aoc.aof .btn${X}{position:relative;z-index:5;background:none!important;border:9px solid transparent!important;border-image:url(${A}btn_green.png) 30 fill/9px stretch!important;border-radius:0!important;box-shadow:none!important;padding:0!important;min-height:24px;line-height:14px;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:-1px 0 #0b3510,1px 0 #0b3510,0 -1px #0b3510,0 1px #0b3510!important;filter:drop-shadow(0 2px 2px #0007)}
+#screen .aoc.aof .btn.off${X}{border-image-source:url(${A}btn_grey.png)!important;text-shadow:-1px 0 #3a2a1a,1px 0 #3a2a1a,0 -1px #3a2a1a,0 1px #3a2a1a!important}
+#screen #rf.aorf{background:none!important;border:10px solid transparent!important;border-image:url(${A}btn_gold.png) 30 fill/10px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px 0!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:-1px 0 #5a3006,1px 0 #5a3006,0 -1px #5a3006,0 1px #5a3006,0 2px #5a3006!important;filter:drop-shadow(0 2px 2px #0007)}
+#screen #rf.aorf.off{border-image-source:url(${A}btn_grey.png)!important}
+#screen :is(.aoc.aof .btn,#rf.aorf):active{transform:scale(.95)}\n`;
+for(const d in F){const f=F[d],k=f.k,p=v=>(v*k).toFixed(1)+'px';
+css+=`#screen .aoc.aof.${d}{filter:drop-shadow(0 0 4px ${f.c}) drop-shadow(0 0 1px ${f.c})}#screen .aoc.${d} .aofr{border-width:${p(f.T)} ${p(f.R)} ${p(f.B)} ${p(f.L)};border-image:url(${A}hc_frame_${f.g}.png) ${f.T} ${f.R} ${f.B} ${f.L}/${p(f.T)} ${p(f.R)} ${p(f.B)} ${p(f.L)} stretch}
+#screen .aoc.${d} .aocr{width:${f.cy!=null?(f.cw*.18).toFixed(1)+'px':p(f.cw)};top:${f.cy!=null?(71*k-135*.18-2).toFixed(1):((f.tb1-f.cb)*k-2).toFixed(1)}px}#screen .aoc.${d} .aogm{width:${p(f.gw)};bottom:${f.gy!=null?((f.H-f.gy-f.gh)*k-2).toFixed(1):((f.H-f.bb0-f.gh+f.gb)*k-2).toFixed(1)}px}\n`}
+css+=`body:is(.tglite,.nofx) #screen .aoc.aof{filter:none!important}body:is(.tglite,.nofx) #screen .aoc.aof .btn,body:is(.tglite,.nofx) #screen #rf.aorf{filter:none!important}`;const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='arena')return r;const rf=document.querySelector('#screen #rf');if(rf)rf.classList.add('aorf');
+document.querySelectorAll('#screen .aoc:not(.aof)').forEach(c=>{const d=c.classList.contains('hard')?'hard':c.classList.contains('easy')?'easy':'mid',g=F[d].g;c.classList.add('aof');if(d=='mid')c.classList.add('mid');
+c.insertAdjacentHTML('beforeend',`<i class=aofr></i><img class=aocr src="${A}hc_crest_${g}.png"><img class=aogm src="${A}hc_gem_${g}.png">`)})}catch(e){console.warn(e)}return r}})();
