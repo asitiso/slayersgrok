@@ -4551,3 +4551,21 @@ const ttl=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.tt
  const h=document.createElement('div');h.className='tthero';h.innerHTML=`<img class=tbg src="assets/bg_title_hall.jpg">${tx?`<small class=ttcap>${tx}</small>`:''}`;
  (c0||sb.firstElementChild).before(h);if(c0)c0.classList.add('shhide')};
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(sc){if(G.screen=='ach')ach(sc);if(G.screen=='title')ttl(sc)}}catch(e){console.warn(e)}return r}})();
+;(()=>{/* r347: 업적 claim-button ticket/stone icons (same a.t/a.st data as achClaim), caption moved into hero; 마도 패스 status tabs + summary card; display only */
+const ach=sc=>{const sb=sc.querySelector('.sbody');if(!sb||sb.querySelector('.acpx,.acx3'))return;const h=sb.querySelector('.acst.acx'),cap=sb.querySelector('.accap');
+ if(h&&cap){h.classList.add('acx3');h.appendChild(cap)}
+ sb.querySelectorAll('.achr [data-ach]').forEach(b=>{const a=D.ACH.find(x=>x.k==b.dataset.ach);if(!a)return;const lv=C.achLv(a.k);const t=a.t&&a.t[lv],st=a.st&&a.st[lv];if(!t&&!st)return;
+  b.insertAdjacentHTML('beforeend',`<span class=acpx>${t?`<i><img src="assets/it2_ticket.png">${fmt(t)}</i>`:''}${st?`<i><img src="assets/it2_stone.png">${fmt(st)}</i>`:''}</span>`)})};
+const pas=sc=>{const sb=sc.querySelector('.sbody'),d=sb&&sb.querySelector('.pld');if(!d||sb.querySelector('.patab'))return;const b=C.bp(),T=C.bpTier(),N=D.BP.tiers;
+ const rows=[...d.querySelectorAll('.plr')];const cls=(r,t)=>r.querySelector('.plc.can')?1:t<T?2:3;const K=rows.map(cls);
+ const i0=G.paT=G.paT||0,TB=[['전체','pass_free.png'],['받기 가능','it2_gem.png'],['수령 완료','pass_check.png'],['미달성','ic3_quest.png']];
+ const bar=document.createElement('div');bar.className='entabs patab';bar.innerHTML=TB.map((x,i)=>{const n=i?K.filter(k=>k==i).length:rows.length;return `<span class="${i==i0?'on':''}" data-pa=${i}><img src="assets/${x[1]}">${x[0]}<small>${n}</small>${i==1&&n?'<i class=dot></i>':''}</span>`}).join('');
+ const can=d.querySelectorAll('.plc.can').length,got=d.querySelectorAll('.plc.got').length;
+ const sm=document.createElement('div');sm.className='card acsum pasum';sm.innerHTML=`<div class=acst2><div><img src="assets/pass_free.png"><small>패스 단계</small><b>${T}/${N}</b></div><div><img src="assets/it2_exp.png"><small>경험치</small><b>${b.xp%D.BP.xp}/${D.BP.xp}</b></div><div><img src="assets/it2_gem.png"><small>받기 가능</small><b>${can}</b></div><div><img src="assets/pass_premium.png"><small>프리미엄</small><b>${b.prem?'활성':'미활성'}</b></div></div><small class=pagot>받은 보상 ${got}개</small>`;
+ d.before(bar);bar.after(sm);
+ {const c0=sb.querySelector('.card');if(c0&&c0!==sm){const tt=c0.querySelector('.ttl small'),br=c0.querySelector('.bar'),xs=[...c0.children].find(e=>e.tagName=='SMALL');const cap=[tt&&tt.textContent,xs&&(xs.textContent.split('·')[1]||'').trim()].filter(Boolean).join(' · ');
+  if(br)sm.insertBefore(br,sm.querySelector('.pagot'));sm.querySelector('.pagot').innerHTML=`<span>${cap}</span><span>받은 보상 ${got}개</span>`;[...c0.children].forEach(e=>{if(!e.matches('#bpb,.pill'))e.classList.add('shhide')});c0.classList.add('pac0');sm.after(bar);c0.before(bar);bar.after(sm);sm.after(c0)}}
+ rows.forEach((r,t)=>r.classList.toggle('shhide',!!i0&&K[t]!=i0));
+ if(i0&&!K.includes(i0))d.querySelector('.pll').insertAdjacentHTML('afterbegin','<div class="card acemp"><b>표시할 보상이 없습니다</b></div>');
+ bar.querySelectorAll('[data-pa]').forEach(e=>e.onclick=()=>{if(+e.dataset.pa===G.paT)return;G.paT=+e.dataset.pa;renderScreen()})};
+const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{const sc=document.querySelector('#screen');if(sc){if(G.screen=='ach')ach(sc);if(G.screen=='pass')pas(sc)}}catch(e){console.warn(e)}return r}})();
