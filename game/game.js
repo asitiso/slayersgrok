@@ -4244,3 +4244,8 @@ const hide=()=>document.querySelectorAll('#battle .combo:not(.cbq)').forEach(c=>
 const go=()=>{const b=document.getElementById('battle');if(!b)return setTimeout(go,300);new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(!n.classList)continue;if(n.classList.contains('combo'))arm(n);else if(n.classList.contains('wrib')||n.classList.contains('bcut')||n.classList.contains('vsx'))hide()}}).observe(b,{childList:true});
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&(n.classList.contains('bwarn')||n.classList.contains('vsx')))hide()}).observe(document.body,{childList:true})};go();
 })();
+;(()=>{/* v254 r303: cast/duo banner 320 -> 275 wide (scale .86 about its centre) so its ends clear the side-menu columns (left 4-56 / right 334-386); independent `scale` keeps the duoIn transform keyframes intact; non-duo text banners capped at 290.
+ Battle toasts (#toastQ, y ~283-351, e.g. the groggy notice) sit inside both banner slots (238-340 / 280-382): while a banner is live the toast stack slides 118px down (to ~401-469) and slides back when it ends */
+const st=document.createElement('style');st.textContent=`#battle .combo.duo:is(#_a,#_b,div):is(#_c,#_d,div){scale:.86}
+#battle .combo:not(.duo):is(#_a,#_b,div):is(#_c,#_d,div){max-width:290px!important;box-sizing:border-box;margin-inline:auto}
+#toastQ{transition:transform .2s,translate .2s}body:not(.hs-scr):not(.hs-sh):not(.hs-mp):has(#battle .combo:not(.cbq):not(.cbo)) #toastQ{translate:0 118px}`;document.head.appendChild(st)})();
