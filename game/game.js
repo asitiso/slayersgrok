@@ -2063,7 +2063,7 @@ sb.insertAdjacentHTML('afterbegin',html);if(lvC)lvC.style.display='none';
 const T={mis:misC,raid:raidC,don:donC};if(raidC)raidC.querySelector('.ttl,b')?.insertAdjacentHTML('afterbegin','');
 sb.querySelectorAll('[data-gt]').forEach(e=>e.onclick=()=>{const c=T[e.dataset.gt];if(!c)return;c.scrollIntoView({behavior:'smooth',block:'start'});c.classList.remove('gflash');void c.offsetWidth;c.classList.add('gflash')});
 [[misC,'gd_board.png'],[raidC,'gd_raid.png'],[donC,'gd_chest.png']].forEach(([c,ic])=>{const t=c&&c.querySelector('.ttl');if(t)t.insertAdjacentHTML('afterbegin',`<img class=gti src="assets/${ic}">`)});
-if(memC){const ro=C.gRoster();[...memC.querySelectorAll('.row')].forEach(x=>x.remove());memC.insertAdjacentHTML('beforeend',`<div class=gmem>${ro.map(m=>`<div class="gmc ${m.npc?'':'me'} ${/회장/.test(m.role)?'lead':''}"><img src="${A}${m.img}"><b>${m.n}</b><small>${m.role}</small><em>⚔ ${fmt(m.pow)}</em></div>`).join('')}</div>`)}
+if(memC){const ro=C.gRoster();[...memC.querySelectorAll('.row')].forEach(x=>x.remove());memC.insertAdjacentHTML('beforeend',`<div class=gmem>${ro.map(m=>`<div class="gmc ${m.npc?'':'me'} ${/회장/.test(m.role)?'lead':''}"><img src="${A}${m.img}"><b>${m.n}</b><small>${m.role}</small><em><img class=gmpw src="${A}ic3_arena.png">${fmt(m.pow)}</em></div>`).join('')}</div>`)}
 }catch(e){console.warn(e)}return r}})();
 ;(()=>{/* v135 화룡전-style 출석 board on bg_attend (7x4 calendar inside the painted board, gift boxes on 7/14/21/28) + 우편함 gift cards + collect fly-in animation (existing logic, no new rewards) */
 const BX=i=>(i+1)==28?'l':(i+1)%7==0?((i+1)==7?'s':'m'):'';
@@ -3941,3 +3941,21 @@ st.textContent=`#screen .ghall .gst em:is(#_h9,#_ha,em):is(#_hb,#_hc,em){positio
 #screen .gbr [data-gb]${Y}{${B('btn_gold.png','#5a3006')};padding:2px 4px!important;display:flex;align-items:center;justify-content:center;gap:2px}
 #screen .gbr [data-gb].off${Y}{border-image-source:url(${A}btn_grey.png)!important;color:#eee!important;text-shadow:${ol('#2a2a2a')}!important}
 #screen :is(#gAtt,.gbr [data-gb])${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}`;document.head.appendChild(st)})();
+;(()=>{/* v241 r290: joined-guild lower half — weekly mission buttons btn_grey (진행 중/완료) / btn_gold (받기), mission .bar thin via v231; 헌납 + 주간 상자 btn_green (grey when off, chest art kept); chat input on hc_statplate + 전송 btn_green; 탈퇴 btn_red; member tiles on hc_statplate with ic3_arena power icon. Visual only */
+const Y=':is(#_k1,#_k2,span):is(#_k3,#_k4,span)',X=':is(#_k5,#_k6,div):is(#_k7,#_k8,div)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
+B=(f,c,w=9)=>`background:none!important;border:${w}px solid transparent!important;border-image:url(${A}${f}) 30 fill/${w}px stretch!important;border-radius:0!important;box-shadow:none!important;color:#fff!important;font-family:Maplestory,sans-serif!important;font-weight:900;text-shadow:${ol(c)}!important;filter:drop-shadow(0 2px 2px #0007)`,G2=`border-image-source:url(${A}btn_grey.png)!important;color:#eee!important;text-shadow:${ol('#2a2a2a')}!important`,
+P=`background:none!important;border:solid transparent!important;border-width:10px 12px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/10px 12px stretch!important;border-radius:0!important;box-shadow:none!important`,st=document.createElement('style');
+st.textContent=`#screen [data-gm]${Y}{${B('btn_gold.png','#5a3006')};padding:2px 6px!important;min-width:58px;text-align:center}
+#screen [data-gm].off${Y}{${G2}}
+#screen :is(#gco,#gch)${Y}{${B('btn_green.png','#0b3510',10)};padding:2px 4px!important;display:flex!important;align-items:center;justify-content:center;gap:4px;line-height:16px;font-size:14px!important;min-height:44px}
+#screen :is(#gco,#gch).off${Y}{${G2}}
+#screen #gsend${Y}{${B('btn_green.png','#0b3510')};padding:2px 8px!important}
+#screen input#gin:is(#_k9,#_ka,input):is(#_kb,#_kc,input){${P};padding:0 2px!important;color:#fff!important;font-size:13px;outline:none}
+#screen input#gin::placeholder{color:#a8b0c8}
+#screen #gleave${Y}{${B('btn_red.png','#4a0606',7)};padding:0 6px!important;font-size:11px!important;margin-left:6px}
+#screen .gmem .gmc${X}{${P};border-width:9px 10px 12px!important;padding:0 0 7px!important;height:auto!important;filter:drop-shadow(0 2px 2px #0008)}
+#screen .gmem .gmc.me${X}{filter:drop-shadow(0 0 4px #ffd77a) drop-shadow(0 2px 2px #0008)}
+#screen .gmem .gmc.lead${X}{filter:drop-shadow(0 0 3px #ff9a5a) drop-shadow(0 2px 2px #0008)}
+#screen .gmem .gmc em{display:flex!important;align-items:center;justify-content:center;gap:1px}
+#screen .gmem .gmc em img.gmpw{width:13px;height:13px;margin:0;border-radius:0;background:none;object-fit:contain;display:inline-block}
+#screen :is([data-gm],#gco,#gch,#gsend,#gleave)${Y}:not(.off):active{transform:scale(.94)!important;filter:brightness(.8) drop-shadow(0 1px 1px #0007)!important}`;document.head.appendChild(st)})();
