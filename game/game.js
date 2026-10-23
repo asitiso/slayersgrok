@@ -3769,3 +3769,16 @@ const st=document.createElement('style');st.textContent=`
 .idlebar i[style^="width:0%"]{display:none}
 .idlebar span{inset:-8px!important;line-height:22px!important;z-index:1}`;document.head.appendChild(st);
 const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen!='enhance'||G.enTab!='comp')return r;const i=document.querySelector('#screen .trv .trcmp>i:not(.hcar)');if(i&&i.textContent.trim()=='▶')i.classList.add('hcar')}catch(e){console.warn(e)}return r}})();
+
+/* v230 r279: tab plates (tab_on/tab_off 9-slice + tab_gem overlay) on .entabs rows */
+(function(){try{const S=document.createElement('style');const X=':is(#_t1,#_t2,span):is(#_t3,#_t4,span)';
+S.textContent=`
+#screen .entabs{gap:4px!important;padding-top:14px;margin-top:2px}
+#screen .entabs span${X}{flex:1 1 0!important;min-width:0}
+#screen .entabs:has(>span:nth-child(5)) span${X}{border-width:9px 5px!important;font-size:12px;letter-spacing:-.5px}
+#screen .entabs span${X}{background:none!important;border:9px solid transparent!important;border-width:9px 11px!important;border-image:url(${A}tab_off.png) 46 56 fill/9px 11px stretch!important;border-radius:0!important;box-shadow:none!important;padding:1px 0 2px!important;color:#e9dcc0!important;font-family:Maplestory,sans-serif;font-weight:700;line-height:20px;white-space:nowrap;filter:drop-shadow(0 2px 2px #0008);text-shadow:-1px 0 #1b1410,1px 0 #1b1410,0 -1px #1b1410,0 1px #1b1410,0 2px #1b1410;transition:transform .12s}
+#screen .entabs span.on${X}{border-image-source:url(${A}tab_on.png)!important;color:#fff0c8!important;transform:translateY(-2px);text-shadow:-1px 0 #3a0c06,1px 0 #3a0c06,0 -1px #3a0c06,0 1px #3a0c06,0 2px #2a0804}
+#screen .entabs span.on${X}::before{content:'';position:absolute;left:50%;top:-21px;width:25px;height:21px;margin-left:-12.5px;background:url(${A}tab_gem.png) center/contain no-repeat;pointer-events:none}
+#screen .entabs span${X} .dot{top:-21px;right:-10px;transform:scale(.75)}
+#screen .entabs:has(>span:nth-child(5)) span.on${X}::before{top:-22px;width:22px;height:19px;margin-left:-11px}
+`;document.head.appendChild(S)}catch(e){console.warn(e)}})();
