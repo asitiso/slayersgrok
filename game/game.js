@@ -3674,3 +3674,14 @@ const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments)
 const wrap=()=>{if(G.screen!='settings')return;document.querySelectorAll('#screen input[type=range][data-vol]').forEach(i=>{if(i.parentElement.classList.contains('sldw'))return;const w=document.createElement('span');w.className='sldw';w.innerHTML='<i class=sldt></i><i class=sldf></i>';i.before(w);w.appendChild(i);
  const upd=()=>{const mn=+i.min||0,mx=+i.max||100;w.style.setProperty('--p',((+i.value-mn)/(mx-mn)).toFixed(4))};upd();i.addEventListener('input',upd)})};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{wrap()}catch(_){}return r};G.sldWrap=wrap})();
+
+/* v221: settings polish. (1) ✏️/🌙/📢 emoji on 닉네임 변경 / 절전 켜기 / 공지 보기 buttons → ic_quill / ic_moon / ic_horn (19px). (2) settings section titles (게임, 계정 …): .ttl was space-between + dark #6a2a0a on dark card → centred ui_ribbon.png header with gear + cream title. Visual only. */
+(function(){const st=document.createElement('style');st.textContent=`
+#screen :is(#nkBtn,#svGo,#ntGo){display:inline-flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:5px;white-space:nowrap;width:auto!important;min-width:0!important;padding-left:12px!important;padding-right:14px!important}
+#screen :is(#nkBtn,#svGo,#ntGo) img.sbi{width:19px;height:19px;object-fit:contain;filter:drop-shadow(0 1px 1px #0009);flex:0 0 auto}
+#screen .stpaper .card>.ttl{justify-content:center!important;gap:6px!important;height:46px;margin:-2px auto 8px!important;padding:9px 30px 0!important;width:max-content;min-width:160px;box-sizing:border-box;background:url(assets/ui_ribbon.png) center/100% 100% no-repeat!important;border:0!important;color:#fff3d0!important;font-size:15px!important;font-weight:900;text-shadow:0 2px 0 #000,0 0 4px #000!important}
+#screen .stpaper .card>.ttl img.sti{height:20px!important;filter:drop-shadow(0 1px 1px #000)}
+#screen .stpaper .card>.ttl small{color:#f0dcb4!important}`;document.head.appendChild(st);
+const IC={nkBtn:'ic_quill',svGo:'ic_moon',ntGo:'ic_horn'},EM=/^\s*(✏️|✏|🌙|📢)\s*/u;
+const deco=()=>{if(G.screen!='settings')return;Object.entries(IC).forEach(([id,ic])=>{const b=document.getElementById(id);if(!b||b.querySelector('img.sbi'))return;const t=b.firstChild;if(t&&t.nodeType==3&&EM.test(t.textContent)){t.textContent=t.textContent.replace(EM,'');b.insertAdjacentHTML('afterbegin',`<img class=sbi src="assets/${ic}.png" alt="">`)}})};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{deco()}catch(_){}return r};G.setIcDeco=deco})();
