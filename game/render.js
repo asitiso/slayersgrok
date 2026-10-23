@@ -223,7 +223,7 @@ R._pm&&R._pm('logic2');  cx.save();cx.translate(sx,sy);
   // motes
 R._pm&&R._pm('bg');  cx.save();cx.globalCompositeOperation='lighter';for(let i=0;i<22;i+=(R.qLvl>=1?2:1)){const x=((i*97-scroll*.8+time*8)%W+W)%W,y=260+((i*53+time*(10+i%5))%420);cx.globalAlpha=.25+.25*Math.sin(time*2+i);cx.drawImage(glow('rgba(255,200,120,1)'),x-5,y-5,10,10)}cx.restore();
   // ground impact decals (world space)
-R._pm&&R._pm('motes');  DEC.forEach(d=>{const k=d.t/d.life,a=k<.05?k/.05:1-Math.pow(k,2),x=d.x-CX,y=d.y-CY;cx.save();cx.globalAlpha=a*.8;cx.translate(x,y);cx.scale(1,.42);
+R._pm&&R._pm('motes');  DEC.forEach(d=>{if(d.cy===undefined)d.cy=CY;/* r333: decal keeps the screen-y it was laid at, matching the vertically pinned backdrop (horizontal still scrolls) */const k=d.t/d.life,a=k<.05?k/.05:1-Math.pow(k,2),x=d.x-CX,y=d.y-d.cy;cx.save();cx.globalAlpha=a*.8;cx.translate(x,y);cx.scale(1,.42);
     const dsk=Math.min(4,Math.abs(cx.getTransform().a)||1),dr=Math.max(3,Math.round(d.r));
     if(d.k=='scorch'){cx.drawImage(R.gspr('dSc'+dr,2*dr,2*dr,dsk,(q,w)=>{const r=w/2,g=q.createRadialGradient(r,r,2,r,r,r);g.addColorStop(0,'rgba(20,8,0,.9)');g.addColorStop(.6,'rgba(40,16,4,.6)');g.addColorStop(1,'rgba(0,0,0,0)');q.fillStyle=g;q.beginPath();q.arc(r,r,r,0,7);q.fill()}),-d.r,-d.r,2*d.r,2*d.r);if(k<.4){cx.globalCompositeOperation='lighter';cx.globalAlpha=(.4-k)*2;cx.drawImage(glow('rgba(255,90,20,1)'),-d.r*.7,-d.r*.7,d.r*1.4,d.r*1.4)}}
     else if(d.k=='frost'){cx.drawImage(R.gspr('dFr'+dr,2*dr,2*dr,dsk,(q,w)=>{const r=w/2,g=q.createRadialGradient(r,r,2,r,r,r);g.addColorStop(0,'rgba(200,245,255,.7)');g.addColorStop(1,'rgba(120,200,255,0)');q.fillStyle=g;q.beginPath();q.arc(r,r,r,0,7);q.fill()}),-d.r,-d.r,2*d.r,2*d.r)}
