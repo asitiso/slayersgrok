@@ -4787,3 +4787,29 @@ body.sheeton #battle .combo,body.sheeton #battle .combo.duo,body.sheeton #battle
 const de=m=>{const bx=m.querySelector('.mbox');if(!bx||bx.classList.contains('rs359'))return;bx.classList.add('rs359');const t=bx.querySelector('.ttl');if(t){t.insertAdjacentHTML('afterbegin',`<img src="${A}tt_crown.png" alt="">`);t.insertAdjacentHTML('afterend','<small class=rsst>주간 랭킹 · 월 05:00 정산</small>')}};
 new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('brmod'))de(n)}).observe(document.getElementById('app'),{childList:true});
 })();
+;(()=>{// r360 v310 영지 building strip (real Lv + current output from the existing rows) · empty potion-slot frame · 마력 수련 강화 cost red when gold is short (display only)
+const A='assets/',st=document.createElement('style');st.textContent=`
+.bstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0 6px}
+.bstrip .bsc{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 7px;border-radius:12px;border:2px solid #0b0d0f;background:linear-gradient(#3a2a14ee,#1e1408ee);box-shadow:inset 0 0 0 1px #8a6a34,0 4px 10px #0008;cursor:pointer;min-width:0}
+.bstrip .bsc.on{box-shadow:inset 0 0 0 2px #ffd25a,0 0 10px #ffb02e66,0 4px 10px #0008}
+.bstrip .bsc img{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 2px #000a)}
+.bstrip .bsc b{font:900 12px Maplestory,sans-serif;color:#ffe8c0;white-space:nowrap}
+.bstrip .bsc .lv{position:absolute;top:4px;left:5px;font:900 10px Maplestory,sans-serif;color:#fff;background:#000a;border:1px solid #c9953f;border-radius:7px;padding:0 4px}
+.bstrip .bsc small{font:700 10px 'Noto Sans KR',sans-serif;color:#e0d4b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:flex;align-items:center;gap:2px}
+.bstrip .bsc small img{width:12px;height:12px;filter:none}
+.bstrip .bsc .sb{width:86%;height:5px;border-radius:3px;background:#0009;overflow:hidden;margin-top:2px}.bstrip .bsc .sb i{display:block;height:100%;background:linear-gradient(90deg,#7aff8a,#2ac04a)}
+.bstrip .bsc em{font:900 10px 'Noto Sans KR',sans-serif;font-style:normal;color:#7aff8a}.bstrip .bsc em.up{color:#9fd8ff}
+.potb.emp{background:radial-gradient(circle,#0e1116 52%,#1c222a)!important;border-color:transparent!important;box-shadow:inset 0 3px 6px #000c!important}
+.potb.emp::after{content:'';position:absolute;inset:-5px;background:url(${A}sk_empty.png) center/100% 100% no-repeat;z-index:3;pointer-events:none}
+.potb.emp img{width:20px;height:20px;opacity:.3}.potb.emp b{z-index:4;color:#c8ccd4}
+.tcard .pill.off:has(small){filter:none!important;background:linear-gradient(#5a5e66,#3a3d44)!important;border-color:#1a1c20!important;box-shadow:inset 0 1px 0 #ffffff22,0 2px 0 #0008!important;color:#c8ccd4!important;text-shadow:0 1px 0 #000!important}
+.tcard .pill.off small{display:inline-flex;align-items:center;gap:2px;margin-top:1px;padding:0 6px;border-radius:7px;background:#0007}.tcard .pill.off small,.tcard .pill.off small *{color:#ff7a6a!important;font-weight:900}
+body.sheeton .bwarn,body.sheeton #battle .vsx,body.sheeton #battle .wvb,body.sheeton #battle .bcut,body.sheeton #battle .banner,body.sheeton #bubL{visibility:hidden!important;animation-play-state:running}.tcard .pill.off small img{filter:saturate(.6)}`;document.head.appendChild(st);
+const K=[['vault','황금 광산','bd_mine.png'],['mine','마정 농장','bd_farm.png'],['tower','마탑','bd_tower.png']];
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen!='base')return r;const sb=document.querySelector('#screen .sbody'),card=sb&&sb.querySelector('.card.bupc');if(!card||sb.querySelector('.bstrip'))return r;const s=C.S(),now=C.now(),sel=G.baseSel||'vault';
+ const cs=K.map(([k,n,ic])=>{const b=s.bld&&s.bld[k],row=[...card.querySelectorAll('.row')].find(x=>{const d=(x.querySelector('[data-up],[data-sp]')||{}).dataset;return d&&(d.up||d.sp)==k});if(!b||!row)return '';
+  const sm=row.querySelector('.f small');let out='';if(sm){const t=sm.textContent.trim();out=k=='tower'?t.replace(/\s*\(.*\)$/,''):(t.split('·')[0]||'').trim()}const bi=row.querySelector('.bar i'),pc=bi?parseFloat(bi.style.width)||0:null;const up=b.up&&b.up>now;
+  const ri=k=='vault'?'it2_gold.png':k=='mine'?'it2_exp.png':'';
+  return `<div class="bsc ${sel==k?'on':''}" data-bs=${k}><span class=lv>Lv.${b.lv}</span><img src="${A}${ic}" alt=""><b>${n}</b><small>${ri?`<img src="${A}${ri}" alt="">`:''}${out}</small>${pc!=null?`<div class=sb><i style="width:${Math.min(100,pc)}%"></i></div>`:''}${up?'<em class=up>업그레이드 중</em>':k!='tower'&&b.acc>=1?'<em>수확 가능</em>':''}</div>`}).join('');
+ if(!cs)return r;const w=document.createElement('div');w.className='bstrip';w.innerHTML=cs;card.after(w);w.querySelectorAll('[data-bs]').forEach(e=>e.onclick=()=>{G.baseSel=e.dataset.bs;renderScreen()})}catch(e){console.warn(e)}return r};
+})();
