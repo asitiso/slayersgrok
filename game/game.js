@@ -4330,7 +4330,7 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);const P=G._
 ;(()=>{/* r315: companion ult cut-in art. If assets/cut/<k>_ult.png is listed in ULT and decoded, the field cut-in (ccFrame, non-boss) draws a Lina-style tilted band with the full art sliding in; otherwise the arch-banner portrait as before. Boss fights keep the slim strip. Off under low graphics / fx off (portrait banner), and R.opt.cut=off already suppresses the cut-in. Art decoded at idle. Display only. */
 const ULT={gourry:1,amelia:1,lyra:1,zelgadis:1,xellos:1,pip:1,borin:1,sera:1,rhea:1,kaede:1,noel:1},IM={};/* r319: +xellos; r320: +pip, borin; r321: +sera, rhea, kaede, noel *//* r316: +amelia, lyra; r318: +zelgadis */const ric=window.requestIdleCallback||(f=>setTimeout(f,200));
 const low=()=>document.body.classList.contains('tglite')||document.body.classList.contains('nofx')||(R.opt&&R.opt.fx===false);
-const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)i._ok=1})}return i};
+const get=k=>{let i=IM[k];if(!i){i=IM[k]=new Image();i.decoding='async';i.src=A+'cut/'+k+'_ult.png';i._ok=0;const ok=()=>{i._ok=1;/* r372: build the boss-strip panel at idle once decoded (was built on first ult: 5-7ms) */ric(()=>{try{const c=R._ultStripArt&&R._ultStripArt(k);if(c&&R._wflush)R._wflush(c)}catch(_){}},{timeout:3000})};(i.decode?i.decode():Promise.reject()).then(ok,()=>{if(i.complete&&i.naturalWidth)ok()})}return i};
 const pre=Object.keys(ULT);const step=()=>{const k=pre.shift();if(!k)return;ric(()=>{get(k);setTimeout(step,400)},{timeout:4000})};setTimeout(step,3000);
 G._ultArt=()=>Object.keys(IM).filter(k=>IM[k]._ok);
 /* r322: boss-strip panel — the ult art's upper figure cut once into a small canvas per companion (left edge feathered), cached; R.ccStrip asks once per cut-in and draws it at the strip's right end. null (portrait-only strip) if not listed/decoded or low graphics. */
@@ -4919,3 +4919,8 @@ if(!R||typeof R.waveRib!=='function')return;const o=R.waveRib;R.waveRib=function
 ;(()=>{/* r367 v317: boss-fight duo card in the low band - compact (scale .78) and the toast stack stays put (its 118/176px slide only dodged the old mid-field slots and would now land on the boss) */
 const st=document.createElement('style');st.textContent=`body #battle .combo.duo.dlw:is(#_a,#_b,div):is(#_c,#_d,div):is(#_e,#_f,div){scale:.78}
 body:not(.hs-scr):not(.hs-sh):not(.hs-mp):is(.hs-cbw,#_hz1).hs-cbw.hs-cbw.hs-cbw.hs-cbw:is(#_a,#_b,body) #toastQ{translate:0 0!important}`;document.head.appendChild(st)})();
+
+;(()=>{/* r372: warm the upcoming stage boss's sprite caches at idle, from the last wave before the boss and again at startBoss (1.2s lock). Display only. */
+const C=window.CORE,R=window.RENDER;if(!C||!R)return;const D=C.D,BAL=D.BAL;const bossOf=()=>{try{const si=C.S().si,pl=D.BOSSPLAN[Math.floor(si/7)];return pl&&D.BOSSES[pl[si%7==6?1:0]]}catch(_){return null}};
+const w=()=>{const b=bossOf();if(b&&R.warmBoss)R.warmBoss(b.img,b.sc,0)};const sb=C.startBoss;C.startBoss=function(){const r=sb.apply(this,arguments);if(C.B.boss&&!C.B.wb)w();return r};
+setInterval(()=>{try{const s=C.S();if(!C.B.boss&&s.wave>=BAL.waves-1)w()}catch(_){}},2000)})();
