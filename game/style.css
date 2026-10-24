@@ -1563,3 +1563,12 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 /* r376: 일일 특가 original price - was a faint 10px grey line half under the buy button; now a readable struck-through red price on its own line above the button (화룡전 style), same values */
 .dcell s,.deals.scv .dcell s{display:table;position:relative;z-index:2;font:800 11px/15px Maplestory,sans-serif;color:#8a2e1a;opacity:1;margin:1px auto 4px;padding:0 7px;border-radius:8px;background:#fff4dee6;box-shadow:0 0 0 1px #c9a46a99;text-decoration:line-through 1.5px #d0301e;white-space:nowrap}
 .dcell s .ci{width:12px;height:12px;vertical-align:-2px;margin-right:2px;opacity:.85}
+
+/* r420 (display only): grouped full menu (화룡전-style section headers), 5 per row */
+#mgrid.mgrid{grid-template-columns:repeat(5,1fr);gap:6px 2px;padding-top:8px}
+#mgrid .mgh{grid-column:1/-1;margin:6px 4px 0;display:flex;align-items:center;gap:8px;font:900 12.5px Maplestory,sans-serif;color:#ffd77a;text-shadow:0 1px 2px #000,0 0 3px #000}
+#mgrid .mgh::before,#mgrid .mgh::after{content:'';flex:1;height:2px;border-radius:1px;background:linear-gradient(90deg,#c99a4a00,#c99a4a)}
+#mgrid .mgh::after{background:linear-gradient(90deg,#c99a4a,#c99a4a00)}
+#mgrid.mgrid img{width:46px;height:46px}
+/* r420: the boss WARNING / VS cut-ins play over the battle only - hidden (not removed) while the full menu popup is open */
+body.hs-mp .bwarn,body.hs-mp .vsx{visibility:hidden}
