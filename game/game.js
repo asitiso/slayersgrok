@@ -311,7 +311,7 @@ const om=C.mAdd;C.mAdd=(k,n=1)=>{const s=ac();s.ac[k]=(s.ac[k]||0)+n;return om(k
 const oe=C.enhance;C.enhance=(...a)=>{const r=oe(...a);if(r&&typeof r!='string'||r===true||r==='ok'){const s=ac();s.ac.enh=(s.ac.enh||0)+1}return r};
 C.achVal=k=>{const s=ac();if(k=='stage')return s.maxSi||0;if(k=='kill')return Math.max(s.ac.kill||0,s.kills||0);return s.ac[k]||0};
 C.achList=()=>{const s=ac();return D.ACH.map(a=>{const lv=s.acl[a.k]||0,done=lv>=a.g.length,i=Math.min(lv,a.g.length-1),v=C.achVal(a.k);return{k:a.k,n:a.n,d:a.d,ic:a.ic,lv,done,goal:a.g[i],v,gem:a.gem[i],can:!done&&v>=a.g[i]}})};
-G.achGems=()=>{let n=0;try{const s=ac();D.ACH.forEach(a=>{const v=C.achVal(a.k);for(let i=s.acl[a.k]||0;i<a.g.length&&v>=a.g[i];i++)n+=a.gem[i]||0})}catch(e){}return n};G.achSteps=()=>{let n=0;try{const s=ac();D.ACH.forEach(a=>{const v=C.achVal(a.k);for(let i=s.acl[a.k]||0;i<a.g.length&&v>=a.g[i];i++)n++})}catch(e){}return n};C.achClaim=k=>{const s=ac(),a=D.ACH.find(x=>x.k==k);const lv=s.acl[k]||0;if(!a||lv>=a.g.length||C.achVal(k)<a.g[lv])return false;s.acl[k]=lv+1;s.gems+=a.gem[lv];if(a.t)s.tickets=(s.tickets||0)+a.t[lv];if(a.st)s.stone=(s.stone||0)+a.st[lv];return true};
+G.achStepsK=k=>{let n=0;try{const s=ac(),a=D.ACH.find(x=>x.k==k);if(!a)return 0;const v=C.achVal(k);for(let i=s.acl[k]||0;i<a.g.length&&v>=a.g[i];i++)n++}catch(e){}return n};G.achGems=()=>{let n=0;try{const s=ac();D.ACH.forEach(a=>{const v=C.achVal(a.k);for(let i=s.acl[a.k]||0;i<a.g.length&&v>=a.g[i];i++)n+=a.gem[i]||0})}catch(e){}return n};G.achSteps=()=>{let n=0;try{const s=ac();D.ACH.forEach(a=>{const v=C.achVal(a.k);for(let i=s.acl[a.k]||0;i<a.g.length&&v>=a.g[i];i++)n++})}catch(e){}return n};C.achClaim=k=>{const s=ac(),a=D.ACH.find(x=>x.k==k);const lv=s.acl[k]||0;if(!a||lv>=a.g.length||C.achVal(k)<a.g[lv])return false;s.acl[k]=lv+1;s.gems+=a.gem[lv];if(a.t)s.tickets=(s.tickets||0)+a.t[lv];if(a.st)s.stone=(s.stone||0)+a.st[lv];return true};
 C.achScore=()=>{const s=ac();return D.ACH.reduce((t,a)=>t+(s.acl[a.k]||0)*10,0)};})();
 
 D.TITLES=[{k:'t1',n:'견습 마도사',r:1,d:'업적 점수 10 달성',q:()=>C.achScore()>=10,atk:2},
@@ -4405,7 +4405,7 @@ const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);t
  const T=G.mqT=G.mqT||'d';
  const D1=D.MISSIONS.map(m=>{const v=Math.min(m.goal,s.mp[m.k]||0);return{n:m.n,ic:IC[m.k]||'ic3_quest.png',v,goal:m.goal,done:v>=m.goal,cl:!!s.mc[m.k],rw:gem(m.gem),attr:`data-m=${m.k}`}});
  const W1=(D.WMISS||[]).map(m=>{const v=Math.min(m.goal,s.wk.p[m.k]||0);return{n:m.n,ic:IC[m.k]||'ic3_quest.png',v,goal:m.goal,done:v>=m.goal,cl:!!s.wk.c[m.k],rw:gem(m.gem)+tk(m.tk),attr:`data-w=${m.k}`}});
- const A1=C.achList?C.achList().map(a=>({n:a.n+(a.done?'':` ${a.lv+1}단계`),ic:a.ic||'ic3_trophy.png',v:Math.min(a.v,a.goal),goal:a.goal,done:a.done||a.can,cl:a.done,rw:a.done?'':gem(a.gem),attr:`data-ach=${a.k}`})):[];
+ const A1=C.achList?C.achList().map(a=>({n:a.n+(a.done?'':` ${a.lv+1}단계`)+((x=>x>0?`<u class=acwt>+${x}단계 대기</u>`:'')(a.can&&G.achStepsK?G.achStepsK(a.k)-1:0)),ic:a.ic||'ic3_trophy.png',v:Math.min(a.v,a.goal),goal:a.goal,done:a.done||a.can,cl:a.done,rw:a.done?'':gem(a.gem),attr:`data-ach=${a.k}`})):[];
  const dD=D1.some(x=>x.done&&!x.cl),dW=W1.some(x=>x.done&&!x.cl),dA=A1.some(x=>x.done&&!x.cl);
  const L=T=='w'?W1:T=='a'?A1:D1,nd=L.filter(x=>x.cl).length,nr=L.filter(x=>x.done&&!x.cl).length;
  const sub=T=='d'?'매일 05:00 초기화 (KST)':T=='w'?'월요일 초기화':'단계별 영구 보상';
@@ -5190,3 +5190,4 @@ const orp=rewardPop;rewardPop=function(items,sub){let it=items,G2=[];try{const b
  return r};
 })();
 ;(()=>{const st=document.createElement('style');st.textContent=`.acsum b>em.acrdy{font:800 9.5px Maplestory,sans-serif;font-style:normal;color:#9dff7a;margin-left:2px;vertical-align:1px;text-shadow:0 1px 0 #000}`;document.head.appendChild(st)})();
+;(()=>{const st=document.createElement('style');st.textContent=`#panel .mqr .f{position:relative}#panel .mqr .f>b>u.acwt{text-decoration:none;display:inline-block;position:absolute;right:3px;top:29px;z-index:2;line-height:13px!important;padding:0 5px;border-radius:7px;background:#123d0f;box-shadow:inset 0 0 0 1px #9dff7aaa,0 1px 2px #000a;font:800 9px/14px Maplestory,sans-serif;color:#d8ffc8;vertical-align:1px;white-space:nowrap}`;document.head.appendChild(st)})();
