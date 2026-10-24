@@ -1760,10 +1760,10 @@ const css=document.createElement('style');css.textContent=`
 @keyframes tlfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}`;document.head.appendChild(css);
 const draw=fx=>{const el=$('#screen'),s=C.S(),t=s.tal||{},P=C.talPts();
  el.innerHTML=shell('마도 특성','bg_library.jpg',`<div class="card tlh"><span class=pt>${P}</span><div class=f><b>특성 포인트</b><small>스테이지 3개 클리어마다 +1 · 노드를 탭해 습득 (아래 단계부터)</small></div></div>
- <div class=card><small>공격력 +${Math.round(C.talB('atk')*100)}% · 체력 +${Math.round(C.talB('hp')*100)}% · 골드 +${Math.round(C.talB('gold')*100)}%</small></div>
+ <div class="card tlsum"><span class=tlsl>특성 합계</span>${C.TAL.map(b=>`<span class=tlsc style="--c:${b.c}">${b.d} <b>+${Math.round(C.talB(b.k)*100)}%</b></span>`).join('')}</div>
  <div class=tlt>${C.TAL.map(b=>{const n=t[b.k]||0;return `<div class=tlc style="--c:${b.c}"><b>${b.n}</b><small>${b.d} 강화</small><u class=tlq>${n}/${b.v.length}</u>${b.v.map((v,i)=>{const on=i<n,nx=i==n,cs=C.TALC[i];return `<div class="tln ${on?'on':nx?'nx'+(P>=cs?' can':' poor'):'lock'} ${i==4?'cap':''}" data-tl="${b.k}" data-i=${i}><div class=o><img src="${A}${IC[b.k]}"></div>${!on?`<span class="cs${nx?(P>=cs?' ok':' no'):''}">${cs}P</span>`:''}<em>${b.nm[i]}</em><i>${b.d} +${Math.round(v*100)}%</i>${fx==b.k+i?'<span class=tlfx></span>':''}</div>`}).join('')}</div>`}).join('')}</div>`);
  el.querySelector('#sBack').onclick=()=>closeScreen();
- el.querySelectorAll('[data-tl]').forEach(e=>e.onclick=()=>{const k=e.dataset.tl,i=+e.dataset.i,n=(C.S().tal||{})[k]||0;if(i<n)return;if(i>n)return toast('아래 단계를 먼저 습득하세요');if(!C.talUp(k))return toast('특성 포인트가 부족해요');try{updateHud()}catch(_){}draw(k+i);toast((C.TAL.find(b=>b.k==k).nm[i])+' 습득!')})};
+ el.querySelectorAll('[data-tl]').forEach(e=>e.onclick=G.tlWrap(e,()=>{const k=e.dataset.tl,i=+e.dataset.i,n=(C.S().tal||{})[k]||0;if(i<n)return;if(i>n)return toast('아래 단계를 먼저 습득하세요');if(!C.talUp(k))return toast('특성 포인트가 부족해요');try{updateHud()}catch(_){}draw(k+i);toast((C.TAL.find(b=>b.k==k).nm[i])+' 습득!')}))};
 if(!MENU.some(m=>m[0]=='talent')){const i=MENU.findIndex(m=>m[0]=='star');MENU.splice(i+1,0,['talent','특성','ic3_talent.png'])}try{renderHub()}catch(_){}
 const rs=renderScreen;renderScreen=function(){if(G.screen=='talent')return draw();return rs.apply(this,arguments)};
 })();
@@ -5113,3 +5113,44 @@ const st=document.createElement('style');st.textContent=`
 body.nofx .tln.nx .o,body.tglite .tln.nx .o{animation:none}
 .skn b{word-break:keep-all;overflow-wrap:anywhere}
 .ttl>small.skcnt{float:right;font-size:10px;opacity:.85;margin-top:2px}`;document.head.appendChild(st)})();
+
+;(()=>{/* r405 특성 node detail popup (UI flow only): tap → pooled .modal.tlpop (detached on close) showing tier, this node's effect, path total now → after, cost vs points; 습득 button runs the ORIGINAL node handler (C.talUp unchanged); learned/locked/short → disabled button with reason */
+const st=document.createElement('style');st.textContent=`
+.modal.tlpop>.card{width:300px;max-width:86vw;text-align:center;border:3px solid var(--c,#c9953f)!important;padding:14px 14px 12px!important;position:relative}
+.tlpop .tpi{width:66px;height:66px;margin:4px auto 6px;border-radius:50%;border:3px solid var(--c);background:radial-gradient(#fff8,var(--c) 60%,#0008);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px var(--c)}
+.tlpop .tpi img{width:40px;height:40px;object-fit:contain}
+.tlpop.lk .tpi{filter:grayscale(1) brightness(.7);box-shadow:none}
+.tlpop .tpn{font:900 17px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #000}
+.tlpop .tpb{font:900 11px Maplestory,sans-serif;color:var(--c);margin-top:2px}
+.tlpop .tps{display:inline-block;margin:6px 0 4px;padding:1px 9px;border-radius:9px;font:900 11px Maplestory,sans-serif;background:#0009;border:1px solid #fff5;color:#fff}
+.tlpop .tps.on{border-color:#7dff7d;color:#bfffbf}.tlpop .tps.can{border-color:#ffe27a;color:#ffe27a}.tlpop .tps.no,.tlpop .tps.lk{border-color:#ff7a7a;color:#ffc0c0}
+.tlpop .tpr{display:flex;justify-content:space-between;align-items:center;background:#0006;border-radius:8px;padding:6px 10px;margin-top:5px;font:800 12px Maplestory,sans-serif;color:#ddd}
+.tlpop .tpr b{color:#fff}.tlpop .tpr b.up{color:#7dff7d}.tlpop .tpr b.no{color:#ff8a8a}.tlpop .tpr em{font-style:normal;color:#aaa;margin:0 5px}
+.tlpop .tpbt{display:flex;gap:8px;margin-top:12px}.tlpop .tpbt .btn{flex:1;margin:0!important}
+.tlpop .btn.dis{filter:grayscale(1) brightness(.75);pointer-events:none}.tlpop .btn.tpc{pointer-events:auto}
+.tlpop .tpx{font-size:10px;color:#ffc0c0;margin-top:5px;min-height:12px}
+@keyframes tlpi{from{transform:scale(.9);opacity:.4}to{transform:none;opacity:1}}
+.modal.tlpop>.card{animation:tlpi .16s ease-out}body.nofx .modal.tlpop>.card,body.tglite .modal.tlpop>.card{animation:none}`;document.head.appendChild(st);
+let M=null,cur=null;const pc=v=>Math.round(v*100);
+const close=()=>{if(M&&M.parentNode)M.remove();cur=null};
+const build=()=>{M=document.createElement('div');M.className='modal tlpop';M.innerHTML='<div class=card><div class=tpi><img alt=""></div><div class=tpn></div><div class=tpb></div><span class=tps></span><div class="tpr r1"><span>이 노드 효과</span><b></b></div><div class="tpr r2"><span></span><span><b class=a></b><em>▶</em><b class="b up"></b></span></div><div class="tpr r3"><span>필요 포인트</span><span><b class=c></b><em>/</em><b class=d></b></span></div><div class=tpx></div><div class=tpbt><span class="btn p tpc">닫기</span><span class="btn g tpo">습득</span></div></div>';
+ M.onclick=e=>{if(e.target==M||e.target.closest('.tpc'))return close();if(e.target.closest('.tpo')&&cur){const f=cur;close();f()}};
+ return M};
+G.tlWrap=(el,orig)=>()=>{try{const k=el.dataset.tl,i=+el.dataset.i,s=C.S(),n=(s.tal||{})[k]||0,b=C.TAL.find(x=>x.k==k),P=C.talPts(),cs=C.TALC[i],on=i<n,nx=i==n,ok=nx&&P>=cs;
+ if(!M)build();const q=x=>M.querySelector(x);M.style.setProperty('--c',b.c);M.classList.toggle('lk',!on&&!nx);
+ q('.tpi img').src=(el.querySelector('.o img')||{}).src||'';q('.tpn').textContent=b.nm[i];q('.tpb').textContent=b.n+' · '+(i+1)+'단계 / '+b.v.length;
+ const t=q('.tps');t.className='tps '+(on?'on':ok?'can':nx?'no':'lk');t.textContent=on?'습득 완료':ok?'습득 가능':nx?'포인트 부족':'잠김';
+ q('.r1 b').textContent=b.d+' +'+pc(b.v[i])+'%';
+ const now=C.talB(k);q('.r2>span').textContent=b.n+' 합계';q('.r2 .a').textContent=b.d+' +'+pc(now)+'%';
+ const sh=nx;q('.r2 em').style.display=q('.r2 .b').style.display=sh?'':'none';q('.r2 .b').textContent='+'+pc(now+b.v[i])+'%';
+ q('.r3').style.display=on?'none':'';q('.r3 .c').textContent='보유 '+P+'P';q('.r3 .c').className='c '+(P>=cs?'up':'no');q('.r3 .d').textContent='필요 '+cs+'P';
+ q('.tpx').textContent=on?'이미 습득한 노드입니다':ok?'':nx?'포인트가 '+(cs-P)+'P 부족해요 · 스테이지 3개 클리어마다 +1':'아래 단계('+b.nm[n]+')를 먼저 습득하세요';
+ const o=q('.tpo');o.classList.toggle('dis',!ok);o.textContent=ok?'습득 ('+cs+'P)':on?'습득 완료':nx?'포인트 부족':'잠김';
+ cur=ok?orig:null;$('#app').appendChild(M)}catch(e){orig()}};
+})();
+
+;(()=>{/* r405 특성 합계 chips (display only, same C.talB values) */const st=document.createElement('style');st.textContent=`
+#screen .card.tlsum{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:7px 8px!important}
+.tlsum .tlsl{font:900 11px Maplestory,sans-serif;color:#ffe7a8;margin-right:2px}
+.tlsum .tlsc{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:10px;background:#0009;border:1.5px solid var(--c);color:#ddd;font:800 11px Maplestory,sans-serif}
+.tlsum .tlsc b{color:var(--c);font-weight:900}`;document.head.appendChild(st)})();
