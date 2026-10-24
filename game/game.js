@@ -4412,7 +4412,7 @@ const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);t
  const ttl=T=='d'?'일일 지령':T=='w'?'주간 임무':'업적';
  const allN=T=='a'?nr:(T=='d'?D1:W1).filter(x=>x.done&&!x.cl).length+0;
  p.innerHTML=`<div class=mqtabs>${[['d','일일',dD],['w','주간',dW],['a','업적',dA]].map(([k,n,d])=>`<span class="${T==k?'on':''}" data-mq=${k}>${n}${d?'<i class=dot></i>':''}</span>`).join('')}</div>
- <div class="card mqsum"><img src="${A}fr_gift.png"><div class=f><b>${ttl} ${nd}/${L.length}</b> <small>${sub}</small><div class=mqb><i class="${nd>=L.length?'ok':''}" style="width:${L.length?nd/L.length*100:0}%"></i></div></div>${T!='a'?`<span class="mcall ${dD||dW?'':'off'}" id=mqAll>모두 받기${(D1.concat(W1)).filter(x=>x.done&&!x.cl).length?` <small>${(D1.concat(W1)).filter(x=>x.done&&!x.cl).length}</small>`:''}</span>`:`<span class="mcall ${nr?'':'off'}" id=mqAch>모두 받기${nr?` <small>${nr}</small>`:''}</span>`}</div>
+ <div class="card mqsum"><img src="${A}fr_gift.png"><div class=f><b>${ttl} ${nd}/${L.length}</b> <small>${sub}</small><div class=mqb><i class="${nd>=L.length?'ok':''}" style="width:${L.length?nd/L.length*100:0}%"></i></div></div>${T!='a'?`<span class="mcall ${dD||dW?'':'off'}" id=mqAll>모두 받기${(D1.concat(W1)).filter(x=>x.done&&!x.cl).length?` <small>${(D1.concat(W1)).filter(x=>x.done&&!x.cl).length}</small><em class=mqsrc>일일 ${D1.filter(x=>x.done&&!x.cl).length} · 주간 ${W1.filter(x=>x.done&&!x.cl).length}</em>`:''}</span>`:`<span class="mcall ${nr?'':'off'}" id=mqAch>모두 받기${nr?` <small>${nr}</small>`:''}</span>`}</div>
  ${ordr(L).map(row).join('')}${T=='a'?`<span class=mqmore id=mqAchS>업적의 전당 · 칭호 보기 ›</span>`:''}`;
  p.querySelectorAll('[data-mq]').forEach(b=>b.onclick=()=>{G.mqT=b.dataset.mq;renderPanel()});
  p.querySelectorAll('[data-m]').forEach(el=>el.onclick=()=>{if(el.classList.contains('off'))return;C.claimMission(el.dataset.m);try{updateHud()}catch(_){}renderPanel()});
@@ -5175,3 +5175,6 @@ const st=document.createElement('style');st.textContent=`
 .tlc>.tlnh span,.tlc>.tlnh b,.tlc>.tlnh em{display:block;font-style:normal;white-space:nowrap}
 .tlc>.tlnh b{color:var(--c);font-size:11px;font-weight:900}
 .tlc>.tlnh.ok em{color:#9dff9d}.tlc>.tlnh.no em{color:#ff9a9a}.tlc>.tlnh.done{color:#bfffbf}`;document.head.appendChild(st)})();
+
+;(()=>{/* r407 임무 모두 받기 source caption (display only): the button claims daily+weekly together (G.missionClaimAll), so show where the pooled count comes from */
+const st=document.createElement('style');st.textContent=`.mcall{position:relative}.mcall>em.mqsrc{position:absolute;left:0;right:0;bottom:-13px;text-align:center;font:800 9px Maplestory,sans-serif;font-style:normal;color:#ffe7a8;text-shadow:0 1px 0 #000;white-space:nowrap;pointer-events:none}.card.mqsum{padding-bottom:16px!important}`;document.head.appendChild(st)})();
