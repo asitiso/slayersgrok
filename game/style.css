@@ -1567,8 +1567,9 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 /* r420 (display only): grouped full menu (화룡전-style section headers), 5 per row */
 #mgrid.mgrid{grid-template-columns:repeat(5,1fr);gap:6px 2px;padding-top:8px}
 #mgrid .mgh{grid-column:1/-1;margin:6px 4px 0;display:flex;align-items:center;gap:8px;font:900 12.5px Maplestory,sans-serif;color:#ffd77a;text-shadow:0 1px 2px #000,0 0 3px #000}
-#mgrid .mgh::before,#mgrid .mgh::after{content:'';flex:1;height:2px;border-radius:1px;background:linear-gradient(90deg,#c99a4a00,#c99a4a)}
-#mgrid .mgh::after{background:linear-gradient(90deg,#c99a4a,#c99a4a00)}
+#mgrid .mgh::before,#mgrid .mgh::after{content:'';flex:1;max-width:136px;height:20px;background:url(assets/ui/menu_div_l.png) right center/contain no-repeat}
+#mgrid .mgh::after{background-image:url(assets/ui/menu_div_r.png);background-position:left center}
+#mgrid .mgh{justify-content:center;gap:4px;margin-top:4px}
 #mgrid.mgrid img{width:46px;height:46px}
 /* r420: the boss WARNING / VS cut-ins play over the battle only - hidden (not removed) while the full menu popup is open */
 body.hs-mp .bwarn,body.hs-mp .vsx{visibility:hidden}
