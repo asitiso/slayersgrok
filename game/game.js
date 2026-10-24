@@ -5049,10 +5049,10 @@ html body.tglite #battle .sktag{box-shadow:0 2px 3px #0008}html body.tglite #bat
 @keyframes sktI{0%{opacity:0;transform:translate(-50%,-60%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.08)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1;transform:translate(-50%,-100%)}100%{opacity:0;transform:translate(-50%,-150%)}}
 @keyframes sktL{0%{opacity:1}100%{opacity:0}}`;document.head.appendChild(css);
 const pool=[];const tag=(key,name,icon,col)=>{try{if(G.screen||G._fin||G.storyOn||(R.opt&&R.opt.fx===false)||document.body.classList.contains('nofx'))return;const b=document.getElementById('battle'),s=R._AS&&R._AS().get(key);if(!b||!s||!name)return;
- if(!pool.length)for(let i=0;i<4;i++){const d=document.createElement('div');d.className='sktag';d.innerHTML='<img alt=""><b></b>';d._k=null;d._t=0;d.addEventListener('animationend',()=>d.classList.remove('on'));pool.push(d)}
+ if(!pool.length)for(let i=0;i<4;i++){const d=document.createElement('div');d.className='sktag';d.innerHTML='<img alt=""><b></b>';d._k=null;d._t=0;d._x=d._y=-999;d.addEventListener('animationend',()=>d.classList.remove('on'));pool.push(d)}
  const now=performance.now();let d=pool.find(x=>x._k===key&&now-x._t<1250)||pool.find(x=>now-x._t>=1250)||pool.reduce((a,x)=>x._t<a._t?x:a);
  if(d.parentNode!==b)b.appendChild(d);d._k=key;d._t=now;const im=d.firstChild;if(icon){if(!im.src.endsWith(icon))im.src=A+icon;im.style.display=''}else im.style.display='none';d.lastChild.textContent=name;d.style.setProperty('--sc',col||'#ffd77a');
- d.style.left=Math.max(50,Math.min(340,s.x))+'px';d.style.top=(s.y-112)+'px';d.classList.remove('on');void d.offsetWidth;d.classList.add('on')}catch(_){}};
+ const tx=Math.max(50,Math.min(340,s.x));let ty=s.y-112;for(let n=0;n<4;n++){const o=pool.find(x=>x!==d&&now-x._t<1250&&Math.abs(x._x-tx)<100&&Math.abs(x._y-ty)<22);if(!o)break;ty=o._y-23}d._x=tx;d._y=ty;d.style.left=tx+'px';d.style.top=ty+'px';d.classList.remove('on');void d.offsetWidth;d.classList.add('on')}catch(_){}};
 const os=C.ev.spell;C.ev.spell=function(sp){const r=os&&os.apply(this,arguments);try{if(sp&&sp.n&&!(R.cut&&R.cut.t<.2&&R.cut.n===sp.n))tag('lina',sp.n,sp.img,'#ffb35a')}catch(_){}return r};
 let un=G.ultN||0;const of=R.frame;R.frame=dt=>{of(dt);if(G.ultN!==un){un=G.ultN;try{const nm=G.lastUlt,CS=D.CSKI||{};const k=Object.keys(CS).find(x=>CS[x][1]===nm);if(k&&!(R.ccut&&R.ccut.t<.6&&R.ccut.k===k)&&!(R.ccQ&&R.ccQ.k===k)){const cp=(D.COMPS||[]).find(x=>x.k==k);tag(k,nm,CS[k][0],cp&&D.RAR&&(D.RAR[cp.g]||{}).c)}}catch(_){}}};
 })();
