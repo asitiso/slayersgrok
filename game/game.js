@@ -1759,7 +1759,7 @@ const css=document.createElement('style');css.textContent=`
 .tln.cap .o{width:60px;height:60px}.tlfx{position:absolute;left:50%;top:50%;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;border:3px solid #fff;animation:tlfx .6s ease-out forwards;pointer-events:none}
 @keyframes tlfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}`;document.head.appendChild(css);
 const draw=fx=>{const el=$('#screen'),s=C.S(),t=s.tal||{},P=C.talPts();
- el.innerHTML=shell('마도 특성','bg_library.jpg',`<div class="card tlh"><span class=pt>${P}</span><div class=f><b>특성 포인트</b><small>스테이지 3개 클리어마다 +1 · 노드를 탭해 습득 (아래 단계부터)</small></div></div>
+ el.innerHTML=shell('마도 특성','bg_library.jpg',`<div class="card tlh"><span class=pt>${P}</span><div class=f><b>특성 포인트</b><small>스테이지 3개 클리어마다 +1 · 노드를 탭해 습득 (아래 단계부터)</small>${G.tlHdr?G.tlHdr():''}</div></div>
  <div class="card tlsum"><span class=tlsl>특성 합계</span>${C.TAL.map(b=>`<span class=tlsc style="--c:${b.c}">${b.d} <b>+${Math.round(C.talB(b.k)*100)}%</b></span>`).join('')}</div>
  <div class=tlt>${C.TAL.map(b=>{const n=t[b.k]||0;return `<div class=tlc style="--c:${b.c}"><b>${b.n}</b><small>${b.d} 강화</small><u class=tlq>${n}/${b.v.length}</u>${b.v.map((v,i)=>{const on=i<n,nx=i==n,cs=C.TALC[i];return `<div class="tln ${on?'on':nx?'nx'+(P>=cs?' can':' poor'):'lock'} ${i==4?'cap':''}" data-tl="${b.k}" data-i=${i}><div class=o><img src="${A}${IC[b.k]}"></div>${!on?`<span class="cs${nx?(P>=cs?' ok':' no'):''}">${cs}P</span>`:''}<em>${b.nm[i]}</em><i>${b.d} +${Math.round(v*100)}%</i>${fx==b.k+i?'<span class=tlfx></span>':''}</div>`}).join('')}</div>`}).join('')}</div>`);
  el.querySelector('#sBack').onclick=()=>closeScreen();
@@ -5154,3 +5154,16 @@ G.tlWrap=(el,orig)=>()=>{try{const k=el.dataset.tl,i=+el.dataset.i,s=C.S(),n=(s.
 .tlsum .tlsl{font:900 11px Maplestory,sans-serif;color:#ffe7a8;margin-right:2px}
 .tlsum .tlsc{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:10px;background:#0009;border:1.5px solid var(--c);color:#ddd;font:800 11px Maplestory,sans-serif}
 .tlsum .tlsc b{color:var(--c);font-weight:900}`;document.head.appendChild(st)})();
+
+;(()=>{/* r406 특성 header progress (display only). Mirrors core.js C.talPts exactly: earned=floor(maxSi/3), spent=Σ C.TALC[i] for learned tiers; maxSi only advances on a new-stage boss clear (core.js 78) and stops at D.FIELDS.length-1 */
+G.tlInfo=()=>{const s=C.S(),t=s.tal||{},m=s.maxSi||0,E=Math.floor(m/3);let U=0,ALL=0;C.TAL.forEach(b=>{for(let i=0;i<(t[b.k]||0);i++)U+=C.TALC[i];for(let i=0;i<b.v.length;i++)ALL+=C.TALC[i]});
+ const nxt=3*(E+1),last=D.FIELDS.length-1,cap=nxt>last;return{m,E,U,P:C.talPts(),ALL,prog:m-3*E,left:nxt-m,cap,full:U>=ALL}};
+G.tlHdr=()=>{const I=G.tlInfo();const nx=I.full?'<span class=tlnf>모든 특성 습득 완료</span>':I.cap?'<span class=tlnf>최종 스테이지 도달 · 추가 포인트 없음</span>':`<span class=tlnl>다음 포인트까지 스테이지 <b>${I.left}</b>개</span><span class=tlnb>${[0,1,2].map(i=>`<i class="${i<I.prog?'on':''}"></i>`).join('')}</span><span class=tlnn>${I.prog}/3</span>`;
+ return `<div class=tlnx>${nx}</div><div class=tlsp>사용 <b>${I.U}</b> / 획득 <b>${I.E}</b>P<span class=tlsa>전체 습득 ${I.ALL}P</span></div>`};
+const st=document.createElement('style');st.textContent=`
+.tlh .tlnx{display:flex!important;align-items:center;gap:5px;margin-top:5px;font:800 10.5px Maplestory,sans-serif;color:#ddd}
+.tlh .tlnx b{color:#ffe27a}.tlh .f .tlnx b,.tlh .f .tlsp b{display:inline!important}
+.tlh .tlnb{display:inline-flex;gap:2px}.tlh .tlnb i{width:16px;height:7px;border-radius:3px;background:#0009;border:1px solid #ffe27a88}.tlh .tlnb i.on{background:linear-gradient(#ffe9a0,#e0a020);border-color:#ffe27a}
+.tlh .tlnn{color:#ffe27a;font-weight:900}.tlh .tlnf{color:#bfffbf}
+.tlh .tlsp{display:block!important;margin-top:3px;font:800 10.5px Maplestory,sans-serif;color:#ccc}.tlh .tlsp b{color:#fff}
+.tlh .tlsa{margin-left:6px;padding:0 6px;border-radius:7px;background:#0007;color:#aaa;font-size:9.5px}`;document.head.appendChild(st)})();
