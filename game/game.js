@@ -790,11 +790,12 @@ const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const b=document.getElementById('
   const n=low>0&&!G.screen;if(n&&!on)G.dngN++;on=n;v.classList.toggle('on',n)}catch(_){}return r};
 })();
 ;(()=>{// v32 loot fly: coins pop from kills and fly into the gold counter
-G.lootN=0;let live=0;
+G.lootN=0;let live=0;const CP=[];
 const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{const q=R._ES().get(e),b=document.getElementById('battle'),tg=document.getElementById('cGold');if(q&&b&&tg&&!G.screen&&live<36){const br=G.rc(b),tr=G.rc(tg),n=e.boss?10:e.el?5:2;
-  for(let i=0;i<n;i++){const d=document.createElement('img');d.src='assets/fx_coin.png';d.className='lootc';const x=q.x+(Math.random()-.5)*30,y=q.y-30;d.style.left=x+'px';d.style.top=y+'px';d.style.setProperty('--dx',((Math.random()-.5)*(e.boss?160:70))+'px');d.style.setProperty('--dy',(-30-Math.random()*40)+'px');b.appendChild(d);live++;G.lootN++;
+  for(let i=0;i<n;i++){/* r393: pooled - idle coins stay in #battle hidden (.lzz = display:none) and are reused; display none->block restarts lootP exactly like a fresh node */let d=null;for(const c of CP)if(c._f){d=c;break}if(!d){d=document.createElement('img');d.src='assets/fx_coin.png';CP.push(d)}d._f=0;d.className='lootc';d.style.transform='';const x=q.x+(Math.random()-.5)*30,y=q.y-30;d.style.left=x+'px';d.style.top=y+'px';d.style.setProperty('--dx',((Math.random()-.5)*(e.boss?160:70))+'px');d.style.setProperty('--dy',(-30-Math.random()*40)+'px');if(d.parentNode!==b)b.appendChild(d);live++;G.lootN++;
    setTimeout(()=>{d.classList.add('fly');d.style.transform=`translate(${tr.left+tr.width/2-br.left-x}px,${tr.top+tr.height/2-br.top-y}px) scale(.55)`},520+i*45);
-   setTimeout(()=>{d.remove();live--;G.bump(tg,'gbump')},1150+i*45)}}}catch(_){}return ok(e,...a)};
+   setTimeout(()=>{d.className='lootc lzz';d._f=1;live--;G.bump(tg,'gbump')},1150+i*45)}}}catch(_){}return ok(e,...a)};
+{const st=document.createElement('style');st.textContent='html body .lootc.lzz{display:none!important}';document.head.appendChild(st)}
 })();
 ;(()=>{// v33 companion ultimate: gauge fills, at full fires the companion's own CSKI skill (with its cut-in) + burst. Random procs no longer show the named cut-in.
 G.ultN=0;G._grogT=0;const FX=[];
@@ -5037,4 +5038,21 @@ const drop=(q,k,n)=>{const b=document.getElementById('battle');if(!b||!q)return;
 let pst=null;const ok=C.ev.kill;C.ev.kill=function(e,g,o){const r=ok&&ok.apply(this,arguments);try{const s=C.S(),st=s.stone||0,dst=pst==null?0:st-pst;pst=st;
  if(!e||e.boss||e.el||e.wb||e.tg||e.shiny||G.screen||G._fin||G.storyOn||(G.saverState&&G.saverState())||(R.opt&&R.opt.fx===false)||document.body.classList.contains('nofx'))return r;
  const q0=R._ES&&R._ES().get(e),q=q0&&{x:q0.x,y:q0.y};if(o>0)drop(q,'orb',o);if(dst===1)setTimeout(()=>drop(q,'stone',1),o>0?90:0)}catch(_){}return r};
+})();
+;(()=>{/* r393 v343 skill-name tag: with 궁극기 컷인 off (or when the cut-in is skipped because another one is playing / on cooldown) nothing named the skill that just fired. A small pooled tag (skill icon + name) pops above the caster - Lina's spells (C.ev.spell) and companion ultimates (v33 gauge, G.ultN). Skipped when that cast's own cut-in is on screen, with 스킬 연출 (fx) off / nofx, on other screens. Low graphics: no pop/glow animation. Display only. */
+const C=G.C,R=RENDER,A='assets/';const css=document.createElement('style');css.textContent=`
+html body #battle .sktag{position:absolute;z-index:9;display:none;align-items:center;gap:3px;height:20px;padding:0 7px 0 3px;border-radius:10px;background:linear-gradient(#2a1a3ef0,#140c22f0);border:1.5px solid var(--sc,#ffd77a);box-shadow:0 0 6px var(--sc,#ffd77a),0 2px 3px #0008;transform:translate(-50%,-100%);pointer-events:none;white-space:nowrap}
+html body #battle .sktag.on{display:flex;animation:sktI 1.25s ease-out both}
+html body #battle .sktag img{width:16px;height:16px;object-fit:contain}
+html body #battle .sktag b{font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000}
+html body.tglite #battle .sktag{box-shadow:0 2px 3px #0008}html body.tglite #battle .sktag.on{animation:sktL 1.25s step-end both}
+@keyframes sktI{0%{opacity:0;transform:translate(-50%,-60%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.08)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1;transform:translate(-50%,-100%)}100%{opacity:0;transform:translate(-50%,-150%)}}
+@keyframes sktL{0%{opacity:1}100%{opacity:0}}`;document.head.appendChild(css);
+const pool=[];const tag=(key,name,icon,col)=>{try{if(G.screen||G._fin||G.storyOn||(R.opt&&R.opt.fx===false)||document.body.classList.contains('nofx'))return;const b=document.getElementById('battle'),s=R._AS&&R._AS().get(key);if(!b||!s||!name)return;
+ if(!pool.length)for(let i=0;i<4;i++){const d=document.createElement('div');d.className='sktag';d.innerHTML='<img alt=""><b></b>';d._k=null;d._t=0;d.addEventListener('animationend',()=>d.classList.remove('on'));pool.push(d)}
+ const now=performance.now();let d=pool.find(x=>x._k===key&&now-x._t<1250)||pool.find(x=>now-x._t>=1250)||pool.reduce((a,x)=>x._t<a._t?x:a);
+ if(d.parentNode!==b)b.appendChild(d);d._k=key;d._t=now;const im=d.firstChild;if(icon){if(!im.src.endsWith(icon))im.src=A+icon;im.style.display=''}else im.style.display='none';d.lastChild.textContent=name;d.style.setProperty('--sc',col||'#ffd77a');
+ d.style.left=Math.max(50,Math.min(340,s.x))+'px';d.style.top=(s.y-112)+'px';d.classList.remove('on');void d.offsetWidth;d.classList.add('on')}catch(_){}};
+const os=C.ev.spell;C.ev.spell=function(sp){const r=os&&os.apply(this,arguments);try{if(sp&&sp.n&&!(R.cut&&R.cut.t<.2&&R.cut.n===sp.n))tag('lina',sp.n,sp.img,'#ffb35a')}catch(_){}return r};
+let un=G.ultN||0;const of=R.frame;R.frame=dt=>{of(dt);if(G.ultN!==un){un=G.ultN;try{const nm=G.lastUlt,CS=D.CSKI||{};const k=Object.keys(CS).find(x=>CS[x][1]===nm);if(k&&!(R.ccut&&R.ccut.t<.6&&R.ccut.k===k)&&!(R.ccQ&&R.ccQ.k===k)){const cp=(D.COMPS||[]).find(x=>x.k==k);tag(k,nm,CS[k][0],cp&&D.RAR&&(D.RAR[cp.g]||{}).c)}}catch(_){}}};
 })();
