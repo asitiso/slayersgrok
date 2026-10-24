@@ -4908,8 +4908,8 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
 })();
 
 ;(()=>{/* r365 v315 battle readability: the mid-field kill / FEVER / 광폭화 / wave banners (.mkb .fevban .enrb .wclr .wvb) were drawn over by in-flight damage numbers and BLOCK labels (frames 1441_battle_*). While one is up, its own rect (measured once on insert, then re-read every 0.25s so the .mkb top shifts are followed) becomes R._kbB and numbers inside that band fade to .15 like the r306/r327 bands. One pooled 3-slot array, no per-frame allocation, no DOM read per frame. */
-const b=document.getElementById('battle');if(!b||!R._kbB)return;const SEL='.mkb:not(.bgone),.fevban:not(.bgone),.enrb:not(.bgone),.wclr:not(.bgone),.wvb:not(.bgone)';const K=R._kbB;let el=null,tm=0;
-const upd=()=>{const n=b.querySelector(SEL);el=n;if(!n){K[2]=0;return}const r=n.getBoundingClientRect(),o=b.getBoundingClientRect();if(!(r.height>0)){K[2]=0;return}K[0]=r.top-o.top-4;K[1]=r.bottom-o.top+4;K[2]=1};
+const b=document.getElementById('battle');if(!b||!R._kbB)return;const SEL='.mkb:not(.bgone),.fevban:not(.bgone),.enrb:not(.bgone),.wclr:not(.bgone),.wvb:not(.bgone)';const K=R._kbB,DUO='.combo.duo:not(.cbq):not(.dfd):not(.dlo)';let el=null,tm=0;
+const upd=()=>{const n=b.querySelector(SEL),u=b.querySelector(DUO)/* r396: the 연계기 duo card (normal-wave slot ~248-350, boss low slot) also joins the band - final waves stacked CRITICAL numbers behind and around it; with a kill/wave banner up too the band spans both */;el=n||u;if(!el){K[2]=0;return}const o=b.getBoundingClientRect();let t=1e9,m=-1e9;for(const x of [n,u]){if(!x)continue;const r=x.getBoundingClientRect();if(!(r.height>0))continue;if(r.top<t)t=r.top;if(r.bottom>m)m=r.bottom}if(m<t){K[2]=0;return}K[0]=t-o.top-4;K[1]=m-o.top+4;K[2]=1};
 const tick=()=>{tm=0;upd();if(el)tm=setTimeout(tick,250)};
 new MutationObserver(()=>{if(!tm)tick()}).observe(b,{childList:true,subtree:false,attributes:false});
 G._kbTest=()=>K.slice()/* console probe only */;
