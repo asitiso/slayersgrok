@@ -5283,3 +5283,17 @@ const st=document.createElement('style');st.textContent=
 document.head.appendChild(st);
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen==='guild')document.querySelectorAll('#screen .row').forEach(row=>{const b=row.querySelector(':scope>.btn'),i=row.querySelector('.bar>i');if(!b||!i||b.textContent.trim()!=='진행 중')return;const p=Math.max(0,Math.min(100,parseFloat(i.style.width)||0));b.classList.add('pp4');b.style.setProperty('--pp4',p/100);b.classList.toggle('h4',p>=50)})}catch(_){}return r};
 })();
+
+;(()=>{/* r428: (1) 영지 마탑 at Lv.0 (existing bld.tower.lv) gets a construction-site plate: dashed amber rim, hazard stripe band, dimmed sepia art, amber 미건설 pill. (2) battle: empty HP/MP potion slots keep a faint red/blue tint ring + half-visible icon so they read as HP vs MP like 화룡전. (3) battle: ally portrait rims coloured by the ally's real grade (D.RAR[c.g].c), leader gold / danger red kept. Display only, static; portrait tag set once per party rebuild. */
+const st=document.createElement('style');st.textContent=
+'html body #screen .bstrip .bsc.nb428{background:linear-gradient(#3b2f1e,#241b10)!important;box-shadow:inset 0 0 0 2px #0000!important;outline:2px dashed #d9a441;outline-offset:-4px;overflow:hidden;position:relative}'+
+'html body #screen .bstrip .bsc.nb428::before{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:repeating-linear-gradient(135deg,#f0b53a 0 7px,#2a2015 7px 14px);opacity:.85;pointer-events:none}'+
+'html body #screen .bstrip .bsc.nb428>img{filter:sepia(.6) brightness(.7)!important;opacity:.85}'+
+'html body #screen .bstrip .bsc.nb428 em.tw388{background:linear-gradient(#f0b53a,#b97a1c)!important;color:#2a1a05!important;padding:1px 8px;border-radius:9px;font-style:normal;font-weight:800;text-shadow:none!important}'+
+'html body #potH.potb.emp{box-shadow:inset 0 3px 6px #000c,0 0 0 2px #c0303a88!important}html body #potM.potb.emp{box-shadow:inset 0 3px 6px #000c,0 0 0 2px #3a6ad088!important}'+
+'html body .potb.emp img{opacity:.55!important;filter:saturate(.55)}'+
+'html body #partycol .pp.g428:not(.lead):not(.dng) img{border-color:var(--gc)}html body #partycol .pp.g428 img{background:linear-gradient(#0000 40%,color-mix(in srgb,var(--gc) 35%,#3a3f45))}';
+document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen==='base'){const c=document.querySelector('#screen .bstrip [data-bs=tower]'),b=(C.S().bld||{}).tower;if(c&&b)c.classList.toggle('nb428',!(b.lv>0))}}catch(_){}return r};
+const op=renderPartyCol;renderPartyCol=function(){const r=op.apply(this,arguments);try{const el=document.getElementById('partycol'),f=el&&el.firstElementChild;if(f&&!f.classList.contains('g428')){const A=C.B.allies;[...el.children].forEach((p,i)=>{const a=A[i];if(!a)return;const c=a.c,g=c&&D.RAR[c.g];p.classList.add('g428');if(g)p.style.setProperty('--gc',g.c);else p.style.setProperty('--gc','#ffd25a')})}}catch(_){}return r};
+})();
