@@ -5230,7 +5230,7 @@ const st=document.createElement('style');st.textContent=
 '#nav.nav>a.on:not(.orb)::before{content:"";position:absolute;left:8px;right:8px;bottom:1px;height:3px;z-index:2;border-radius:2px;background:linear-gradient(90deg,#ffd66a00,#fff2b8,#ffd66a00);box-shadow:0 0 6px #ffd66acc;pointer-events:none}'+
 '#nav.nav>a.on:not(.orb)>img{transform:translateY(-7px) scale(1.12);filter:brightness(1.12) drop-shadow(0 0 7px #ffd66acc) drop-shadow(0 3px 2px #000a)!important}'+
 '#nav.nav>a.on:not(.orb)>em{color:#ffe37a!important;text-shadow:-1px -1px 0 #3a1c00,1px -1px 0 #3a1c00,-1px 1px 0 #3a1c00,1px 1px 0 #3a1c00,0 0 7px #ffb020,0 0 2px #ffd66a!important}'+
-'#nav .nvr{position:absolute;left:50%;top:40%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:2px solid #ffe7a0;box-shadow:0 0 8px #ffd66a;opacity:0;pointer-events:none}'+
+'#nav .nvr{position:absolute;left:50%;top:40%;width:52px;height:52px;margin:-26px 0 0 -26px;box-sizing:border-box;border-radius:50%;border:3px solid #fff6c8;background:radial-gradient(circle,#fff2b800 52%,#ffe08a66 70%,#ffd66a00 74%);box-shadow:0 0 10px 2px #ffc23acc,inset 0 0 8px #ffd66acc;opacity:0;pointer-events:none;z-index:3}'+
 'body.tglite #nav.nav>a>img,body.nofx #nav.nav>a>img{transition:none!important}'+
 /* r423 (2): normal-wave duo banner (248-350, x 57-333) covered 더보기 (280-332); scaled .70 and shifted 27px left so it spans x 56-280 in the same band (toast slide / band rules unchanged). Boss slots (dlo/dlw) untouched. */
 '#battle .combo.duo:not(.dlo):not(.dlw):is(#_a,#_b,div):is(#_c,#_d,div):is(#_e,#_f,div){scale:.7;translate:-27px 0}';
@@ -5240,7 +5240,13 @@ nav.addEventListener('pointerdown',e=>{const a=e.target.closest&&e.target.closes
 const fxOn=()=>!(RENDER.opt&&RENDER.opt.fx===false)&&!document.body.classList.contains('tglite')&&!document.body.classList.contains('nofx');
 const ring=document.createElement('i');ring.className='nvr';
 const press=(k,el)=>{if(!fxOn())return;el=el||0;if(!el){lk=k;lt=performance.now()}const a=document.getElementById('nav'+k);if(!a)return;const im=a.querySelector('img');if(im&&k!='roll'){const on=a.classList.contains('on'),b=on?'translateY(-7px) scale(1.12)':k=='summon'?'translateY(-3px) scale(1.04)':'none';im.animate([{transform:b},{transform:(on?'translateY(-2px) ':'')+'scale(.86)'},{transform:on?'translateY(-9px) scale(1.18)':'scale(1.06)'},{transform:b}],{duration:260,easing:'ease-out'}).currentTime=el}
- a.appendChild(ring);for(const x of ring.getAnimations())x.cancel();ring.animate([{opacity:.95,transform:'scale(.6)'},{opacity:0,transform:'scale(1.5)'}],{duration:340,easing:'ease-out'}).currentTime=el};
-const orn=renderNav;renderNav=function(){const r=orn.apply(this,arguments);if(pk&&performance.now()-pt<500){const k=pk;pk='';press(k)}else if(lk){const el=performance.now()-lt;if(el<330)press(lk,el);else lk=''}return r};/* a second rebuild (screen open re-renders the nav) resumes the press mid-way instead of cutting it */
+ a.appendChild(ring);for(const x of ring.getAnimations())x.cancel();ring.animate([{opacity:1,transform:'scale(.45)'},{opacity:.95,transform:'scale(.95)',offset:.4},{opacity:0,transform:'scale(1.32)'}],{duration:380,easing:'ease-out'}).currentTime=el};
+const orn=renderNav;renderNav=function(){const r=orn.apply(this,arguments);if(pk&&performance.now()-pt<500){const k=pk;pk='';press(k)}else if(lk){const el=performance.now()-lt;if(el<380)press(lk,el);else lk=''}return r};/* a second rebuild (screen open re-renders the nav) resumes the press mid-way instead of cutting it */
 nav.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('#nav>a');if(a&&pk&&a.dataset.t===pk&&performance.now()-pt<500){const k=pk;setTimeout(()=>{if(pk===k){pk='';press(k)}},0)}},{passive:true});
 })();
+;(()=>{/* r424: (a) daily dungeon 일괄 소탕 when locked: was a flat grey slab (grayscale .6) that read as broken - now a dimmed warm plate like 화룡전 disabled buttons (still pointer-events none, text unchanged). (b) stage map boss node: its empty star row sat under the 5-x label and collided with the next node below - moved to the right of the label. Display only. */
+const st=document.createElement('style');st.textContent=
+'html body #screen .swall:is(#_r1,#_r2,div):is(#_r3,#_r4,div):is(#_r5,#_r6,div).off{filter:sepia(.45) saturate(.75) brightness(.78) drop-shadow(0 2px 2px #0007)!important;opacity:1;box-shadow:0 2px 0 #3a2410,inset 0 0 0 1px #ffe2a033}'+
+'html body #screen .swall:is(#_r1,#_r2,div):is(#_r3,#_r4,div):is(#_r5,#_r6,div).off .swwhy{color:#ffe9c0;opacity:1}'+
+'#screen .snode.bs:not(.s3)>small{position:absolute;left:34px;top:71px;white-space:nowrap}';
+document.head.appendChild(st)})();
