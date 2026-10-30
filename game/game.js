@@ -2545,7 +2545,7 @@ const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try
 const body=sb.querySelector('.sbody');if(body&&!body.querySelector('.bghero')){const h=document.createElement('div');h.className='bghero';h.innerHTML=`<img src="${A}bg_backpack.png"><div><b>모험가의 창고</b><small>아이템을 눌러 정보 확인</small></div>`;body.prepend(h)}
 const cards=sb.querySelectorAll('.card');const tt=cards[0]&&cards[0].querySelector('.ttl');if(tt&&!tt.querySelector('img'))tt.insertAdjacentHTML('afterbegin',`<img src="${A}bg_pouch.png">`);
 const t2=cards[1]&&cards[1].querySelector('.ttl');if(t2&&!t2.querySelector('img'))t2.insertAdjacentHTML('afterbegin',`<img src="${A}it2_armor.png">`);
-cards.forEach((c,ci)=>c.querySelectorAll('.bagg .bi').forEach(b=>{if(b.querySelector('.sf'))return;const col=ci==1?b.style.borderColor:'';if(ci==1)b.classList.add('gear');const f=document.createElement('img');f.className='sf';f.src=A+'bg_slot.png';if(col)f.style.filter=`drop-shadow(0 0 3px ${col}) drop-shadow(0 0 2px ${col})`;b.appendChild(f)}))}else $('#screen').classList.remove('bgx')}catch(_){}return r}})();
+cards.forEach((c,ci)=>c.querySelectorAll('.bagg .bi').forEach(b=>{const q0=b.querySelector(':scope>b');b.classList.toggle('z0',!!q0&&q0.textContent.trim()==='0');if(b.querySelector('.sf'))return;const col=ci==1?b.style.borderColor:'';if(ci==1)b.classList.add('gear');const f=document.createElement('img');f.className='sf';f.src=A+'bg_slot.png';if(col)f.style.filter=`drop-shadow(0 0 3px ${col}) drop-shadow(0 0 2px ${col})`;b.appendChild(f)}))}else $('#screen').classList.remove('bgx')}catch(_){}return r}})();
 /* v159 칭호: hall of honours */
 (function(){const st=document.createElement('style');st.textContent=`
 .ttx .shade{background:rgba(8,6,14,.55)!important}
@@ -4815,7 +4815,7 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
  const cs=K.map(([k,n,ic])=>{const b=s.bld&&s.bld[k],row=[...card.querySelectorAll('.row')].find(x=>{const d=(x.querySelector('[data-up],[data-sp]')||{}).dataset;return d&&(d.up||d.sp)==k});if(!b||!row)return '';
   const sm=row.querySelector('.f small');let out='';if(sm){const t=sm.textContent.trim();out=k=='tower'?t.replace(/\s*\(.*\)$/,''):(t.split('·')[0]||'').trim()}const bi=row.querySelector('.bar i'),pc=bi?parseFloat(bi.style.width)||0:null;const up=b.up&&b.up>now;
   const ri=k=='vault'?'it2_gold.png':k=='mine'?'it2_exp.png':'';
-  return `<div class="bsc ${sel==k?'on':''}" data-bs=${k}><span class=lv>Lv.${b.lv}</span><img src="${A}${ic}" alt=""><b>${n}</b><small>${ri?`<img src="${A}${ri}" alt="">`:''}${out}</small>${pc!=null?`<div class=sb><i style="width:${Math.min(100,pc)}%"></i></div>`:''}${up?'<em class=up>업그레이드 중</em>':k!='tower'&&b.acc>=1?'<em>수확 가능</em>':''}</div>`}).join('');
+  return `<div class="bsc ${sel==k?'on':''}${!up&&k!='tower'&&b.acc>=1?' rdy':''}" data-bs=${k}><span class=lv>Lv.${b.lv}</span><img src="${A}${ic}" alt=""><b>${n}</b><small>${ri?`<img src="${A}${ri}" alt="">`:''}${out}</small>${pc!=null?`<div class=sb><i style="width:${Math.min(100,pc)}%"></i></div>`:''}${up?'<em class=up>업그레이드 중</em>':k!='tower'&&b.acc>=1?'<em>수확 가능</em>':''}</div>`}).join('');
  if(!cs)return r;const w=document.createElement('div');w.className='bstrip';w.innerHTML=cs;card.after(w);w.querySelectorAll('[data-bs]').forEach(e=>e.onclick=()=>{G.baseSel=e.dataset.bs;renderScreen()})}catch(e){console.warn(e)}return r};
 })();
 ;(()=>{// r361 v311 소환 결과 grade frames + rarity glow reveal (영웅 purple / 전설·신화 gold; flip, or fade on 스킬 연출 off / low graphics; CSS-only, no per-frame JS) · 영지 strip castle + barracks cards (real levels / existing 준비 중 text). Display only
@@ -5249,4 +5249,14 @@ const st=document.createElement('style');st.textContent=
 'html body #screen .swall:is(#_r1,#_r2,div):is(#_r3,#_r4,div):is(#_r5,#_r6,div).off{filter:sepia(.45) saturate(.75) brightness(.78) drop-shadow(0 2px 2px #0007)!important;opacity:1;box-shadow:0 2px 0 #3a2410,inset 0 0 0 1px #ffe2a033}'+
 'html body #screen .swall:is(#_r1,#_r2,div):is(#_r3,#_r4,div):is(#_r5,#_r6,div).off .swwhy{color:#ffe9c0;opacity:1}'+
 '#screen .snode.bs:not(.s3)>small{position:absolute;left:34px;top:71px;white-space:nowrap}';
+document.head.appendChild(st)})();
+;(()=>{/* r425: 영지 building cards that are really ready to collect (same test as the existing 수확 가능 label: not upgrading, acc>=1) get a ready plate: green-gold rim + soft breathing glow (opacity only, compositor), and 수확 가능 becomes a small green pill. Static in tglite/nofx. Display only. */
+const st=document.createElement('style');st.textContent=
+'html body #screen .bstrip .bsc.rdy{border-color:#1d3a10;box-shadow:inset 0 0 0 2px #9cf06a,0 0 9px #6ae05a77,0 4px 10px #0008;background:linear-gradient(#3e3a16ee,#1e1a08ee)}'+
+'html body #screen .bstrip .bsc.rdy.on{box-shadow:inset 0 0 0 2px #ffd25a,inset 0 0 0 4px #9cf06a88,0 0 12px #9cf06a88,0 4px 10px #0008}'+
+'html body #screen .bstrip .bsc.rdy::after{content:"";position:absolute;inset:-2px;border-radius:12px;box-shadow:0 0 14px 3px #8cf05a,inset 0 0 12px #8cf05a66;opacity:0;pointer-events:none;animation:rdy425 1.6s ease-in-out infinite alternate}'+
+'@keyframes rdy425{to{opacity:.85}}'+
+'body:is(.tglite,.nofx) #screen .bstrip .bsc.rdy::after{animation:none;opacity:.45}'+
+/* r425 (2): 가방 slots holding 0 are dimmed like 화룡전 unowned slots (info tap still works) */'html body #screen .bagg .bi.z0>img:not(.sf){filter:grayscale(.8) brightness(.62)!important;opacity:.85}html body #screen .bagg .bi.z0>b{color:#a8a8a8!important}html body #screen .bagg .bi.z0>small{opacity:.6}'+
+'html body #screen .bstrip .bsc.rdy>em{color:#fff;background:linear-gradient(#5ccf3a,#2a8a1a);border:1px solid #0b2a06;border-radius:8px;padding:1px 7px 0;text-shadow:0 1px 0 #0a3a04;box-shadow:inset 0 1px 0 #c8ffb066,0 1px 2px #0008}';
 document.head.appendChild(st)})();
