@@ -1957,7 +1957,7 @@ function deco(){const el=$('#screen'),s=C.S(),f0=el.querySelector('.slotrow');if
  card.before(st);st.querySelectorAll('.pfig[data-k]').forEach(n=>{if(n.dataset.k!='lina')n.onclick=()=>{const o=el.querySelector(`[data-rm="${n.dataset.k}"]`);o&&o.click()}});
  el.querySelectorAll('.row .fac').forEach(n=>{const f=Object.keys(D.FACTIONS).find(x=>D.FACTIONS[x].n==n.textContent);if(f&&!n.querySelector('img'))n.insertAdjacentHTML('afterbegin',`<img class=fci src="assets/fac_${f}.png">`)});const rc=el.querySelectorAll('.rcard');if(!rc.length)return;rc[0].parentNode.classList.add('rgrid');
  rc.forEach(n=>{const k=n.dataset.c,c=D.COMPS.find(x=>x.k==k),lv=s.comps[k],R=D.RAR[c.g],F=D.FACTIONS[c.fac],inP=P.includes(k);n.style.setProperty('--rc',R.c);n.classList.toggle('own',!!lv);
-  n.innerHTML=`<img src="${A}${c.img}"><span class=rg>${R.n}</span><img class=fd src="assets/fac_${c.fac}.png">${inP?'<span class=ck><img class="emi e_pass_check" src=assets/pass_check.png alt=""></span>':''}<b>${c.n}</b><small>${lv?'★'.repeat(Math.min(5,lv)):'미보유'}</small>${lv?`<span class=di data-det=${k}>i</span>`:''}`})}})();
+  n.innerHTML=`<img src="${A}${c.img}"><span class=rg>${R.n}</span><img class=fd src="assets/fac_${c.fac}.png">${inP?'<span class=ck><img class="emi e_pass_check" src=assets/pass_check.png alt=""></span>':''}<b>${c.n}</b><small class=rst4>${lv?'★'.repeat(Math.min(5,lv))+'<i>'+'☆'.repeat(Math.max(0,5-lv))+'</i>':'미보유'}</small>${lv?`<span class=di data-det=${k}>i</span>`:''}`})}})();
 /* v125 화룡전식 동료 상세 (전신 일러스트 무대 · 세력 엠블럼 · 능력치 막대 · 스킬 카드) */
 ;(()=>{const ocd=compDetail;compDetail=function(k){const r=ocd.apply(this,arguments);try{const c=D.COMPS.find(x=>x.k==k),im=[...document.querySelectorAll('.cdet .cdimg')].pop();if(!c||!im)return r;
  im.classList.add('cdx');im.querySelector('img').src=`${A}cutc/${k}.png`;im.querySelector('img').onerror=function(){this.onerror=null;this.src=A+c.img};
@@ -5260,3 +5260,14 @@ const st=document.createElement('style');st.textContent=
 /* r425 (2): 가방 slots holding 0 are dimmed like 화룡전 unowned slots (info tap still works) */'html body #screen .bagg .bi.z0>img:not(.sf){filter:grayscale(.8) brightness(.62)!important;opacity:.85}html body #screen .bagg .bi.z0>b{color:#a8a8a8!important}html body #screen .bagg .bi.z0>small{opacity:.6}'+
 'html body #screen .bstrip .bsc.rdy>em{color:#fff;background:linear-gradient(#5ccf3a,#2a8a1a);border:1px solid #0b2a06;border-radius:8px;padding:1px 7px 0;text-shadow:0 1px 0 #0a3a04;box-shadow:inset 0 1px 0 #c8ffb066,0 1px 2px #0008}';
 document.head.appendChild(st)})();
+
+;(()=>{/* r426: (1) 임무 진행 중 buttons get a progress plate from the row's real bar width (fill + tier tint: started / half+); (2) 편성 roster star row on a dark pill with gold stars + dim empty stars. Display only, static, no per-frame work. */
+const st=document.createElement('style');st.textContent=
+'html body #panel .mqr .btn.pp4{position:relative}html body #panel .mqr .btn.pp4::after{content:"";position:absolute;left:-5px;top:-5px;bottom:-5px;width:calc((100% + 10px) * var(--pp4));border-radius:4px;background:linear-gradient(#ffd46a,#c8861e);opacity:.5;mix-blend-mode:overlay;pointer-events:none}'+
+'html body #panel .mqr .btn.pp4.h4{color:#fff1c2!important;text-shadow:0 1px 1px #000a}'+
+'html body #panel .mqr .btn.pp4.z4{opacity:.8}'+
+'html body #screen small.rst4{display:inline-block;padding:0 6px;border-radius:8px;background:linear-gradient(#2a1e10cc,#120b05cc);box-shadow:inset 0 0 0 1px #8a6a2a;color:#ffd24a!important;text-shadow:0 1px 0 #7a4a00,0 0 3px #ffb02088;letter-spacing:-1px;line-height:14px}'+
+'html body #screen small.rst4>i{font-style:normal;color:#6b5a3e;text-shadow:none}';
+document.head.appendChild(st);
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab==='mission')document.querySelectorAll('#panel .mqr:not(.rd):not(.cl)').forEach(row=>{const b=row.querySelector(':scope>.btn'),i=row.querySelector('.mqb>i');if(!b||!i||b.textContent.trim()!=='진행 중')return;const p=Math.max(0,Math.min(100,parseFloat(i.style.width)||0));b.classList.add('pp4');b.style.setProperty('--pp4',p/100);b.classList.toggle('h4',p>=50);b.classList.toggle('z4',p<=0)})}catch(_){}return r};
+})();
