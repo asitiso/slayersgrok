@@ -5661,3 +5661,15 @@ const om=modal;modal=function(html,cb){const m=om.apply(this,arguments);try{cons
 const deco=d=>setTimeout(()=>{try{if(!d.isConnected)return;const bx=d.querySelector('.rwbox');if(!bx||!d.classList.contains('rwclr'))return;const ri=bx.querySelector('.rwi');if(ri&&!ri.children.length&&!ri.querySelector('.vre485')){const e=document.createElement('div');e.className='vre485';e.textContent='획득한 보상 없음';ri.appendChild(e)}pose(bx,1)}catch(_){}},30);
 const ob502=ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1)continue;if(n.classList.contains('rwpop'))deco(n);else if(n.classList.contains('arep')){const bx=n.querySelector('.arbox');if(!bx)continue;const o=new MutationObserver(()=>{const e=bx.querySelector('.arres .rsbx');if(e){o.disconnect();e.classList.add('r502b');pose(e,e.parentNode.classList.contains('w'))}else if(!n.isConnected)o.disconnect()});o.observe(bx,{childList:true,subtree:true})}}};new MutationObserver(ob502).observe(document.body,{childList:true});const ap=document.getElementById('app');ap&&new MutationObserver(ob502).observe(ap,{childList:true});
 })();
+;(()=>{/* r503 display-only: (a) 내 전투력 colour on every result panel = red only when below 권장, green otherwise (was always red on fail panels); (b) defeat pose re-seated on the fail card's top-left corner (stage DEFEAT card style), clear of the 확인 button */
+const st=document.createElement('style');st.textContent=`
+.pwcmp .pwc.me b.r503lo{color:#ff6a5a!important}.pwcmp .pwc.me b.r503ok{color:#7aff8a!important}
+.modal.rsfail .card .r502p.lo{left:-22px;top:-78px;bottom:auto;height:96px;z-index:5}
+.rsbx.r502b>.r502p{left:-6px;top:-74px;bottom:auto;height:92px;z-index:5}
+@media (max-width:370px){.modal.rsfail .card .r502p.lo{left:-14px;top:-70px;height:86px}}@media (max-width:370px){.rsbx.r502b>.r502p{left:-2px;top:-66px;height:82px}}`;document.head.appendChild(st);
+const num=t=>{const m=/([\d.,]+)\s*([KMB]?)/.exec(t||'');if(!m)return NaN;return parseFloat(m[1].replace(/,/g,''))*({K:1e3,M:1e6,B:1e9}[m[2]]||1)};
+const col=root=>root.querySelectorAll('.pwcmp').forEach(c=>{const bs=c.querySelectorAll('.pwc b'),me=c.querySelector('.pwc.me b');if(bs.length<2||!me)return;const rq=num(bs[0].textContent),pw=num(me.textContent);if(isNaN(rq)||isNaN(pw))return;me.classList.remove('r503lo','r503ok');me.classList.add(pw<rq?'r503lo':'r503ok')});
+const run=n=>{setTimeout(()=>{try{n.isConnected&&col(n)}catch(_){}},60)};
+const ob=ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType==1&&(n.classList.contains('modal')||n.classList.contains('rwpop')||n.classList.contains('arep')))run(n)};
+new MutationObserver(ob).observe(document.body,{childList:true});const ap=document.getElementById('app');ap&&new MutationObserver(ob).observe(ap,{childList:true});
+})();
