@@ -897,6 +897,7 @@ body.hs-mod .unl,body:is(.hs-scr,#_x.hs_x) .unl,body:is(.hs-nt,#_x) .unl,body.hs
 .crp{width:16px;height:8px}.crt{font-size:19px}
 /* v96 rift */
 .rift{position:absolute;left:262px;top:540px;opacity:.85;width:0;height:0;z-index:4;pointer-events:none;animation:rfOut .4s ease-in forwards;animation-delay:1.3s}
+/* r449: normal-wave rift opens at the right edge (mobs walk in from there, 화룡전 style) and closes sooner so it no longer sits over the melee */.rift:not(.boss){left:auto;right:6px;transform:scale(.8);animation-delay:.55s}
 .rift.boss{left:262px;top:520px;animation-delay:.9s}
 .rift i{position:absolute;border-radius:50%}
 .rift .rs{left:-22px;top:-60px;width:44px;height:120px;background:conic-gradient(from 0deg,#b07cff,#3a1a7a,#ff7af0,#2a0a5a,#b07cff);filter:blur(1px);animation:rfOpen .45s cubic-bezier(.3,1.5,.5,1) both;box-shadow:0 0 24px 8px #b07cffaa}
