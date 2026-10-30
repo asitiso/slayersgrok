@@ -5438,7 +5438,7 @@ setInterval(()=>{const bx=document.querySelector('.arep .arbox');if(bx&&bx.query
 
 
 ;(()=>{/* r437 (1): live world boss grade badge - "C → B까지 12.3M" built from C.WB.tiers × C.wbRef() and the live B.wb.dmg; string rebuilt at most 4x/s and only when it changes, drawn by the existing canvas panel (no new DOM). Grade-up flash only with fx on and not tglite. Display only. */
-const C=G.C;let lt=null,lti=-2;setInterval(()=>{try{const w=C.B.wb;if(!w){if(R._wbB){R._wbB=null;lt=null}lti=-2;return}const T=C.WB.tiers,ref=C.wbRef(),d=w.dmg||0,ti=C.wbTier(d),nx=T[ti+1];const cur=ti>=0?T[ti][0]:'등급 없음';const t=nx?cur+' → '+nx[0]+'까지 '+fmt(Math.max(0,Math.ceil(nx[1]*ref-d))):cur+' 최고 등급';if(t!==lt){lt=t;R._wbB=t;const c=R._bc&&R._bc();if(c){const x=c.getContext('2d');x.save();x.font='900 9.5px Maplestory,sans-serif';R._wbBW=x.measureText(t).width;x.restore()}}if(lti>-2&&ti>lti&&(!R.opt||R.opt.fx!==false)&&!document.body.classList.contains('tglite'))R._wbFl=.6;lti=ti}catch(_){}},250)})();
+const C=G.C;let lt=null,lti=-2;setInterval(()=>{try{const w=C.B.wb;if(!w){if(R._wbB){R._wbB=null;lt=null}R._wbTi=null;lti=-2;return}const T=C.WB.tiers,ref=C.wbRef(),d=w.dmg||0,ti=C.wbTier(d),nx=T[ti+1];const cur=ti>=0?T[ti][0]:'등급 없음';R._wbTi=ti;const t=nx?cur+' → '+nx[0]+'까지 '+fmt(Math.max(0,Math.ceil(nx[1]*ref-d))):cur+' 최고 등급';if(t!==lt){lt=t;R._wbB=t;const c=R._bc&&R._bc();if(c){const x=c.getContext('2d');x.save();x.font='900 9.5px Maplestory,sans-serif';R._wbBW=x.measureText(t).width;x.restore()}}if(lti>-2&&ti>lti&&(!R.opt||R.opt.fx!==false)&&!document.body.classList.contains('tglite'))R._wbFl=.6;lti=ti}catch(_){}},250)})();
 
 ;(()=>{/* r437 (2): 화룡전 lobby/battle cues, CSS only (transform/opacity, compositor). a) ready skills keep a slow gold sweep ring (not only the one-shot rdyfx flash); b) 방치보상 chest bobs with a glow once storage is full (MAX). All motion off under tglite / nofx / fxoff. Display only. */
 const st=document.createElement('style');st.textContent=`
@@ -5450,3 +5450,12 @@ const st=document.createElement('style');st.textContent=`
 @keyframes ig437{0%,100%{opacity:.35}50%{opacity:.9}}
 body.tglite #skills .sk.ready::after,body.nofx #skills .sk.ready::after,body.fxoff #skills .sk.ready::after{animation:none}
 body.tglite #idleBtn.full img,body.nofx #idleBtn.full img,body.fxoff #idleBtn.full img,body.tglite #idleBtn.full::before,body.nofx #idleBtn.full::before,body.fxoff #idleBtn.full::before{animation:none}`;document.head.appendChild(st);})();
+
+;(()=>{/* r438 (2)(3): stage bar - boss portrait lights up once all waves are cleared (화룡전 보스 도전 준비 cue), with a small '도전' tag; boss timer bar itself turns red in the existing <=10s 'tlow' state. Display only; animations off under tglite / nofx / fxoff. */
+const st=document.createElement('style');st.textContent=`#stagebar .sboss{transition:filter .3s}
+#stagebar.bsr .sboss{filter:drop-shadow(0 0 3px #ffd23a) drop-shadow(0 0 6px #ff9a2a)!important;animation:bs438 1s ease-in-out infinite alternate}
+#stagebar.bsr .srow::after{content:'도전';position:absolute;right:-6px;bottom:-9px;z-index:4;padding:0 4px;border-radius:6px;background:linear-gradient(#ff7a2a,#c8300a);border:1px solid #ffe08a;color:#fff;font:900 8.5px/12px Maplestory,sans-serif;text-shadow:0 1px 1px #000;pointer-events:none}
+@keyframes bs438{to{transform:scale(1.1)}}
+.trow:has(#stInfo.tlow) #tBar{background:linear-gradient(#ff5a4a,#b0100a)!important;box-shadow:0 0 6px #ff2a1a}
+body.tglite #stagebar.bsr .sboss,body.nofx #stagebar.bsr .sboss,body.fxoff #stagebar.bsr .sboss{animation:none!important}`;document.head.appendChild(st);
+let lv=null;setInterval(()=>{try{const sb=document.getElementById('stagebar');if(!sb)return;const s=G.S(),v=!!(!C.B.boss&&!C.B.wb&&s.wave>=BAL.waves);if(v!==lv){lv=v;sb.classList.toggle('bsr',v)}}catch(_){}},300)})();
