@@ -1577,3 +1577,4 @@ body.hs-mp .bwarn,body.hs-mp .vsx{visibility:hidden}
 /* r468: party power label - gem icon sat over "파티" */.psp img{width:22px;height:22px;flex:none;position:static;margin:0;transform:none}.psp small{white-space:nowrap;position:static}
 /* r468: 보관 한도 caption sat on the ribbon frame line -> drop it into the gap above the vault row */body #screen .card.bupc>.ttl>small{top:57px}
 .psp small{font:800 12px Maplestory,"Noto Sans KR",sans-serif;text-shadow:0 0 3px #000,0 1px 2px #000,0 0 6px #000a}
+/* r468: guild-join hero subline read thin over the map art -> dark pill + heavier weight */#screen .gjhero .gjtx small{display:inline-block;background:rgba(20,10,4,.62);border-radius:9px;padding:2px 8px;font-weight:700;color:#fff3dc;text-shadow:0 1px 2px #000}
