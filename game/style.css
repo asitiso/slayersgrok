@@ -1574,3 +1574,6 @@ body.tglite .atmk.nx img,body.nofx .atmk.nx img{animation:none}
 #mgrid.mgrid img{width:46px;height:46px}
 /* r420: the boss WARNING / VS cut-ins play over the battle only - hidden (not removed) while the full menu popup is open */
 body.hs-mp .bwarn,body.hs-mp .vsx{visibility:hidden}
+/* r468: party power label - gem icon sat over "파티" */.psp img{width:22px;height:22px;flex:none;position:static;margin:0;transform:none}.psp small{white-space:nowrap;position:static}
+/* r468: 보관 한도 caption sat on the ribbon frame line -> drop it into the gap above the vault row */body #screen .card.bupc>.ttl>small{top:57px}
+.psp small{font:800 12px Maplestory,"Noto Sans KR",sans-serif;text-shadow:0 0 3px #000,0 1px 2px #000,0 0 6px #000a}
