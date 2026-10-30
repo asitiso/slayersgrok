@@ -3014,15 +3014,15 @@ setInterval(tick,250);tick()})();
 /* v195: boss-fight companion skill strip — during a boss fight the full-width cut-in becomes a slim framed strip under the boss bar (0.9s, small portrait in the socket); outside boss fights the normal banner plays (visual only) */
 ;(()=>{const C=G.C;const fr=new Image();fr.src=A+'strip_frame.png';const IM={};const img=s=>{let i=IM[s];if(!i){i=IM[s]=new Image();i.src=A+s}return i};
 // source slices in strip_frame.png (452x132): capL 0-130, stretch 130-228, diamond 228-256, stretch 256-368, capR 368-452; socket centre (61,66) r34; band rows 31-104
-const SW=452,SH=132,SL=[[0,130,0],[130,228,1],[228,256,0],[256,368,1],[368,452,0]];
+const FX473={pip:.3,noel:.63,amelia:.5,borin:.5,kaede:.5,sera:.5,xellos:.5,zelgadis:.5};const SW=452,SH=132,SL=[[0,130,0],[130,228,1],[228,256,0],[256,368,1],[368,452,0]];
 R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth)return false;if(!C.alive().some(e=>e.boss&&!e.wb))return false;
  const c=R.ccut;c.t+=dt/.9;const t=Math.min(1,c.t),ein=Math.min(1,t/.14),eo=t>.78?(1-t)/.22:1,a=Math.max(0,Math.min(ein,eo));
- const h=52,k=h/SH,w=Math.min(W-28,330),x0=(W-w)/2-(1-ein)*40,y0=304;/* r306: 304-356, below the boss HP notice slot (279-301) */
- const fixed=SL.filter(q=>!q[2]).reduce((s,q)=>s+(q[1]-q[0])*k,0),strW=(w-fixed)/2;
+ const h=52,k=h/SH,w=Math.min(W-28,330),eb=ein<1?1+2.2*Math.pow(ein-1,3)+1.2*Math.pow(ein-1,2):1,x0=(W-w)/2-(1-eb)*W*.55+(t>.78?(t-.78)/.22*28:0),y0=304;/* r473 display: snappier slide-in with a small overshoot, drifts right on exit (same duration) *//* r306: 304-356, below the boss HP notice slot (279-301) */
+ const fixed=R._ccFx||(R._ccFx=(130+28+84)*k),strW=(w-fixed)/2;/* r473: constant fixed-width sum, no per-frame filter/reduce arrays */
  cx.save();cx.globalAlpha=a;
  // portrait behind the socket
  const pi=img(c.img);const scx=x0+61*k,scy=y0+66*k,sr=34*k+1;
- if(pi.complete&&pi.naturalWidth){cx.save();cx.beginPath();cx.arc(scx,scy,sr,0,6.283);cx.closePath();cx.fillStyle='#2a1830';cx.fill();cx.clip();const iw=pi.naturalWidth,ih=pi.naturalHeight,side=Math.min(iw*(c.bust?.5:.62),ih*.55),sx=(iw-side)/2+(c.bust?iw*.06:0),sy=ih*(c.bust?.06:.06);cx.drawImage(pi,sx,sy,side,side,scx-sr,scy-sr,sr*2,sr*2);cx.restore()}
+ if(pi.complete&&pi.naturalWidth){cx.save();cx.beginPath();cx.arc(scx,scy,sr,0,6.283);cx.closePath();cx.fillStyle='#2a1830';cx.fill();cx.clip();const iw=pi.naturalWidth,ih=pi.naturalHeight,side=Math.min(iw*(c.bust?.46:.62),ih*(c.bust?.5:.55)),fx=c.bust?(FX473[c.k]||.54):.5,sx=c.bust?Math.max(0,Math.min(iw-side,fx*iw-side/2)):(iw-side)/2,sy=c.bust?Math.max(0,Math.min(ih-side,ih*.27-side*.42)):ih*.06;/* r473 portrait framing: socket crop centred on each bust's face (pip/noel faces sit off-centre and were cut) */cx.drawImage(pi,sx,sy,side,side,scx-sr,scy-sr,sr*2,sr*2);cx.restore();if(t<.3){/* r473: portrait socket flash ring on entry */cx.save();cx.globalAlpha=a*(1-t/.3);cx.strokeStyle='#fff1b8';cx.lineWidth=2.5;cx.beginPath();cx.arc(scx,scy,sr+2+t*22,0,6.283);cx.stroke();cx.restore()}}
  let x=x0;const sn=v=>Math.round(v*2)/2;for(const [s0,s1,st] of SL){const dw=st?strW:(s1-s0)*k,xa=sn(x),xb=sn(x+dw);cx.drawImage(fr,s0,0,s1-s0,SH,xa,y0,xb-xa,h);x+=dw}
  /* r322: ult art panel at the right end of the strip, inside 304-356 (looked up once per cut-in) */
  if(c._sa===undefined)c._sa=R._ultStripArt?R._ultStripArt(c.k):null;
@@ -3030,7 +3030,7 @@ R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth
  // text in the band
  const tx=x0+136*k,ty=y0+(31+104)/2*k+1;cx.textBaseline='middle';cx.textAlign='left';
  cx.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';cx.fillStyle=c.rc||'#ffd77a';const nw=cx.measureText(c.n).width;cx.lineWidth=3;cx.strokeStyle='#000a';cx.strokeText(c.n,tx,ty);cx.fillText(c.n,tx,ty);
- cx.font='900 15px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';const sx2=tx+nw+6,sk=c.sk+'!';cx.strokeText(sk,sx2,ty);cx.fillStyle='#fff6d8';cx.fillText(sk,sx2,ty);
+ {/* r473 skill-name typography: larger, warm outline + gold underlay, quick pop-in scale */const sx2=tx+nw+6,sk=c.sk+'!',ps=t<.22?1+(1-t/.22)*.28:1;cx.save();cx.translate(sx2,ty);cx.scale(ps,ps);cx.font='900 17px Maplestory,"Noto Sans KR",sans-serif';cx.lineJoin='round';cx.lineWidth=6;cx.strokeStyle='#2a1200';cx.strokeText(sk,0,1);cx.lineWidth=2.5;cx.strokeStyle='#c9781a';cx.strokeText(sk,0,0);cx.fillStyle='#fff3c4';cx.fillText(sk,0,0);cx.restore()}
  cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
 })();
 
