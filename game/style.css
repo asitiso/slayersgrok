@@ -1609,3 +1609,9 @@ body #stInfo.tbo{min-width:84px;text-align:right;box-sizing:border-box}
 @keyframes vsxO2{0%,82%{opacity:1;scale:1 1;filter:none}90%{opacity:1;scale:1 .55;filter:brightness(1.5)}100%{opacity:0;scale:1 .04;filter:brightness(2)}}
 #battle .vsx{animation-name:vsxO2!important;transform-origin:50% 50%}
 body.nofx #battle .vsx{animation-name:vsxO!important}
+
+/* r500: 보물상자 notice = compact strip in the upper band (y≈288, between icon columns) */
+#battle .echt.echs{position:absolute;left:88px;top:274px;width:184px;margin-left:0;height:24px;line-height:24px;white-space:nowrap;font:900 12px Maplestory,"Noto Sans KR",sans-serif;background:linear-gradient(90deg,rgba(10,40,70,0),rgba(14,58,96,.88) 14%,rgba(14,58,96,.88) 86%,rgba(10,40,70,0));border-top:1px solid #9fe0ff;border-bottom:1px solid #9fe0ff;z-index:7;opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .3s;pointer-events:none}
+#battle .gold .echt.echs,#battle .echt.echs.g{color:#ffe27a}
+#battle .echt.echs br{display:none}#battle .echt.echs b{font-size:12px;margin-left:6px}#battle .echt.echs b img{width:15px;vertical-align:-3px}
+#battle .echt.echs.on{opacity:1;transform:none}#battle .echt.echs.off{opacity:0}

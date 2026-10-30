@@ -1505,7 +1505,7 @@ const PT=[];const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen||(G.saverState&
 (()=>{const C=G.C;let live=0;
 const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'&&!document.querySelector('.vic')){const q=R._ES().get(e),b=document.getElementById('battle');if(q&&b&&live<3){const gold=G._echG!=null?G._echG:Math.random()<.2,s=C.S(),gm=gold?10:3,st=gold?3:1;s.gems+=gm;s.stone=(s.stone||0)+st;live++;
  const w=document.createElement('div');w.className='ech'+(gold?' gold':'');w.style.left=Math.max(90,Math.min(265,q.x))+'px';w.style.top=(q.y-20)+'px';
- w.innerHTML=`<div class="echb"></div><img src="assets/ic3_chest.png"><div class="echt">${gold?'황금 보물상자!':'보물상자'}<br><b><img src="assets/it2_gem.png">${gm} <img src="assets/it2_stone.png">${st}</b></div>`;b.appendChild(w);
+ w.innerHTML=`<div class="echb"></div><img src="assets/ic3_chest.png"><div class="echt">${gold?'황금 보물상자!':'보물상자'}<br><b><img src="assets/it2_gem.png">${gm} <img src="assets/it2_stone.png">${st}</b></div>`;b.appendChild(w);/* r500: the 보물상자 reward text leaves the fight and shows as a short strip in the upper band (beam stays on the drop) */{const tx=w.querySelector('.echt');if(tx){tx.classList.add('echs');b.appendChild(tx);setTimeout(()=>tx.classList.add('on'),850);setTimeout(()=>tx.classList.add('off'),2400);setTimeout(()=>tx.remove(),3000)}}
  setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000);const r=ok(e,...a);R.ekT=null;return r}}}catch(_){}return ok(e,...a)}})();
 /* v95 breakable field crates */
 (()=>{const C=G.C;let cd=12,el=null;
@@ -3128,16 +3128,10 @@ const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{if(di
 #battle.ccon.elon .mkb{top:424px!important}
 #battle.ccon.elon .tdmg{top:452px!important}`;document.head.appendChild(st);
 const PW=600,PH=184,DW=240,CY=378;let fr=null,on=0,seen=0;
-const cls=v=>{if(on===v)return;on=v;const b=document.getElementById('battle');b&&b.classList.toggle('elon',!!v);R._elB=!!v/* r365: elite plaque band 341-415 for the number fade */};
-R.elPlq=(cx,c,W,t,a)=>{try{if(C.B.boss)return false;fr=fr||Object.assign(new Image(),{src:A+'elite_plaque.png'});if(!fr.complete||!fr.naturalWidth)return false;seen=performance.now();cls(1);
- const k=DW/PW,sc=t<.1?.6+t*6.5:t<.22?1.25-(t-.1)*2.1:1,fo=t>1.3?1+(t-1.3)*.12:1;cx.save();cx.globalAlpha=Math.max(0,a);cx.translate(W/2,CY);cx.scale(sc*fo,sc*fo);
- cx.drawImage(fr,-DW/2,-PH*k/2,DW,PH*k);
- // skull glow pulse (eyes ≈ frame px 88,98)
- const gx=-DW/2+88*k,gy=-PH*k/2+97*k,p=.55+.45*Math.sin(t*14);cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(gx,gy,0,gx,gy,22);g.addColorStop(0,`rgba(255,70,40,${.55*p})`);g.addColorStop(.45,`rgba(255,40,20,${.22*p})`);g.addColorStop(1,'rgba(255,0,0,0)');cx.fillStyle=g;cx.fillRect(gx-24,gy-24,48,48);cx.restore();
- // text centred on plate (plate centre ≈ frame px 330)
- const tx=-DW/2+330*k;cx.textAlign='center';cx.textBaseline='middle';cx.font='italic 900 19px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=5;cx.strokeStyle='#3a0006';cx.strokeText('정예 출현!',tx,-7,140);const tg=cx.createLinearGradient(0,-17,0,3);tg.addColorStop(0,'#fff8d0');tg.addColorStop(1,'#ffc23a');cx.fillStyle=tg;cx.fillText('정예 출현!',tx,-7,140);
- cx.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=3;cx.strokeStyle='#2a0004';const sub=(c.n||'정예')+' · 처치 시 보상 4배';cx.strokeText(sub,tx,12,140);cx.fillStyle='#ffe9c8';cx.fillText(sub,tx,12,140);
- cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
+const cls=v=>{if(on===v)return;on=v;const b=document.getElementById('battle');/* r500: the plaque is now a compact top strip - no mid-field band, no .mkb shove */R._elB=false};
+R.elPlq=(cx,c,W,t,a)=>{/* r500: 화룡전-style short notice - one compact strip in the upper band (under the wave bar / 대기 chip, between the icon columns), slide-in + fade; background cached */try{if(C.B.boss)return false;seen=performance.now();const SW=200,SH=26,SY=R._elSY500||258,SXC=180,dk=Math.min(4,Math.abs(cx.getTransform().a)||1);
+ const bg=R.gspr('elS500',SW,SH,dk,(q,w,h)=>{const g=q.createLinearGradient(0,0,w,0);g.addColorStop(0,'rgba(70,0,8,0)');g.addColorStop(.14,'rgba(92,6,14,.9)');g.addColorStop(.86,'rgba(92,6,14,.9)');g.addColorStop(1,'rgba(70,0,8,0)');q.fillStyle=g;q.fillRect(0,0,w,h);q.fillStyle='#ffc23a';q.fillRect(w*.12,0,w*.76,1.2);q.fillRect(w*.12,h-1.2,w*.76,1.2)});
+ const sl=t<.16?(1-t/.16)*-10:0;cx.save();cx.globalAlpha=Math.max(0,a);cx.drawImage(bg,SXC-SW/2,SY-SH/2+sl,SW,SH);cx.textAlign='center';cx.textBaseline='middle';cx.font='italic 900 13px Maplestory,"Noto Sans KR",sans-serif';cx.lineWidth=3.5;cx.strokeStyle='#2a0004';const s1='정예 출현! '+(c.n||'정예')+' · 보상 4배';cx.strokeText(s1,SXC,SY+sl+1,SW-30);cx.fillStyle="#ffe08a";cx.fillText(s1,SXC,SY+sl+1,SW-30);cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
 const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);try{const ek=!C.B.boss&&R.ekT&&R.ekT.t>0&&R.ekT.t<1.3,el=!C.B.boss&&R.elT&&R.elT.t>0&&R.elT.t<1.6&&performance.now()-seen<250;cls(ek||el?1:0)}catch(_){}return r};/* 정예 처치 text (y≈392) shares the plaque slot */
 })();
 
