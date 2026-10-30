@@ -5526,3 +5526,47 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
 ;(()=>{/* r484 summon result panel: less washed-out — stronger violet centre vignette + edge darkening over the bright altar so the white cards/labels pop. Display only */const st=document.createElement('style');st.textContent=`html body #sumModal.srm>.card{background:radial-gradient(ellipse 72% 58% at 50% 48%,#140a24c0,#140a2490 60%,#140a2440 100%),linear-gradient(#1c0f30d8,#1c0f3060 30%,#1c0f3060 70%,#1c0f30d0),url(assets/bg_summon_altar_bright.jpg) 50% 45%/cover!important}`;document.head.appendChild(st)})();
 ;(()=>{/* r485 (a) defeat pose: SD Lina (sd_lina_defeat.png, user art, bg removed) slumps down onto the DEFEAT card's top-left edge (sits on the frame, over the dimmed HUD only; never over DEFEAT/stats/buttons); one img per card, no per-frame work; nofx/tglite/R.opt.fx===false = static. (b) empty 획득 보상 row: a quiet "획득한 보상 없음" pill sits right after the header and is hidden by CSS as soon as any reward chip follows it (:not(:last-child)), so it never shows next to real rewards. Display only */const st=document.createElement('style');st.textContent=`.vic.lose .vlose{position:absolute;left:-8px;top:-84px;height:104px;width:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 3px #0009);transform-origin:50% 100%;animation:vls .6s cubic-bezier(.3,1.3,.5,1) .2s both}@keyframes vls{0%{opacity:0;transform:translateY(-14px) scaleY(1.05)}55%{opacity:1;transform:translateY(3px) scaleY(.92) scaleX(1.04)}100%{opacity:1;transform:none}}.vic.lose.vnofx .vlose,body.nofx .vic.lose .vlose,body.tglite .vic.lose .vlose{animation:none!important;opacity:1;transform:none}/* r485: rest of the result card also appears instantly under nofx/tglite (guide cards, clear badge, reward chips) */body.nofx .vic .gdb span,body.nofx .vic.clr .clbw,body.nofx .vic .vr>span.s432,body.nofx .vic .vr .fcl,body.tglite .vic .gdb span,body.tglite .vic.clr .clbw,body.tglite .vic .vr>span.s432,body.tglite .vic .vr .fcl{animation:none!important;opacity:1!important}.vic .vr .vre485:not(:last-child){display:none}.vic .vr .vre485{display:block;width:max-content;margin:3px auto 0;padding:2px 12px;border-radius:10px;background:#0006;border:1px solid #ffffff22;color:#cfc6dc;font-size:11px;font-weight:700;letter-spacing:0}`;document.head.appendChild(st);
 const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w){const h=[...document.querySelectorAll('.vic.win .vr .vrh432')].pop();if(h&&!h.parentNode.querySelector('.vre485')){const e=document.createElement('div');e.className='vre485';e.textContent='획득한 보상 없음';h.after(e)}}}catch(_){}try{if(!w){const d=[...document.querySelectorAll('.vic.lose')].pop();if(d&&!d.querySelector('.vlose')){const i=document.createElement('img');i.className='vlose';i.src='assets/sd_lina_defeat.png';i.alt='';if(document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||(window.R&&R.opt&&R.opt.fx===false)){i.style.animation='none';d.classList.add('vnofx')}d.appendChild(i)}}}catch(_){}return r}})();
+;(()=>{/* r486 display-only: bigger defeat Lina seated on card's top-left corner; pooled growth feedback (flash/burst/sparks/number pop) for 동료 레벨업·승급·스킬 and 장비 강화 (wraps results only; no logic change) */
+const cs=document.createElement('style');cs.textContent=`
+html body .vic.lose .vlose{left:-30px;top:-112px;height:142px;z-index:3}
+html body .vic.lose>.vt{position:relative;z-index:4}
+@media (max-width:370px){html body .vic.lose .vlose{left:-18px;height:134px;top:-106px}}
+#ufx486{position:fixed;left:0;top:0;width:10px;height:10px;pointer-events:none;z-index:950;display:none;contain:layout}
+#ufx486.on{display:block}
+#ufx486>*{position:absolute;left:50%;top:50%}#ufx486>.np{top:24%}
+#ufx486 .fl{left:0;top:0;width:100%;height:100%;border-radius:14px;background:radial-gradient(circle at 50% 45%,#fff 0,#fff8d0cc 25%,#ffe08a55 55%,#0000 75%);opacity:0}
+#ufx486 .rg{width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:5px solid #fff2a8;box-shadow:0 0 14px #ffd04a,inset 0 0 12px #ffd04a;opacity:0}
+#ufx486 .ry{width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:repeating-conic-gradient(#fff6c000 0 9deg,#fff6c088 12deg,#fff6c000 15deg 30deg);-webkit-mask:radial-gradient(#000 20%,#0000 68%);mask:radial-gradient(#000 20%,#0000 68%);opacity:0}
+#ufx486 .sp i{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:radial-gradient(#fff,#ffe27a 45%,#ffb02e00 72%);opacity:0;transform:rotate(var(--a)) translateY(0)}
+#ufx486 .np{transform:translate(-50%,-50%);white-space:nowrap;font:900 34px Maplestory,sans-serif;color:#fff6c8;-webkit-text-stroke:1.5px #5a3006;text-shadow:0 3px 0 #5a3006,0 0 14px #ffb02e;opacity:0}
+#ufx486 .np small{display:block;font-size:15px;-webkit-text-stroke:0;color:#fff;text-shadow:0 2px 0 #000a;text-align:center}
+#ufx486.lv .rg{border-color:#c8ffa8;box-shadow:0 0 14px #5aff4a,inset 0 0 12px #5aff4a}#ufx486.lv .np{color:#e4ffd0;-webkit-text-stroke-color:#0b3510;text-shadow:0 3px 0 #0b3510,0 0 14px #3aff3a}
+#ufx486.no .fl{background:radial-gradient(circle,#b0b0c055,#0000 70%)}#ufx486.no .rg,#ufx486.no .ry,#ufx486.no .sp{display:none}#ufx486.no .np{color:#d8d0c4;-webkit-text-stroke-color:#2a2a2a;text-shadow:0 3px 0 #222,0 0 8px #0008;font-size:26px}
+#ufx486.go .fl{animation:u486f .45s ease-out}
+#ufx486.go .rg{animation:u486r .6s ease-out}
+#ufx486.go .ry{animation:u486y .9s ease-out}
+#ufx486.go .sp i{animation:u486s .7s cubic-bezier(.2,.8,.4,1)}
+#ufx486.go .np{animation:u486n 1.1s cubic-bezier(.3,1.4,.5,1) forwards}
+#ufx486.go.no .np{animation:u486x .7s ease-out forwards}
+@keyframes u486f{0%{opacity:.95}100%{opacity:0}}
+@keyframes u486r{0%{opacity:1;transform:scale(.3)}100%{opacity:0;transform:scale(3.2)}}
+@keyframes u486y{0%{opacity:0;transform:rotate(0) scale(.6)}25%{opacity:1}100%{opacity:0;transform:rotate(40deg) scale(1.15)}}
+@keyframes u486s{0%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(1.2)}100%{opacity:0;transform:rotate(var(--a)) translateY(-90px) scale(.4)}}
+@keyframes u486n{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}22%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}40%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-80%)}100%{opacity:0;transform:translate(-50%,-95%)}}
+@keyframes u486x{0%{opacity:0;transform:translate(-50%,-30%)}25%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(-50%,-60%)}}
+body.nofx #ufx486 .fl,body.nofx #ufx486 .rg,body.nofx #ufx486 .ry,body.nofx #ufx486 .sp,body.tglite #ufx486 .fl,body.tglite #ufx486 .rg,body.tglite #ufx486 .ry,body.tglite #ufx486 .sp,#ufx486.lt .fl,#ufx486.lt .rg,#ufx486.lt .ry,#ufx486.lt .sp{display:none}
+body.nofx #ufx486 .np,body.tglite #ufx486 .np,#ufx486.lt .np{animation:none!important;opacity:1;transform:translate(-50%,-50%)}`;document.head.appendChild(cs);
+const L=document.createElement('div');L.id='ufx486';L.innerHTML='<div class=fl></div><div class=ry></div><div class=rg></div><div class=sp>'+[0,45,90,135,180,225,270,315].map(a=>`<i style="--a:${a}deg"></i>`).join('')+'</div><div class=np></div>';
+const np=L.querySelector('.np');let tm=0,pend=null;
+const lite=()=>(R.opt&&R.opt.fx===false)||(G.loadSet&&G.loadSet().gq=='save');
+const hide=()=>{L.className='';tm=0};
+const show=(sel,cls,txt,sub,snd)=>{const t=document.querySelector(sel);if(!t)return;const r=t.getBoundingClientRect();if(!r.width)return;if(!L.parentNode)document.body.appendChild(L);
+ L.style.left=r.left+'px';L.style.top=r.top+'px';L.style.width=r.width+'px';L.style.height=Math.min(r.height,260)+'px';np.innerHTML=txt+(sub?'<small>'+sub+'</small>':'');
+ L.className='on '+cls+(lite()?' lt':'');void L.offsetWidth;L.classList.add('go');if(tm)clearTimeout(tm);tm=setTimeout(hide,lite()?800:1150);try{snd&&G.sfx&&G.sfx(snd)}catch(_){}};
+const flush=()=>{fq=0;if(!pend)return;const p=pend;pend=null;if(document.querySelector('.modal'))return;show(...p)};let fq=0;const q=()=>{if(!fq)fq=setTimeout(flush,0)};const w=(n,f)=>{const o=C[n];if(typeof o!='function')return;C[n]=function(){const r=o.apply(this,arguments);try{if(G.screen=='enhance'){f(r,arguments[0]);if(pend)q()}}catch(_){}return r}};
+w('compUp',(r,k)=>{if(r)pend=['.trstage','lv','Lv '+((C.S().clv||{})[k]||1),'','lvup']});
+w('starUp',(r,k)=>{if(r=='ok')pend=['.trstage','st','★'+(C.S().comps[k]||1),'','lvup']});
+w('skUp',(r,k)=>{if(r=='ok')pend=['.trstage','lv','Skill Lv '+((C.S().csk||{})[k]||1),'','click']});
+w('enhance',(r,k)=>{const g=C.S().gear[k];if(r=='ok')pend=['.anvilv,.anvil','st','+'+(g&&g.en||0),'','coin'];else if(r=='fail')pend=['.anvilv,.anvil','no','','','click']});
+
+G._ufx486=show})();
