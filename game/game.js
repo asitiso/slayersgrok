@@ -3017,20 +3017,29 @@ setInterval(tick,250);tick()})();
 const FX473={pip:.3,noel:.63,amelia:.5,borin:.5,kaede:.5,sera:.5,xellos:.5,zelgadis:.5};const SW=452,SH=132,SL=[[0,130,0],[130,228,1],[228,256,0],[256,368,1],[368,452,0]];
 R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth)return false;if(!C.alive().some(e=>e.boss&&!e.wb))return false;
  const c=R.ccut;c.t+=dt/.9;const t=Math.min(1,c.t),ein=Math.min(1,t/.14),eo=t>.78?(1-t)/.22:1,a=Math.max(0,Math.min(ein,eo));
- const h=52,k=h/SH,w=Math.min(W-28,330),eb=ein<1?1+2.2*Math.pow(ein-1,3)+1.2*Math.pow(ein-1,2):1,x0=(W-w)/2-(1-eb)*W*.55+(t>.78?(t-.78)/.22*28:0),y0=304;/* r473 display: snappier slide-in with a small overshoot, drifts right on exit (same duration) *//* r306: 304-356, below the boss HP notice slot (279-301) */
+ const h=52,k=h/SH,w=Math.min(W-62,324),eb=ein<1?1+2.2*Math.pow(ein-1,3)+1.2*Math.pow(ein-1,2):1,x0=54+(W-54-8-w)/2-(1-eb)*W*.55/* r474: strip starts right of the ally portrait column (0-50) */+(t>.78?(t-.78)/.22*28:0),y0=304;/* r473 display: snappier slide-in with a small overshoot, drifts right on exit (same duration) *//* r306: 304-356, below the boss HP notice slot (279-301) */
  const fixed=R._ccFx||(R._ccFx=(130+28+84)*k),strW=(w-fixed)/2;/* r473: constant fixed-width sum, no per-frame filter/reduce arrays */
  cx.save();cx.globalAlpha=a;
  // portrait behind the socket
  const pi=img(c.img);const scx=x0+61*k,scy=y0+66*k,sr=34*k+1;
  if(pi.complete&&pi.naturalWidth){cx.save();cx.beginPath();cx.arc(scx,scy,sr,0,6.283);cx.closePath();cx.fillStyle='#2a1830';cx.fill();cx.clip();const iw=pi.naturalWidth,ih=pi.naturalHeight,side=Math.min(iw*(c.bust?.46:.62),ih*(c.bust?.5:.55)),fx=c.bust?(FX473[c.k]||.54):.5,sx=c.bust?Math.max(0,Math.min(iw-side,fx*iw-side/2)):(iw-side)/2,sy=c.bust?Math.max(0,Math.min(ih-side,ih*.27-side*.42)):ih*.06;/* r473 portrait framing: socket crop centred on each bust's face (pip/noel faces sit off-centre and were cut) */cx.drawImage(pi,sx,sy,side,side,scx-sr,scy-sr,sr*2,sr*2);cx.restore();if(t<.3){/* r473: portrait socket flash ring on entry */cx.save();cx.globalAlpha=a*(1-t/.3);cx.strokeStyle='#fff1b8';cx.lineWidth=2.5;cx.beginPath();cx.arc(scx,scy,sr+2+t*22,0,6.283);cx.stroke();cx.restore()}}
+ {/* r474: dark underlay behind the translucent band so field pickups/particles below no longer show through the skill name */cx.fillStyle='rgba(22,12,30,.72)';cx.fillRect(x0+90*k,y0+33*k,w-(90+40)*k,(104-33-2)*k)}
  let x=x0;const sn=v=>Math.round(v*2)/2;for(const [s0,s1,st] of SL){const dw=st?strW:(s1-s0)*k,xa=sn(x),xb=sn(x+dw);cx.drawImage(fr,s0,0,s1-s0,SH,xa,y0,xb-xa,h);x+=dw}
  /* r322: ult art panel at the right end of the strip, inside 304-356 (looked up once per cut-in) */
  if(c._sa===undefined)c._sa=R._ultStripArt?R._ultStripArt(c.k):null;
  if(c._sa){const ph=h-6,pw=ph*2,px=x0+w-pw-12+(1-ein)*24;cx.drawImage(c._sa,px,y0+3,pw,ph)}
  // text in the band
- const tx=x0+136*k,ty=y0+(31+104)/2*k+1;cx.textBaseline='middle';cx.textAlign='left';
- cx.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';cx.fillStyle=c.rc||'#ffd77a';const nw=cx.measureText(c.n).width;cx.lineWidth=3;cx.strokeStyle='#000a';cx.strokeText(c.n,tx,ty);cx.fillText(c.n,tx,ty);
- {/* r473 skill-name typography: larger, warm outline + gold underlay, quick pop-in scale */const sx2=tx+nw+6,sk=c.sk+'!',ps=t<.22?1+(1-t/.22)*.28:1;cx.save();cx.translate(sx2,ty);cx.scale(ps,ps);cx.font='900 17px Maplestory,"Noto Sans KR",sans-serif';cx.lineJoin='round';cx.lineWidth=6;cx.strokeStyle='#2a1200';cx.strokeText(sk,0,1);cx.lineWidth=2.5;cx.strokeStyle='#c9781a';cx.strokeText(sk,0,0);cx.fillStyle='#fff3c4';cx.fillText(sk,0,0);cx.restore()}
+ const tx=x0+136*k,ty=y0+(31+104)/2*k+1;
+ {/* r474 perf: name + skill-name text (two outlined passes) pre-rendered once per cut-in into one pooled canvas; per frame is a single drawImage (pop scale applied around the skill name) */
+ const tk=c.n+'|'+c.sk,ds=Math.min(3,Math.max(1,Math.abs(cx.getTransform().a)||1));let T=R._ccTC;if(!T){T=R._ccTC={c:document.createElement('canvas'),k:'',ds:0,nw:0,sw:0}}
+ if(T.k!==tk||T.ds!==ds||T.rc!==c.rc){const q=T.c.getContext('2d'),sk=c.sk+'!';q.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';const nw=q.measureText(c.n).width;q.font='900 17px Maplestory,"Noto Sans KR",sans-serif';const sw=q.measureText(sk).width;
+  const Wc=Math.ceil((nw+6+sw+12)*ds),Hc=Math.ceil(30*ds);if(T.c.width<Wc)T.c.width=Wc;if(T.c.height<Hc)T.c.height=Hc;q.setTransform(1,0,0,1,0,0);q.clearRect(0,0,T.c.width,T.c.height);q.setTransform(ds,0,0,ds,0,0);q.textBaseline='middle';q.textAlign='left';q.lineJoin='round';
+  q.font='bold 10px Maplestory,"Noto Sans KR",sans-serif';q.lineWidth=3;q.strokeStyle='#000a';q.strokeText(c.n,2,15);q.fillStyle=c.rc||'#ffd77a';q.fillText(c.n,2,15);
+  q.font='900 17px Maplestory,"Noto Sans KR",sans-serif';const x2=2+nw+6;q.lineWidth=6;q.strokeStyle='#2a1200';q.strokeText(sk,x2,16);q.lineWidth=2.5;q.strokeStyle='#c9781a';q.strokeText(sk,x2,15);q.fillStyle='#fff3c4';q.fillText(sk,x2,15);
+  T.k=tk;T.ds=ds;T.rc=c.rc;T.nw=nw;T.sw=sw;T.w=(nw+6+sw+12)}
+ const ps=t<.22?1+(1-t/.22)*.28:1,ox=tx-2,oy=ty-15,nx=2+T.nw+6;
+ cx.drawImage(T.c,0,0,nx*ds,30*ds,ox,oy,nx,30);
+ if(ps===1)cx.drawImage(T.c,nx*ds,0,(T.w-nx)*ds,30*ds,ox+nx,oy,T.w-nx,30);else{cx.save();cx.translate(ox+nx,ty);cx.scale(ps,ps);cx.drawImage(T.c,nx*ds,0,(T.w-nx)*ds,30*ds,0,-15,T.w-nx,30);cx.restore()}}
  cx.textBaseline='alphabetic';cx.restore();return true}catch(_){return false}};
 })();
 
