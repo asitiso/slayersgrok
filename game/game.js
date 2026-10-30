@@ -5271,3 +5271,15 @@ const st=document.createElement('style');st.textContent=
 document.head.appendChild(st);
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab==='mission')document.querySelectorAll('#panel .mqr:not(.rd):not(.cl)').forEach(row=>{const b=row.querySelector(':scope>.btn'),i=row.querySelector('.mqb>i');if(!b||!i||b.textContent.trim()!=='진행 중')return;const p=Math.max(0,Math.min(100,parseFloat(i.style.width)||0));b.classList.add('pp4');b.style.setProperty('--pp4',p/100);b.classList.toggle('h4',p>=50);b.classList.toggle('z4',p<=0)})}catch(_){}return r};
 })();
+
+;(()=>{/* r427: (1) 진행 중 progress fill (r426) also on 협회 weekly missions (#screen .row .bar) using each row's real bar width; 주간 tab rows share the #panel .mqr path. (2) 영지 병영 placeholder styled as a 화룡전 locked slot: dark hatched stone plate, grey rim, centred lock, grey 준비 중 pill (no unlock condition exists, so text stays 준비 중). Display only, static. */
+const st=document.createElement('style');st.textContent=
+'html body #screen .row>.btn.pp4{position:relative}html body #screen .row>.btn.pp4::after{content:"";position:absolute;left:-5px;top:-5px;bottom:-5px;width:calc((100% + 10px) * var(--pp4));border-radius:4px;background:linear-gradient(#ffd46a,#c8861e);opacity:.5;mix-blend-mode:overlay;pointer-events:none}html body #screen .row>.btn.pp4.h4{color:#fff1c2!important;text-shadow:0 1px 1px #000a}'+
+'html body #screen .bsc.lk{background:repeating-linear-gradient(135deg,#ffffff08 0 6px,transparent 6px 12px),linear-gradient(#3a3530,#211d19)!important;box-shadow:inset 0 0 0 2px #6d665c,inset 0 0 14px #000a!important;position:relative}'+
+'html body #screen .bsc.lk>img.bk362{filter:grayscale(1) brightness(.5)!important;opacity:.7}'+
+'html body #screen .bsc.lk>img.lk362{filter:drop-shadow(0 2px 3px #000c)}'+
+'html body #screen .bsc.lk>b{color:#bdb6aa!important}'+
+'html body #screen .bsc.lk>small{display:inline-block;margin-top:2px;padding:1px 8px;border-radius:9px;background:linear-gradient(#77706a,#4a4540);box-shadow:inset 0 0 0 1px #8f877c;color:#e8e2d8!important;font-size:10px}';
+document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen==='guild')document.querySelectorAll('#screen .row').forEach(row=>{const b=row.querySelector(':scope>.btn'),i=row.querySelector('.bar>i');if(!b||!i||b.textContent.trim()!=='진행 중')return;const p=Math.max(0,Math.min(100,parseFloat(i.style.width)||0));b.classList.add('pp4');b.style.setProperty('--pp4',p/100);b.classList.toggle('h4',p>=50)})}catch(_){}return r};
+})();
