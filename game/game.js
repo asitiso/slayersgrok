@@ -5374,3 +5374,29 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
   if(tn&&tn.nodeType==3&&dg>0&&tn.textContent.trim()=='+'+fmt(dg)){const fin=tn.textContent;tn.textContent=' +0';let t0=0;const st=()=>{t0=performance.now();const f=n=>{if(!tn.isConnected)return;const k=Math.min(1,(n-t0)/550);tn.textContent=k<1?' +'+fmt(Math.round(dg*(1-Math.pow(1-k,3)))):fin;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)};setTimeout(st,900);v.addEventListener('pointerdown',()=>{t0=-1e9},{once:true})}}/* the card's own onclick closes it; 다음 스테이지 just lets that happen */
 }catch(_){}return r};
 })();
+;(()=>{/* r434 (1): 화룡전-style DEFEAT card - same r433 button bar (월드맵 = existing map screen, 확인 = existing tap-to-close; the game already auto-retries) and the 강해지는 방법 guide as 4 icon tiles that open existing screens (장비 강화/동료 육성 → enhance tabs, 편성 → party, 소환 → summon). Only values the card already had (boss HP left, 강화석 count). */
+const st=document.createElement('style');st.textContent=`
+.vic.lose.v434{padding:12px 8px 10px}
+.v434 .gdt{display:flex;align-items:center;justify-content:center;gap:6px;margin:8px 0 4px;font:900 12px Maplestory,sans-serif;color:#ffe2a0;text-shadow:0 1px 0 #0008}
+.v434 .gdt:before,.v434 .gdt:after{content:'';height:1px;width:44px;background:linear-gradient(90deg,#ffd27a00,#ffd27a)}.v434 .gdt:after{transform:scaleX(-1)}
+.v434 .gdb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:0 2px;width:auto;max-width:100%;box-sizing:border-box}.v434 .gdb>span{box-sizing:border-box;width:auto;margin:0}
+.v434 .gdb>span{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px 5px;border-radius:10px;background:linear-gradient(#fff2d8,#f0d29a);border:1.5px solid #fff8e4;box-shadow:0 2px 0 #0009,inset 0 -2px 0 #c89a5a;cursor:pointer;min-width:0}
+.v434 .gdb>span img{width:34px;height:34px;object-fit:contain}
+.v434 .gdb>span b{font:900 11px/13px Maplestory,sans-serif;color:#4a2400;white-space:nowrap}
+.v434 .gdb>span small{font:700 8px/10px Maplestory,sans-serif;color:#7a5030;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.v434 .gdb>span:active{transform:translateY(1px);filter:brightness(.93)}
+.v434 .gdhp i{display:block;height:7px;border-radius:4px;background:#0008;overflow:hidden;margin-top:3px}.v434 .gdhp em{display:block;height:100%;background:linear-gradient(#ff7a5a,#c8281a);transform-origin:0 50%;animation:bf433 .6s .3s cubic-bezier(.2,.8,.3,1) both}
+body.tglite .v434 .gdhp em{animation:none}
+.v434 .gdn{display:none}
+/* (2b) 화룡전 greys the field behind a defeat card */body:not(.tglite):has(.vic.lose.v434:not(.out)) #cv{filter:saturate(.3) brightness(.78);transition:filter .4s}
+.pw434{display:flex;gap:6px;margin:6px 6px 0}.pw434>span{flex:1;display:flex;justify-content:space-between;align-items:center;background:#0006;border-radius:8px;padding:4px 8px;font:700 10px Maplestory,sans-serif;color:#e8d0c8}.pw434 b{font:900 12px Maplestory,sans-serif;color:#ffe9a8}.pw434 b.lo{color:#ff8a7a}.pw434 b.ok{color:#9aff8a}
+.v434 .vn.vbt433 .b2{background:linear-gradient(#ff8a6a,#c83a28);border-color:#ffc8b0;color:#fff;text-shadow:0 1px 0 #0006}
+.v434 .vn.vbt433 .b2 small{color:#ffe8d8}
+`;document.head.appendChild(st);
+const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(w||C.B.br||C.B.rb)return r;const n=[...document.querySelectorAll('.vic.lose.guide')].pop();if(!n||n.classList.contains('v434'))return r;n.classList.add('v434');
+ /* (2) 화룡전 shows 권장 vs 내 전투력 on defeat - both already computed (G._stReq from the stage 권장 label, C.POW()) */try{const rq=G._stReq,pw=C.POW();if(rq>0&&pw>=0){const h=n.querySelector('.gdhp')||n.querySelector('.gdt');h&&h.insertAdjacentHTML('beforebegin',`<div class=pw434><span>권장 전투력<b>${fmt(rq)}</b></span><span>내 전투력<b class=${pw<rq?'lo':'ok'}>${fmt(pw)}</b></span></div>`)}}catch(_){}
+ const gb=n.querySelector('.gdb');if(gb){const g=gb.querySelector('[data-g=gear] img'),c=gb.querySelector('[data-g=comp]'),sm=gb.querySelector('[data-g=summon] img');if(g)g.src='assets/it2_sword.png';if(sm)sm.src='assets/it2_ticket.png';if(c)c.insertAdjacentHTML('afterend','<span data-g=party><img src=assets/ally_amelia.png><b>편성</b><small>파티 배치</small></span>')}
+ n.insertAdjacentHTML('beforeend','<div class="vn vbt433"><span class=b1 data-g=map>월드맵</span><span class=b2>확인<small>자동 재도전 대기</small></span></div>');
+ const oc=n.onclick;n.onclick=ev=>{const g=ev.target.closest('[data-g]');if(g&&(g.dataset.g=='party'||g.dataset.g=='map')){ev.stopPropagation();n.remove();openScreen(g.dataset.g);return}return oc&&oc(ev)};
+}catch(_){}return r};
+})();
