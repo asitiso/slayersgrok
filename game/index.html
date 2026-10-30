@@ -4,7 +4,17 @@
 #boot .orb{width:58px;height:58px;margin:0 0 18px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff6c0 0,#ff9a2a 30%,#c2280e 62%,#3a0806 100%);box-shadow:0 0 22px #ff6a2a99,0 0 60px #ff3a1a44;animation:bto 1.6s ease-in-out infinite}
 @keyframes bto{50%{transform:scale(1.08);box-shadow:0 0 30px #ff8a3acc,0 0 80px #ff3a1a66}}
 #boot .bb{margin-top:34px;width:200px;height:8px;border-radius:5px;background:#1a0a08;border:1px solid #8a5a2a;box-shadow:inset 0 1px 2px #000;overflow:hidden}#boot .bb{position:relative}#boot .bb::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0000 0,#ffd27a55 50%,#0000 100%);background-size:60px 100%;background-repeat:no-repeat;animation:bts 1.2s linear infinite}@keyframes bts{from{background-position:-60px 0}to{background-position:200px 0}}#boot .bb i{display:block;height:100%;width:3%;border-radius:4px;background:linear-gradient(#ffe08a,#e07a1a);transition:width .25s}
-#boot .bp{margin-top:8px;font:700 11px "Noto Sans KR",sans-serif;color:#c9a46a}</style></head><body><div id=boot><div class=orb></div><div class=bt>슬레이어즈<br>붉은 마도사전</div><div class=bs>RED SORCERESS CHRONICLE</div><div class=bb><i></i></div><div class=bp>마력을 모으는 중… 0%</div></div>
+#boot .bp{margin-top:8px;font:700 11px "Noto Sans KR",sans-serif;color:#c9a46a}/* r482 boot like 화룡전 title: bright sky key-art bg, SD Lina hero, Maplestory logo w/ dark outline, bar on a dark plate. Display only */
+#boot{background:url(assets/bg_clear.jpg) center/cover,#f3e6d0!important;justify-content:flex-end!important;padding-bottom:150px}
+#boot::before{content:'';position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(#0000,#1a0c2a88 55%,#140a20cc);pointer-events:none}
+#boot>*{position:relative}
+#boot .orb{width:150px;height:232px;margin:0 0 4px;border-radius:0;background:url(assets/sd_lina.png) center bottom/contain no-repeat;box-shadow:none;filter:drop-shadow(0 6px 6px #0006);animation:btl 2.4s ease-in-out infinite}
+@keyframes btl{50%{transform:translateY(-6px)}}
+#boot .bt{font:900 36px/1.1 Maplestory,"Noto Sans KR",sans-serif!important;filter:drop-shadow(0 2px 0 #4a0d06) drop-shadow(0 0 2px #4a0d06) drop-shadow(0 3px 4px #0008)!important}
+#boot .bs{font:700 12px Maplestory,sans-serif!important;color:#fff3d6!important;opacity:1!important;text-shadow:0 1px 0 #000,0 0 4px #000}
+#boot .bp{font:700 12px Maplestory,sans-serif!important;color:#ffe8b8!important;text-shadow:0 1px 0 #000}
+#boot .bb{margin-top:20px!important}
+</style></head><body><div id=boot><div class=orb></div><div class=bt>슬레이어즈<br>붉은 마도사전</div><div class=bs>RED SORCERESS CHRONICLE</div><div class=bb><i></i></div><div class=bp>마력을 모으는 중… 0%</div></div>
 <div id=app>
  <div id=battle><canvas id=cv width=390 height=844></canvas>
   <div class=hud><div class=prof id=prof><div class=av><img src=assets/hero_lina.png></div><div class=pinfo><b id=hName>Lv.1</b><small id=hPow>0</small><div class=xpbar><i id=xpBar></i></div></div></div><div class=cur><span id=cGold>0</span><span id=cGem>0</span><span id=menuBtn class=menubtn>▼</span></div></div>
