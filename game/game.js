@@ -5688,3 +5688,16 @@ const st=document.createElement('style');st.textContent=`
 #screen .rcard[style*="opacity: 0.4"]{opacity:1!important}
 #screen .rcard[style*="opacity: 0.4"]>img:first-child{filter:grayscale(.85) brightness(.55);opacity:.85}
 #screen .rcard[style*="opacity: 0.4"]>b{color:#b9b2c4}`;document.head.appendChild(st)})();
+;(()=>{/* r505 display-only: (1) sort-direction chevron (CSS border triangle) on the active 등급/레벨 chip - the existing sort is fixed high->low for those two; 기본/세력 have no direction so get none. (3) gear compare: ▲/▼ text glyphs in the NEW column become CSS triangles with the real per-row delta vs 착용 중 (green up / red down), 화룡전-style; numbers come from the two columns already on screen */
+const st=document.createElement('style');st.textContent=`
+.cso.on[data-so=rar]::after,.cso.on[data-so=lv]::after{content:'';display:inline-block;width:0;height:0;margin:0 0 1px 4px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor;vertical-align:middle}
+.srow2 b .tr505{display:inline-block;width:0;height:0;margin-left:4px;border-left:4px solid transparent;border-right:4px solid transparent;vertical-align:middle}
+.srow2 b .tr505.up{border-bottom:6px solid #5dff7a}.srow2 b .tr505.down{border-top:6px solid #ff5a5a}
+.srow2 b .dv505{font-size:10px;margin-left:3px;font-weight:800}.srow2 b .dv505.up{color:#5dff7a}.srow2 b .dv505.down{color:#ff6a6a}`;document.head.appendChild(st);
+const num=t=>{const m=/([\d.,]+)\s*([KMB]?)/.exec(t||'');return m?parseFloat(m[1].replace(/,/g,''))*({K:1e3,M:1e6,B:1e9}[m[2]]||1):NaN};
+const fix=()=>{const w=document.querySelector('.cmpwrap');if(!w||w.dataset.r505)return;const o=w.querySelector('.cmpc.own'),n=w.querySelector('.cmpc.new');if(!o||!n)return;w.dataset.r505=1;
+ const orow=[...o.querySelectorAll('.srow2')],nrow=[...n.querySelectorAll('.srow2')];nrow.forEach((r,i)=>{const b=r.querySelector('b'),g=b&&b.querySelector('i.up,i.down');if(!g)return;const up=g.classList.contains('up');
+  const sameStat=orow[i]&&orow[i].firstElementChild.textContent==r.firstElementChild.textContent;const ov=sameStat?num(orow[i].querySelector('b').textContent):0,nv=num(b.firstChild.textContent);
+  const t=document.createElement('i');t.className='tr505 '+(up?'up':'down');g.replaceWith(t);if(!isNaN(nv)&&!isNaN(ov)&&nv!=ov){const d=document.createElement('i');d.className='dv505 '+(up?'up':'down');d.textContent=(nv>ov?'+':'-')+R.fmt(Math.abs(nv-ov));t.before(d)}})};
+const rp=renderPanel;renderPanel=function(){const r=rp.apply(this,arguments);try{fix()}catch(_){}return r};
+})();
