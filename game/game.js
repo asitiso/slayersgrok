@@ -3061,17 +3061,17 @@ R.ccStrip=(cx,dt,W,H)=>{try{if(!C.B.boss||C.B.wb||!fr.complete||!fr.naturalWidth
 `;document.head.appendChild(st);
 let last=null;const ok=C.ev.kill;C.ev.kill=function(e){try{if(e&&e.boss&&!e.wb){const q=R._ES&&R._ES().get(e),c=R._bc(),r=c&&c.getBoundingClientRect();last={x:(r?r.left:0)+(q?q.x:240),y:(r?r.top:0)+(q?q.y:520),t:performance.now()}}}catch(_){}return ok&&ok.apply(this,arguments)};
 const T=[],at=(f,ms)=>T.push(setTimeout(f,ms));
-G.chestMoment=(w)=>{T.splice(0).forEach(clearTimeout);document.querySelectorAll('.bchest,.bcl').forEach(x=>x.remove());
+let ch0=0;G.chestMoment=(w)=>{T.splice(0).forEach(clearTimeout);document.querySelectorAll('.bchest,.bcl').forEach(x=>x.remove());
  if(!w||(R.opt&&R.opt.fx===false)||G.screen||C.B.br||C.B.rb||C.B.wb||G.storyOn||!last||performance.now()-last.t>6000)return 0;
- const s=C.S(),b=G._bs||{},W=innerWidth,x=Math.max(70,Math.min(W-70,last.x)),y=innerHeight-216/* ground line under the clear card, above the fever bar */;last=null;
+ const s=C.S(),b=G._bs||{},W=innerWidth,p432=G.cs432&&G.cs432(),x=p432?p432.x:Math.max(70,Math.min(W-70,last.x)),y=p432?p432.y:innerHeight-216/* r432: own slot under the result card (G.cs432), else old ground line */;last=null;if(p432)ch0=1;
  const dg=Math.max(0,s.gold-(b.g||s.gold)),ds=Math.max(0,(s.stone||0)-(b.st||0));
  const L=[['it2_gold.png','+'+fmt(dg),'#cGold'],['it2_gem.png','+'+((D.BAL||{}).bossGems||15),'#cGem'],['it_orb.png','+'+((D.BAL||{}).bossOrbs||5),'#cGem']];if(ds)L.push(['it2_stone.png','+'+ds,'#cGold']);
- const ch=document.createElement('div');ch.className='bchest';ch.style.left=x+'px';ch.style.top=y+'px';
+ const ch=document.createElement('div');ch.className='bchest'+(p432?' c432':'');ch.style.left=x+'px';ch.style.top=y+'px';
  ch.innerHTML=`<i class=bcsh></i><i class=bcg></i><i class=bcr></i><img class=bco src="${A}chest_closed.png"><img class=bcp src="${A}chest_open.png">`;document.body.appendChild(ch);G._chestN=(G._chestN||0)+1;
  at(()=>ch.classList.add('sh'),640);
  at(()=>{ch.classList.remove('sh');ch.classList.add('op');G.sfx&&G.sfx('coin');R.hs=Math.max(R.hs||0,.15)},860);
  at(()=>{L.forEach(([ic,tx,sel],i)=>{const n=document.createElement('div');n.className='bcl';n.innerHTML=`<img src="${A}${ic}"><b>${tx}</b>`;n.style.left=x+'px';n.style.top=(y-50)+'px';document.body.appendChild(n);
-  const dx=(i-(L.length-1)/2)*40,tg=document.querySelector(sel),tr=tg&&tg.getBoundingClientRect(),tx2=tr?tr.left+12-x:-x+60,ty2=tr?tr.top+tr.height/2-(y-50):-(y-70);
+  const dx=(i-(L.length-1)/2)*40,tg=(p432&&(()=>{const v=[...document.querySelectorAll('.vic.win:not(.out) .vr>span')].find(e=>{const m=e.querySelector('img');return m&&m.src.endsWith(ic)});return v})())||document.querySelector(sel)/* r432: a drop lands on its own reward chip in the card when there is one, else the header counter */,tr=tg&&tg.getBoundingClientRect(),tx2=tr?tr.left+12-x:-x+60,ty2=tr?tr.top+tr.height/2-(y-50):-(y-70);
   const a=n.animate([{transform:'translate(0,10px) scale(.3)',opacity:0},{transform:`translate(${dx}px,-46px) scale(1.15)`,opacity:1,offset:.3},{transform:`translate(${dx}px,-40px) scale(1)`,opacity:1,offset:.45},{transform:`translate(${tx2}px,${ty2}px) scale(.55)`,opacity:.9}],{duration:1000+i*70,easing:'cubic-bezier(.5,0,.75,.4)',fill:'forwards'});
   a.onfinish=()=>{n.remove();if(tg){tg.classList.remove('hdpulse');void tg.offsetWidth;tg.classList.add('hdpulse')}}})},1120);
  at(()=>ch.classList.add('out'),2250);at(()=>ch.remove(),2620);return 1};
@@ -5326,3 +5326,27 @@ let X=null,M,RW=[];const mk=()=>{X=document.createElement('div');X.className='vb
 G.vb431=(d,ka,tot,nm,im)=>{if(!X)mk();const v=k=>G.DM_(k),p=k=>Math.round(v(k)/tot*100)+'%',m=ka[0];M.img.src=A+im(m);M.b.textContent=nm(m);M.em.textContent='기여도 '+p(m);
  for(let i=0;i<5;i++){const o=RW[i],k=ka[i];o.r.style.display=k?'':'none';if(!k)continue;o.img.src=A+im(k);o.b.textContent=nm(k);o.u.textContent=fmt(Math.round(v(k)));o.s.style.width=(v(k)/tot*100).toFixed(1)+'%';o.s.className=i?'':'top';o.r.classList.toggle('top',!i);o.em.textContent=p(k)}
  const vn=d.querySelector('.vn');if(vn)vn.before(X)}})();
+
+;(()=>{/* r432: 화룡전-style result reward flow - the boss chest gets its own slot under the card (no overlap with the 보상 row), and the reward chips appear one by one after it opens. nofx / tglite / no chest: everything at once. Real reward chips only; display only. */
+const st=document.createElement('style');st.textContent=`
+.bchest.c432{width:92px;height:92px;margin:-92px 0 0 -46px}
+.bchest.c432 .bcg{width:170px;height:170px;margin:-85px 0 0 -85px}
+.vic.rv432 .vr>span:not(.s432){opacity:0;transform:scale(.4)}
+.vic .vr>span.s432{animation:rv432 .34s cubic-bezier(.2,1.6,.4,1) both!important}
+.vic .vr>span.s432.hdpulse{animation:hdpulse .3s ease-out!important}
+@keyframes rv432{0%{opacity:0;transform:scale(.4)}100%{opacity:1;transform:none}}
+.vic .vr .vrh432{flex-basis:100%;display:flex;align-items:center;gap:6px;margin:2px 14px 1px;font:900 10px Maplestory,sans-serif;color:#ffd77acc;letter-spacing:1px}
+.vic .vr .vrh432:before,.vic .vr .vrh432:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,#ffd77a00,#ffd77a88,#ffd77a00)}
+`;document.head.appendChild(st);
+const T=[];let V=null;
+const lite=()=>(R.opt&&R.opt.fx===false)||document.body.classList.contains('tglite');
+const done=()=>{T.splice(0).forEach(clearTimeout);if(V){V.classList.remove('rv432');V.onclick432=null}V=null};
+G.cs432=()=>{const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop();if(!v)return null;/* layout box (ignores the scale-in transform) *//* the card keeps growing (stars, MVP block arrive later), so the slot is the fixed strip between the card bottom and the FEVER bar */return{x:innerWidth/2,y:innerHeight-210}};
+const orp=resultPop;resultPop=function(w){done();const r=orp.apply(this,arguments);try{const v=w&&[...document.querySelectorAll('.vic.win:not(.out)')].pop();if(!v)return r;const vr=v.querySelector('.vr');if(vr&&!vr.querySelector('.vrh432')){const f=vr.querySelector(':scope>span');const h=document.createElement('div');h.className='vrh432';h.textContent='획득 보상';vr.insertBefore(h,f||null)}
+ if(lite()||!document.querySelector('.bchest.c432'))return r;
+ V=v;v.classList.add('rv432');
+ const go=()=>{if(V!==v)return;const sp=[...v.querySelectorAll('.vr>span:not(.s432)')];sp.forEach((e,i)=>T.push(setTimeout(()=>e.classList.add('s432'),i*170)));T.push(setTimeout(()=>{if(V===v){v.querySelectorAll('.vr>span').forEach(e=>e.classList.add('s432'));done()}},sp.length*170+400))};
+ T.push(setTimeout(go,900));/* chest bursts open at 860ms */
+ v.addEventListener('pointerdown',()=>{if(V===v){v.querySelectorAll('.vr>span').forEach(e=>e.classList.add('s432'));done()}},{once:true});/* tap = show all */
+}catch(_){done()}return r};
+})();
