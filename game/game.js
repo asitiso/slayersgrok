@@ -5846,3 +5846,15 @@ const oe=R.elPlq;if(oe)R.elPlq=(cx,c,W,t,a)=>{const q=R._ccb520;if(on(q)){const 
 const ocb=R.coinBurst;R.coinBurst=(x,y,n,kind)=>{try{const L=R._fxLoad520(),cap=R._fxCap520();if(L>=cap)n=Math.min(n,2);else if(L>=cap*.7)n=Math.ceil(n/2)}catch(_){}return ocb(x,y,n,kind)};
 let lc=-1,fc=0;const of=R.frame;R.frame=dt=>{of(dt);if(++fc&1)return;const v=on(R._ccb520)?1:0;if(v!==lc){lc=v;const b=document.getElementById('battle');if(b)b.classList.toggle('cc520',!!v);document.body.classList.toggle('cc520',!!v)}};
 const st=document.createElement('style');st.textContent='#battle.cc520 .echs,#battle.cc520 .mkb,#battle.cc520 .wvb,#battle.cc520 .sktag,body.cc520 .sktag{opacity:0!important;transition:opacity .1s}';document.head.appendChild(st)})();
+;(()=>{/* r521 cut-ins one at a time (display only): a companion band (R.ccut) never draws while the ult band (R.cut) is up - it is parked in a 2-slot queue (oldest dropped when full) and replays from t=0 once the ult band clears; a companion band arriving while another is mid-show waits its turn the same way. Skill timing/damage untouched (casts already happened; only the picture waits). Skill-total popup drops lower while a band shows. Effects cap tightens to 8 during the ult band */
+const Q=[null,null];let qn=0,cur=null;
+const push=c=>{if(qn===2){Q[0]=Q[1];qn=1}Q[qn++]=c};
+const pop=()=>{const c=Q[0];Q[0]=Q[1];Q[1]=null;qn--;return c};
+const ultOn=()=>R.cut&&R.cut.t<1.25;
+const of=R.frame;R.frame=dt=>{try{const c=R.ccut;
+ if(c&&c!==cur){/* new companion band */if(ultOn()||(cur&&cur.t<1&&cur!==c&&R._ccPrev521===cur)){push(c);R.ccut=cur&&cur.t<1&&!ultOn()?cur:null}else cur=c}
+ if(R.ccut&&ultOn()){push(R.ccut);R.ccut=null;cur=null}
+ if((!R.ccut||R.ccut.t>=1)&&qn&&!ultOn()){const n=pop();n.t=0;R.ccut=n;cur=n}
+ R._ccPrev521=R.ccut}catch(_){}of(dt)};
+const oc=R._fxCap520;if(oc)R._fxCap520=()=>ultOn()?8:oc();
+const st=document.createElement('style');st.textContent='body #battle.cc520:not(.elon) .tdmg{top:408px!important}body.cc520 .bub{opacity:0!important;transition:opacity .1s}';document.head.appendChild(st)})();
