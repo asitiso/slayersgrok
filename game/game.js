@@ -5570,3 +5570,27 @@ w('skUp',(r,k)=>{if(r=='ok')pend=['.trstage','lv','Skill Lv '+((C.S().csk||{})[k
 w('enhance',(r,k)=>{const g=C.S().gear[k];if(r=='ok')pend=['.anvilv,.anvil','st','+'+(g&&g.en||0),'','coin'];else if(r=='fail')pend=['.anvilv,.anvil','no','','','click']});
 
 G._ufx486=show})();
+;(()=>{/* r487 display-only: enhance label sync on success (no stale +N), drop duplicate .fen badge; result-card stage name fallback from real stage data */
+const cs=document.createElement('style');cs.textContent=`html body .anvilv .fen{display:none!important}`;document.head.appendChild(cs);
+const oe=C.enhance;C.enhance=function(k){const r=oe.apply(this,arguments);try{if(r=='ok'&&G.screen=='enhance'&&k==G.enSel){const g=C.S().gear[k],sp=document.querySelector('#screen .card.anvil>.ttl span');if(g&&sp)sp.textContent='+'+(g.en||0)}}catch(_){}return r};
+const ob=C.startBoss;C.startBoss=function(){const s=C.S(),was=C.B.boss,si=s.si,r=ob.apply(this,arguments);try{if(!was&&C.B.boss&&G._bs)G._bs.si=si}catch(_){}return r};
+const orp=resultPop;resultPop=function(w){try{const s=C.S(),b=G._bs;if(b&&!b.nm){if(b.si!=null)b.nm=C.stageName(b.si);else if(!w)b.nm=C.stageName(s.si)}else if(!b&&!w)G._bs={g:s.gold,st:s.stone||0,nm:C.stageName(s.si)}}catch(_){}return orp.apply(this,arguments)};
+new MutationObserver(m=>{for(const x of m)for(const n of x.addedNodes){if(n.nodeType!=1||!n.classList.contains('vic'))continue;const v=n.querySelector('.vs');if(v&&/^\s*(undefined)?\s*클리어/.test(v.textContent))v.textContent=v.textContent.replace(/^\s*(undefined)?\s*클리어/,'스테이지 클리어')}}).observe(document.body,{childList:true});
+})();
+;(()=>{/* r487 display-only gaps: lobby avatar framed on Lina's face (brighter backing), party hint readable pill, shop deal prices tinted when balance is short (button still works; same prices) */
+const cs=document.createElement('style');cs.textContent=`
+html body #prof>.av{background:radial-gradient(circle at 50% 40%,#ffe9d6,#f0a890 60%,#b0506a)!important}
+html body #prof>.av>img{width:230%!important;max-width:none!important;height:auto!important;margin:-20% 0 0 -88%!important;object-fit:fill!important}
+html body .pstage .pst{left:50%;right:auto;transform:translateX(-50%);width:max-content;max-width:94%;padding:2px 10px;border-radius:10px;background:#1a0f08b8;color:#fff;font-size:11px;text-shadow:none;box-shadow:0 0 0 1px #f4c66b66}
+html body #screen .dgrid .dcell .btn.off.poor487.poor487{color:#ff8a7a!important;text-shadow:0 1px 0 #000,0 0 4px #ff3a2a66!important}
+html body .dcell .btn.poor487 img{filter:grayscale(.5)}`;document.head.appendChild(cs);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='shop'){const s=C.S();document.querySelectorAll('#screen .dcell .btn[data-deal]').forEach(b=>{const im=b.querySelector('img'),n=+b.textContent.replace(/[\s,]/g,'');if(!im||!isFinite(n)||!n)return;const bal=/it2_gem/.test(im.src)?s.gems:/it2_gold/.test(im.src)?s.gold:null;if(bal==null)return;b.classList.toggle('poor487',bal<n)})}}catch(_){}return r}})();
+;(()=>{/* r487 display-only: multi-summon result summary row (rarity counts + NEW count read from the shown cards) fills the gap above 확인 */
+const cs=document.createElement('style');cs.textContent=`
+#sumModal .sum487{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:12px auto 2px;animation:aocin .35s both}
+#sumModal .sum487 span{padding:3px 10px;border-radius:11px;font:900 12px Maplestory,'Noto Sans KR',sans-serif;color:#fff;background:#1a0f2ad0;box-shadow:inset 0 0 0 1.5px var(--rc,#c8b8ff);text-shadow:0 1px 0 #000}
+#sumModal .sum487 span b{color:var(--rc,#fff);margin-left:4px}
+#sumModal .sum487 span.nw{--rc:#ff5a4a}
+body.nofx #sumModal .sum487,body.tglite #sumModal .sum487{animation:none!important}`;document.head.appendChild(cs);
+const os=summon;summon=function(n){const r=os.apply(this,arguments);try{const m=document.getElementById('sumModal');if(m&&n>1&&!m.querySelector('.sum487')){const cards=[...m.querySelectorAll('.sumcard')];if(cards.length>1){const ct={};let nw=0;cards.forEach(c=>{const g=(c.querySelector('.gr')||{}).textContent||'';if(g){ct[g]=ct[g]||{n:0,c:c.style.getPropertyValue('--rc')};ct[g].n++}const f=c.closest('.srf');if((f&&f.querySelector('.srnw'))||(!f&&c.querySelector('.snew')&&/NEW/.test(c.querySelector('.snew').textContent)))nw++});
+const row=document.createElement('div');row.className='sum487';row.innerHTML=D.RAR.map(x=>x.n).reverse().filter(g=>ct[g]).map(g=>`<span style="--rc:${ct[g].c}">${g}<b>${ct[g].n}</b></span>`).join('')+(nw?`<span class=nw>NEW<b>${nw}</b></span>`:'');const grid=m.querySelector('.srg')||cards[0].parentNode;grid.after(row);const chk=()=>{const sh=!grid.querySelector('.srf:not(.open)');row.style.display=sh?'':'none';if(sh&&mo)mo.disconnect()};const mo=grid.querySelector('.srf')?new MutationObserver(chk):null;if(mo)mo.observe(grid,{subtree:true,attributes:true,attributeFilter:['class']});chk()}}}catch(e){}return r}})();
