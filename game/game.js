@@ -5673,3 +5673,18 @@ const run=n=>{setTimeout(()=>{try{n.isConnected&&col(n)}catch(_){}},60)};
 const ob=ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType==1&&(n.classList.contains('modal')||n.classList.contains('rwpop')||n.classList.contains('arep')))run(n)};
 new MutationObserver(ob).observe(document.body,{childList:true});const ap=document.getElementById('app');ap&&new MutationObserver(ob).observe(ap,{childList:true});
 })();
+;(()=>{/* r504 display-only: small side labels under the 비무대회 result VS portraits - 나 under my party (left, same side as 내 전투력), opponent name under theirs; read from the replay's own .arnames, no data change */
+const st=document.createElement('style');st.textContent=`.vs435.r504{align-items:flex-start}.vs435.r504>div{flex-direction:column;align-items:center;gap:2px}.vs435.r504>div>.pr504{display:flex;gap:2px}.vs435.r504 b{align-self:center;margin-top:-10px}
+.vs435 i.lb504{font:700 10px Maplestory,sans-serif;font-style:normal;color:#cfc6dc;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:12px}.vs435 i.lb504.me{color:#7ad8ff}`;document.head.appendChild(st);
+const lab=bx=>{const v=bx.querySelector('.vs435');if(!v||v.classList.contains('r504'))return;const ds=v.querySelectorAll(':scope>div');if(ds.length!=2)return;const ns=bx.querySelectorAll('.arnames span'),on=(ns[1]&&ns[1].textContent.trim())||'상대';v.classList.add('r504');
+ ds.forEach((d,i)=>{const p=document.createElement('div');p.className='pr504';while(d.firstChild)p.appendChild(d.firstChild);d.appendChild(p);const l=document.createElement('i');l.className='lb504'+(i?'':' me');l.textContent=i?on:'나';d.appendChild(l)})};
+setInterval(()=>{const bx=document.querySelector('.arep .arbox');if(bx)lab(bx)},300);
+/* defeated portraits read as a different hero when fully darkened - keep them recognisable */
+st.textContent+=`.arep .vs435 .dead img{filter:grayscale(.6) brightness(.85)!important}.arep .rsbx.r502b>.r502p{top:-44px;height:76px;left:-4px}@media (max-width:370px){.arep .rsbx.r502b>.r502p{top:-40px;height:70px}}`;
+})();
+;(()=>{/* r504 (3) display-only hero list polish: rarity tag becomes a rarity-coloured pill (from the card's own --rc); unowned cards no longer wash the whole card to 40% (name/tags unreadable) - frame and text stay solid, only the portrait is dimmed + desaturated, 화룡전-style */
+const st=document.createElement('style');st.textContent=`
+#screen .rcard>.rg{filter:none!important;background:var(--rc,#666)!important;color:#fff!important;text-shadow:0 1px 1px #000c;border:1px solid #ffffff44;border-radius:7px;padding:0 5px;font-weight:800;line-height:14px}
+#screen .rcard[style*="opacity: 0.4"]{opacity:1!important}
+#screen .rcard[style*="opacity: 0.4"]>img:first-child{filter:grayscale(.85) brightness(.55);opacity:.85}
+#screen .rcard[style*="opacity: 0.4"]>b{color:#b9b2c4}`;document.head.appendChild(st)})();
