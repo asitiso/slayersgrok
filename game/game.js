@@ -5436,3 +5436,17 @@ const pw=bx=>{if(bx.dataset.r436)return;const h=bx.querySelector('.arhd small'),
 setInterval(()=>{const bx=document.querySelector('.arep .arbox');if(bx&&bx.querySelector('.vs435'))pw(bx)},300);
 })();
 
+
+;(()=>{/* r437 (1): live world boss grade badge - "C → B까지 12.3M" built from C.WB.tiers × C.wbRef() and the live B.wb.dmg; string rebuilt at most 4x/s and only when it changes, drawn by the existing canvas panel (no new DOM). Grade-up flash only with fx on and not tglite. Display only. */
+const C=G.C;let lt=null,lti=-2;setInterval(()=>{try{const w=C.B.wb;if(!w){if(R._wbB){R._wbB=null;lt=null}lti=-2;return}const T=C.WB.tiers,ref=C.wbRef(),d=w.dmg||0,ti=C.wbTier(d),nx=T[ti+1];const cur=ti>=0?T[ti][0]:'등급 없음';const t=nx?cur+' → '+nx[0]+'까지 '+fmt(Math.max(0,Math.ceil(nx[1]*ref-d))):cur+' 최고 등급';if(t!==lt){lt=t;R._wbB=t;const c=R._bc&&R._bc();if(c){const x=c.getContext('2d');x.save();x.font='900 9.5px Maplestory,sans-serif';R._wbBW=x.measureText(t).width;x.restore()}}if(lti>-2&&ti>lti&&(!R.opt||R.opt.fx!==false)&&!document.body.classList.contains('tglite'))R._wbFl=.6;lti=ti}catch(_){}},250)})();
+
+;(()=>{/* r437 (2): 화룡전 lobby/battle cues, CSS only (transform/opacity, compositor). a) ready skills keep a slow gold sweep ring (not only the one-shot rdyfx flash); b) 방치보상 chest bobs with a glow once storage is full (MAX). All motion off under tglite / nofx / fxoff. Display only. */
+const st=document.createElement('style');st.textContent=`
+#skills .sk.ready:not(.rdyfx)::after{content:'';position:absolute;inset:-3px;border-radius:50%;pointer-events:none;z-index:5;background:conic-gradient(from 0deg,#0000 0 62%,#fff3b066 78%,#ffe27a 88%,#0000 100%);-webkit-mask:radial-gradient(circle,#0000 calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(circle,#0000 calc(100% - 5px),#000 calc(100% - 4px));animation:sk437 1.8s linear infinite;will-change:transform}
+@keyframes sk437{to{transform:rotate(360deg)}}
+#idleBtn.full img{animation:id437 1.6s ease-in-out infinite;transform-origin:50% 90%}
+#idleBtn.full::before{content:'';position:absolute;left:50%;top:40%;width:70px;height:46px;margin:-23px 0 0 -35px;border-radius:50%;background:radial-gradient(#ffd25a88,#0000 70%);pointer-events:none;animation:ig437 1.6s ease-in-out infinite}
+@keyframes id437{0%,100%{transform:none}50%{transform:translateY(-3px) rotate(-3deg)}}
+@keyframes ig437{0%,100%{opacity:.35}50%{opacity:.9}}
+body.tglite #skills .sk.ready::after,body.nofx #skills .sk.ready::after,body.fxoff #skills .sk.ready::after{animation:none}
+body.tglite #idleBtn.full img,body.nofx #idleBtn.full img,body.fxoff #idleBtn.full img,body.tglite #idleBtn.full::before,body.nofx #idleBtn.full::before,body.fxoff #idleBtn.full::before{animation:none}`;document.head.appendChild(st);})();
