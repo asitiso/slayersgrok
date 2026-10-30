@@ -5367,7 +5367,7 @@ body.tglite .v431 .vbb s{animation:none}
 `;document.head.appendChild(st);
 /* r433 (4): the 절전/연출 끔 lite class was only applied after the first screen render, so after a reload battle and result effects ran at full until a menu was opened - apply it once at boot with the same rule */try{const s0=G.loadSet?G.loadSet():{};if((R.opt&&R.opt.fx===false)||s0.gq=='save')document.body.classList.add('tglite')}catch(_){}
 const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{if(!w)return r;const v=[...document.querySelectorAll('.vic.win:not(.out)')].pop(),vn=v&&v.querySelector('.vn:not(.vbt433)');if(!vn)return r;const nx=(vn.textContent.split('▶')[1]||'').trim();
- vn.className='vn vbt433';vn.innerHTML='<span class=b1>월드맵</span><span class=b2>다음 스테이지<small></small></span>';vn.lastChild.lastChild.textContent=nx;
+ vn.className='vn vbt433';vn.innerHTML='<span class=b1>월드맵</span><span class=b2>다음 스테이지<small></small></span>';vn.lastChild.lastChild.textContent=nx;/* r435 (2): 화룡전 shows the next stage's 권장 전투력 on the button - C.stageReq is the same value the stage label uses */try{const rq=C.stageReq(C.S().si);if(rq>0){const q=document.createElement('i');q.className='rq435'+(C.POW()<rq?' lo':'');q.textContent=' · 권장 '+fmt(rq);vn.lastChild.lastChild.appendChild(q)}}catch(_){}
  vn.firstChild.addEventListener('click',()=>{try{openScreen('map')}catch(_){}});
  /* r433 (6): 화룡전-style gold count-up on the gold chip as it is revealed - same dg the card printed (gold now - gold at boss start), only the text animates; skipped in tglite/nofx or with no chest */
  if(!document.body.classList.contains('tglite')&&!(R.opt&&R.opt.fx===false)&&v.classList.contains('rv432')){const b=G._bs||{},dg=Math.max(0,C.S().gold-(b.g==null?C.S().gold:b.g)),ch=[...v.querySelectorAll('.vr>span')].find(e=>{const m=e.querySelector('img');return m&&/it2_gold\.png$/.test(m.src)}),tn=ch&&ch.lastChild;
@@ -5399,4 +5399,25 @@ const orp=resultPop;resultPop=function(w){const r=orp.apply(this,arguments);try{
  n.insertAdjacentHTML('beforeend','<div class="vn vbt433"><span class=b1 data-g=map>월드맵</span><span class=b2>확인<small>자동 재도전 대기</small></span></div>');
  const oc=n.onclick;n.onclick=ev=>{const g=ev.target.closest('[data-g]');if(g&&(g.dataset.g=='party'||g.dataset.g=='map')){ev.stopPropagation();n.remove();openScreen(g.dataset.g);return}return oc&&oc(ev)};
 }catch(_){}return r};
+})();
+
+;(()=>{/* r435 (1): 비무대회 and 월드 보스 result cards get the r433 button bar. 비무대회: 월드맵 (existing map screen) + 확인 (the existing #arOk). 월드 보스: 확인 only (existing tap-to-close) - leaving to the map mid world-boss return flow would need new logic. No damage breakdown: 비무대회 hit numbers are a cosmetic replay (random, not real), and the v25 tracker skips world-boss hits, so there is no real per-member data. (3): 비무대회 card shows both line-ups (portraits already on the field) above the scores, like 화룡전's VS result. */
+const st=document.createElement('style');st.textContent=`
+.rq435{font-style:normal;color:#6a3200}.rq435.lo{color:#b01a10}
+.rs358 .vn.vbt433{display:flex;gap:6px;justify-content:center;margin:8px 0 0}
+.rs358 .vbt433.one>span{max-width:200px}
+.rs358 .rwtap{display:none}
+.vs435{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 6px}
+.vs435>div{display:flex;gap:2px}.vs435 img{width:30px;height:30px;object-fit:contain;border-radius:8px;background:#0006;border:1px solid #ffffff22}
+.vs435 .dead img{filter:grayscale(1) brightness(.6)}
+.vs435 b{font:italic 900 14px Maplestory,sans-serif;color:#ffd84a;text-shadow:0 1px 0 #000}
+`;document.head.appendChild(st);
+const bar=(one)=>{const v=document.createElement('div');v.className='vn vbt433'+(one?' one':'');v.innerHTML=(one?'':'<span class=b1>월드맵</span>')+'<span class=b2>확인</span>';return v};
+const doAr=e=>{if(e.dataset.r435)return;const bx=e.querySelector('.rsbx'),ok=e.querySelector('#arOk');if(!bx||!ok)return;e.dataset.r435=1;
+ try{const m=e.closest('.modal'),sd=m&&m.querySelectorAll('.arside');if(sd&&sd.length==2){const w=document.createElement('div');w.className='vs435';const mk=s=>'<div>'+[...s.querySelectorAll('.aru')].map(u=>`<span class="${u.classList.contains('dead')?'dead':''}"><img src="${u.querySelector('img').getAttribute('src')}"></span>`).join('')+'</div>';w.innerHTML=mk(sd[0])+'<b>VS</b>'+mk(sd[1]);const rs=bx.querySelector('.rsst');rs?rs.after(w):bx.prepend(w)}}catch(_){}
+ const v=bar(0);ok.style.display='none';bx.appendChild(v);v.lastChild.onclick=ev=>{ev.stopPropagation();ok.click()};v.firstChild.onclick=ev=>{ev.stopPropagation();ok.click();try{openScreen('map')}catch(_){}}};
+const doWb=d=>{if(d.dataset.r435||!d.classList.contains('rs358'))return;d.dataset.r435=1;const bx=d.querySelector('.rwbox');if(bx)bx.appendChild(bar(1))};
+/* no subtree observer on body (battle text churns every frame): body childList for rewardPop, #app childList + the arena box only while an arena modal is open */
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('rwpop'))setTimeout(()=>doWb(n),0)}).observe(document.body,{childList:true});
+new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1||!n.classList.contains('arep'))continue;const bx=n.querySelector('.arbox');if(!bx)continue;const o=new MutationObserver(()=>{const e=bx.querySelector('.arres');if(e){o.disconnect();setTimeout(()=>doAr(e),0)}else if(!n.isConnected)o.disconnect()});o.observe(bx,{childList:true})}}).observe(document.getElementById('app'),{childList:true});
 })();

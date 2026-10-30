@@ -1,5 +1,5 @@
 // watchdog: page heartbeat + CDP pause stack dump if main thread stalls
-module.exports=async(p,label='page')=>{const cdp=await p.target().createCDPSession();await cdp.send('Debugger.enable');let last=Date.now(),dumped=0;
+module.exports=async(p,label='page',lim=+(process.env.WD_MS||6000))=>{const cdp=await p.target().createCDPSession();await cdp.send('Debugger.enable');let last=Date.now(),dumped=0;
  await p.exposeFunction('__hb',()=>{last=Date.now()}).catch(()=>{});await p.evaluateOnNewDocument(()=>{setInterval(()=>window.__hb&&window.__hb(),500)});await p.evaluate(()=>{setInterval(()=>window.__hb&&window.__hb(),500)}).catch(()=>{});
- cdp.on('Debugger.paused',ev=>{console.log('WATCHDOG '+label+' main thread stalled >6s. stack:');ev.callFrames.slice(0,12).forEach(f=>console.log('  at',f.functionName||'(anon)',f.url.split('/').pop()+':'+(f.location.lineNumber+1)+':'+f.location.columnNumber));cdp.send('Debugger.resume').catch(()=>{});setTimeout(()=>process.exit(3),300)});
- const iv=setInterval(()=>{if(!dumped&&Date.now()-last>6000){dumped=1;cdp.send('Debugger.pause').catch(()=>{})}},1000);iv.unref&&iv.unref();return ()=>clearInterval(iv)};
+ cdp.on('Debugger.paused',ev=>{console.error('WATCHDOG '+label+' main thread stalled >'+lim/1000+'s. stack:');ev.callFrames.slice(0,12).forEach(f=>console.error('  at',f.functionName||'(anon)',f.url.split('/').pop()+':'+(f.location.lineNumber+1)+':'+f.location.columnNumber));cdp.send('Debugger.resume').catch(()=>{});setTimeout(()=>process.exit(3),300)});
+ const iv=setInterval(()=>{if(!dumped&&Date.now()-last>lim){dumped=1;cdp.send('Debugger.pause').catch(()=>{})}},1000);iv.unref&&iv.unref();return ()=>clearInterval(iv)};
