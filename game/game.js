@@ -5951,3 +5951,13 @@ const S=':is(#_a,#_b,span):is(#_c,#_d,span)';const st=document.createElement('st
 #battle #bossBtn.bossbtn${S}.bsp{position:relative!important}
 #battle #bossBtn.bossbtn${S}.bsp>i{display:flex!important;position:absolute;right:0;bottom:0;width:15px;height:15px;border-radius:50%;align-items:center;justify-content:center;font:900 11px/1 sans-serif;font-style:normal;color:#fff6c8;background:radial-gradient(circle at 40% 35%,#ff6a4a,#b0140c);box-shadow:0 0 0 1.5px #ffd76a,0 1px 2px #000a;text-shadow:0 1px 1px #000;pointer-events:none}
 `;document.head.appendChild(st)})();
+
+;(()=>{/* r558 (display only, UX.md 15 & 19): (A) normal waves have no real timer (core only sets B.timer for boss / world boss / rush), so instead of a countdown the timer row shows a 3-segment wave track (cleared waves filled) while not in a boss fight; the hourglass is hidden there. Class/var written by a 500ms check only on change, nothing per frame. (B) party column: opaque dark portrait backing (sprites no longer wash out over bright fields) and a thicker outlined HP bar */
+const st=document.createElement('style');st.textContent=`
+#stagebar .trow.wv558>span{display:none!important}
+#stagebar .trow.wv558 .bar{width:42px!important;min-width:42px!important;height:7px!important;flex:none!important;margin-right:5px;background:linear-gradient(90deg,#111 0 32%,#0000 32% 34%,#111 34% 66%,#0000 66% 68%,#111 68%)!important;border-color:#0000!important;box-shadow:none!important;overflow:hidden}
+#stagebar .trow.wv558 .bar>#tBar{width:calc(var(--wf558,0)*100%)!important;height:100%!important;background:linear-gradient(#ffe27a,#e0a020)!important;-webkit-mask:linear-gradient(90deg,#000 0 32%,#0000 32% 34%,#000 34% 66%,#0000 66% 68%,#000 68%);mask:linear-gradient(90deg,#000 0 32%,#0000 32% 34%,#000 34% 66%,#0000 66% 68%,#000 68%);-webkit-mask-size:42px 100%;mask-size:42px 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+#partycol .pp img{background:radial-gradient(circle at 50% 40%,#4a3a2a,#140e0a 80%)!important}
+#partycol .pp .hpb{height:6px!important;border:1px solid #000!important;box-shadow:0 0 0 1px #ffffff40;border-radius:2px;margin-top:1px}
+#partycol .pp .hpb>i{height:100%!important}`;document.head.appendChild(st);
+let on=null,wf=-1;setInterval(()=>{try{const B=C.B,s=C.S(),r=document.querySelector('#stagebar .trow');if(!r)return;const n=!B.boss;if(n!==on){on=n;r.classList.toggle('wv558',n)}if(n){const f=Math.min(1,s.wave/BAL.waves);if(f!==wf){wf=f;r.style.setProperty('--wf558',String(f))}}}catch(e){}},500)})();
