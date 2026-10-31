@@ -5990,3 +5990,5 @@ ${D}>span{display:grid!important;grid-template-columns:40px minmax(0,1fr);grid-t
 ${D}>span img{grid-row:1/3;width:40px!important;height:40px!important}
 ${D}>span b{font:900 13px/16px Maplestory,sans-serif!important;align-self:end}
 ${D}>span small{font:700 10px/12px Maplestory,sans-serif!important;color:#6a4020!important;align-self:start;max-width:100%}`;document.head.appendChild(st)})();
+;(()=>{/* r562 display only: (1) chest-loot flyers (.bcl, z1000) sink below the stage-clear popup (z998) and its scrim while it is open, so they never pass over a reward tile; (2) 일일 지령/주간/업적 rows: one fixed-width action column (진행 중 / 바로가기 / 받기 all 76px, centered) so reward chips and buttons line up row to row */const st=document.createElement('style');st.textContent=`body:has(.vic.clr:not(.out)) .bcl{z-index:990!important}
+html body .card.mqr>.btn{flex:0 0 76px!important;width:76px!important;min-width:0!important;max-width:76px!important;box-sizing:border-box!important;padding-left:2px!important;padding-right:2px!important;justify-content:center!important;text-align:center!important;white-space:nowrap;overflow:hidden}`;document.head.appendChild(st)})();
