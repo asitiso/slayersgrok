@@ -205,7 +205,7 @@ function renderScreen(first){const k=G.screen,el=$('#screen'),s=C.S();if(!k)retu
    const tabs=`<div class=entabs><span class="${G.enTab=='gear'?'on':''}" data-et=gear>장비 강화</span><span class="${G.enTab=='comp'?'on':''}" data-et=comp>동료 육성</span><span class="${G.enTab=='skill'?'on':''}" data-et=skill>스킬 편성</span></div><div class="card enres"><img src="${A}it2_stone.png"><b>강화석 ${fmt(s.stone||0)}</b><small>처치 3% · 보스 5개 · 방치 15분당 1개</small></div>`;
    let body='';
    if(G.enTab=='gear'){const sl=D.SLOTS.filter(x=>s.gear[x.k]);G.enSel=s.gear[G.enSel]?G.enSel:(sl[0]&&sl[0].k);const it=s.gear[G.enSel];
-     body=`<div class=card><div class=engrid>${sl.map(x=>{const g=s.gear[x.k];return `<div class="eni ${x.k==G.enSel?'sel':''}" data-es=${x.k} style="--rc:${D.RAR[g.r].c}"><img src="${A}${x.img}" style="${x.f?'filter:'+x.f:''}"><b>+${g.en||0}</b></div>`}).join('')||'<div class=empty style="grid-column:1/-1"><img src="assets/ic3_anvil.png"><b>장착한 장비가 없습니다</b><small>마정구로 장비를 뽑아 장착하면 여기서 강화할 수 있어요</small><span class="pill green" id=goRoll>장비 뽑으러 가기</span></div>'}</div></div>`;if(!sl.length)body+=`<div class="card en535"><div class=ttl>장비 슬롯 <small>0/${D.SLOTS.length} 장착</small></div><div class=en535g>${D.SLOTS.map(x=>`<div class=en535s><img src="${A}${x.img}"><small>${x.n}</small><i>${x.st=='atk'?'공격력':'체력'}</i></div>`).join('')}</div><p class=en535h>슬롯마다 장비 1개를 장착할 수 있어요. 장착한 장비는 강화석으로 +단계를 올려 능력치를 키웁니다.</p></div>`;
+     body=`<div class=card><div class=engrid>${sl.map(x=>{const g=s.gear[x.k];return `<div class="eni ${x.k==G.enSel?'sel':''}" data-es=${x.k} style="--rc:${D.RAR[g.r].c}"><img src="${A}${x.img}" style="${x.f?'filter:'+x.f:''}"><b>+${g.en||0}</b></div>`}).join('')||'<div class=empty style="grid-column:1/-1"><img src="assets/ic3_anvil.png"><b>장착한 장비가 없습니다</b><small>마정구로 장비를 뽑아 장착하면 여기서 강화할 수 있어요</small><span class="pill green" id=goRoll>장비 뽑으러 가기</span></div>'}</div></div>`;if(!sl.length)body+=`<div class="card en535"><div class=ttl>장비 슬롯 <small>0/${D.SLOTS.length} 장착</small></div><div class=en535g>${D.SLOTS.map(x=>`<div class=en535s><img src="${A}${x.img}"><small>${x.n}</small><i>${x.st=='atk'?'공격력':'체력'}</i></div>`).join('')}</div><p class=en535h>슬롯마다 장비 1개를 장착할 수 있어요. 장착한 장비는 골드와 강화석으로 +단계를 올려 능력치를 키웁니다.</p></div>`;
      if(it){const c=C.enCost(it),r=C.enRate(it),n=it.en||0,cur=Math.round(it.v*(1+.1*n)),nx=Math.round(it.v*(1+.1*(n+1)));
       body+=`<div class="card anvil"><div class=anvilv><img class=av1 src="${A}ic3_anvil.png"><div class=eqbig style="--rc:${D.RAR[it.r].c}"><img src="${A}${D.SLOTS.find(q=>q.k==it.slot).img}"></div></div>
       <div class=ttl style="justify-content:center">${it.name} <span style="color:#ffd66a">+${n}</span></div>
@@ -440,7 +440,7 @@ const stars=(n,a)=>`<span class=stv>${'★'.repeat(Math.min(n,6))}<i>${'☆'.rep
 function scr(el){const s=C.S();G.stSel=G.stSel&&s.comps[G.stSel]?G.stSel:(D.COMPS.find(x=>s.comps[x.k])||{}).k;const own=D.COMPS.filter(x=>s.comps[x.k]).sort((a,b)=>b.g-a.g);const k=G.stSel,c=D.COMPS.find(x=>x.k==k);
  const red=x=>{const st=s.comps[x.k],sh=(s.csh||{})[x.k]||0;return st<C.STARMAX?sh>=C.starCost(x.k):((s.caw||{})[x.k]||0)<C.AWMAX&&sh>=C.awCost(x.k).sh};
  const list=`<div class=stlist>${own.map(x=>`<div class="stc ${x.k==k?'on':''}" data-st=${x.k} style="--rc:${D.RAR[x.g].c}"><img src="${A}${x.img}"><small>★${s.comps[x.k]}${(s.caw||{})[x.k]?'+'+(s.caw||{})[x.k]:''}</small>${red(x)?'<i class=dot></i>':''}</div>`).join('')}</div>`;
- let det='<div class=card><small>보유한 동료가 없습니다. 소환에서 동료를 모으세요!</small></div>';
+ let det='<div class=card><small>보유한 동료가 없습니다. 소환에서 동료를 모으세요!</small></div>';if(!own.length)det=`<div class="card en535"><div class=ttl>승급할 동료 <small>0/${D.COMPS.length} 보유</small></div><div class=en535g>${D.COMPS.map(c=>`<div class=en535s><img src="${A}${c.img}"><small>${c.n}</small><i>${'★'.repeat(c.g)}</i></div>`).join('')}</div><p class=en535h>보유한 동료가 없습니다. 소환에서 동료를 얻으면 여기서 승급할 수 있어요.</p></div>`;
  if(c){const st=s.comps[k],aw=(s.caw||{})[k]||0,sh=(s.csh||{})[k]||0,mx=st>=C.STARMAX,need=mx?C.awCost(k).sh:C.starCost(k),m0=C.compMul(k),m1=mx?m0/(1+.15*aw)*(1+.15*(aw+1)):m0/(1+.1*(st-1))*(1+.1*st),awMax=aw>=C.AWMAX;
   det=`<div class="card sthero" style="--rc:${D.RAR[c.g].c}"><img src="${A}${c.img}" class=${aw?'awk':''}><div class=f><b>${c.n} <span class=fac style="color:${D.RAR[c.g].c};border-color:${D.RAR[c.g].c}">${D.RAR[c.g].n}</span></b>${stars(st,aw)}<small>공격 배율 ×${m0.toFixed(2)}${awMax?'':` → <i class=up>×${m1.toFixed(2)}</i>`}</small><small>${mx?'최대 승급 달성 · 각성으로 추가 강화 (◆ 최대 3)':'중복 소환 시 조각 획득 · 승급마다 공격 +10% · 체력 +10%'}</small></div></div>
   <div class=card><div class=ttl>${mx?'각성':'승급'} <small>조각 ${sh}/${need}</small></div><div class=bar style="height:10px"><i style="width:${Math.min(100,sh/need*100)}%"></i></div>
@@ -2806,7 +2806,7 @@ ${CX.map((x,i)=>`#skills.skills>.sk:nth-child(${i+1}){left:${x-21}px!important}`
 #battle>.hud #menuBtn{transform:translate(-13px,-16px)!important;width:16px!important;min-width:0!important;padding:0!important;font-size:11px!important;overflow:visible}`;document.head.appendChild(st)})();
 
 /* v172 shared non-battle chrome: title bar, panel 9-slice, bronze buttons & chips */
-(function(){const st=document.createElement('style');const TH=':not(.bgx):not(.cdx):not(.fsx):not(.glx):not(.pfx):not(.ptx):not(.rlx):not(.skx):not(.stfx):not(.stx):not(.ttx)'+['bond','mail','event','map','base','skin','summon'].map(k=>`:not([data-scr=${k}])`).join('');
+(function(){const st=document.createElement('style');const TH=':not(.bgx):not(.cdx):not(.fsx):not(.glx):not(.pfx):not(.ptx):not(.rlx):not(.skx):not(.snx):not(.stfx):not(.stx):not(.ttx)'+['bond','mail','event','map','base','skin','summon'].map(k=>`:not([data-scr=${k}])`).join('');
 st.textContent=`
 #screen .shead{background:none!important;border-bottom:none!important;box-shadow:none!important;isolation:isolate}
 #screen .shead::before{content:'';position:absolute;left:-12px;top:-5px;width:402px;height:72px;background:url(assets/ui_titlebar.png) 0 0/100% 100% no-repeat;z-index:-1;pointer-events:none;filter:drop-shadow(0 3px 5px #000b)}
@@ -4124,14 +4124,14 @@ const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);try
 ;(()=>{/* v247 r296: 코스튬 — dressing-room name plate + 보유 chip on hc_statplate; 리나 코스튬 / 동료 축제 코스튬 cards on panel_stage + gem; costume tiles on hc_statplate (worn = gold glow + sk_star badge, not owned = dimmed + sk_lock); prices wrapped into a btn_gold pill with a small sk_tag (btn_grey when gems < cost, real s.gems); emoji-free. Visual only, static CSS, DOM touch only on render */
 const X=':is(#_k1,#_k2,div):is(#_k3,#_k4,div)',Y=':is(#_k5,#_k6,span):is(#_k7,#_k8,span)',ol=c=>`-1px 0 ${c},1px 0 ${c},0 -1px ${c},0 1px ${c},0 2px ${c}`,
 SP=(v,h)=>`background:none!important;border:solid transparent!important;border-width:${v}px ${h}px!important;border-image:url(${A}hc_statplate.png) 46 52 fill/${v}px ${h}px stretch!important;border-radius:0!important;box-shadow:none!important`,
-K='#screen.skx .sbody>.card'+X,T='#screen.skx .skg .skn'+X,st=document.createElement('style');
-st.textContent=`#screen.skx .skst .knm${X}{${SP(10,12)};padding:1px 10px 2px!important;filter:drop-shadow(0 3px 3px #0009)}
-#screen.skx .skst .knm${X} b{text-shadow:0 2px 2px #000}#screen.skx .skst .knm${X} small{color:#efe4cc;text-shadow:0 1px 2px #000}
-#screen.skx .skst .kcnt${Y}{${SP(6,8)};padding:0 4px!important;filter:drop-shadow(0 2px 2px #0008);text-shadow:0 1px 2px #000}
+K='#screen.snx .sbody>.card'+X,T='#screen.snx .skg .skn'+X,st=document.createElement('style');
+st.textContent=`#screen.snx .skst .knm${X}{${SP(10,12)};padding:1px 10px 2px!important;filter:drop-shadow(0 3px 3px #0009)}
+#screen.snx .skst .knm${X} b{text-shadow:0 2px 2px #000}#screen.snx .skst .knm${X} small{color:#efe4cc;text-shadow:0 1px 2px #000}
+#screen.snx .skst .kcnt${Y}{${SP(6,8)};padding:0 4px!important;filter:drop-shadow(0 2px 2px #0008);text-shadow:0 1px 2px #000}
 ${K}{background:none!important;border:18px solid transparent!important;border-image:url(${A}panel_stage.png) 64 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:2px!important;position:relative;margin-top:28px!important;overflow:visible!important}
 ${K}::after{content:'';position:absolute;left:50%;top:-30px;width:26px;height:31px;margin-left:-13px;background:url(${A}panel_stage_gem.png) center/contain no-repeat;pointer-events:none}
 ${K} .ttl{text-shadow:0 2px 2px #000}${K} .ttl small{color:#efe4cc;text-shadow:0 1px 2px #000}
-#screen.skx .skstrip{padding:8px 4px 10px!important}
+#screen.snx .skstrip{padding:8px 4px 10px!important}
 ${T}{${SP(9,10)};border-width:9px 10px 12px!important;padding:2px 0 4px!important;filter:drop-shadow(0 2px 2px #0008)}
 ${T} b{color:#fff;text-shadow:0 1px 2px #000}${T} small{color:#ffe7a8!important;text-shadow:0 1px 2px #000;opacity:1!important}
 ${T}.on{filter:drop-shadow(0 0 3px #ffe08a) drop-shadow(0 0 5px #ffc040) drop-shadow(0 0 3px #ffb03a) drop-shadow(0 2px 2px #0008)}${T}.on b{color:#ffe08a}
@@ -4142,9 +4142,9 @@ ${T} .skp${Y}{display:inline-flex;align-items:center;gap:2px;margin-top:3px;back
 ${T} .skp${Y}.off{border-image-source:url(${A}btn_grey.png)!important;text-shadow:${ol('#2a2a2a')}!important;color:#eee!important}
 ${T} .skp img.kt{height:16px;width:auto;margin:-3px 1px -3px -4px;filter:drop-shadow(0 1px 1px #0008)}${T} .skp img.ci{height:13px!important;width:13px!important;margin:0!important}
 ${T}:active .skp:not(.off){filter:brightness(.8)}
-body.tglite ${T},body.tglite ${T}.on,body.tglite #screen.skx .skst .knm${X}{filter:none}`;document.head.appendChild(st);
+body.tglite ${T},body.tglite ${T}.on,body.tglite #screen.snx .skst .knm${X}{filter:none}`;document.head.appendChild(st);
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
-function deco(){const el=$('#screen');if(G.screen!='skin'){if(!(G.screen=='enhance'&&G.enTab=='skill'))el.classList.remove('skx');return}el.classList.add('skx');
+function deco(){const el=$('#screen');if(G.screen!='skin'){el.classList.remove('snx');return}el.classList.add('snx');
  const s=C.S(),g=s.gems||0;
  el.querySelectorAll('.skg .skn').forEach(c=>{if(c.dataset.v247)return;c.dataset.v247=1;const sm=c.querySelector('small'),gi=sm&&sm.querySelector('img.ci');
   if(gi){const n=gi.nextSibling,cost=parseInt((n&&n.textContent||'').trim(),10)||0;const p=document.createElement('span');p.className='skp'+(g<cost?' off':'');p.innerHTML=`<img class=kt src="${A}sk_tag.png">`;gi.replaceWith(p);p.appendChild(gi);if(n){p.appendChild(document.createTextNode(String(cost)));n.remove()}}
@@ -4182,8 +4182,8 @@ ${L} .dot{top:-6px!important;right:-6px!important}
 #screen.stx .slad>div>span{display:flex;align-items:center;gap:0;height:16px}#screen.stx .slad>div>span img.sg{height:12px;width:12px}#screen.stx .slad>div>em{font-style:normal;color:#ffe7a8;font-size:10px}#screen.stx .slad>div>u{text-decoration:none;color:#cfe0ff;font-size:9.5px}
 #screen.stx .slad>div.sok{opacity:.72}#screen.stx .slad>div.scur{filter:drop-shadow(0 0 3px #ffe08a) drop-shadow(0 0 4px #ffc040)}#screen.stx .slad>div.scur>em{color:#9dff7a}
 #screen.stx .slad>div.sno span img{filter:grayscale(1) brightness(.5)}#screen.stx .slad .aw{color:#c8a8ff}
-#screen.skx .skg .skn .skj${Y}{display:inline-flex;flex-direction:column;align-items:center;margin-top:3px;${SP(6,8)};padding:0 2px!important;color:#ffe7a8!important;font:900 10.5px Maplestory,sans-serif!important;line-height:12px;text-shadow:${ol('#2a1a08')};white-space:nowrap}
-#screen.skx .skg .skn .skj u{text-decoration:none;color:#cfe0ff;font-size:9.5px}
+#screen.snx .skg .skn .skj${Y}{display:inline-flex;flex-direction:column;align-items:center;margin-top:3px;${SP(6,8)};padding:0 2px!important;color:#ffe7a8!important;font:900 10.5px Maplestory,sans-serif!important;line-height:12px;text-shadow:${ol('#2a1a08')};white-space:nowrap}
+#screen.snx .skg .skn .skj u{text-decoration:none;color:#cfe0ff;font-size:9.5px}
 body.tglite ${L},body.tglite ${L}.on,body.tglite #screen.stx .slad>div.scur,body.tglite #screen.stx .sthero${X}>img{filter:none}\n`;
 for(const g in N){const [t,r,b,l,k]=N[g];css+=`#screen.stx .sthero.${g} .f>b${Zb}{border-width:${(t*k).toFixed(1)}px ${(r*k).toFixed(1)}px ${(b*k).toFixed(1)}px ${(l*k).toFixed(1)}px;border-image:url(${A}hc_name_${g}.png) ${t} ${r} ${b} ${l} fill/${(t*k).toFixed(1)}px ${(r*k).toFixed(1)}px ${(b*k).toFixed(1)}px ${(l*k).toFixed(1)}px stretch}\n`}
 const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
@@ -5901,3 +5901,5 @@ const of=R.frame;R.frame=dt=>{try{const L=document.body.classList.contains('tgli
 ;(()=>{/* r534: 강화석 source line readable — wraps under the count instead of a 9px right-aligned run */const st=document.createElement('style');st.textContent=`.enres{flex-wrap:wrap}.enres>small{font-size:11.5px!important;font-weight:700;color:#e8d8b8!important;opacity:1!important;margin-left:auto;text-align:right;line-height:1.3;max-width:58%}`;document.head.appendChild(st)})();
 
 ;(()=>{/* r535: 장비 강화 empty state — real slot list (D.SLOTS) as empty silhouettes + hint */const st=document.createElement('style');st.textContent=`.en535g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:4px 2px}.en535s{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 6px;border:2px dashed #c9a25a88;border-radius:10px;background:#0003}.en535s img{width:38px;height:38px;object-fit:contain;filter:grayscale(1) brightness(.55) drop-shadow(0 1px 1px #000);opacity:.8}.en535s small{font:900 11.5px Maplestory,sans-serif;color:#e8d8b8}.en535s i{font-style:normal;font-size:10px;color:#b8a888}.en535h{margin:8px 4px 2px;font-size:11.5px;line-height:1.45;color:#e8d8b8;text-align:center}`;document.head.appendChild(st)})();
+
+;(()=>{/* r536: skill-tab grid clears bottom nav */const st=document.createElement('style');st.textContent=`#screen.skx .sbody{padding-bottom:110px!important}`;document.head.appendChild(st)})();
