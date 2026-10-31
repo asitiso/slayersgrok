@@ -5984,3 +5984,9 @@ ${T}>span.rcd img,${T}>span.fcl img{height:24px!important;width:auto!important;m
 ${T}>span.fcl small{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);margin:0!important;font-size:8.5px!important;line-height:12px;padding:0 4px!important;white-space:nowrap}
 ${T}>span.fcl{margin-bottom:6px}`;document.head.appendChild(st)})();
 ;(()=>{/* r560 (display only): party column above the edge hit/break vignette (#phv z9, its inset glow washed out the portraits) and skill tags; still below #sheet (24), boss VS intro (34) and warnings (60) */const st=document.createElement('style');st.textContent='html body #battle #partycol{z-index:10!important}';document.head.appendChild(st)})();
+;(()=>{/* r561 display only: (1) stage-clear tiles keep the existing item PNGs (it2_gold/it2_stone/it2_gem/it2_ticket, same art as HUD) at 28px for crisper read; (2) defeat 강해지는 방법: 2x2 grid of wide cards (icon left, 13px label + 10px hint), >=52px tall tap targets, same data-g destinations */const T='html body .vic.clr .vr',D='html body .vic.lose.guide .gdb';const st=document.createElement('style');st.textContent=`${T}>span.rcd img,${T}>span.fcl img{height:28px!important}
+${D}{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;margin:0 4px!important}
+${D}>span{display:grid!important;grid-template-columns:40px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:6px;row-gap:1px;min-height:52px;padding:6px 8px 6px 6px!important;text-align:left}
+${D}>span img{grid-row:1/3;width:40px!important;height:40px!important}
+${D}>span b{font:900 13px/16px Maplestory,sans-serif!important;align-self:end}
+${D}>span small{font:700 10px/12px Maplestory,sans-serif!important;color:#6a4020!important;align-self:start;max-width:100%}`;document.head.appendChild(st)})();
