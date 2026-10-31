@@ -5944,3 +5944,10 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
 
 ;/* r549: shared cached radial gradient centred at 0,0 - callers translate; stops: c0 at 0, then (o1,c1), optional (o2,c2) */G.RG549=(ctx,m,k,r0,r1,c0,o1,c1,o2,c2)=>{let g=m.get(k);if(!g){g=ctx.createRadialGradient(0,0,r0,0,0,r1);g.addColorStop(0,c0);g.addColorStop(o1,c1);if(o2!=null)g.addColorStop(o2,c2);m.set(k,g)}return g};
 ;/* r550: frame-hook boss lookup over the render's pooled per-frame alive list - no filter array, no closure; any=1 also accepts the world boss */G.bo550=(R,any)=>{const A=R._alv();for(let i=0;i<A.length;i++){const e=A[i];if(e.boss&&(any||!e.wb))return e}return undefined};
+
+;(()=>{/* r557 (display only, 화룡전 UX.md lines 16 & 22): (A) center-weight skill row - the big (ultimate) skill renders larger than the others (negative margin keeps row layout); (B) boss portrait button keeps a small red ϟ lightning badge so it still reads as the boss-challenge button (ref: round red lightning button) */
+const S=':is(#_a,#_b,span):is(#_c,#_d,span)';const st=document.createElement('style');st.textContent=`
+#skills.skills>.sk.big:is(#_a,#_b,div):is(#_c,#_d,div){width:47px!important;height:47px!important;margin:-4px!important;z-index:3}
+#battle #bossBtn.bossbtn${S}.bsp{position:relative!important}
+#battle #bossBtn.bossbtn${S}.bsp>i{display:flex!important;position:absolute;right:0;bottom:0;width:15px;height:15px;border-radius:50%;align-items:center;justify-content:center;font:900 11px/1 sans-serif;font-style:normal;color:#fff6c8;background:radial-gradient(circle at 40% 35%,#ff6a4a,#b0140c);box-shadow:0 0 0 1.5px #ffd76a,0 1px 2px #000a;text-shadow:0 1px 1px #000;pointer-events:none}
+`;document.head.appendChild(st)})();
