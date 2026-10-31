@@ -5973,3 +5973,14 @@ const st=document.createElement('style');st.textContent=`
 const st=document.createElement('style');st.textContent=`
 html body .vic.clr .vlina:is(#_a,img):is(#_b,img){right:calc(100% - 22px)!important;height:128px!important;bottom:-4px!important}
 html body .vic.clr .card:has(.mvp,[class*=mvp]){position:relative;z-index:2}`;document.head.appendChild(st)})();
+
+;(()=>{/* r560 (display only): stage-clear reward row as matching square tiles in one row (icon over amount, same values); 최초 클리어 tag becomes a small ribbon on its tile */
+const T='html body .vic.clr .vr';const st=document.createElement('style');st.textContent=`
+${T}{column-gap:6px!important}
+${T}>.vrh432,${T}>.vre485{flex-basis:100%}
+${T}>span.rcd,${T}>span.fcl{box-sizing:border-box;width:58px;height:58px;padding:5px 2px 4px!important;display:inline-flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;border-radius:10px;background:linear-gradient(#3a2a4aee,#1a1228ee)!important;border:1.5px solid #ffd77a99!important;font-size:12.5px;line-height:1;white-space:nowrap}
+${T}>span.fcl{border-color:#6ac8ffcc!important;background:linear-gradient(#1e3a5aee,#0e1a30ee)!important}
+${T}>span.rcd img,${T}>span.fcl img{height:24px!important;width:auto!important;margin:0!important;vertical-align:0!important}
+${T}>span.fcl small{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);margin:0!important;font-size:8.5px!important;line-height:12px;padding:0 4px!important;white-space:nowrap}
+${T}>span.fcl{margin-bottom:6px}`;document.head.appendChild(st)})();
+;(()=>{/* r560 (display only): party column above the edge hit/break vignette (#phv z9, its inset glow washed out the portraits) and skill tags; still below #sheet (24), boss VS intro (34) and warnings (60) */const st=document.createElement('style');st.textContent='html body #battle #partycol{z-index:10!important}';document.head.appendChild(st)})();
