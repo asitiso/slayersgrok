@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const C=CORE,D=C.D,A=D.A,W=390,H=844;
-const R={};window.RENDER=R;R._kbB=[0,0,0];R._AS=()=>AS;R._ES=()=>ES;R._CNn=()=>COINS.length;R._FXd522=()=>FX;R._lt522=()=>{let s=flash*1.6;for(let i=0;i<FX.length;i++){const f=FX[i];if(f.k=='blast'||f.k=='hcol'||f.k=='bolt'||f.k=='beam'||f.k=='flashpt')s+=.5*Math.max(0,1-(f.t/(f.life||f.dur||1)))}return s};R._TX=()=>TXT;
+const R={};window.RENDER=R;R._kbB=[0,0,0];R._AS=()=>AS;R._ES=()=>ES;R._HB586=()=>HB;R._CNn=()=>COINS.length;R._FXd522=()=>FX;R._lt522=()=>{let s=flash*1.6;for(let i=0;i<FX.length;i++){const f=FX[i];if(f.k=='blast'||f.k=='hcol'||f.k=='bolt'||f.k=='beam'||f.k=='flashpt')s+=.5*Math.max(0,1-(f.t/(f.life||f.dur||1)))}return s};R._TX=()=>TXT;
 const IMG={};const load=n=>{if(!IMG[n]){const i=new Image();i.src=A+n;IMG[n]=i}return IMG[n]};
 /* r231 speed: warm-up preloads wait until the current battle field is on screen, then load 4 at a time (on-demand draws are never delayed) */
 {const Q=[];let act=0,go=false;const pump=()=>{while(go&&act<4&&Q.length){const n=Q.shift();if(IMG[n])continue;act++;const i=load(n);const dn=()=>{act--;pump()};if(i.complete)dn();else{i.addEventListener('load',dn,{once:true});i.addEventListener('error',dn,{once:true})}}};
