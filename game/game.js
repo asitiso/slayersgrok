@@ -5961,3 +5961,15 @@ const st=document.createElement('style');st.textContent=`
 #partycol .pp .hpb{height:6px!important;border:1px solid #000!important;box-shadow:0 0 0 1px #ffffff40;border-radius:2px;margin-top:1px}
 #partycol .pp .hpb>i{height:100%!important}`;document.head.appendChild(st);
 let on=null,wf=-1;setInterval(()=>{try{const B=C.B,s=C.S(),r=document.querySelector('#stagebar .trow');if(!r)return;const n=!B.boss;if(n!==on){on=n;r.classList.toggle('wv558',n)}if(n){const f=Math.min(1,s.wave/BAL.waves);if(f!==wf){wf=f;r.style.setProperty('--wf558',String(f))}}}catch(e){}},500)})();
+
+;(()=>{/* r559 (display only): low-HP party portraits (.pp.dng, set by the existing <30% check) - red HP fill with a dark-red track and a red name-frame tint so low HP reads at a glance; the existing border pulse is turned off under nofx / tglite / fx-off (static red glow instead) */
+const st=document.createElement('style');st.textContent=`
+#partycol .pp.dng .hpb{background:#3a0806!important;box-shadow:0 0 0 1px #ff4a3a80!important}
+#partycol .pp.dng .hpb>i{background:linear-gradient(#ff6a5a,#c01810)!important}
+#partycol .pp.dng img{background:radial-gradient(circle at 50% 40%,#5a1a14,#1a0806 80%)!important}
+:is(body.nofx,body.tglite,body.fxoff) #partycol .pp.dng img{animation:none!important;box-shadow:0 0 6px 1px #ff2a2a!important}`;document.head.appendChild(st)})();
+
+;(()=>{/* r559 (display only): stage-clear victory Lina (r5521 placement) covered the MVP name/stat text in the result card - smaller and pushed further out so she only overlaps the panel rim; the MVP block also sits above her */
+const st=document.createElement('style');st.textContent=`
+html body .vic.clr .vlina:is(#_a,img):is(#_b,img){right:calc(100% - 22px)!important;height:128px!important;bottom:-4px!important}
+html body .vic.clr .card:has(.mvp,[class*=mvp]){position:relative;z-index:2}`;document.head.appendChild(st)})();
