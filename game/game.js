@@ -7780,3 +7780,105 @@ renderScreen=function(){
 };
 try{if(G.screen==='summon')paintSummon()}catch(_){}
 })();
+
+/* r609: summon — drop redundant 보유 재화 (suown608 covers it) + scroll-pad
+   clear of nav; 영지 — owned/needed upgrade colour, clearer collect/lock.
+   Display only, real values. Keep r607/r608 party/승급/소환 strip. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* summon: hide old wallet card when strip present; clear nav */
+html body #screen .sbody:has(.suown608)>.sucd.cur365{display:none!important}
+html body #screen[data-scr=summon] .sbody,
+html body #screen .sbody:has(.sumbtns){
+  scroll-padding-bottom:96px!important;padding-bottom:96px!important}
+html body #screen .sbody:has(.sumbtns)::after{
+  content:"";display:block;height:24px;flex:none}
+
+/* —— 영지 —— */
+html body #screen.base2 .sbody{
+  scroll-padding-bottom:96px!important;padding-bottom:88px!important}
+/* selected building upgrade cost owned/needed */
+html body #screen .bupc .bcost609{
+  display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  margin-top:4px;padding:4px 8px;border-radius:8px;
+  background:#0a0810aa;border:1px solid #c9a24a66;
+  font:800 11px/1.2 Maplestory,sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000}
+html body #screen .bupc .bcost609>img{width:14px;height:14px}
+html body #screen .bupc .bcost609>em{font-style:normal;font-weight:900}
+html body #screen .bupc .bcost609>em.ok{color:#9dff7a}
+html body #screen .bupc .bcost609>em.no{color:#ff8a7a}
+html body #screen .bupc .bcost609>u{
+  text-decoration:none;opacity:.85;font-size:10px;color:#cfe0ff;margin:0 2px}
+html body #screen .bupc .btimer609{
+  display:inline-flex;align-items:center;gap:3px;margin-left:6px;
+  font:800 10.5px Maplestory,sans-serif;color:#ffe08a}
+html body #screen .bupc .btimer609>img{width:12px;height:12px}
+/* collect ready pulse static under nofx */
+html body #screen .bupc [data-col]:not(.off){
+  filter:drop-shadow(0 0 4px #ffd77a66)!important}
+body.nofx #screen .bupc [data-col]:not(.off),
+body.tglite #screen .bupc [data-col]:not(.off){filter:none!important}
+/* strip lock clearer */
+html body #screen .bstrip .bsc.lk{
+  position:relative;filter:grayscale(.75) brightness(.72)!important;
+  box-shadow:inset 0 0 0 2px #6a6a70,0 2px 6px #000a!important}
+html body #screen .bstrip .bsc.lk::after{
+  content:"잠김";position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
+  padding:1px 6px;border-radius:7px;background:#1a1a20ee;border:1px solid #9a9aa0;
+  color:#e8e8ec;font:900 9.5px Maplestory,sans-serif;text-shadow:0 1px 0 #000;
+  pointer-events:none;z-index:2}
+html body #screen .bstrip .bsc.lk small{opacity:0!important} /* hide 준비 중 under 잠김 */
+/* unbuilt tower */
+html body #screen .bhs.lock{
+  filter:grayscale(.85) brightness(.65)!important}
+html body #screen .bhs.lock .blv{
+  background:#2a2a30!important;border-color:#8a8a90!important}
+`;
+document.head.appendChild(st);
+
+const paintSummon=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='summon')return;
+  /* remove redundant 보유 재화 card (strip already has tickets/gems/mile) */
+  sc.querySelectorAll('.sucd.cur365').forEach(el=>{
+    if(sc.querySelector('.suown608'))el.remove();
+  });
+};
+
+const paintBase=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='base')return;
+  const s=C.S();
+  const row=sc.querySelector('.card.bupc .row');
+  if(!row)return;
+  const up=row.querySelector('[data-up]');
+  const k=up&&up.dataset.up;
+  if(!k||!s.bld[k])return;
+  const cost=C.bCost(k), gold=s.gold||0, ok=gold>=cost;
+  const f=row.querySelector('.f');
+  if(!f)return;
+  let box=f.querySelector('.bcost609');
+  const html=`<img src="${A}it2_gold.png"><em class="${ok?'ok':'no'}">${fmt(gold)}</em><u>/</u><em class="${ok?'ok':'no'}">${fmt(cost)}</em>`+
+    `<span class=btimer609><img src="${A}ui_timer.png">${((n)=>{n=Math.max(0,n|0);return ((n/60)|0)+':'+String(n%60).padStart(2,'0')})(C.bTime(k))}</span>`;
+  if(!box){box=document.createElement('div');box.className='bcost609';box.innerHTML=html;f.appendChild(box)}
+  else box.innerHTML=html;
+  /* strip: tower unbuilt label already via em; ensure barracks lk class */
+  sc.querySelectorAll('.bstrip .bsc.lk').forEach(el=>{
+    if(!el.querySelector('.lk362')&&!el.querySelector('img[src*=sk_lock]')){
+      /* keep existing lock art */
+    }
+  });
+};
+
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{
+    if(G.screen==='summon')paintSummon();
+    if(G.screen==='base')paintBase();
+  }catch(_){}
+  return r;
+};
+try{paintSummon();paintBase()}catch(_){}
+})();
