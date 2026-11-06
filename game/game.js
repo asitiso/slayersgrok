@@ -8102,3 +8102,86 @@ renderScreen=function(){
 };
 try{paintBase();paintBag()}catch(_){}
 })();
+
+/* r612: 영지 card — cost/time as full-width row under columns (gold+timer
+   fully visible); 보관 한도 as small tag on 보관 row (not floating). Display only. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* cost bar full width under the building row */
+html body #screen .card.bupc .bcost612{
+  display:flex!important;align-items:center;justify-content:center;gap:6px;
+  margin:10px 8px 6px;padding:6px 10px;border-radius:10px;clear:both;position:relative;z-index:1;
+  background:#0a0810cc;border:1.5px solid #c9a24a88;
+  box-shadow:inset 0 0 0 1px #0008;box-sizing:border-box;
+  font:900 12px/1.2 Maplestory,sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000;
+  white-space:nowrap;overflow:visible}
+html body #screen .card.bupc .bcost612>img{width:15px;height:15px;flex:none}
+html body #screen .card.bupc .bcost612>em{font-style:normal;font-weight:900}
+html body #screen .card.bupc .bcost612>em.ok{color:#9dff7a}
+html body #screen .card.bupc .bcost612>em.no{color:#ff8a7a}
+html body #screen .card.bupc .bcost612>u{text-decoration:none;opacity:.85;color:#cfe0ff;margin:0 2px}
+html body #screen .card.bupc .bcost612 .btimer609{
+  display:inline-flex;align-items:center;gap:3px;margin-left:4px;
+  color:#ffe08a;font:800 11px Maplestory,sans-serif}
+html body #screen .card.bupc .bcost612 .btimer609>img{width:13px;height:13px}
+/* hide old left-column pill */
+html body #screen .bupc .row .f .bcost609{display:none!important}
+/* 보관 한도 tag inline on 보관 row */
+html body #screen .bupc .bp611{flex-wrap:wrap!important;max-width:100%}
+html body #screen .bupc .bp611 .bcap612{
+  display:inline-flex;align-items:center;margin-left:4px;padding:1px 6px;
+  border-radius:7px;background:#0a0810cc;border:1px solid #c9a24a88;
+  color:#e8dcc0;font:800 9.5px Maplestory,sans-serif;white-space:nowrap;
+  text-shadow:0 1px 0 #000;flex:none}
+/* hide floating chip */
+html body #screen .card.bupc>.bcap611{display:none!important}
+`;
+document.head.appendChild(st);
+
+const paint=()=>{
+  if(G.screen!=='base')return;
+  const sc=document.getElementById('screen');
+  if(!sc)return;
+  const card=sc.querySelector('.card.bupc');
+  if(!card)return;
+  const row=card.querySelector(':scope > .row')||card.querySelector('.row');
+  if(!row)return;
+  const up=row.querySelector('[data-up]');
+  const k=up&&up.dataset.up;
+  const s=C.S();
+  if(!k||!s.bld[k])return;
+  const cost=C.bCost(k), gold=s.gold||0, ok=gold>=cost;
+  const tsec=((n)=>{n=Math.max(0,n|0);return ((n/60)|0)+':'+String(n%60).padStart(2,'0')})(C.bTime(k));
+  let bar=card.querySelector(':scope > .bcost612');
+  const html=`<img src="${A}it2_gold.png"><em class="${ok?'ok':'no'}">${fmt(gold)}</em><u>/</u><em class="${ok?'ok':'no'}">${fmt(cost)}</em>`+
+    `<span class=btimer609><img src="${A}ui_timer.png">${tsec}</span>`;
+  if(!bar){
+    bar=document.createElement('div');bar.className='bcost612';
+    /* place after the building .row (full width under columns) */
+    row.insertAdjacentElement('afterend', bar);
+  }
+  bar.innerHTML=html;
+
+  /* 보관 한도 → tag on 보관 bp611 row */
+  const capTx=(()=>{
+    const c=card.querySelector('.bcap611')||[...card.querySelectorAll('small')].find(x=>/보관 한도/.test(x.textContent||''));
+    if(c){const m=(c.textContent||'').match(/보관 한도\s*(\d+)\s*시간/);return m?m[1]+'시간': (c.textContent||'').replace(/보관 한도\s*/,'').trim()}
+    try{return (BAL.store/3600)+'시간'}catch(_){return ''}
+  })();
+  const storeRow=[...card.querySelectorAll('.bp611')].find(x=>/보관/.test(x.textContent||''));
+  if(storeRow&&capTx&&!storeRow.querySelector('.bcap612')){
+    const tag=document.createElement('span');tag.className='bcap612';tag.textContent='한도 '+capTx;
+    storeRow.appendChild(tag);
+  }
+  /* ensure floating chip stays hidden / removed from flow */
+  card.querySelectorAll('.bcap611').forEach(el=>{el.style.display='none'});
+};
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{paint()}catch(_){}
+  return r;
+};
+try{paint()}catch(_){}
+})();
