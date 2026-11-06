@@ -2775,7 +2775,7 @@ setInterval(()=>{setup();const on=!!(C.B&&C.B.boss&&!G.screen&&C.alive&&C.alive(
 
 /* v169 lower battle dock: socket dock for the skill row, parchment mission strip */
 (function(){const S=.553,CX=[144,265,385,514,635,755].map(c=>Math.round(195+(c-450)*S));const st=document.createElement('style');st.textContent=`
-#skills.skills{bottom:93px!important;left:0!important;right:auto!important;width:390px!important;max-width:none!important;transform:none!important;height:74px!important;display:block!important;gap:0!important;background:url(assets/dock_frame.png) center -52px/497px 168px no-repeat!important;filter:drop-shadow(0 -2px 5px #0009);overflow:visible}
+#skills.skills{bottom:93px!important;left:0!important;right:auto!important;width:390px!important;max-width:none!important;transform:none!important;height:74px!important;display:block!important;gap:0!important;background:url(assets/dock_frame.png) center -52px/497px 168px no-repeat!important;filter:drop-shadow(0 -1px 3px #0007);overflow:visible}
 #skills.skills>.sk{position:absolute!important;top:15px!important;bottom:auto!important;width:42px!important;height:42px!important;margin:0!important;border-radius:50%!important;transform:none!important}
 ${CX.map((x,i)=>`#skills.skills>.sk:nth-child(${i+1}){left:${x-21}px!important}`).join('')}
 #skills.skills>.sk.big{box-shadow:0 0 10px #ff6a2a,0 0 0 2px #ffcf6a!important}
@@ -6032,5 +6032,7 @@ const st=document.createElement('style');st.textContent=`
 #bctl #bSpd{width:42px!important;height:42px!important}
 #battle:has(.wvb.wrib:not(.out)) .tdmg{top:392px!important}
 `;document.head.appendChild(st)})();
+;(()=>{/* r590: dock_frame.png rebaked from crimson-wood/gold source (magenta keyed, gold rails only, seamless plank fill, 7 painted sockets at CX/AUTO). No runtime compositing. Softened dock drop-shadow so button circles don't read as ghost rings. */})();
+
 
 
