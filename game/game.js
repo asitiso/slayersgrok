@@ -6232,3 +6232,62 @@ function basePolish(){
 const rs=renderScreen;
 renderScreen=function(){const r=rs.apply(this,arguments);try{basePolish()}catch(e){}return r};
 })();
+/* r595: (1) quiet ×4 recheck r594 vs r593 — swarm −1.5 / fps7 −1.2 / boss +0.2 / normal −1.8;
+   drop vs claimed ~4.6 was restart noise; r594 CSS already scoped (#ufx486.tr593, #screen .card.bupc) — no bisect fix.
+   (2) display-only: 전투력 .powup → ui_ribbon + st_atk 화룡전 toast; STAGE CLEAR crest + STAGE CLEAR text readability. */
+;(()=>{
+const A=(window.A||'assets/');
+new Image().src=A+'ui_ribbon.png';
+new Image().src=A+'st_atk.png';
+const st=document.createElement('style');
+st.textContent=`
+/* r595 powup ribbon toast (display only; keeps .powup class for existing hide/merge observers) */
+.powup.pw595{
+  top:112px!important;bottom:auto!important;
+  padding:0!important;margin:0;left:50%;transform:translateX(-50%);
+  width:228px;height:54px;
+  border-radius:0!important;
+  background:url(${A}ui_ribbon.png) center/100% 100% no-repeat!important;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  filter:drop-shadow(0 3px 4px #000a);
+  font:900 13px Maplestory,"Noto Sans KR",sans-serif;
+  color:#ffe9b0;text-shadow:0 1px 0 #3a1a00,0 0 6px #000;
+  animation:pw595in 1.25s ease-out forwards!important;
+  pointer-events:none;z-index:999;
+}
+.powup.pw595 .pwi{width:22px;height:22px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a);flex:0 0 auto}
+.powup.pw595 .pwl{font-size:12px;color:#ffe08a;letter-spacing:.5px}
+.powup.pw595 b{color:#7dff5a!important;font-size:15px;text-shadow:0 1px 0 #000,0 0 6px #3a8a2088}
+.powup.pw595 i{font-style:normal;color:#9dff70;font-size:12px;margin-left:1px}
+body.cc520 .powup.pw595{top:158px!important;width:190px;height:44px;font-size:11px}
+body.cc520 .powup.pw595 .pwi{width:18px;height:18px}
+body.cc520 .powup.pw595 b{font-size:13px}
+@keyframes pw595in{
+  0%{opacity:0;transform:translate(-50%,12px) scale(.82)}
+  14%{opacity:1;transform:translate(-50%,0) scale(1.06)}
+  24%{transform:translate(-50%,0) scale(1)}
+  78%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-16px) scale(.96)}
+}
+/* r595 stage-clear crest readability (CSS only; same clear_banner.png) */
+.vic.clr .clbw{width:132px!important;height:112px!important;margin:-78px auto 0!important}
+.vic.clr .clb{width:132px!important;filter:drop-shadow(0 4px 6px #000a) drop-shadow(0 0 10px #ffc23a66)}
+.vic.clr .clt{bottom:7px!important;font-size:11px!important;letter-spacing:1px!important;color:#3a1a00!important;text-shadow:0 0 3px #fff,0 1px 0 #fff8,0 0 6px #ffe08a!important}
+.vic.clr .vt{font-size:28px!important}
+`;
+document.head.appendChild(st);
+const polish=n=>{
+  if(!n||!n.classList||!n.classList.contains('powup')||n.classList.contains('pw595'))return;
+  const b=n.querySelector('b');
+  const delta=(b&&b.textContent)||'+0';
+  n.classList.add('pw595');
+  n.innerHTML=`<img class=pwi src="${A}st_atk.png" alt=""><span class=pwl>전투력</span><b>${delta}</b><i>▲</i>`;
+};
+new MutationObserver(ms=>{
+  for(const m of ms)for(const n of m.addedNodes){
+    if(n.nodeType!==1)continue;
+    if(n.classList&&n.classList.contains('powup'))polish(n);
+  }
+}).observe(document.body,{childList:true});
+document.querySelectorAll('.powup').forEach(polish);
+})();
