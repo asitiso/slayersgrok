@@ -6803,3 +6803,131 @@ html body #panel .br444{margin:10px 12px 20px!important;padding-top:10px!importa
 `;
 document.head.appendChild(st);
 })();
+/* r601: (0) 추천 on 판매 when NEW weaker is intended — C.sellBag() sells S.bag (NEW), not equipped.
+   (1) 메뉴 sheet: crisp borderless 2D icon grid — consistent sizes, Maplestory outline labels,
+   section headers, pooled tap feedback, red-dots only where real. Wire GR entries that already
+   have screens + ic3_* art (bond/talent/fish/town/friend/gallery). Explore→ic3_explore.png. */
+;(()=>{
+/* --- extend MENU with existing screens/icons (display/nav completeness; handlers already openScreen) --- */
+const ADD=[
+  ['bond','인연','ic3_bond.png'],
+  ['talent','특성','ic3_talent.png'],
+  ['fish','낚시','ic3_fish.png'],
+  ['town','마을','ic3_town.png'],
+  ['friend','친구','ic3_friend.png'],
+  ['gallery','갤러리','ic3_gallery.png'],
+];
+ADD.forEach(m=>{if(!MENU.some(x=>x[0]===m[0]))MENU.push(m)});
+/* distinct explore icon (was shared with 지도) */
+{const e=MENU.find(x=>x[0]==='explore');if(e&&e[2]==='ic3_map.png')e[2]='ic3_explore.png'}
+
+const rebuild=()=>{
+  const GR=[['성장',['party','bond','enhance','star','talent','summon','skin','pet','bag','codex']],
+    ['콘텐츠',['dungeon','tower','wboss','arena','explore','fish','relic','base','town','map']],
+    ['소셜 · 기록',['guild','friend','rank','ach','gallery']],
+    ['기타',['mail','event','pass','settings']]];
+  const one=([k,n,i])=>`<a data-s=${k}><img src="${A}${i}" alt=""><em>${n}</em></a>`;
+  const used=new Set();let h='';
+  for(const [t,ks] of GR){
+    const L=[];for(const k of ks){const m=MENU.find(x=>x[0]===k);if(m)L.push(m)}
+    L.forEach(m=>used.add(m[0]));
+    if(t==='기타')MENU.forEach(m=>{if(!used.has(m[0])){used.add(m[0]);L.splice(Math.max(0,L.length-1),0,m)}});
+    if(L.length)h+=`<h6 class=mgh><span>${t}</span></h6>`+L.map(one).join('');
+  }
+  const g=document.getElementById('mgrid');if(!g)return;
+  g.innerHTML=h;
+  g.querySelectorAll('a').forEach(a=>{a.onclick=()=>menuGo(a.dataset.s)});
+  try{if(typeof updateHud==='function')updateHud()}catch(_){}
+};
+rebuild();
+
+/* pooled tap feedback — one shared .prs601 node class, no per-tap timer alloc storm */
+let cur=null;
+const up=()=>{if(cur){cur.classList.remove('prs601');cur=null}};
+document.addEventListener('pointerdown',e=>{
+  const a=e.target.closest&&e.target.closest('#mgrid a');
+  up();if(a){cur=a;a.classList.add('prs601')}
+},true);
+document.addEventListener('pointerup',up,true);
+document.addEventListener('pointercancel',up,true);
+document.addEventListener('pointerleave',e=>{if(e.target===document||e.target===document.documentElement)up()},true);
+
+const st=document.createElement('style');
+st.textContent=`
+/* crisp borderless 2D grid */
+html body #menuPop .mbox #mgrid.mgrid,
+html body #mgrid.mgrid{
+  display:grid!important;grid-template-columns:repeat(4,1fr)!important;
+  gap:10px 6px!important;padding:6px 8px 14px!important}
+html body #mgrid a{
+  background:none!important;border:none!important;box-shadow:none!important;
+  border-radius:0!important;padding:4px 2px 2px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  gap:3px!important;position:relative!important;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html body #mgrid a>img{
+  width:48px!important;height:48px!important;object-fit:contain!important;
+  border-radius:0!important;border:none!important;
+  filter:drop-shadow(0 2px 1px #000a)!important;
+  transition:transform 70ms ease-out,filter 70ms ease-out}
+html body #mgrid a>em{
+  display:block!important;font:900 12px/1.15 Maplestory,"Noto Sans KR",sans-serif!important;
+  font-style:normal!important;color:#fff6d8!important;letter-spacing:-.2px;
+  text-align:center;white-space:nowrap;
+  -webkit-text-stroke:2.5px #1a0c04;paint-order:stroke fill;
+  text-shadow:0 1px 0 #000,0 0 2px #000c!important}
+/* section headers */
+html body #mgrid .mgh{
+  grid-column:1/-1!important;display:flex!important;align-items:center!important;
+  justify-content:center!important;gap:6px!important;margin:10px 2px 2px!important;
+  font:900 13px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#ffd77a!important;text-shadow:0 1px 2px #000,0 0 3px #000!important}
+html body #mgrid .mgh>span{flex:none;padding:0 4px}
+html body #mgrid .mgh::before,html body #mgrid .mgh::after{
+  content:''!important;flex:1;max-width:120px;height:18px;
+  background:url(assets/ui/menu_div_l.png) right center/contain no-repeat!important}
+html body #mgrid .mgh::after{
+  background-image:url(assets/ui/menu_div_r.png)!important;background-position:left center!important}
+/* pooled press */
+html body #mgrid a.prs601>img{
+  transform:scale(.9)!important;filter:brightness(1.12) drop-shadow(0 0 4px #ffc94a88)!important}
+html body #mgrid a.prs601>em{color:#ffe08a!important}
+body.nofx #mgrid a.prs601>img,body.tglite #mgrid a.prs601>img{
+  filter:brightness(1.08)!important;transform:scale(.92)!important}
+/* locked stay grey art, no red dot */
+html body #mgrid a.lk>img{filter:grayscale(1) brightness(.62)!important;opacity:1!important}
+html body #mgrid a.lk>em{color:#c8c0b4!important;-webkit-text-stroke-color:#0a0806}
+html body #mgrid a.lk>.dot{display:none!important}
+/* red-dot badge placement — real ui_badge only */
+html body #mgrid a>.dot{
+  width:16px!important;height:16px!important;right:-2px!important;top:-2px!important;
+  background:url(assets/ui_badge.png) center/contain no-repeat!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;z-index:3}
+/* todo bar sits above grid cleanly */
+html body #todoBar{
+  margin:4px 8px 8px!important;border-radius:10px!important;
+  background:rgba(20,12,6,.55)!important;border:1px solid #6a4a28!important}
+html body #todoBar .tdh{
+  font:900 13px Maplestory,"Noto Sans KR",sans-serif!important;color:#ffe6b0!important;
+  text-shadow:0 1px 2px #000}
+`;
+document.head.appendChild(st);
+
+/* ensure dots: only BD / feature writers; hide unknown fresh dots */
+const scrub=()=>{
+  const g=document.getElementById('mgrid');if(!g)return;
+  const B=G.BD||{};
+  g.querySelectorAll('a').forEach(a=>{
+    const k=a.dataset.s;let d=a.querySelector('.dot');
+    if(a.classList.contains('lk')){if(d)$sd(d,'none');return}
+    /* feature-owned writers keep their own; BD keys follow BD; others stay hidden unless a writer lit them */
+    if(k in B){
+      if(!d){d=document.createElement('span');d.className='dot';a.appendChild(d)}
+      $sd(d,B[k]?'':'none');
+    }
+  });
+};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const mp=document.getElementById('menuPop');if(mp&&mp.classList.contains('on'))scrub()}catch(_){}return r};
+/* rebuild once at boot; lock marks come from the existing r391/v65 menuGo→mark wrap on the same nodes */
+const om=menuGo;menuGo=function(k){const r=om.apply(this,arguments);try{if(k==='menu')scrub()}catch(_){}return r};
+})();
