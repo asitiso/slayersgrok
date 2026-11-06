@@ -6330,3 +6330,141 @@ resultPop=function(w){
   return r;
 };
 })();
+/* r597: (1) restore .vic.lose width so 2×2 subtitles fit; crest/Lina clearance.
+   (2) boss HP bar = snapshot at C.ev.fail from live boss; hide if not a boss fail (stale bp was the 100% false-positive).
+   (3) 방치보상 claim popup polish — real C.idleSec/offlineCalc/offCap, crisp it2 icons, MAX, pooled claim pop. */
+;(()=>{
+const A='assets/';
+const st=document.createElement('style');
+st.textContent=`
+/* r597 lose card width restore (r596 forced 248px → truncated 강화석/레벨·스킬/새 동료) */
+html body .vic.lose.v596{width:300px!important;max-width:calc(100vw - 24px)!important;padding:10px 10px 12px!important;box-sizing:border-box!important}
+html body .vic.lose.v596 .gdb>span small{font-size:9px!important;letter-spacing:0!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important;max-width:none!important}
+html body .vic.lose.v596 .gdb>span b{font-size:12px!important}
+html body .vic.lose.v596 .dfbw{width:118px!important;height:100px!important;margin:-70px auto 2px!important}
+html body .vic.lose.v596 .dfb{width:118px!important}
+html body .vic.lose.v596 .dft{font-size:10px!important;bottom:6px!important}
+/* Lina sits left of crest, not under the gem */
+html body .vic.lose.v596 .vlose{left:-52px!important;top:-88px!important;height:100px!important;z-index:5!important}
+@media (max-width:370px){html body .vic.lose.v596 .vlose{left:-34px!important;height:94px!important;top:-82px!important}}
+html body .vic.lose.v596 .dfbw{position:relative;z-index:2}
+html body .vic.lose.v596 .vt{position:relative;z-index:4}
+/* r597 idle claim popup */
+.modal .card.id597{padding-top:4px}
+.modal .card.id597 .id597h{display:flex;flex-direction:column;align-items:center;gap:2px;margin:2px 0 6px}
+.modal .card.id597 .id597h>img{height:86px;filter:drop-shadow(0 4px 8px #000a)}
+.modal .card.id597 .id597bar{position:relative;width:100%;max-width:260px;margin:4px auto 8px;height:24px}
+.modal .card.id597 .rwgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:6px 2px 4px}
+.modal .card.id597 .rwgrid>div{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:10px;background:linear-gradient(#fff8e6ee,#f0dcb0ee);border:1.5px solid #c9a05a;text-align:left}
+.modal .card.id597 .rwgrid>div img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 1px 1px #0006)}
+.modal .card.id597 .rwgrid>div b{display:block;font:900 13px Maplestory,sans-serif;color:#3a2408;line-height:1.1}
+.modal .card.id597 .rwgrid>div small{display:block;font:700 9px Maplestory,sans-serif;color:#7a5530}
+.modal .card.id597 .id597cap{display:block;margin:2px 0 6px;font:700 10px Maplestory,sans-serif;color:#6a4a20}
+.modal .card.id597 .id597cap.full{color:#b06a10;font-weight:900}
+.modal .card.id597 #idleClaim{transition:transform .12s,filter .12s;position:relative}
+.modal .card.id597 #idleClaim.pop597{animation:id597pop .45s cubic-bezier(.2,1.5,.4,1)}
+@keyframes id597pop{0%{transform:scale(1)}30%{transform:scale(1.08)}100%{transform:scale(1)}}
+body.nofx .modal .card.id597 #idleClaim.pop597,body.tglite .modal .card.id597 #idleClaim.pop597{animation:none}
+`;
+document.head.appendChild(st);
+
+/* (2) snapshot real boss HP at fail; clear when no boss */
+G._bpFail=null;G._bpWasBoss=0;
+const snapBp=()=>{try{
+  const B=C.B,list=(B&&B.enemies)||[];
+  const b=list.find(e=>e&&e.boss&&!e.wb&&e.max>0);
+  G._bpWasBoss=!!(B&&B.boss||b)?1:0;
+  if(b)G._bpFail=Math.round(Math.max(0,Math.min(100,(b.hp/b.max)*100)));
+  else if(!(B&&B.boss)){G._bpFail=null;G._bpWasBoss=0}
+}catch(_){G._bpFail=null;G._bpWasBoss=0}};
+const ofail=C.ev.fail;
+C.ev.fail=function(){snapBp();return ofail&&ofail.apply(this,arguments)};
+/* also refresh while boss lives so a late UI path still has a fresh value */
+const ot=C.tick;C.tick=function(dt){const r=ot.apply(this,arguments);try{
+  const B=C.B,b=((B&&B.enemies)||[]).find(e=>e&&e.boss&&!e.wb&&e.max>0);
+  if(b)G._bpFail=Math.round(Math.max(0,Math.min(100,(b.hp/b.max)*100)));
+  /* G._bpWasBoss is set only in C.ev.fail — never invent a boss-fail from a live field tick */
+}catch(_){}return r};
+
+const orp=resultPop;
+resultPop=function(w){
+  const r=orp.apply(this,arguments);
+  try{
+    if(w||C.B.br||C.B.rb)return r;
+    const n=[...document.querySelectorAll('.vic.lose.guide')].pop();
+    if(!n)return r;
+    n.classList.add('v597');
+    /* prefer live boss at popup time, else fail snapshot; hide if not a boss fail */
+    const live=((C.B.enemies)||[]).find(e=>e&&e.boss&&!e.wb&&e.max>0);
+    /* was = fail() marked boss, or we still have an active boss fight (C.B.boss) with a live/snapshot pct */
+    const was=!!(G._bpWasBoss||(C.B.boss&&(live||typeof G._bpFail==='number')));
+    let pct=null;
+    if(was){
+      if(live)pct=Math.round(Math.max(0,Math.min(100,(live.hp/live.max)*100)));
+      else if(typeof G._bpFail==='number')pct=G._bpFail;
+    }
+    let bar=n.querySelector('.gdhp');
+    if(!was||pct==null){if(bar)bar.remove()}
+    else{
+      if(!bar){
+        const gdt=n.querySelector('.gdt');
+        if(gdt)gdt.insertAdjacentHTML('beforebegin',`<div class=gdhp>보스 남은 체력 <b>${pct}%</b><i><em style="width:${pct}%"></em></i></div>`);
+        bar=n.querySelector('.gdhp');
+      }else{
+        const b=bar.querySelector('b'),em=bar.querySelector('em');
+        if(b)b.textContent=pct+'%';
+        if(em)em.style.width=pct+'%';
+      }
+    }
+  }catch(_){}
+  return r;
+};
+
+/* (3) idle claim popup polish — wrap idleInfo, real values only */
+const oi=idleInfo;
+idleInfo=function(){
+  oi.apply(this,arguments);
+  try{
+    const m=document.querySelector('#app>.modal,body>.modal');
+    if(!m)return;
+    const c=m.querySelector(':scope>.card');
+    if(!c||c.classList.contains('id597'))return;
+    const sec=C.idleSec(),cap=BAL.offCap,r=C.offlineCalc(Math.max(60,sec));
+    const g=Math.floor(r.g*.5),x=Math.floor(r.x*.5),o=Math.floor(r.o*.5),stn=Math.floor(sec/900);
+    const h=Math.floor(sec/3600),mi=Math.floor(sec%3600/60),pct=Math.min(100,sec/cap*100),full=sec>=cap;
+    c.classList.add('id597');
+    /* rebuild body under existing ppx header if present, else whole card content after ttl */
+    const grid=`<div class=rwgrid>
+      <div><img src="${A}it2_gold.png" alt=""><div><b>${fmt(g)}</b><small>골드</small></div></div>
+      <div><img src="${A}it2_xp.png" alt=""><div><b>${fmt(x)}</b><small>경험치</small></div></div>
+      <div><img src="${A}it2_exp.png" alt=""><div><b>${fmt(o)}</b><small>마정구</small></div></div>
+      ${stn?`<div><img src="${A}it2_stone.png" alt=""><div><b>${fmt(stn)}</b><small>강화석</small></div></div>`:''}
+    </div>`;
+    const bar=`<div class="idlebar id597bar"><i style="width:${pct}%"></i><span>${h}시간 ${mi}분 / ${cap/3600}시간${full?' · MAX':''}</span></div>`;
+    const capNote=`<small class="id597cap${full?' full':''}">현재 스테이지 ${C.stageName(C.S().si)} 기준 · 최대 ${cap/3600}시간 누적${full?' (가득 참)':''}</small>`;
+    const center=c.querySelector('.pph')?c.querySelector('.pph').nextElementSibling:c.querySelector('.ttl');
+    /* replace the centered block (chest + bar + grid + claim) */
+    const box=c.querySelector('div[style*="text-align:center"]')||[...c.children].find(el=>el.querySelector&&el.querySelector('#idleClaim'));
+    if(box){
+      const claim=box.querySelector('#idleClaim');
+      box.innerHTML=`<img src="${A}ic3_chest.png" style="height:86px;filter:drop-shadow(0 0 12px #ffd25a)">${bar}${grid}${capNote}`;
+      if(claim){box.appendChild(claim)}
+      else{const s=document.createElement('span');s.className='pill green wide';s.id='idleClaim';s.style.marginTop='8px';s.textContent='받기';box.appendChild(s)}
+    }
+    const btn=c.querySelector('#idleClaim');
+    if(btn&&!btn._r597){
+      btn._r597=1;
+      const prev=btn.onclick;
+      btn.onclick=function(e){
+        e&&e.stopPropagation();
+        btn.classList.remove('pop597');void btn.offsetWidth;btn.classList.add('pop597');
+        const g2=C.idleClaim();
+        if(g2){try{idleBurst(g2)}catch(_){}}
+        toast(g2?'방치 보상 수령: <img class=ci src=assets/it2_gold.png>'+fmt(g2.g):'1분 이상 누적 후 수령 가능');
+        m.remove();updateHud();
+      };
+    }
+  }catch(_){}
+};
+G.idleInfo=idleInfo;
+})();
