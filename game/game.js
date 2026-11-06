@@ -7473,3 +7473,214 @@ return r};
 try{paintMq()}catch(_){}
 try{paintParty()}catch(_){}
 })();
+
+/* r607: 편성 cards — one clear 출전 ribbon (real S.party only); keep faction .fd,
+   drop stacked .ck+.pfl. 승급 panel — before→after stat rows, mat owned/needed
+   colour, bigger primary CTA, pooled success pop. Display only. Keep r606 CTAs. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* —— party: single 출전 mark; faction emblem stays alone top-right —— */
+html body #screen.ptx .rgrid .rcard>.pfl,
+html body #screen .rgrid .rcard>.pfl{display:none!important}
+html body #screen.ptx .rgrid .rcard>.ck,
+html body #screen .rgrid .rcard>.ck{display:none!important}
+/* faction emblem — sole round badge, top-right */
+html body #screen .rgrid .rcard>.fd{
+  position:absolute!important;right:3px!important;top:3px!important;
+  width:18px!important;height:18px!important;z-index:4!important;
+  filter:drop-shadow(0 1px 1px #000a)!important}
+/* 출전 ribbon — only when .inP from real party */
+html body #screen .rgrid .rcard>.dep607{
+  position:absolute!important;left:50%!important;bottom:2px!important;
+  transform:translateX(-50%)!important;z-index:5!important;
+  display:inline-flex!important;align-items:center!important;gap:2px!important;
+  padding:1px 7px 1px 5px!important;border-radius:8px!important;
+  background:linear-gradient(#3fbf5a,#1f8a3a)!important;
+  border:1.5px solid #9ff0b0!important;box-shadow:0 1px 3px #000a!important;
+  color:#fff!important;font:900 10px/14px Maplestory,sans-serif!important;
+  letter-spacing:0!important;text-shadow:0 1px 0 #0a3a10!important;
+  white-space:nowrap!important;pointer-events:none!important}
+html body #screen .rgrid .rcard>.dep607::before{
+  content:""!important;width:10px!important;height:10px!important;
+  background:url(assets/pass_check.png) center/contain no-repeat!important;
+  flex:none!important}
+html body #screen .rgrid .rcard.own.inP{
+  box-shadow:inset 0 0 0 2px #6ec8ff,inset 0 0 0 4px #1a4060aa,
+    0 0 10px #4ab0ff66,0 2px 6px #000a!important}
+/* hide r606 absolute ck that sat on faction */
+html body #screen .rgrid .rcard .ck{display:none!important}
+html body #screen .rgrid .rcard.own.inP>.rst4{visibility:hidden!important;height:14px!important}
+html body #screen .rgrid .rcard>.dep607{bottom:4px!important}
+
+/* —— 승급 growth panel —— */
+html body #screen.stx .stgrow607{
+  display:flex;flex-direction:column;gap:5px;margin:4px 0 2px}
+html body #screen.stx .stgrow607 .sr{
+  display:flex;align-items:center;gap:6px;
+  background:none!important;border:solid transparent!important;
+  border-width:7px 9px!important;
+  border-image:url(assets/hc_statplate.png) 46 52 fill/7px 9px stretch!important;
+  padding:0 4px!important;min-height:22px;box-sizing:border-box}
+html body #screen.stx .stgrow607 .sr>img{width:16px;height:16px;flex:none;filter:drop-shadow(0 1px 1px #000a)}
+html body #screen.stx .stgrow607 .sr>b{flex:1;font:800 11px Maplestory,sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000}
+html body #screen.stx .stgrow607 .sr>em{font-style:normal;font:900 12px Maplestory,sans-serif;color:#ffe7a8;text-shadow:0 1px 0 #000}
+html body #screen.stx .stgrow607 .sr>i.ar{
+  width:12px;height:14px;flex:none;background:url(assets/st_arrow.png) center/contain no-repeat;
+  filter:drop-shadow(0 1px 1px #000a);transform:rotate(-90deg)}
+html body #screen.stx .stgrow607 .sr>u{
+  text-decoration:none;font:900 12px Maplestory,sans-serif;color:#9dff7a;text-shadow:0 1px 0 #000}
+html body #screen.stx .stmat607{
+  display:flex;align-items:center;gap:6px;margin:6px 0 4px;
+  background:none!important;border:solid transparent!important;
+  border-width:8px 10px!important;
+  border-image:url(assets/hc_statplate.png) 46 52 fill/8px 10px stretch!important;
+  padding:0 4px!important;min-height:26px}
+html body #screen.stx .stmat607>img{width:22px;height:22px;flex:none}
+html body #screen.stx .stmat607>b{flex:1;font:800 12px Maplestory,sans-serif;color:#fff;text-shadow:0 1px 0 #000}
+html body #screen.stx .stmat607>em{font-style:normal;font:900 13px Maplestory,sans-serif;text-shadow:0 1px 0 #000}
+html body #screen.stx .stmat607>em.ok{color:#9dff7a}
+html body #screen.stx .stmat607>em.no{color:#ff8a7a}
+html body #screen.stx .stmat607>em.ok u,
+html body #screen.stx .stmat607>em.no u{text-decoration:none;opacity:.85;font-weight:800;font-size:11px;margin-left:2px;color:#cfe0ff}
+/* bigger primary */
+html body #screen.stx :is(#stUp,#stAw):not(.off){
+  min-height:40px!important;font-size:15px!important;margin-top:8px!important;
+  filter:drop-shadow(0 2px 3px #0008)!important}
+html body #screen.stx :is(#stUp,#stAw).off{
+  min-height:40px!important;font-size:15px!important;margin-top:8px!important}
+/* pooled success pop */
+html body #stpop607{
+  position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);
+  z-index:9200;pointer-events:none;display:none;
+  padding:8px 16px;border-radius:12px;
+  background:linear-gradient(#2a1c10ee,#120c08f2);
+  border:2px solid #ffd77a;box-shadow:0 0 20px #ffb03a88,0 4px 12px #000a;
+  color:#fff6d8;font:900 15px/1.2 Maplestory,sans-serif;text-align:center;
+  text-shadow:0 1px 0 #000;white-space:nowrap}
+html body #stpop607.on{display:block;animation:stpop607a .9s ease-out both}
+html body #stpop607 small{display:block;margin-top:3px;font:800 11px Maplestory,sans-serif;color:#9dff7a}
+@keyframes stpop607a{0%{opacity:0;transform:translate(-50%,-40%) scale(.85)}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}
+  70%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-58%) scale(.96)}}
+body.nofx #stpop607.on,body.tglite #stpop607.on{animation:none;opacity:1}
+`;
+document.head.appendChild(st);
+
+/* pooled pop node */
+let POP=null;
+const pop=(title,sub)=>{
+  if(!POP){POP=document.createElement('div');POP.id='stpop607';document.body.appendChild(POP)}
+  POP.innerHTML=title+(sub?`<small>${sub}</small>`:'');
+  POP.classList.remove('on');void POP.offsetWidth;POP.classList.add('on');
+  clearTimeout(POP._t);POP._t=setTimeout(()=>POP.classList.remove('on'),950);
+};
+
+const paintParty=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='party')return;
+  const party=new Set((C.S().party)||[]);
+  sc.querySelectorAll('.rgrid .rcard').forEach(n=>{
+    const k=n.dataset.c;
+    const inP=!!k&&party.has(k);
+    n.classList.toggle('inP',inP);
+    n.classList.toggle('in',inP); /* keep legacy .in for other CSS */
+    /* remove stacked marks */
+    n.querySelectorAll(':scope>.pfl,:scope>.ck').forEach(x=>x.remove());
+    let rib=n.querySelector(':scope>.dep607');
+    if(inP){
+      if(!rib){
+        rib=document.createElement('span');
+        rib.className='dep607';
+        rib.textContent='출전';
+        n.appendChild(rib);
+      }
+    }else if(rib){rib.remove()}
+  });
+};
+
+const paintStar=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='star')return;
+  const s=C.S(),k=G.stSel,c=k&&D.COMPS.find(x=>x.k==k);
+  if(!c)return;
+  const st=s.comps[k]||0,aw=(s.caw||{})[k]||0,sh=(s.csh||{})[k]||0;
+  const mx=st>=C.STARMAX,awMax=aw>=C.AWMAX;
+  const need=mx?C.awCost(k).sh:C.starCost(k);
+  const m0=C.compMul(k);
+  const m1=awMax?m0:mx?m0/(1+.15*aw)*(1+.15*(aw+1)):m0/(1+.1*(st-1))*(1+.1*st);
+  const h0=1+.1*Math.max(0,st-1);
+  const h1=awMax?h0:mx?h0:1+.1*st; /* star-up HP factor from buildAllies formula */
+  const hero=sc.querySelector('.sthero .f');
+  if(hero&&!hero.querySelector('.stgrow607')){
+    const box=document.createElement('div');
+    box.className='stgrow607';
+    box.innerHTML=
+      `<div class=sr><img src="${A}st_atk.png"><b>공격 배율</b><em>×${m0.toFixed(2)}</em>`+
+      (awMax?'':`<i class=ar></i><u>×${m1.toFixed(2)}</u>`)+`</div>`+
+      `<div class=sr><img src="${A}st_hp.png"><b>체력 계수</b><em>×${h0.toFixed(2)}</em>`+
+      (awMax||mx?'':`<i class=ar></i><u>×${h1.toFixed(2)}</u>`)+`</div>`;
+    /* place after sxr or stars */
+    const sxr=hero.querySelector('.sxr');
+    if(sxr){sxr.style.display='none';sxr.after(box)}
+    else{const xsk=hero.querySelector('.xsk');if(xsk)xsk.after(box);else hero.appendChild(box)}
+  }else if(hero){
+    const box=hero.querySelector('.stgrow607');
+    if(box){
+      box.innerHTML=
+        `<div class=sr><img src="${A}st_atk.png"><b>공격 배율</b><em>×${m0.toFixed(2)}</em>`+
+        (awMax?'':`<i class=ar></i><u>×${m1.toFixed(2)}</u>`)+`</div>`+
+        `<div class=sr><img src="${A}st_hp.png"><b>체력 계수</b><em>×${h0.toFixed(2)}</em>`+
+        (awMax||mx?'':`<i class=ar></i><u>×${h1.toFixed(2)}</u>`)+`</div>`;
+    }
+  }
+  /* material owned/needed on the 승급 card */
+  const card=[...sc.querySelectorAll('.sbody>.card')].find(x=>x.querySelector('#stUp,#stAw')||/조각/.test((x.querySelector('.ttl')||{}).textContent||''));
+  if(card){
+    let mat=card.querySelector('.stmat607');
+    const ok=sh>=need;
+    const html=`<img src="${A}st_frag.png"><b>${mx?'각성 조각':'승급 조각'}</b><em class="${ok?'ok':'no'}">${fmt(sh)}<u>/ ${fmt(need)}</u></em>`;
+    if(!mat){mat=document.createElement('div');mat.className='stmat607';mat.innerHTML=html;
+      const bar=card.querySelector('.bar');(bar||card.querySelector('.ttl')).after(mat);
+    }else mat.innerHTML=html;
+    /* gold cost line for awake */
+    if(mx&&!awMax){
+      const gc=C.awCost(k).g, gok=s.gold>=gc;
+      let g=card.querySelector('.stmat607g');
+      const gh=`<img src="${A}it2_gold.png"><b>각성 골드</b><em class="${gok?'ok':'no'}">${fmt(s.gold)}<u>/ ${fmt(gc)}</u></em>`;
+      if(!g){g=document.createElement('div');g.className='stmat607 stmat607g';g.innerHTML=gh;mat.after(g);}
+      else g.innerHTML=gh;
+    }
+  }
+};
+
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{paintParty();paintStar()}catch(_){}
+  return r;
+};
+
+/* wrap starUp/awake success → pooled pop (after existing burst flag) */
+const su=C.starUp;
+C.starUp=function(k){
+  const r=su.apply(this,arguments);
+  if(r==='ok'){
+    const c=D.COMPS.find(x=>x.k==k), st=C.S().comps[k];
+    try{pop(`${c?c.n:''} 승급!`,`★${st}`)}catch(_){}
+  }
+  return r;
+};
+const aw=C.awake;
+C.awake=function(k){
+  const r=aw.apply(this,arguments);
+  if(r==='ok'){
+    const c=D.COMPS.find(x=>x.k==k), a=(C.S().caw||{})[k]||0;
+    try{pop(`${c?c.n:''} 각성!`,`◆${a}`)}catch(_){}
+  }
+  return r;
+};
+
+try{paintParty();paintStar()}catch(_){}
+})();
