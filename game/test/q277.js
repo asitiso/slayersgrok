@@ -1,6 +1,0 @@
-const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));const fs=require('fs');
-(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],headless:'new'});const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:1});
-const U='http://127.0.0.1:18791/index.html';await p.goto(U);await p.evaluate(s=>{G.noSave=1;localStorage.clear();localStorage.setItem('slayers_save_v2',s)},fs.readFileSync('/tmp/bigsave.json','utf8'));await p.goto(U);await sl(3500);
-console.log(await p.evaluate(()=>{document.querySelectorAll('.modal,.tut,#notice,.sty').forEach(x=>x.remove());openScreen('enhance');G.enTab='comp';G.trSel='gourry';renderScreen();const e=document.querySelector('#trLv'),cs=getComputedStyle(e);
-const m=[];for(const ss of document.styleSheets){let rs;try{rs=ss.cssRules}catch(_){continue}for(const r of rs)if(r.selectorText&&e.matches(r.selectorText)&&/border|background/.test(r.style.cssText))m.push(r.selectorText.slice(0,80)+' => '+r.style.cssText.slice(0,140))}
-return JSON.stringify({cls:e.className,bi:cs.borderImageSource.slice(-30),bg:cs.backgroundImage.slice(0,80),m},null,1)}));await b.close()})();
