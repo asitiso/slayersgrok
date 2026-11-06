@@ -6102,7 +6102,7 @@ st.textContent=
 '#screen .twst .tw539{z-index:4;left:50%;transform:translateX(-50%)}'+
 '#ufx486.tr593 .np{font:900 15px Maplestory,sans-serif!important;-webkit-text-stroke:1px #0b3510!important;text-shadow:0 1px 0 #0b3510,0 0 6px #3aff3a!important}'+
 '#ufx486.tr593 .np small{display:none!important}'+
-'#ufx486.tr593>.np{top:85%!important}'+
+'#ufx486.tr593>.np{/* r594 sets top */}'+
 '#ufx486.tr593 .rg{width:28px!important;height:28px!important;margin:-14px 0 0 -14px!important;border-width:3px!important;top:82%!important}'+
 '#ufx486.tr593 .ry{width:72px!important;height:72px!important;margin:-36px 0 0 -36px!important;top:82%!important}'+
 '#ufx486.tr593 .fl{border-radius:10px!important}'+
@@ -6142,4 +6142,93 @@ const rs=renderScreen;
 renderScreen=function(){const r=rs.apply(this,arguments);try{layout()}catch(e){console.warn(e)}return r};
 const wrap=()=>{const o=G._ufx486;if(!o||o._r593)return;const w=(sel,cls,txt,sub,snd)=>{o(sel,cls,txt,sub,snd);if(!cls||cls.indexOf('tr593')<0)return;const L=document.getElementById('ufx486'),card=document.querySelector(sel),medal=card&&card.querySelector('.medal');if(!L||!medal)return;const m=medal.getBoundingClientRect(),th=card.querySelector('.th556'),tr=(th||card).getBoundingClientRect(),h=56,wdt=Math.max(90,m.width+28);L.style.left=(m.left+m.width/2-wdt/2)+'px';L.style.top=(tr.top-h-12)+'px';L.style.width=wdt+'px';L.style.height=h+'px'};w._r593=1;G._ufx486=w};
 wrap();const rp=renderPanel;renderPanel=function(){const r=rp.apply(this,arguments);try{wrap()}catch(_){}return r};
+})();
+
+;(()=>{/* r594 display: (1) train Lv pop stays INSIDE the tcard — centred, starts just above .tlv over lower medal, rises toward medal top (clipped below title); dark outline on gold glow; size kept. (2) 영지 .bupc upgrade card: Maplestory pill art on 수확/강화, larger framed building icon, clearer Lv chip — real data only. */
+const st=document.createElement('style');
+st.textContent=
+'#ufx486.tr593{overflow:hidden!important;contain:paint}'+
+'#ufx486.tr593 .np{font:900 15px Maplestory,sans-serif!important;color:#e8ffd4!important;'+
+'-webkit-text-stroke:1.25px #071208!important;'+
+'text-shadow:-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000,0 2px 0 #000,0 0 5px #1a3a10,0 0 8px #3aff3aaa!important}'+
+'#ufx486.tr593 .np small{display:none!important}'+
+'#ufx486.tr593>.np{left:50%!important}'+
+'#ufx486.tr593 .rg,#ufx486.tr593 .ry,#ufx486.tr593 .sp{top:70%!important}'+
+'#ufx486.tr593 .rg{width:26px!important;height:26px!important;margin:-13px 0 0 -13px!important;border-width:3px!important}'+
+'#ufx486.tr593 .ry{width:64px!important;height:64px!important;margin:-32px 0 0 -32px!important}'+
+'#ufx486.tr593 .sp i{width:5px!important;height:5px!important;left:-2px!important;top:-2px!important}'+
+'#ufx486.tr593.go .np{animation:u594n .62s ease-out forwards!important}'+
+'#ufx486.tr593.go .rg{animation:u594r .4s ease-out!important}'+
+'#ufx486.tr593.go .ry{animation:u594y .5s ease-out!important}'+
+'#ufx486.tr593.go .sp i{animation:u594s .45s ease-out!important}'+
+'#ufx486.tr593.go .fl{animation:u486f .28s ease-out!important}'+
+'@keyframes u594n{0%{opacity:0;transform:translate(-50%,4%) scale(.72)}18%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.94)}}'+
+'@keyframes u594r{0%{opacity:.8;transform:scale(.35)}100%{opacity:0;transform:scale(1.45)}}'+
+'@keyframes u594y{0%{opacity:0;transform:rotate(0) scale(.5)}30%{opacity:.55}100%{opacity:0;transform:rotate(18deg) scale(.88)}}'+
+'@keyframes u594s{0%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(1)}100%{opacity:0;transform:rotate(var(--a)) translateY(-22px) scale(.5)}}'+
+'body.nofx #ufx486.tr593 .np,body.tglite #ufx486.tr593 .np,#ufx486.tr593.lt .np{animation:none!important;opacity:1;transform:translate(-50%,0)!important}'+
+/* 영지 upgrade card */
+'#screen .card.bupc .row>.ic{width:64px!important;height:64px!important;object-fit:contain;padding:4px;box-sizing:border-box;border:2px solid #c9953f!important;border-radius:12px!important;background:radial-gradient(circle at 50% 30%,#5a3a18,#1a1008)!important;box-shadow:inset 0 0 0 1px #ffe08a44,0 2px 6px #000a!important}'+
+'#screen .card.bupc .row>.f>b{font:900 15px Maplestory,sans-serif;color:#ffe9b8;text-shadow:0 1px 0 #000}'+
+'#screen .card.bupc .row>.f>b::before{content:"";}'+
+'#screen .card.bupc .lv594{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:8px;background:linear-gradient(#3a2a14,#1a1208);border:1px solid #c9953f;color:#ffe08a;font:900 11px Maplestory,sans-serif;vertical-align:2px;text-shadow:0 1px 0 #000}'+
+'#screen .card.bupc .row>div:last-child{gap:8px!important;min-width:78px}'+
+'#screen .card.bupc .row [data-col],#screen .card.bupc .row [data-up],#screen .card.bupc .row [data-sp]{'+
+'background:none!important;border:9px solid transparent!important;border-image:url(assets/btn_green.png) 30 fill/9px stretch!important;border-radius:0!important;'+
+'color:#fff!important;font:900 13px Maplestory,sans-serif!important;text-shadow:-1px 0 #0b3510,1px 0 #0b3510,0 -1px #0b3510,0 1px #0b3510!important;'+
+'padding:4px 6px!important;text-align:center;filter:drop-shadow(0 2px 2px #0007);box-shadow:none!important}'+
+'#screen .card.bupc .row [data-col]{border-image-source:url(assets/btn_gold.png)!important;text-shadow:-1px 0 #5a3006,1px 0 #5a3006,0 -1px #5a3006,0 1px #5a3006!important}'+
+'#screen .card.bupc .row [data-up].np508,#screen .card.bupc .row [data-up].off,'+
+'#screen .card.bupc .row [data-sp].off{border-image-source:url(assets/btn_grey.png)!important;text-shadow:-1px 0 #2a2a2a,1px 0 #2a2a2a,0 -1px #2a2a2a,0 1px #2a2a2a!important;color:#eee!important}'+
+'#screen .card.bupc .row [data-col]:not(.off):active,#screen .card.bupc .row [data-up]:not(.np508):not(.off):active{transform:scale(.94);filter:brightness(.85) drop-shadow(0 1px 1px #0007)}'+
+'#screen .card.bupc>.ttl>small{top:48px!important;right:8px!important;left:auto;background:#0008;border:1px solid #c9953f66;border-radius:8px;padding:1px 6px;color:#f0e4c8!important}'+
+'body.tglite #screen .card.bupc .row [data-col],body.nofx #screen .card.bupc .row [data-col],'+
+'body.tglite #screen .card.bupc .row [data-up],body.nofx #screen .card.bupc .row [data-up]{filter:none}';
+document.head.appendChild(st);
+
+const placeTrain=(sel)=>{
+  const L=document.getElementById('ufx486');
+  const card=document.querySelector(sel);
+  if(!L||!card||!card.classList.contains('tcard'))return;
+  const medal=card.querySelector('.medal'),tlv=card.querySelector('.tlv'),th=card.querySelector('.th556');
+  if(!medal||!tlv)return;
+  const cr=card.getBoundingClientRect(),tr=(th||card).getBoundingClientRect(),mr=medal.getBoundingClientRect(),lr=tlv.getBoundingClientRect();
+  const top=Math.max(cr.top+1,tr.bottom+2);
+  const bot=Math.min(cr.bottom-2,lr.bottom+8);
+  const h=Math.max(40,bot-top),w=cr.width;
+  L.style.left=cr.left+'px';L.style.top=top+'px';L.style.width=w+'px';L.style.height=h+'px';
+  // centre of np just above .tlv (over lower half of medal); ~19px tall
+  const npH=19, targetTop=(lr.top-top)-npH-3; // top of text; bottom sits ~3px above .tlv
+  const pct=Math.max(30,Math.min(78,(targetTop/h)*100));
+  const np=L.querySelector('.np');
+  if(np){np.style.setProperty('top',pct+'%','important');np.style.setProperty('left','50%','important')}
+  L.querySelectorAll('.rg,.ry,.sp').forEach(el=>{el.style.setProperty('top',Math.max(35,pct-10)+'%','important')});
+};
+
+const wrap=()=>{
+  const o=G._ufx486;if(!o||o._r594)return;
+  const w=(sel,cls,txt,sub,snd)=>{
+    o(sel,cls,txt,sub,snd);
+    if(!cls||cls.indexOf('tr593')<0)return;
+    try{placeTrain(sel)}catch(_){}
+  };
+  w._r594=1;w._r593=1;G._ufx486=w;
+};
+wrap();
+const rp=renderPanel;renderPanel=function(){const r=rp.apply(this,arguments);try{wrap()}catch(_){}return r};
+
+function basePolish(){
+  if(G.screen!='base')return;
+  const card=document.querySelector('#screen .card.bupc');if(!card)return;
+  card.querySelectorAll('.row').forEach(row=>{
+    if(row.style.display==='none')return;
+    const b=row.querySelector('.f>b');
+    if(b&&!b.querySelector('.lv594')){
+      const m=/^(.*)\s+(Lv\.\d+)\s*$/.exec(b.textContent.trim());
+      if(m){b.textContent='';b.appendChild(document.createTextNode(m[1]+' '));const s=document.createElement('span');s.className='lv594';s.textContent=m[2];b.appendChild(s)}
+    }
+  });
+}
+const rs=renderScreen;
+renderScreen=function(){const r=rs.apply(this,arguments);try{basePolish()}catch(e){}return r};
 })();
