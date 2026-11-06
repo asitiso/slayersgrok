@@ -6468,3 +6468,107 @@ idleInfo=function(){
 };
 G.idleInfo=idleInfo;
 })();
+/* r598: (1) idle claim popup — bright amounts, legible labels, 받기 primary / 닫기 secondary (modal 확인 only closes).
+   (2) FEVER meter chrome — framed gauge, fill gradient, label, glow when full; static under nofx/tglite. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* —— idle reward cells: cream amounts on dark-rimmed pills (beat ppx #3a2810) —— */
+html body .modal .card.ppx.id597 .rwgrid>div,
+html body .modal .card.id597 .rwgrid>div{
+  background:linear-gradient(#3a2a1af0,#221810f5)!important;
+  border:1.5px solid #e0b86a!important;
+  box-shadow:inset 0 0 0 1px #0008,0 2px 4px #0006!important;
+  padding:8px 10px!important;gap:8px!important}
+html body .modal .card.ppx.id597 .rwgrid>div img,
+html body .modal .card.id597 .rwgrid>div img{
+  width:30px!important;height:30px!important;filter:drop-shadow(0 1px 2px #000a)!important}
+html body .modal .card.ppx.id597 .rwgrid>div b,
+html body .modal .card.id597 .rwgrid>div b{
+  color:#fff8e0!important;font:900 16px/1.1 Maplestory,"Noto Sans KR",sans-serif!important;
+  text-shadow:0 1px 0 #000,0 0 3px #000,0 0 6px #000c,-1px -1px 0 #1a0a00,1px 1px 0 #1a0a00!important;
+  letter-spacing:.3px}
+html body .modal .card.ppx.id597 .rwgrid>div small,
+html body .modal .card.id597 .rwgrid>div small{
+  color:#ffe9b0!important;font:800 11.5px/1.15 Maplestory,"Noto Sans KR",sans-serif!important;
+  text-shadow:0 1px 0 #000,0 0 3px #000,0 0 2px #000a!important;opacity:1!important}
+/* time bar readable */
+html body .modal .card.ppx.id597 .idlebar span,
+html body .modal .card.id597 .idlebar span{
+  font:900 12px/22px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#fff!important;text-shadow:0 1px 2px #000,0 0 4px #000!important;letter-spacing:.2px}
+html body .modal .card.ppx.id597 .idlebar,
+html body .modal .card.id597 .idlebar{height:26px!important;max-width:280px!important}
+html body .modal .card.id597 .id597cap{font:800 11px Maplestory,sans-serif!important;color:#5a3a18!important}
+html body .modal .card.ppx.id597 .id597cap{color:#4a2a10!important;font:800 11px Maplestory,sans-serif!important}
+/* 받기 primary green stays; trailing modal 확인 → secondary close */
+html body .modal .card.id597 #idleClaim.pill.green,
+html body .modal .card.ppx.id597 #idleClaim{
+  background:linear-gradient(#6ad03a,#2a8a18)!important;border:2px solid #c8ff9a!important;
+  color:#fff!important;font:900 15px Maplestory,sans-serif!important;
+  text-shadow:0 1px 0 #0a4010!important;box-shadow:0 3px 0 #1a5010,0 4px 8px #0006!important}
+html body .modal .card.id597>.btn.wide.id598close,
+html body .modal .card.ppx.id597>.btn.wide.id598close{
+  background:linear-gradient(#d8c8a8,#b09870)!important;border:1.5px solid #8a7048!important;
+  color:#3a2810!important;font:800 13px Maplestory,sans-serif!important;
+  text-shadow:0 1px 0 #f0e0c0!important;box-shadow:0 2px 0 #6a5030,inset 0 1px 0 #fff6!important;
+  opacity:.95;margin-top:8px!important}
+html body .modal .card.id597>.btn.wide.id598close:active{transform:translateY(1px);filter:brightness(.95)}
+
+/* —— FEVER meter chrome (display only; fill width still from real g/fv) —— */
+html body #battle #fevg,html body #fevg{
+  gap:8px!important;align-items:center!important;
+  padding:3px 8px 3px 6px!important;border-radius:10px!important;
+  background:linear-gradient(180deg,#2a1c10ee,#140e08f2)!important;
+  border:1.5px solid #c9a05a!important;
+  box-shadow:inset 0 0 0 1px #0009,0 2px 6px #0008!important}
+html body #battle #fevg>b,html body #fevg>b{
+  font:900 italic 12px Maplestory,sans-serif!important;color:#ffe9a0!important;
+  text-shadow:0 1px 0 #000,0 0 4px #ffb02e66,0 0 2px #000!important;
+  letter-spacing:1px;min-width:42px;text-align:center}
+html body #battle #fevg .fvb,html body #fevg .fvb{
+  height:11px!important;border-radius:6px!important;
+  background:linear-gradient(#0a0806,#1a1208)!important;
+  border:1.5px solid #6a4a28!important;
+  box-shadow:inset 0 1px 3px #000c!important;overflow:hidden!important}
+html body #battle #fevg .fvb i,html body #fevg .fvb i{
+  background:linear-gradient(90deg,#ff6a10 0%,#ffb02e 45%,#ffe58a 78%,#fff6c8 100%)!important;
+  box-shadow:inset 0 2px 0 #fff8,inset 0 -1px 0 #0005!important;border-radius:4px}
+html body #battle #fevg.full,html body #fevg.full{
+  box-shadow:inset 0 0 0 1px #0009,0 0 12px #ffb02e88,0 2px 6px #0008!important;
+  border-color:#ffe08a!important}
+html body #battle #fevg.full>b,html body #fevg.full>b{color:#fff6c8!important;text-shadow:0 0 8px #ffb02e,0 1px 0 #000!important}
+html body #battle #fevg.on,html body #fevg.on{
+  box-shadow:inset 0 0 0 1px #0009,0 0 14px #ff6a4088,0 2px 6px #0008!important;
+  border-color:#ff9a5a!important}
+html body #battle #fevg.on .fvb i,html body #fevg.on .fvb i{
+  background:linear-gradient(90deg,#ff3a6a,#ffb02e,#fff3a0)!important}
+/* static under nofx/tglite — no pulse */
+body.nofx #fevg.full .fvb i,body.tglite #fevg.full .fvb i,
+body.nofx #battle #fevg.full .fvb i,body.tglite #battle #fevg.full .fvb i,
+body.fxoff #fevg.full .fvb i{animation:none!important;filter:none!important}
+`;
+document.head.appendChild(st);
+
+/* after idleInfo polish, restyle the modal's auto 확인 (close-only) as secondary 닫기 */
+const oi=G.idleInfo||idleInfo;
+const wrap=function(){
+  oi.apply(this,arguments);
+  try{
+    const m=document.querySelector('#app>.modal');
+    if(!m)return;
+    const c=m.querySelector(':scope>.card');
+    if(!c||!c.classList.contains('id597'))return;
+    /* last .btn.wide that isn't a pill claim / quick-hunt */
+    const btns=[...c.querySelectorAll(':scope>.btn.wide')];
+    btns.forEach(b=>{
+      if(b.id==='idleClaim'||b.id==='qhBtn')return;
+      if(/확인|닫기/.test(b.textContent.trim())){
+        b.classList.add('id598close');
+        if(b.textContent.trim()==='확인')b.textContent='닫기'; /* same close handler, clearer hierarchy */
+      }
+    });
+  }catch(_){}
+};
+idleInfo=wrap;G.idleInfo=wrap;
+})();
