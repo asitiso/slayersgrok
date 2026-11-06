@@ -7001,3 +7001,100 @@ html body .rwpop.rwclr .rwbox{padding-top:36px!important}
 `;
 document.head.appendChild(st);
 })();
+
+/* r603: 보상 획득 panel size-to-content (kill empty gap under tiles; centre 1–2
+   tiles; keep chest overlap; vertical centre). Shop product cards + 구매 확인
+   polish (화룡전-ish). Display only, pooled, static under nofx/tglite. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* —— 보상 획득: hug content, no dead air —— */
+html body .rwpop{
+  display:flex!important;align-items:center!important;justify-content:center!important}
+html body .rwpop .rwbox,
+html body .rwpop .rwbox.rpf{
+  display:block!important;
+  height:auto!important;min-height:0!important;
+  max-height:min(86vh,640px)!important;
+  width:min(300px,92vw)!important;
+  padding:6px 8px 8px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  flex:none!important}
+html body .rwpop .rpic{
+  display:block!important;height:74px!important;
+  margin:-62px auto 2px!important;position:relative!important;z-index:2!important}
+html body .rwpop .rwt{margin:0!important;line-height:1.15!important}
+html body .rwpop .rws{margin:2px 0 0!important}
+html body .rwpop .rwi{
+  display:flex!important;flex-wrap:wrap!important;
+  justify-content:center!important;align-content:center!important;align-items:stretch!important;
+  gap:10px!important;
+  margin:8px 0 4px!important;padding:0!important;
+  height:auto!important;min-height:0!important;max-height:min(50vh,380px)!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  flex:none!important;flex-grow:0!important;flex-shrink:1!important}
+/* 1–2 tiles: keep centred (not stretched left) */
+html body .rwpop .rwi .rwc{
+  flex:0 0 auto!important;margin:0!important}
+html body .rwpop .rwtap{
+  display:block!important;margin:2px 0 0!important;padding:0!important;
+  position:static!important;flex:none!important}
+/* collapsed gear-list slot must never reserve space */
+html body .rwpop .rwgl:not(.on){
+  display:none!important;height:0!important;max-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
+html body .rwpop .rwrays{display:none!important}
+body.nofx .rwpop .rwc,body.tglite .rwpop .rwc,body.fxoff .rwpop .rwc{animation:none!important}
+body.nofx .rwpop .rwtap,body.tglite .rwpop .rwtap,body.fxoff .rwpop .rwtap{animation:none!important}
+body.nofx .rwpop,body.tglite .rwpop{animation:none!important}
+
+/* —— 상점 product cards (gem/gold grid .shc2) —— */
+html body #screen .shc2{
+  background:linear-gradient(#2a1a10f2,#140c08f5)!important;
+  border:2px solid #0b0d0f!important;border-radius:12px!important;
+  box-shadow:inset 0 0 0 1.5px #e8b86099,0 3px 8px #000a!important;
+  padding:10px 6px 8px!important}
+html body #screen .shc2>img.ic{
+  border-radius:10px!important;border-color:#c9953f!important;
+  filter:drop-shadow(0 2px 2px #0008)!important}
+html body #screen .shc2>b{
+  color:#ffe9c8!important;font:800 11px Maplestory,"Noto Sans KR",sans-serif!important;
+  text-shadow:0 1px 1px #000!important;min-height:26px!important}
+html body #screen .shc2>[data-b]{
+  margin-top:4px!important;border-radius:8px!important;
+  font:800 12px Maplestory,"Noto Sans KR",sans-serif!important}
+html body #screen .shc2:not(.sold):not(.poor)>[data-b]:not(.off){
+  box-shadow:0 0 0 1px #e8b86088,0 2px 0 #1a0e08!important}
+
+/* —— 구매 확인 modal —— */
+html body .modal.shcf .shcb{
+  width:min(270px,88vw)!important;padding:14px 14px 12px!important;
+  border-radius:14px!important;
+  background:linear-gradient(#1a1008f5 0%,#2a1a0ef8 22%,#24160cf5 100%)!important;
+  border:2.5px solid #0b0d0f!important;
+  box-shadow:inset 0 0 0 1.5px #e8b860aa,0 12px 28px #000c!important}
+html body .modal.shcf .shcb>.ttl{
+  font:900 18px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#ffe08a!important;-webkit-text-stroke:2.5px #2a1406;paint-order:stroke fill;
+  text-shadow:0 2px 0 #000!important;justify-content:center!important;margin-bottom:4px!important}
+html body .modal.shcf .shci{
+  width:120px!important;height:120px!important;margin:4px auto 6px!important;
+  filter:drop-shadow(0 3px 4px #000a)}
+html body .modal.shcf .shcb>b{
+  font:900 15px Maplestory,"Noto Sans KR",sans-serif!important;color:#fff!important;
+  text-shadow:0 1px 2px #000!important;margin-top:2px!important}
+html body .modal.shcf .shcb>small{
+  display:block;margin-top:3px;
+  font:800 11.5px Maplestory,"Noto Sans KR",sans-serif!important;color:#ffd9a0!important;
+  text-shadow:0 1px 1px #000}
+html body .modal.shcf .shcbt{
+  display:flex!important;gap:10px!important;justify-content:center!important;
+  margin-top:12px!important}
+html body .modal.shcf .shcbt .btn{
+  min-width:96px!important;padding:8px 10px!important;
+  font:800 13px Maplestory,"Noto Sans KR",sans-serif!important}
+body.nofx .modal.shcf,body.tglite .modal.shcf{animation:none!important}
+`;
+document.head.appendChild(st);
+})();
