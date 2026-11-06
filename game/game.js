@@ -6572,3 +6572,68 @@ const wrap=function(){
 };
 idleInfo=wrap;G.idleInfo=wrap;
 })();
+/* r599: (1) FEVER label/bar height align + cheaper full/on chrome (no blur glow — boss fps).
+   (2) gear-compare: stronger brush NEW/착용 중, grade frames, green/red real diffs, primary 장착. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* FEVER align: label pill and bar share 14px inner height inside 20px plate */
+html body #battle #fevg,html body #fevg{
+  height:20px!important;box-sizing:border-box!important;
+  padding:3px 6px 3px 4px!important;gap:6px!important;
+  align-items:center!important;
+  /* cheap plate — solid border, no soft blur glow */
+  box-shadow:inset 0 0 0 1px #0009,0 1px 2px #0008!important}
+html body #battle #fevg>b,html body #fevg>b{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  height:14px!important;line-height:14px!important;min-width:40px;
+  font-size:11px!important;padding:0 5px;margin:0;
+  border-radius:4px;background:#1a1008aa;border:1px solid #6a4a28;
+  box-sizing:border-box}
+html body #battle #fevg .fvb,html body #fevg .fvb{
+  height:14px!important;margin:0!important;flex:1;align-self:center;
+  border-radius:5px!important;box-sizing:border-box}
+/* cheaper full/on: border + inset only, no 12–14px blur */
+html body #battle #fevg.full,html body #fevg.full,
+html body #battle #fevg.on,html body #fevg.on{
+  box-shadow:inset 0 0 0 1px #ffe08a55,0 1px 2px #0008!important}
+html body #battle #fevg.full>b,html body #fevg.full>b{border-color:#c9a05a;background:#3a2810cc}
+html body #battle #fevg.on>b,html body #fevg.on>b{border-color:#ff9a5a;background:#401810cc}
+body.nofx #fevg.full .fvb i,body.tglite #fevg.full .fvb i,
+body.nofx #battle #fevg.full .fvb i,body.tglite #battle #fevg.full .fvb i,
+body.fxoff #fevg.full .fvb i,
+body.nofx #fevg.full,body.tglite #fevg.full,body.nofx #fevg.on,body.tglite #fevg.on{animation:none!important;filter:none!important}
+
+/* gear compare — brush headers + frames + primary 장착 */
+html body #panel .cmpwrap .cmpc .brush{
+  margin:8px auto 2px!important;width:88%!important;padding:5px 0 4px!important;
+  font:900 13px Maplestory,"Noto Sans KR",sans-serif!important;
+  letter-spacing:.5px;text-shadow:0 1px 0 #fff6;
+  clip-path:polygon(4% 8%,100% 0,96% 92%,0 100%);
+  filter:drop-shadow(0 2px 1px #0008)}
+html body #panel .cmpwrap .cmpc.own .brush{
+  background:linear-gradient(90deg,#0000,#e8d4a8 12%,#f0e0b8 50%,#e8d4a8 88%,#0000)!important;
+  color:#3a2a10!important}
+html body #panel .cmpwrap .cmpc.new .brush{
+  background:linear-gradient(90deg,#0000,#c82818 12%,#e04028 50%,#c82818 88%,#0000)!important;
+  color:#fff!important;text-shadow:0 1px 0 #5a0a00,0 0 4px #0006!important}
+html body #panel .cmpwrap .cmpc{
+  border:2.5px solid #0b0d0f!important;border-radius:10px!important;
+  box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--rc,#888) 70%,#fff3),
+    0 0 0 1px color-mix(in srgb,var(--rc,#888) 40%,transparent),0 3px 8px #0007!important}
+html body #panel .cmpwrap .pdiff.up{color:#7dff9a!important;border-color:#3adfff!important;
+  text-shadow:0 0 6px #2aff8866;font-size:15px!important}
+html body #panel .cmpwrap .pdiff.down{color:#ff8a7a!important;border-color:#ff6a5a!important;
+  text-shadow:0 0 6px #ff4a3a55;font-size:15px!important}
+html body #panel .cmpwrap .srow2 b .dv505.up,html body #panel .cmpwrap .srow2 b i.up{color:#5dff7a!important}
+html body #panel .cmpwrap .srow2 b .dv505.down,html body #panel .cmpwrap .srow2 b i.down{color:#ff6a6a!important}
+html body #panel .br444 #eq.pill.green{
+  min-width:120px;padding:10px 18px!important;font:900 15px Maplestory,sans-serif!important;
+  background:linear-gradient(#6ad03a,#2a8a18)!important;border:2px solid #c8ff9a!important;
+  box-shadow:0 3px 0 #1a5010,0 4px 10px #0006!important;color:#fff!important}
+html body #panel .br444 #eq.pill.green.rec444{box-shadow:0 0 0 2px #fff6,0 3px 0 #1a5010,0 0 14px #ffe37a88!important}
+html body #panel .br444 #sl.pill.red{opacity:.92;font-weight:800}
+body.nofx #panel .br444 #eq.rec444,body.tglite #panel .br444 #eq.rec444{animation:none!important}
+`;
+document.head.appendChild(st);
+})();
