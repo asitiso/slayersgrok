@@ -6637,3 +6637,169 @@ body.nofx #panel .br444 #eq.rec444,body.tglite #panel .br444 #eq.rec444{animatio
 `;
 document.head.appendChild(st);
 })();
+/* r600: (1) gear-compare srow2 single-line / stacked diff so 전투력+▲ don't wrap;
+   (2) 판매/장착 (+추천) fully inside sheet panel; (3) skill socket ring polish —
+   readable CD sweep, ready rim, number stroke; static under nofx/tglite; CSS only. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* --- gear compare rows: label nowrap; value+diff stay together --- */
+html body #panel .cmpwrap .srow2{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:4px!important;padding:3px 6px!important;margin-top:2px!important;
+  min-height:22px;box-sizing:border-box}
+html body #panel .cmpwrap .srow2>span{
+  flex:none!important;white-space:nowrap!important;word-break:keep-all!important;
+  font-size:11px!important;letter-spacing:-.2px;color:#e8dcc0}
+html body #panel .cmpwrap .srow2>b{
+  flex:1 1 auto;min-width:0;display:flex!important;flex-direction:column!important;
+  align-items:flex-end!important;justify-content:center;
+  white-space:nowrap!important;font-size:12px!important;line-height:1.15!important;
+  gap:0!important}
+html body #panel .cmpwrap .srow2>b>.dv505,
+html body #panel .cmpwrap .srow2>b>.tr505,
+html body #panel .cmpwrap .srow2>b>i.up,
+html body #panel .cmpwrap .srow2>b>i.down{
+  display:inline!important}
+/* pack diff+triangle onto one sub-line under the value (right-aligned) */
+html body #panel .cmpwrap .srow2>b{
+  /* use wrap so first text node = value line, then dv+tr share next line */
+  flex-flow:row wrap!important;justify-content:flex-end!important;column-gap:3px;row-gap:0}
+html body #panel .cmpwrap .srow2>b>.dv505{
+  font-size:9px!important;margin-left:0!important;font-weight:800;line-height:1.1}
+html body #panel .cmpwrap .srow2>b>.tr505{
+  margin-left:2px!important;transform:scale(.9);transform-origin:center}
+html body #panel .cmpwrap .cmpc.own .srow2>b,
+html body #panel .cmpwrap .cmpc.new .srow2>b{min-height:22px}
+
+/* --- buttons fully inside panel; 추천 tag visible --- */
+html body #sheet:has(.br444) #panel{
+  padding-bottom:28px!important}
+html body #panel .br444{
+  margin:10px 12px 18px!important;padding-top:6px!important;
+  position:relative;z-index:2;flex-shrink:0}
+html body #panel .br444 .pill{
+  overflow:visible!important}
+html body #panel .br444 .rec444::after{
+  top:-11px!important;right:-2px!important;z-index:3;
+  box-shadow:0 1px 2px #0008}
+html body #sheet:has(.cmpwrap){
+  /* keep bottom frame from eating the btnrow */
+  overflow:visible!important}
+html body #sheet:has(.cmpwrap) #panel{
+  overflow-x:hidden;overflow-y:auto}
+
+/* --- skill socket polish (cheap CSS; no filter:blur; static under nofx/tglite) --- */
+html body #skills .sk{
+  box-shadow:inset 0 0 0 1.5px #1a1008,0 0 0 1.5px #b8904888,0 2px 0 #0006!important}
+html body #skills .sk .cdsw{
+  background:conic-gradient(from 0deg,
+    #0000 0 calc(360deg - var(--cdp,0)*3.6deg),
+    #0a0604e0 0 360deg)!important}
+html body #skills .sk .cdsw.on::after{
+  /* thin gold tip on the sweep edge — no blur filter */
+  background:conic-gradient(from calc(360deg - var(--cdp,0)*3.6deg - 8deg),
+    #0000 0,#ffe08acc 7deg,#0000 10deg)!important}
+html body #skills .sk .t{
+  z-index:3!important;color:#fff6d0!important;
+  -webkit-text-stroke:3.5px #1a0c04!important;paint-order:stroke fill;
+  text-shadow:0 1px 0 #000,0 0 2px #000c!important;
+  font:900 16px/1 Maplestory,"Noto Sans KR",sans-serif!important}
+html body #skills .sk.ready:not(.lock){
+  box-shadow:inset 0 0 0 2px #ffe9a8,0 0 0 2px #e8a028,0 0 0 4px #ffd06044,0 2px 0 #0006!important}
+html body #skills .sk.ready:not(.lock)::before{
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  box-shadow:inset 0 0 0 1.5px #ffe08a88;pointer-events:none;z-index:0}
+/* static under low fx — kill ready flash animations / filter glow */
+body.nofx #skills .sk.ready:not(.lock),
+body.tglite #skills .sk.ready:not(.lock),
+body.fxoff #skills .sk.ready:not(.lock){
+  animation:none!important;filter:none!important;
+  box-shadow:inset 0 0 0 2px #ffe9a8,0 0 0 2px #c9953f,0 2px 0 #0006!important}
+body.nofx #skills .sk.rdyfx,body.tglite #skills .sk.rdyfx,body.fxoff #skills .sk.rdyfx,
+body.nofx #skills .sk.rdyfx::before,body.tglite #skills .sk.rdyfx::before,body.fxoff #skills .sk.rdyfx::before,
+body.nofx #skills .sk.rdyfx::after,body.tglite #skills .sk.rdyfx::after,body.fxoff #skills .sk.rdyfx::after{
+  animation:none!important;filter:none!important}
+body.nofx #skills .sk .cdsw.on::after,
+body.tglite #skills .sk .cdsw.on::after{display:none!important}
+`;
+document.head.appendChild(st);
+})();
+;(()=>{/* r600b: pack NEW-column dv505+tr505 onto one sub-line under the value (display only) */
+const pack=()=>{
+  document.querySelectorAll('#panel .cmpwrap .cmpc .srow2>b').forEach(b=>{
+    if(b.dataset.r600)return;b.dataset.r600=1;
+    const dv=b.querySelector(':scope>.dv505'),tr=b.querySelector(':scope>.tr505,:scope>i.up,:scope>i.down');
+    if(!dv&&!tr)return;
+    const sub=document.createElement('span');sub.className='r600d';
+    if(dv)sub.appendChild(dv);if(tr)sub.appendChild(tr);
+    b.appendChild(sub);
+  });
+};
+const rp=renderPanel;renderPanel=function(){const r=rp.apply(this,arguments);try{pack()}catch(_){}return r};
+const st=document.createElement('style');
+st.textContent=`html body #panel .cmpwrap .srow2>b{flex-direction:column!important;flex-wrap:nowrap!important;align-items:flex-end!important;row-gap:1px}
+html body #panel .cmpwrap .srow2>b>.r600d{display:inline-flex!important;align-items:center;gap:2px;white-space:nowrap;line-height:1}
+html body #panel .cmpwrap .srow2>b>.r600d>.dv505{font-size:9px!important;margin:0!important}
+html body #panel .cmpwrap .srow2>b>.r600d>.tr505{margin:0!important}`;
+document.head.appendChild(st);
+})();
+;(()=>{/* r600c: fix dv+tr pack; force single-line rows (aligned); pull 판매/장착 inside sheet */
+const pack=()=>{
+  document.querySelectorAll('#panel .cmpwrap .cmpc .srow2>b').forEach(b=>{
+    let sub=b.querySelector(':scope>.r600d');
+    if(!sub){sub=document.createElement('span');sub.className='r600d';b.appendChild(sub)}
+    [...b.children].forEach(ch=>{
+      if(ch===sub)return;
+      if(ch.classList&&(ch.classList.contains('dv505')||ch.classList.contains('tr505')||ch.classList.contains('up')||ch.classList.contains('down')))
+        sub.appendChild(ch);
+    });
+  });
+};
+const rp=renderPanel;renderPanel=function(){const r=rp.apply(this,arguments);try{pack()}catch(_){}return r};
+const st=document.createElement('style');
+st.textContent=`
+/* single-line: label | value +diff ▲  — both columns same height */
+html body #panel .cmpwrap .srow2{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:4px!important;padding:4px 6px!important;margin-top:2px!important;
+  min-height:24px!important;box-sizing:border-box}
+html body #panel .cmpwrap .srow2>span{
+  flex:none!important;white-space:nowrap!important;word-break:keep-all!important;
+  overflow:visible!important;font-size:11px!important;line-height:1.2!important}
+html body #panel .cmpwrap .srow2>b{
+  flex:1 1 auto;min-width:0;display:inline-flex!important;flex-direction:row!important;
+  flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-end!important;
+  gap:3px!important;white-space:nowrap!important;font-size:11.5px!important;line-height:1.2!important;
+  min-height:0!important}
+html body #panel .cmpwrap .srow2>b>.r600d{
+  display:inline-flex!important;flex-direction:row!important;align-items:center!important;
+  flex-wrap:nowrap!important;gap:2px!important;white-space:nowrap!important;line-height:1}
+html body #panel .cmpwrap .srow2>b>.r600d>.dv505{font-size:9px!important;margin:0!important}
+html body #panel .cmpwrap .srow2>b>.r600d>.tr505{margin:0!important;transform:scale(.85)}
+
+/* extend sheet down slightly so btnrow + 추천 sit inside the frame */
+html body #sheet:has(.cmpwrap){
+  bottom:78px!important;overflow:visible!important}
+html body #sheet:has(.cmpwrap) #panel{
+  padding-bottom:22px!important}
+html body #panel .br444{
+  margin:8px 12px 14px!important;padding-top:8px!important}
+html body #panel .br444 .rec444::after{
+  top:-12px!important;right:0!important;z-index:5}
+`;
+document.head.appendChild(st);
+})();
+;(()=>{/* r600d: more btn clearance; hard-lock compare labels to one glyph line */
+const st=document.createElement('style');
+st.textContent=`
+html body #panel .cmpwrap .srow2>span{
+  white-space:nowrap!important;word-break:keep-all!important;line-break:strict!important;
+  overflow-wrap:normal!important;overflow:hidden!important;text-overflow:clip!important;
+  max-width:none!important;flex:0 0 auto!important}
+html body #sheet:has(.cmpwrap){bottom:70px!important}
+html body #sheet:has(.cmpwrap) #panel{padding-bottom:26px!important}
+html body #panel .br444{margin:10px 12px 20px!important;padding-top:10px!important}
+`;
+document.head.appendChild(st);
+})();
