@@ -7418,8 +7418,7 @@ html body #screen .rgrid .rcard{
   overflow:hidden!important}
 html body #screen .rgrid .rcard.own{
   background:linear-gradient(180deg,#3a2818f0,#1a100af5)!important}
-html body #screen .rgrid .rcard.own.inP,
-html body #screen .rgrid .rcard.own:has(.ck){
+html body #screen .rgrid .rcard.own.inP{
   box-shadow:inset 0 0 0 2px #6ec8ff,inset 0 0 0 4px #1a4060aa,
     0 0 10px #4ab0ff66,0 2px 6px #000a!important}
 html body #screen .rgrid .rcard:not(.own){
@@ -7574,7 +7573,11 @@ const pop=(title,sub)=>{
   if(!POP){POP=document.createElement('div');POP.id='stpop607';document.body.appendChild(POP)}
   POP.innerHTML=title+(sub?`<small>${sub}</small>`:'');
   POP.classList.remove('on');void POP.offsetWidth;POP.classList.add('on');
-  clearTimeout(POP._t);POP._t=setTimeout(()=>POP.classList.remove('on'),950);
+  clearTimeout(POP._t);POP._t=setTimeout(()=>{
+    POP.classList.remove('on');
+    if(POP&&POP.parentNode)POP.remove();
+    POP=null;
+  },950);
 };
 
 const paintParty=()=>{
@@ -7683,4 +7686,97 @@ C.awake=function(k){
 };
 
 try{paintParty();paintStar()}catch(_){}
+})();
+
+/* r608: FPS — tear down #stpop607 after pop; summon polish (owned strip,
+   cost lines, pity 누적, hide dup spity). Display only, real values.
+   Keep r607 party/승급. No pull-logic change. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+html body #stpop607{contain:layout style}
+html body #stpop607:not(.on){display:none!important;pointer-events:none!important}
+html body #screen .sbody:has(.smp)>.spity{display:none!important}
+html body #screen .suown608{
+  display:flex;justify-content:center;gap:8px;margin:6px 4px 2px;flex-wrap:wrap}
+html body #screen .suown608>span{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px 3px 5px;border-radius:10px;
+  background:#0e1018cc;border:1.5px solid #c9a24a88;
+  box-shadow:inset 0 0 0 1px #0008,0 1px 2px #0008;
+  color:#fff6d8;font:900 12px/1 Maplestory,sans-serif;
+  text-shadow:0 1px 0 #000;letter-spacing:0}
+html body #screen .suown608>span>img{width:16px;height:16px;object-fit:contain}
+html body #screen .suown608>span>small{
+  font:800 10px Maplestory,sans-serif;color:#cfe0ff;margin-left:2px;opacity:.9}
+html body #screen .sumbtns .pill>em.sucost608{
+  display:flex!important;align-items:center;justify-content:center;gap:3px;
+  margin-top:2px;font:900 11px/1 Maplestory,sans-serif;font-style:normal;
+  color:#fff;text-shadow:0 1px 0 #000a;letter-spacing:0}
+html body #screen .sumbtns .pill>em.sucost608>img{width:14px;height:14px}
+html body #screen .sumbtns .pill>em.sucost608.short{color:#ff8a7a!important}
+html body #screen .smp>b{
+  flex:none;font:900 11.5px/1.15 Maplestory,sans-serif;color:#fff6d8;
+  text-shadow:0 1px 0 #000;white-space:nowrap;text-align:right}
+html body #screen .smp>b>u{
+  display:block;text-decoration:none;font:800 10px Maplestory,sans-serif;color:#cfe0ff}
+html body #screen .sumban .bt>b{
+  font:900 16px/1.15 Maplestory,sans-serif!important;
+  text-shadow:0 2px 0 #1a0a30,0 0 8px #000!important;letter-spacing:0!important}
+html body #screen .sumban .bt>small{
+  font:800 11px Maplestory,sans-serif!important;color:#ffe08a!important;
+  text-shadow:0 1px 0 #000!important}
+html body #screen .sucd.cur365 .sucur{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+html body #screen .sucd.cur365 .sucur>div>b{
+  font:900 15px/1.1 Maplestory,sans-serif!important;color:#fff!important;
+  text-shadow:0 1px 0 #000,0 0 3px #000!important}
+html body #screen .sutab>span[data-st="2"]{position:relative}
+html body #screen .sutab>span[data-st="2"]::after{
+  content:"ⓘ";position:absolute;right:4px;top:2px;font-size:9px;opacity:.85}
+`;
+document.head.appendChild(st);
+
+const paintSummon=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='summon')return;
+  const s=C.S();
+  const tk=s.tickets||0, gems=s.gems||0, pity=s.pity||0, mile=s.mile||0;
+  const P=C.PITY||80;
+  const left=Math.max(0,P-pity);
+  const btns=sc.querySelector('.sumbtns');
+  if(btns){
+    let own=sc.querySelector('.suown608');
+    const html=`<span><img src="${A}it2_ticket.png">${tk}<small>소환권</small></span>`+
+      `<span><img src="${A}it2_gem.png">${fmt(gems)}<small>다이아</small></span>`+
+      `<span><img src="${A}it3_mileagestar.png">${mile}/100<small>마일리지</small></span>`;
+    if(!own){own=document.createElement('div');own.className='suown608';own.innerHTML=html;btns.before(own)}
+    else own.innerHTML=html;
+  }
+  const setCost=(sel,needTk,gemCost)=>{
+    const b=sc.querySelector(sel);if(!b)return;
+    let em=b.querySelector('em.sucost608');
+    const useTk=tk>=needTk, ic=useTk?'it2_ticket.png':'it2_gem.png';
+    const short=!useTk&&gems<gemCost;
+    const tx=`<img src="${A}${ic}">${useTk?needTk:fmt(gemCost)}`;
+    if(!em){em=document.createElement('em');em.className='sucost608';b.appendChild(em)}
+    em.classList.toggle('short',!!short);em.innerHTML=tx;
+    const sm=b.querySelector(':scope>small');if(sm)sm.style.display='none';
+  };
+  setCost('#su1',1,BAL.summon);
+  setCost('#su10',10,BAL.summon10);
+  const smp=sc.querySelector('.smp');
+  if(smp){
+    let b=smp.querySelector(':scope>b');
+    if(!b){b=document.createElement('b');smp.appendChild(b)}
+    b.innerHTML=`누적 ${pity}/${P}<u>확정까지 ${left}회</u>`;
+  }
+};
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{if(G.screen==='summon')paintSummon()}catch(_){}
+  return r;
+};
+try{if(G.screen==='summon')paintSummon()}catch(_){}
 })();
