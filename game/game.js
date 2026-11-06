@@ -6050,3 +6050,47 @@ const flash=(sel)=>{const el=document.querySelector(sel);if(!el)return;el.classL
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab!=='train')return r;const p=document.getElementById('panel');if(!p)return r;
 p.querySelectorAll('.tcard [data-s]').forEach(el=>{if(el._r591)return;el._r591=1;el.onclick=()=>{const k=el.dataset.s;const ok=C.train(k);renderPanel();if(!ok)return;const lv=(C.S().stl||{})[k]||0,st=(D.STATS||[]).find(x=>x.k===k);const sel=`.tcard:has([data-s="${k}"])`;flash(sel);if(G._ufx486)G._ufx486(sel,'lv','Lv '+lv,(st&&st.n)||'','lvup')}});
 const t10=document.getElementById('t10');if(t10&&!t10._r591){t10._r591=1;t10.onclick=()=>{let n=0;for(let i=0;i<300;i++){if(!C.train(C.cheapestStat().k))break;n++}toast('수련 '+n+'회 완료');renderPanel();if(n>0){flash('.trainhero');if(G._ufx486)G._ufx486('.trainhero','lv','+'+n+' 수련','최대 강화','lvup')}}}}catch(_){}return r}})();
+
+;(()=>{/* r592 display: 무한의 탑 spiral plaques — replace lock/flag/door with the floor's real T.mob portrait (silhouette when locked); cleared floors keep a check; milestone crest when T.rew actually grants gem/ticket (%5/%10/%30). No invented floors/rewards. Static CSS only (nofx/tglite ok). */
+const st=document.createElement('style');
+st.textContent=
+'#screen .twst .tfl{overflow:visible!important}'+
+'#screen .twst .tfl>.ti.tm592{height:36px!important;width:36px;object-fit:contain;flex-shrink:0}'+
+'#screen .twst .tfl.up>.ti.tm592{filter:brightness(0) opacity(.55)!important}'+
+'#screen .twst .tfl.boss.up>.ti.tm592{filter:brightness(0) opacity(.65) drop-shadow(0 0 3px #ff6a5a88)!important}'+
+'#screen .twst .tfl.done>.ti.tm592{filter:none;opacity:.95}'+
+'#screen .twst .tfl.cur>.ti.tm592{filter:drop-shadow(0 0 3px #ffe08a);height:38px!important;width:38px}'+
+'#screen .twst .tfl>.tk592{position:absolute;right:6px;top:-7px;height:18px;width:18px;object-fit:contain;filter:drop-shadow(0 1px 1px #000a);pointer-events:none;z-index:4}'+
+'#screen .twst .tfl>.tc592{position:absolute;left:-6px;bottom:-6px;height:22px;width:22px;object-fit:contain;filter:drop-shadow(0 1px 2px #000a);pointer-events:none;z-index:4}'+
+'#screen .twst .tfl.boss>.tc592{height:24px;width:24px;filter:drop-shadow(0 0 3px #ffd060) drop-shadow(0 1px 2px #000a)}'+
+'body.tglite #screen .twst .tfl.up>.ti.tm592,body.nofx #screen .twst .tfl.up>.ti.tm592{opacity:.5!important}'+
+'body.tglite #screen .twst .tfl.cur,body.nofx #screen .twst .tfl.cur{animation:none!important}';
+document.head.appendChild(st);
+function decorate(){
+  if(G.screen!='tower')return;
+  const T=C.T;if(!T||!T.mob)return;
+  const list=document.querySelectorAll('#screen .twst .tfl');
+  for(let i=0;i<list.length;i++){
+    const el=list[i];
+    if(el.dataset.r592)continue;
+    const b=el.querySelector(':scope>b');
+    const f=b&&parseInt(b.textContent,10);
+    if(!(f>0))continue;
+    el.dataset.r592='1';
+    const mob=T.mob(f);if(!mob)continue;
+    let ti=el.querySelector(':scope>.ti');
+    if(ti){ti.src=A+mob;ti.classList.add('tm592');ti.removeAttribute('alt')}
+    else{ti=document.createElement('img');ti.className='ti tm592';ti.src=A+mob;el.insertBefore(ti,el.firstChild)}
+    if(el.classList.contains('done')&&!el.querySelector(':scope>.tk592')){
+      const mk=document.createElement('img');mk.className='tk592';mk.src=A+'pass_check.png';mk.alt='';el.appendChild(mk);
+    }
+    const r=T.rew(f);
+    if((r&&(r.gem||r.tk))&&!el.querySelector(':scope>.tc592')){
+      const c=document.createElement('img');c.className='tc592';
+      c.src=A+(T.boss(f)?'ic4/crown.png':'hc_crest_red.png');c.alt='';el.appendChild(c);
+    }
+  }
+}
+const rs=renderScreen;
+renderScreen=function(){const r=rs.apply(this,arguments);try{decorate()}catch(e){console.warn(e)}return r};
+})();
