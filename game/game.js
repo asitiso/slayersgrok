@@ -7098,3 +7098,103 @@ body.nofx .modal.shcf,body.tglite .modal.shcf{animation:none!important}
 `;
 document.head.appendChild(st);
 })();
+
+/* r604: 보상 획득 — compact tile grid (≤12 no scroll), labels wrap fully,
+   close hint below grid; normalize 마정구 icon to it2_exp; never show wallet
+   totals (display only). 임무 row polish light. Pooled, nofx/tglite static. */
+;(()=>{
+/* normalize reward tile icons: 마정구 always purple orb */
+const orb='it2_exp.png';
+const fixItems=items=>{
+  if(!items||!items.length)return items;
+  return items.map(it=>{
+    if(!it||!it[0])return it;
+    const lab=String(it[2]||'');
+    const img=it[0];
+    if(/마정구/.test(lab) || img==='it3_gempouch.png')
+      return [orb, it[1], /마정구/.test(lab)?lab: (lab||'마정구')];
+    return it;
+  });
+};
+const orp=rewardPop;
+rewardPop=function(items,sub){
+  return orp.call(this, fixItems(items), sub);
+};
+G.rewardPop=rewardPop;
+
+const st=document.createElement('style');
+st.textContent=`
+/* compact reward grid: ~4×3 fits without scroll; tap stays below */
+html body .rwpop .rwbox,
+html body .rwpop .rwbox.rpf{
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;
+  height:auto!important;min-height:0!important;
+  max-height:min(86vh,640px)!important;
+  width:min(320px,94vw)!important;
+  padding:6px 8px 8px!important;
+  box-sizing:border-box!important;overflow:visible!important}
+html body .rwpop .rpic{flex:none!important;margin:-62px auto 2px!important}
+html body .rwpop .rwt,html body .rwpop .rws{flex:none!important}
+html body .rwpop .rwi{
+  display:flex!important;flex-wrap:wrap!important;
+  justify-content:center!important;align-content:flex-start!important;
+  gap:6px!important;
+  margin:6px 0 4px!important;padding:2px 0 0!important;
+  width:100%!important;box-sizing:border-box!important;
+  height:auto!important;min-height:0!important;
+  max-height:none!important;overflow:visible!important;
+  flex:0 1 auto!important}
+/* when many tiles still overflow viewport — scroll inside rwi, fade edges, tap outside */
+html body .rwpop .rwbox.rwmany .rwi{
+  max-height:min(42vh,320px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+  -webkit-mask-image:linear-gradient(#0000,#000 10px,#000 calc(100% - 10px),#0000);
+  mask-image:linear-gradient(#0000,#000 10px,#000 calc(100% - 10px),#0000);
+  padding:8px 0!important}
+html body .rwpop .rwtap{
+  flex:none!important;display:block!important;
+  margin:4px 0 0!important;padding:0!important;
+  position:relative!important;z-index:2!important}
+/* smaller tiles — 4 across in 300px */
+html body .rwpop .rwc{
+  width:68px!important;padding:6px 2px 5px!important;border-radius:10px!important;
+  flex:0 0 auto!important;margin:0!important;box-sizing:border-box!important}
+html body .rwpop .rwc img{
+  width:34px!important;height:34px!important;object-fit:contain!important}
+html body .rwpop .rwc b{
+  font:900 12px Maplestory,"Noto Sans KR",sans-serif!important;
+  margin-top:2px!important;line-height:1.1!important}
+html body .rwpop .rwc small{
+  display:block!important;max-width:64px!important;margin:1px auto 0!important;
+  font:800 9px/1.2 Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#ffd9a0!important;text-shadow:0 1px 1px #000;
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
+  word-break:keep-all!important;overflow-wrap:anywhere!important;
+  max-height:2.4em!important}
+body.nofx .rwpop .rwc,body.tglite .rwpop .rwc{animation:none!important}
+body.nofx .rwpop .rwtap,body.tglite .rwpop .rwtap{animation:none!important}
+
+/* 임무 rows — slightly tighter 화룡전 plate */
+html body #panel .mqr{
+  background:linear-gradient(#2a1a10f0,#160e08f5)!important;
+  border:2px solid #0b0d0f!important;border-radius:12px!important;
+  box-shadow:inset 0 0 0 1.5px #e8b86088,0 2px 6px #0008!important}
+html body #panel .mqr>.mqi{
+  background:radial-gradient(circle at 50% 30%,#6a4a22,#1a1008)!important;
+  box-shadow:inset 0 0 0 1.5px #e8b86099,0 2px 4px #0008!important}
+html body #panel .mqr .f b{
+  font:800 12.5px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#ffe9c8!important;text-shadow:0 1px 1px #000}
+`;
+document.head.appendChild(st);
+
+/* mark many-tile pops for scroll+fade */
+const mark=()=>{
+  document.querySelectorAll('.rwpop .rwbox').forEach(bx=>{
+    const ri=bx.querySelector('.rwi');if(!ri)return;
+    const n=ri.querySelectorAll('.rwc').length;
+    bx.classList.toggle('rwmany', n>12);
+  });
+};
+new MutationObserver(()=>mark()).observe(document.body,{childList:true,subtree:true});
+})();
