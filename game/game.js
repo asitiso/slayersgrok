@@ -8275,3 +8275,60 @@ renderScreen=function(){
 };
 try{paint()}catch(_){}
 })();
+
+/* r615: 보상 획득 — sync rwmany mark (MO arm-race safe); close after last
+   tile settles; keep r604 compact height:auto / 4-across. Display only.
+   (r614 1690_reward_10 was mid-anim + invented TEST pack, not a layout break.) */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+html body .rwpop .rwbox,
+html body .rwpop .rwbox.rpf{
+  height:auto!important;min-height:0!important;
+  display:flex!important;flex-direction:column!important}
+html body .rwpop .rwi{
+  height:auto!important;min-height:0!important;
+  max-height:none!important;overflow:visible!important;
+  flex:0 1 auto!important}
+html body .rwpop .rwbox.rwmany .rwi{
+  max-height:min(42vh,320px)!important;overflow-y:auto!important;overflow-x:hidden!important}
+`;
+document.head.appendChild(st);
+
+const mark=()=>{
+  document.querySelectorAll('.rwpop .rwbox').forEach(bx=>{
+    const ri=bx.querySelector('.rwi');if(!ri)return;
+    bx.classList.toggle('rwmany', ri.querySelectorAll('.rwc').length>12);
+  });
+};
+
+const wrap=fn=>{
+  const o=fn;
+  const w=function(items,sub){
+    const n=(items&&items.length)||0;
+    const r=o.apply(this,arguments);
+    try{
+      mark();
+      /* keep pop up until last staggered tile settles (.18+(n-1)*.12+.4s) */
+      const need=Math.ceil((.18+Math.max(0,n-1)*.12+.55)*1000)+400;
+      document.querySelectorAll('.rwpop').forEach(d=>{
+        if(d._r615t)return;
+        d._r615t=1;
+        /* base rewardPop already schedules 4s close; stretch if tiles need longer */
+        if(need>4000){
+          const closer=()=>{if(!d.isConnected)return;d.classList.add('out');setTimeout(()=>d.remove(),220)};
+          setTimeout(closer, need);
+        }
+      });
+    }catch(_){}
+    return r;
+  };
+  return w;
+};
+if(typeof rewardPop==='function'){
+  rewardPop=wrap(rewardPop);
+  G.rewardPop=rewardPop;
+}else if(G.rewardPop){
+  G.rewardPop=wrap(G.rewardPop);
+}
+})();
