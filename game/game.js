@@ -7198,3 +7198,135 @@ const mark=()=>{
 };
 new MutationObserver(()=>mark()).observe(document.body,{childList:true,subtree:true});
 })();
+
+/* r605: 임무 tab icons (ic3_mq_daily/weekly/ach); unify row CTA sizes
+   (받기 gold / 바로가기 green secondary / 진행 중 muted pill); claimable row
+   gold glow static under nofx; drop 0% plate when count already 0/N.
+   Display only, pooled. Keep row task icons. */
+;(()=>{
+const TAB={d:'ic3_mq_daily.png',w:'ic3_mq_weekly.png',a:'ic3_mq_ach.png'};
+const GO={train:1,arena:1,donate:1,collect:1}; /* real handlers exist (r383) */
+
+const st=document.createElement('style');
+st.textContent=`
+/* tab icons left of label; keep red dots */
+html body #panel .mqtabs span{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important}
+html body #panel .mqtabs span>img.mqtic{
+  width:18px!important;height:18px!important;object-fit:contain!important;
+  flex:none!important;filter:drop-shadow(0 1px 1px #000a)!important;
+  pointer-events:none}
+html body #panel .mqtabs span .dot{right:-6px;top:-8px}
+
+/* equal CTA footprint */
+html body #panel .mqr>.btn{
+  flex:none!important;min-width:72px!important;width:72px!important;
+  min-height:28px!important;height:28px!important;box-sizing:border-box!important;
+  padding:0 4px!important;margin:0!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  font:800 12px/1 Maplestory,"Noto Sans KR",sans-serif!important;
+  white-space:nowrap!important}
+/* 받기 — gold (claimable) */
+html body #panel .mqr.rd>.btn:not(.off):not(.mqgo),
+html body #panel .mqr>.btn[data-ach]:not(.off),
+html body #panel .mqr>.btn[data-m]:not(.off):not(.mqgo),
+html body #panel .mqr>.btn[data-w]:not(.off):not(.mqgo){
+  background:none!important;border:10px solid transparent!important;
+  border-image:url(${A}btn_gold.png) 30 fill/10px stretch!important;
+  border-radius:0!important;box-shadow:none!important;
+  color:#fff!important;text-shadow:0 1px 0 #5a3006,0 0 2px #5a3006!important;
+  filter:drop-shadow(0 2px 2px #0007)!important;opacity:1!important}
+/* 바로가기 — secondary green, same footprint */
+html body #panel .mqr>.btn.off.mqgo{
+  background:none!important;border:10px solid transparent!important;
+  border-image:url(${A}btn_green.png) 30 fill/10px stretch!important;
+  border-radius:0!important;box-shadow:none!important;
+  color:#fff!important;filter:drop-shadow(0 2px 2px #0007)!important;
+  opacity:1!important;pointer-events:auto!important;cursor:pointer!important;
+  text-shadow:0 1px 0 #0a3a10,0 0 2px #0a3a10!important}
+/* 진행 중 — muted grey pill, same footprint; no progress overlay */
+html body #panel .mqr>.btn.off:not(.mqgo){
+  background:none!important;border:10px solid transparent!important;
+  border-image:url(${A}btn_grey.png) 30 fill/10px stretch!important;
+  border-radius:0!important;box-shadow:none!important;
+  color:#ddd!important;filter:brightness(.92)!important;opacity:.9!important;
+  text-shadow:0 1px 0 #2a2a2a!important}
+html body #panel .mqr>.btn.off:not(.mqgo).pp4::after{content:none!important;display:none!important}
+html body #panel .mqr>.btn.off:not(.mqgo).pp4{color:#ddd!important}
+
+/* drop redundant ·N% (count already in bar) */
+html body #panel .mqb>em>u.pc446{display:none!important}
+
+/* beat r489 ip489 muted pill — same footprint as 받기/바로가기 */
+html body #panel#panel .mqr .btn.off.ip489.ip489,
+html body #panel .mqr>.btn.off.ip489,
+html body #panel .mqr>.btn.off:not(.mqgo){
+  min-width:72px!important;width:72px!important;
+  min-height:28px!important;height:28px!important;
+  padding:0 4px!important;box-sizing:border-box!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  border:0!important;border-image:none!important;
+  background:#1a1008cc!important;
+  box-shadow:inset 0 0 0 1.5px #ffffff22,0 1px 2px #0008!important;
+  border-radius:14px!important;
+  font:800 12px/1 Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#c8b898!important;text-shadow:none!important;
+  opacity:1!important;filter:none!important;outline:0!important;animation:none!important}
+html body #panel#panel .mqr .btn.ip489.ip489::after,
+html body #panel#panel .mqr .btn.ip489.ip489::before{display:none!important}
+html body #panel .mqr>.btn.off.mqgo{
+  min-width:72px!important;width:72px!important;
+  min-height:28px!important;height:28px!important}
+
+
+/* claimable row subtle gold glow — static under nofx/tglite */
+html body #panel .mqr.rd{
+  box-shadow:inset 0 0 0 2px #ffd25aaa,0 0 10px #ffb03a66,0 2px 6px #0008!important}
+body.nofx #panel .mqr.rd,body.tglite #panel .mqr.rd,body.fxoff #panel .mqr.rd{
+  box-shadow:inset 0 0 0 2px #ffd25a99,0 0 6px #ffb03a44,0 2px 6px #0008!important}
+body.nofx #panel .mqr.rd .btn,body.tglite #panel .mqr.rd .btn,body.fxoff #panel .mqr.rd .btn{
+  animation:none!important}
+`;
+document.head.appendChild(st);
+
+const paint=()=>{
+  const p=document.getElementById('panel');
+  if(!p||G.tab!=='mission')return;
+  /* drop ·N% suffix (count already shown) */
+  p.querySelectorAll('.mqb>em>u.pc446').forEach(u=>u.remove());
+  /* tab icons */
+  p.querySelectorAll('.mqtabs span[data-mq]').forEach(sp=>{
+    const k=sp.dataset.mq, src=TAB[k];
+    if(!src||sp.querySelector('img.mqtic'))return;
+    const im=document.createElement('img');
+    im.className='mqtic';im.alt='';im.src=A+src;
+    sp.insertBefore(im, sp.firstChild);
+  });
+  /* CTA normalize: only 바로가기 where GO handler exists; strip 0% plate */
+  p.querySelectorAll('.mqr>.btn').forEach(bt=>{
+    const k=bt.dataset.m||bt.dataset.w||bt.dataset.ach;
+    const tx=(bt.textContent||'').trim();
+    if(bt.classList.contains('mqgo')||tx==='바로가기'){
+      if(!GO[k]){
+        /* no real handler — revert to muted 진행 중 */
+        bt.textContent='진행 중';bt.classList.remove('mqgo');
+        bt.onclick=null;
+      }
+    }
+    /* drop redundant 0% progress plate (count already in bar) */
+    if(bt.classList.contains('pp4')){
+      const p0=parseFloat(bt.style.getPropertyValue('--pp4')||'0')||0;
+      if(p0<=0.001){bt.classList.remove('pp4','h4','z4');bt.style.removeProperty('--pp4')}
+    }
+  });
+};
+const orp=renderPanel;
+renderPanel=function(){
+  const r=orp.apply(this,arguments);
+  try{paint()}catch(_){}
+  return r;
+};
+/* first paint if already on mission */
+try{paint()}catch(_){}
+})();
