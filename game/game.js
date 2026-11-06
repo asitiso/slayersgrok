@@ -5872,7 +5872,7 @@ const of=R.frame;R.frame=dt=>{try{const L=document.body.classList.contains('tgli
 ;(()=>{const st=document.createElement('style');st.textContent='.powup{animation-duration:1.2s!important}body.cc520 .powup{top:158px!important;padding:2px 10px!important;font-size:12px!important;animation-duration:.9s!important}';document.head.appendChild(st)})();
 
 /* r524: while the compact 전투력 pill sits under the HUD (cut-in band live) the small 총 피해 caption under the DPS button steps aside, so the pill never covers it (display only) */
-;(()=>{const st=document.createElement('style');st.textContent='body.cc520.pw524 #dpsBtn>.dm429{opacity:0;transition:opacity .1s}';document.head.appendChild(st);let tm=0;new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('powup')){document.body.classList.add('pw524');clearTimeout(tm);tm=setTimeout(()=>document.body.classList.remove('pw524'),1250)}}).observe(document.body,{childList:true})})();
+;(()=>{const st=document.createElement('style');st.textContent='body.cc520.pw524 #dpsBtn>.dm429{opacity:0;transition:opacity .1s}';document.head.appendChild(st);let tm=0;/* r596: was body{childList} for .powup — fold into updateHud */const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{if(document.querySelector('.powup')){document.body.classList.add('pw524');clearTimeout(tm);tm=setTimeout(()=>document.body.classList.remove('pw524'),1250)}}catch(_){}return r}})();
 ;(()=>{/* r525: 장비 sheet slot upgrade arrow - larger, readable at 390 (화룡전-style), static CSS only, display only */const st=document.createElement('style');st.textContent='#sheet .eq .up442{top:3px;right:4px;border-width:0 9px 13px;border-bottom-color:#3cff6a;filter:drop-shadow(0 0 1px #000) drop-shadow(0 1px 1px #000)}';document.head.appendChild(st)})();
 ;(()=>{/* r525: on the 장비 sheet the guide's dotted leader line is hidden when it would cross the item compare cards (the ▼ marker on the target button still points). Display only */const o=G.tutTick;if(!o)return;G.tutTick=function(){const r=o.apply(this,arguments);try{const l=document.querySelector('.tut .tl493');if(!l)return r;let hit=false;if(document.querySelector('#sheet.on')&&l.style.display!='none'){const q=l.getBoundingClientRect();if(q.height>4)document.querySelectorAll('#sheet .cmpc').forEach(c=>{const z=c.getBoundingClientRect();if(q.right>z.left&&q.left<z.right&&q.bottom>z.top+8&&q.top<z.bottom-8)hit=true})}if(hit!==l.classList.contains('hd525'))l.classList.toggle('hd525',hit)}catch(e){}return r};const st=document.createElement('style');st.textContent='.tut .tl493.hd525{opacity:0!important}';document.head.appendChild(st)})();
 ;(()=>{/* r526: 가방 장비 정렬 (기본/등급/레벨/강화) - same .csort chevrons as the hero list; reorders the tiles on screen only (state order, auto-sell and equip untouched); choice kept in memory only, no save */const C=G.C,SO=[['def','기본'],['rar','등급'],['lv','레벨'],['en','강화']];let K='def';const rs0=renderScreen;renderScreen=function(){const r=rs0.apply(this,arguments);try{if(G.screen=='bag'){const c=document.querySelectorAll('#screen .sbody>.card:not(.bgdt)')[1],gg=c&&c.querySelector('.bagg'),tt=c&&c.querySelector('.ttl');if(gg&&tt&&!c.querySelector('.csort')){const gs=Object.values(C.S().gear||{}).filter(Boolean),ti=[...gg.querySelectorAll(':scope>.bi')];if(ti.length>1){const RK=Object.keys(D.RAR),v=(x,i)=>[K=='rar'?-RK.indexOf(String(x.r)):K=='lv'?-(x.lv||0):K=='en'?-(x.en||0):0,K=='def'?0:-RK.indexOf(String(x.r)),i];ti.forEach((b,i)=>b.dataset.gi=i);gg.addEventListener('click',()=>{const f=()=>gg.querySelectorAll(':scope>.bi').forEach(t=>t.classList.toggle('bgsel',+t.dataset.gi==(G.bgSelG||0)));f()});const P=ti.map((b,i)=>({b,k:gs[i]?v(gs[i],i):[0,0,i]}));P.sort((a,b)=>{for(let j=0;j<3;j++)if(a.k[j]!=b.k[j])return a.k[j]-b.k[j];return 0});P.forEach(p=>gg.appendChild(p.b));tt.insertAdjacentHTML('afterend',`<div class="csort bs526">${SO.map(([k,n])=>`<span class="cso ${K==k?'on':''}" data-so=${k=='en'?'lv':k} data-k526=${k}>${n}</span>`).join('')}</div>`);c.querySelectorAll('.bs526 .cso').forEach(b=>b.onclick=e=>{e.stopPropagation();if(K==b.dataset.k526)return;K=b.dataset.k526;const y=(document.querySelector('#screen .sbody')||{}).scrollTop;renderScreen();const sb=document.querySelector('#screen .sbody');if(sb&&y!=null)sb.scrollTop=y})}}}}catch(e){console.warn(e)}return r}})();
@@ -6283,11 +6283,50 @@ const polish=n=>{
   n.classList.add('pw595');
   n.innerHTML=`<img class=pwi src="${A}st_atk.png" alt=""><span class=pwl>전투력</span><b>${delta}</b><i>▲</i>`;
 };
-new MutationObserver(ms=>{
-  for(const m of ms)for(const n of m.addedNodes){
-    if(n.nodeType!==1)continue;
-    if(n.classList&&n.classList.contains('powup'))polish(n);
-  }
-}).observe(document.body,{childList:true});
+/* r596: was document.body{childList} — broad; polish only via updateHud (powup is created there) */
+const ou=updateHud;
+updateHud=function(){const r=ou.apply(this,arguments);try{document.querySelectorAll('.powup:not(.pw595)').forEach(polish)}catch(_){}return r};
 document.querySelectorAll('.powup').forEach(polish);
+})();
+/* r596: (1) r595 .powup polish no longer uses body MutationObserver — direct updateHud hook only.
+   (2) display-only: .vic.lose crest+steel/crimson panel to STAGE CLEAR polish level; keep 2×2 강해지는 방법. */
+;(()=>{
+const A=(window.A||'assets/');
+new Image().src=A+'clear_banner.png';
+new Image().src=A+'sd_lina_defeat.png';
+const st=document.createElement('style');
+st.textContent=`
+/* r596 defeat crest (mirrors .vic.clr .clbw; muted crimson/steel via filter on clear_banner) */
+.vic.lose.v596{position:relative;width:248px!important;padding:8px 8px 12px!important;top:36%!important;
+  background:linear-gradient(180deg,#2a181cf2 0%,#1a1218f5 55%,#141018f5 100%)!important;
+  border:2px solid #6a4a52!important;border-radius:16px!important;
+  box-shadow:inset 0 0 0 1px #c8787088,inset 0 0 28px #4a203033,0 8px 24px #000c,0 0 0 200vmax #0a0608c4!important}
+.vic.lose.v596 .dfbw{position:relative;height:112px;margin:-78px auto 4px;width:132px;animation:clbin .45s cubic-bezier(.2,1.6,.4,1) both;z-index:2}
+.vic.lose.v596 .dfb{width:132px;display:block;filter:hue-rotate(-12deg) saturate(.55) brightness(.78) sepia(.25) drop-shadow(0 4px 6px #000a) drop-shadow(0 0 8px #8a304066)}
+.vic.lose.v596 .dft{position:absolute;left:0;right:0;bottom:7px;font:900 11px Maplestory,sans-serif;color:#1a0a0a;letter-spacing:1px;text-shadow:0 0 3px #e8d0d0,0 1px 0 #fff6,0 0 6px #c87870}
+.vic.lose.v596 .vt{margin-top:2px!important;color:#e8c8c0!important;text-shadow:0 2px 0 #2a0a08,0 0 8px #a0403088!important;filter:drop-shadow(0 3px 3px #000a) grayscale(.15) brightness(.95)!important}
+.vic.lose.v596 .vs{color:#d0b8b8!important;font-size:12px}
+.vic.lose.v596 .pw434{background:transparent;margin:4px 2px 0}
+.vic.lose.v596 .pw434>span{background:linear-gradient(#2a1a20ee,#1a1016ee);border:1px solid #6a4a5288;border-radius:9px}
+.vic.lose.v596 .gdhp{background:#140c10aa;border:1px solid #6a4a5255;border-radius:9px;padding:6px 8px;margin:6px 2px 0;color:#e0c8c8}
+.vic.lose.v596 .gdt{color:#e8c8a0!important}
+.vic.lose.v596 .gdt:before,.vic.lose.v596 .gdt:after{background:linear-gradient(90deg,#c8787000,#c87870)!important}
+.vic.lose.v596 .vlose{left:-6px;top:-92px;height:110px;z-index:4}
+body.nofx .vic.lose.v596 .dfbw,body.tglite .vic.lose.v596 .dfbw,.vic.lose.vnofx .dfbw{animation:none!important;opacity:1;transform:none}
+`;
+document.head.appendChild(st);
+const orp=resultPop;
+resultPop=function(w){
+  const r=orp.apply(this,arguments);
+  try{
+    if(w||C.B.br||C.B.rb)return r;
+    const n=[...document.querySelectorAll('.vic.lose.guide')].pop();
+    if(!n||n.classList.contains('v596'))return r;
+    n.classList.add('v596');
+    if(!n.querySelector('.dfbw')){
+      n.insertAdjacentHTML('afterbegin',`<div class=dfbw><img class=dfb src="${A}clear_banner.png" alt=""><b class=dft>STAGE FAIL</b></div>`);
+    }
+  }catch(_){}
+  return r;
+};
 })();
