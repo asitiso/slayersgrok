@@ -7330,3 +7330,146 @@ renderPanel=function(){
 /* first paint if already on mission */
 try{paint()}catch(_){}
 })();
+
+
+
+/* r606: quest CTA type (Maplestory 900 14px + dark stroke, tracking 0,
+   equal ~66×30); keep r605 tab icons; gate .mqr.rd glow; 편성 card frames. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* equal CTA footprint — beat r605 72×28 + r562 76 + r489 pad */
+html body #panel .mqr>.btn,
+html body #panel .mqr .btn,
+html body .card.mqr>.btn,
+html body #panel#panel .mqr .btn{
+  flex:0 0 70px!important;
+  min-width:70px!important;width:70px!important;max-width:70px!important;
+  min-height:30px!important;height:30px!important;max-height:30px!important;
+  padding:0!important;margin:0!important;box-sizing:border-box!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  font-family:Maplestory,"Noto Sans KR",sans-serif!important;
+  font-weight:900!important;font-size:15px!important;line-height:1!important;
+  letter-spacing:0!important;word-spacing:0!important;
+  overflow:visible!important;-webkit-font-smoothing:antialiased!important}
+
+/* 받기 — gold plate */
+html body #panel .mqr.rd>.btn:not(.off):not(.mqgo),
+html body #panel .mqr>.btn[data-m]:not(.off):not(.mqgo),
+html body #panel .mqr>.btn[data-w]:not(.off):not(.mqgo),
+html body #panel .mqr>.btn[data-ach]:not(.off){
+  background:none!important;
+  border:6px solid transparent!important;
+  border-image:url(${A}btn_gold.png) 30 fill/6px stretch!important;
+  border-radius:0!important;box-shadow:none!important;filter:none!important;
+  padding:0!important;margin:0!important;
+  min-width:70px!important;width:70px!important;height:30px!important;
+  color:#fff!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:-1.2px 0 #3a1a00,1.2px 0 #3a1a00,0 -1.2px #3a1a00,0 1.2px #3a1a00,
+    -1px -1px 0 #3a1a00,1px -1px 0 #3a1a00,-1px 1px 0 #3a1a00,1px 1px 0 #3a1a00,
+    0 2px 0 #5a3006!important}
+
+/* 바로가기 — green secondary, same footprint */
+html body #panel .mqr>.btn.off.mqgo{
+  background:none!important;
+  border:6px solid transparent!important;
+  border-image:url(${A}btn_green.png) 30 fill/6px stretch!important;
+  border-radius:0!important;box-shadow:none!important;filter:none!important;
+  padding:0!important;margin:0!important;
+  color:#fff!important;opacity:1!important;pointer-events:auto!important;cursor:pointer!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:-1.2px 0 #041a0a,1.2px 0 #041a0a,0 -1.2px #041a0a,0 1.2px #041a0a,
+    -1px -1px 0 #041a0a,1px -1px 0 #041a0a,-1px 1px 0 #041a0a,1px 1px 0 #041a0a,
+    0 2px 0 #0a3a10!important;
+  min-width:70px!important;width:70px!important;min-height:30px!important;height:30px!important;max-height:30px!important}
+
+/* 진행 중 — muted pill, same size */
+html body #panel .mqr>.btn.off:not(.mqgo),
+html body #panel .mqr>.btn.off.ip489,
+html body #panel#panel .mqr .btn.off.ip489.ip489{
+  background:#1a1008cc!important;
+  border:0!important;border-image:none!important;
+  border-radius:15px!important;
+  box-shadow:inset 0 0 0 1.5px #ffffff22,0 1px 2px #0008!important;
+  color:#e8dcc0!important;opacity:1!important;filter:none!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:-1px 0 #0a0806,1px 0 #0a0806,0 -1px #0a0806,0 1px #0a0806,0 1px 0 #000a!important;
+  min-width:70px!important;width:70px!important;min-height:30px!important;height:30px!important;max-height:30px!important;
+  font-weight:900!important;font-size:15px!important;letter-spacing:0!important}
+html body #panel .mqr>.btn.off:not(.mqgo).pp4::after,
+html body #panel .mqr>.btn.ip489::after,
+html body #panel .mqr>.btn.ip489::before{content:none!important;display:none!important}
+
+/* ▶ same face as label */
+html body #panel .mqr>.btn.mqgo::after{
+  content:"▶"!important;font:inherit!important;font-size:13px!important;
+  letter-spacing:0!important;margin-left:1px!important;
+  -webkit-text-stroke:0!important}
+
+html body #panel .mqb>em>u.pc446{display:none!important}
+html body #panel:not(:has(.mqtabs)) .mqr.rd{box-shadow:none!important}
+
+/* 편성 hero cards */
+html body #screen .rgrid .rcard{
+  position:relative!important;border-radius:10px!important;
+  background:linear-gradient(180deg,#2a1c10ee,#120c08f2)!important;
+  box-shadow:inset 0 0 0 1.5px var(--rc,#c9a24a),inset 0 0 0 3px #0008,0 2px 6px #000a!important;
+  overflow:hidden!important}
+html body #screen .rgrid .rcard.own{
+  background:linear-gradient(180deg,#3a2818f0,#1a100af5)!important}
+html body #screen .rgrid .rcard.own.inP,
+html body #screen .rgrid .rcard.own:has(.ck){
+  box-shadow:inset 0 0 0 2px #6ec8ff,inset 0 0 0 4px #1a4060aa,
+    0 0 10px #4ab0ff66,0 2px 6px #000a!important}
+html body #screen .rgrid .rcard:not(.own){
+  filter:saturate(.35) brightness(.72)!important;
+  box-shadow:inset 0 0 0 1.5px #5a5040,inset 0 0 0 3px #000a,0 2px 4px #0008!important}
+html body #screen .rgrid .rcard>img{filter:drop-shadow(0 2px 3px #000a)!important}
+html body #screen .rgrid .rcard .rg{
+  font:900 9px/14px Maplestory,sans-serif!important;padding:0 5px!important;
+  border-radius:0 0 6px 0!important;background:var(--rc,#c9a24a)!important;
+  color:#1a0c00!important;text-shadow:none!important;letter-spacing:0!important;
+  box-shadow:0 1px 2px #0008!important}
+html body #screen .rgrid .rcard b{
+  font:900 11px/1.1 Maplestory,sans-serif!important;color:#fff6d8!important;
+  text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000!important;
+  letter-spacing:0!important}
+html body #screen .rgrid .rcard .rst4{
+  font:800 10px Maplestory,sans-serif!important;letter-spacing:0!important;
+  color:#ffd77a!important;text-shadow:0 1px 0 #000!important}
+html body #screen .rgrid .rcard:not(.own) .rst4{
+  color:#c8b898!important;background:#0008;border-radius:4px;padding:1px 4px}
+html body #screen .rgrid .rcard .ck{
+  position:absolute!important;right:3px!important;bottom:18px!important;
+  width:18px!important;height:18px!important;
+  background:#1a8a3acc!important;border:1.5px solid #9ff0b0!important;
+  border-radius:50%!important;display:flex!important;align-items:center!important;
+  justify-content:center!important;box-shadow:0 1px 3px #000a!important;z-index:3}
+html body #screen .rgrid .rcard .ck img{width:12px!important;height:12px!important;margin:0!important}
+`;
+document.head.appendChild(st);
+
+const paintMq=()=>{
+  const p=document.getElementById('panel');
+  if(!p||G.tab!=='mission')return;
+  p.querySelectorAll('.mqr>.btn').forEach(bt=>{
+    const tx=(bt.textContent||'').replace(/\s+/g,'').replace(/▶/g,'');
+    if(bt.classList.contains('mqgo')||tx==='바로가기'){
+      if((bt.textContent||'').replace(/\s|▶/g,'')!=='바로가기')bt.textContent='바로가기';
+    }else if(tx==='받기'){if(bt.textContent!=='받기')bt.textContent='받기';
+    }else if(tx==='진행중'){if(bt.textContent!=='진행 중')bt.textContent='진행 중';}
+  });
+};
+const paintParty=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='party')return;
+  sc.querySelectorAll('.rgrid .rcard').forEach(n=>n.classList.toggle('inP',!!n.querySelector('.ck')));
+};
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{paintMq()}catch(_){}
+return r};
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{paintParty()}catch(_){}
+return r};
+try{paintMq()}catch(_){}
+try{paintParty()}catch(_){}
+})();
