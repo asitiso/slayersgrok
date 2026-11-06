@@ -8332,3 +8332,105 @@ if(typeof rewardPop==='function'){
   G.rewardPop=wrap(G.rewardPop);
 }
 })();
+
+/* r616: 보상 획득 display-merge same item→sum; rwmany scroll keeps
+   rwtap below fade; scope rwmany MO to the pop node (not body/battle).
+   Display only — granting unchanged. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* scroll case: hint outside + below the fade mask */
+html body .rwpop .rwbox.rwmany{
+  overflow:hidden!important}
+html body .rwpop .rwbox.rwmany .rwi{
+  flex:1 1 auto!important;min-height:0!important;
+  max-height:min(36vh,260px)!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  -webkit-mask-image:linear-gradient(#000 0,#000 calc(100% - 18px),#0000 100%)!important;
+  mask-image:linear-gradient(#000 0,#000 calc(100% - 18px),#0000 100%)!important;
+  padding:6px 0 4px!important;margin:6px 0 0!important}
+html body .rwpop .rwbox.rwmany .rwtap{
+  flex:none!important;position:relative!important;z-index:5!important;
+  display:block!important;margin:10px 0 0!important;padding:8px 8px 4px!important;
+  background:#1a1008!important;
+  box-shadow:0 -10px 12px #1a1008!important;
+  width:100%!important;box-sizing:border-box!important;
+  text-align:center!important;pointer-events:none!important;
+  isolation:isolate!important}
+html body .rwpop .rwc>i.rwm616{
+  display:block;margin-top:1px;font:900 9px/1 Maplestory,sans-serif;
+  font-style:normal;color:#9fe0ff;text-shadow:0 1px 0 #000}
+`;
+document.head.appendChild(st);
+
+/* merge numeric tiles by label+img (display only) */
+const merge=items=>{
+  if(!items||!items.length)return items;
+  const out=[], ix={};
+  for(const it of items){
+    if(!it||typeof it[1]!=='number'){out.push(it);continue}
+    const k=(it[2]||'')+'|'+it[0];
+    if(ix[k]!=null){out[ix[k]][1]+=it[1];out[ix[k]]._n=(out[ix[k]]._n||1)+1}
+    else{const row=[it[0],it[1],it[2]];row._n=1;ix[k]=out.length;out.push(row)}
+  }
+  return out;
+};
+
+const mark=()=>{
+  const pop=document.querySelector('.rwpop');if(!pop)return;
+  pop.querySelectorAll('.rwbox').forEach(bx=>{
+    const ri=bx.querySelector('.rwi');if(!ri)return;
+    bx.classList.toggle('rwmany', ri.querySelectorAll('.rwc').length>12);
+  });
+};
+
+/* after paint: optional ×N chip when merged from several rows */
+const paintMergeChips=()=>{
+  document.querySelectorAll('.rwpop .rwc').forEach(c=>{
+    if(c.dataset.m616)return;
+    const n=+c.dataset.nmerge||0;if(n<2)return;
+    c.dataset.m616=1;
+    if(!c.querySelector('i.rwm616')){
+      const i=document.createElement('i');i.className='rwm616';i.textContent='×'+n;
+      c.appendChild(i);
+    }
+  });
+};
+
+const wrap=fn=>{
+  const o=fn;
+  return function(items,sub){
+    let merged=items, meta=[];
+    try{
+      merged=merge(items);
+      meta=merged.filter(x=>x&&x._n>1).map(x=>[x[2],x._n,x[1]]);
+    }catch(_){merged=items}
+    const r=o.call(this, merged, sub);
+    try{
+      /* stamp ×N onto tiles that were merged */
+      const d=[...document.querySelectorAll('.rwpop')].pop();
+      if(d&&merged){
+        const tiles=d.querySelectorAll('.rwc');
+        merged.forEach((it,i)=>{
+          if(it&&it._n>1&&tiles[i]) tiles[i].dataset.nmerge=it._n;
+        });
+        paintMergeChips();
+      }
+      mark();
+      /* scope MO to this pop only (gate: never body/battle subtree) */
+      if(d&&!d._r616mo){
+        d._r616mo=1;
+        const mo=new MutationObserver(()=>{mark();paintMergeChips();if(!d.isConnected)mo.disconnect()});
+        mo.observe(d,{childList:true,subtree:true});
+      }
+    }catch(_){}
+    try{G._rwMergeMeta=meta}catch(_){}
+    return r;
+  };
+};
+if(typeof rewardPop==='function'){rewardPop=wrap(rewardPop);G.rewardPop=rewardPop}
+else if(G.rewardPop){G.rewardPop=wrap(G.rewardPop)}
+
+/* neutralize r613 body-subtree rwmany arm while we have scoped MO:
+   mark() already no-ops without .rwpop — keep as belt-and-suspenders */
+})();
