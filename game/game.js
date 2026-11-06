@@ -36,8 +36,11 @@ function updateHud(){const s=C.S();
 let lockedSig='';
 function renderSkills(){const s=C.S();lockedSig=JSON.stringify(C.spells().map(x=>x.k));
 setTimeout(()=>{const k=$('#skills');k&&k.classList.toggle('sw',k.scrollWidth>k.clientWidth+4)},50);
-  $('#skills').innerHTML=C.load6().map(sp=>{const lk=sp.unlock&&s.maxSi<sp.unlock;return `<div class="sk ${lk?'lock':''} ${sp.k=='ds'?'big':''}" data-k=${sp.k}><img src="${A}${sp.img}"><div class=cd></div><div class=t>${lk?'<img class="emi e_sk_lock" src=assets/sk_lock.png alt="">':''}</div></div>`}).join('')+`<div class="tgl ${s.autoSpell?'on':''}" id=autoSp><img src=assets/ic2_auto.png style="width:100%;height:100%;object-fit:contain"></div>`;
-  $('#autoSp').onclick=()=>{s.autoSpell=!s.autoSpell;renderSkills()};
+  /* r588: display order only — Dragon Slave to centre slot; others keep relative order around it */
+  const L0=C.load6(),_ds=L0.find(sp=>sp.k==='ds'),_rs=L0.filter(sp=>sp.k!=='ds');
+  const L=_ds?[..._rs.slice(0,Math.ceil(_rs.length/2)),_ds,..._rs.slice(Math.ceil(_rs.length/2))]:L0;
+  $('#skills').innerHTML=L.map(sp=>{const lk=sp.unlock&&s.maxSi<sp.unlock;return `<div class="sk ${lk?'lock':''} ${sp.k=='ds'?'big':''}" data-k=${sp.k}><img src="${A}${sp.img}"><div class=cd></div><div class=t>${lk?'<img class="emi e_sk_lock" src=assets/sk_lock.png alt="">':''}</div></div>`}).join('')+`<div class="tgl ${s.autoSpell?'on':''}" id=autoSp><img src=assets/ic2_auto.png style="width:100%;height:100%;object-fit:contain"></div>`;
+  $('#autoSp').onclick=()=>{s.autoSpell=!s.autoSpell;toast(s.autoSpell?'스킬 자동 사용 ON':'스킬 자동 사용 OFF');renderSkills();const a=document.querySelector('#bAutoSk');if(a)a.classList.toggle('on',!!s.autoSpell)};
   document.querySelectorAll('.sk').forEach(el=>el.onclick=()=>{const sp=D.SPELLS.find(x=>x.k==el.dataset.k);if(sp.unlock&&s.maxSi<sp.unlock)return toast(`${C.stageName(sp.unlock)} 도달 시 해금`);C.castSpell(sp)})}
 const SIDEL=[['event','출석','ic3_calendar.png'],['shop','패키지','ic3_gift.png'],['mail','우편','ic3_mail.png']];/* r334: 탐험 sat under the party column - folded into 더보기 */
 /* r334: 4 core icons per side; the rest fold into 더보기 (#sideF), same ids so every badge/tutorial/lock lookup still finds them */
@@ -6010,3 +6013,19 @@ tr.classList.toggle('wv573',w>=0);if(w<0)return;const k=g.children;for(let i=0;i
 ;(()=>{const st=document.createElement('style');st.textContent='html body #sheet .panel,html body #screen .sbody{scroll-padding-bottom:16px}';document.head.appendChild(st)})();/* r577: scroll guard; bottom audit found no cut-off */;(()=>{const st=document.createElement('style');st.textContent='html body #panel #roll,html body #panel #rollEq{flex-direction:row;gap:6px;min-height:40px}html body #panel #roll>img,html body #panel #rollEq>img{flex:none;margin:0}';document.head.appendChild(st)})();/* r582: 장비 sheet 뽑기 pills — icon sits inline before the label (화룡전 pill layout) instead of stacked above it, halving their height so the filter chips and 자동 뽑기 rise into view. Display only */
 ;(()=>{const st=document.createElement('style');st.textContent='html body #panel #rollEq:not(.off){background:linear-gradient(#ffd56a,#d99a1e);color:#3a2300;border-color:#ffe49a;box-shadow:0 2px 0 #8a5a08,0 0 8px rgba(255,200,80,.35)}';document.head.appendChild(st)})();/* r583: rollEq gold secondary; .off keeps disabled look */
 ;(()=>{const st=document.createElement('style');st.textContent='html body .duntr{min-height:66px;padding:10px 12px;gap:10px;align-items:center}html body .duntr .dtn b{font-size:17px;line-height:1.15}html body .duntr .dtn small{font-size:12px;margin-top:3px;display:block}html body .duntr .dtr{gap:6px;flex-wrap:wrap}html body .duntr .dtr i{font-size:14px;font-weight:700;font-style:normal;padding:4px 9px 4px 5px;border-radius:14px;background:rgba(0,0,0,.45);display:inline-flex;align-items:center;gap:4px;color:#fff3c8}html body .duntr .dtr i img{width:22px;height:22px}html body .duntr .dtr i.fc{font-size:12px;color:#bfeaff;background:rgba(40,90,140,.5);box-shadow:inset 0 0 0 1px rgba(140,210,255,.45)}html body .duntr .dtr i.fc img{width:18px;height:18px}html body .duntr .dtb .pill{min-width:74px;min-height:40px;font-size:16px}html body .duntr .dtb .dlk{flex-direction:column;gap:1px;padding:4px 8px;min-width:86px}html body .duntr .dtb .dlk small{white-space:normal;font-size:10px;line-height:1.15;text-align:center}html body .duntr .dtb .dlk img{width:14px;height:14px}html body .duntr.lock .dtn b,html body .duntr.lock .dtr{opacity:.6}';document.head.appendChild(st)})();/* r586: 일일 던전 tier rows: taller rows, bigger reward chips, first-clear badge, lock pill text wraps */
+;(()=>{/* r588 (display only, UX.md line 22 / user-approved): Dragon Slave already centred via renderSkills order; squeeze the 6 skill sockets left to free the dock's right end for All-Auto (#autoSp), hide the duplicate #bAutoSk, keep ×1 (#bSpd) on the 지령 row right (reachable, no overlap). Skill sizes unchanged (DS 47px). Avoids 지령 / skill-total / wave-toast collision. */
+const CX=[24,82,140,198,256,314];
+const st=document.createElement('style');st.textContent=`
+#skills.skills>.sk:nth-child(1){left:${CX[0]-21}px!important}
+#skills.skills>.sk:nth-child(2){left:${CX[1]-21}px!important}
+#skills.skills>.sk:nth-child(3){left:${CX[2]-21}px!important}
+#skills.skills>.sk:nth-child(4){left:${CX[3]-21}px!important}
+#skills.skills>.sk:nth-child(5){left:${CX[4]-21}px!important}
+#skills.skills>.sk:nth-child(6){left:${CX[5]-21}px!important}
+#skills.skills>#autoSp{display:flex!important;position:absolute!important;left:auto!important;right:4px!important;top:15px!important;bottom:auto!important;width:42px!important;height:42px!important;margin:0!important;padding:0!important;border-radius:50%!important;z-index:4;box-sizing:border-box;background:radial-gradient(circle at 50% 35%,#3a3a4a,#15151e)!important;border:2px solid #6a6a7a!important;box-shadow:0 2px 4px #000a!important;align-items:center;justify-content:center;overflow:hidden}
+#skills.skills>#autoSp.on{border-color:#ffd36a!important;background:radial-gradient(circle at 50% 35%,#ffb02e,#a85a00)!important;box-shadow:0 0 10px #ffb02e,0 2px 4px #000a!important}
+#skills.skills>#autoSp>img{width:78%!important;height:78%!important;object-fit:contain;pointer-events:none}
+#bctl #bAutoSk{display:none!important}
+#bctl{gap:0!important;right:6px!important}
+#bctl #bSpd{width:42px!important;height:42px!important}
+`;document.head.appendChild(st)})();
