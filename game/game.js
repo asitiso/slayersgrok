@@ -7800,7 +7800,7 @@ html body #screen.base2 .sbody{
   scroll-padding-bottom:96px!important;padding-bottom:88px!important}
 /* selected building upgrade cost owned/needed */
 html body #screen .bupc .bcost609{
-  display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  display:inline-flex;align-items:center;gap:3px;flex-wrap:nowrap;max-width:100%;
   margin-top:4px;padding:4px 8px;border-radius:8px;
   background:#0a0810aa;border:1px solid #c9a24a66;
   font:800 11px/1.2 Maplestory,sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000}
@@ -7951,4 +7951,154 @@ renderScreen=function(){
   return r;
 };
 try{paintSet()}catch(_){}
+})();
+
+/* r611: 영지 selected card — one cost/time line (bcost609), split 시간당/보관
+   rows, 보관 한도 chip inside title, strip scroll clear of nav. Display only.
+   Small gap: 가방 item rows — count chip + use/lock clarity (real values). */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+/* hide duplicate 업그레이드 … small when owned/needed pill present */
+html body #screen .bupc .row .f>small.bdup611{display:none!important}
+/* split production rows */
+html body #screen .bupc .row>.ic{width:52px!important;height:52px!important}
+html body #screen .bupc .row>.f{min-width:0!important;overflow:visible!important;flex:1 1 auto!important}
+html body #screen .bupc .row>div:last-child{flex:0 0 70px!important;min-width:70px!important}
+html body #screen .bupc .bcost609{font:800 10.5px/1.15 Maplestory,sans-serif!important;padding:3px 6px!important}
+html body #screen .bupc .bcost609>em{font-size:10.5px!important}
+html body #screen .bupc .btimer609{font-size:10px!important;margin-left:4px!important}
+html body #screen .bupc .bp611{
+  display:flex!important;align-items:center;gap:3px;flex-wrap:nowrap;
+  white-space:nowrap;overflow:visible;
+  font:800 10.5px/1.2 Maplestory,sans-serif;color:#f0e4c8;margin-top:1px}
+html body #screen .bupc .bp611>img{width:13px;height:13px;flex:none}
+html body #screen .bupc .bp611>b{font:inherit;font-weight:900;color:#ffe08a;flex:none}
+html body #screen .bupc .bp611>em{font-style:normal;opacity:.9;flex:none}
+/* title chip inside plate */
+html body #screen .card.bupc>.ttl>small,
+html body #screen .card.bupc>.bcap611{
+  position:static!important;top:auto!important;right:auto!important;left:auto!important;
+  transform:none!important;display:inline-flex!important;align-items:center!important;
+  margin:2px 8px 4px auto!important;
+  background:#0a0810cc!important;border:1px solid #c9a24a88!important;
+  border-radius:8px!important;padding:2px 8px!important;
+  color:#f0e4c8!important;font:800 10px Maplestory,sans-serif!important;
+  white-space:nowrap!important;box-shadow:inset 0 0 0 1px #0006!important;
+  float:right;clear:both;z-index:2}
+html body #screen .card.bupc{overflow:visible!important}
+/* strip / body clear nav */
+html body #screen.base2 .sbody{
+  scroll-padding-bottom:110px!important;padding-bottom:110px!important}
+html body #screen .bstrip{margin-bottom:8px!important}
+
+/* —— 가방 —— */
+html body #screen .bag611 .brow611{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;margin:4px 0;
+  border-radius:10px;background:linear-gradient(#2a1c12ee,#16100af2);
+  border:1.5px solid #c9a24a66;box-shadow:inset 0 0 0 1px #0008}
+html body #screen .bag611 .brow611>img.bic{
+  width:40px;height:40px;object-fit:contain;flex:none;
+  border:1.5px solid #c9953f;border-radius:10px;background:#1a1008;padding:2px}
+html body #screen .bag611 .brow611 .bf{flex:1;min-width:0}
+html body #screen .bag611 .brow611 .bf>b{
+  font:900 13px Maplestory,sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000}
+html body #screen .bag611 .brow611 .bf>small{
+  display:block;font:800 10.5px Maplestory,sans-serif;color:#cfe0ff;opacity:.9}
+html body #screen .bag611 .bcnt611{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:28px;padding:2px 7px;border-radius:9px;
+  background:#0e1018cc;border:1.5px solid #c9a24a88;
+  color:#ffe08a;font:900 12px Maplestory,sans-serif;text-shadow:0 1px 0 #000}
+html body #screen .bag611 .bagg .bi.brow611{
+  position:relative;border-radius:10px;border:1.5px solid #c9a24a66;
+  background:linear-gradient(#2a1c12ee,#16100af2);padding:6px 4px 4px;
+  box-shadow:inset 0 0 0 1px #0008}
+html body #screen .bag611 .bagg .bi.brow611>b.bcnt611{
+  position:static;display:block;margin:2px auto 0;min-width:0;
+  background:none;border:0;box-shadow:none;color:#ffe08a;
+  font:900 13px Maplestory,sans-serif;text-shadow:0 1px 0 #000}
+html body #screen .bag611 .bagg .bi.brow611.lock611{
+  filter:grayscale(.55) brightness(.78);opacity:.9;border-color:#6a6a70!important}
+html body #screen .bag611 .bagg .bi.brow611.lock611::after{content:none!important}
+html body #screen[data-scr=bag] .sbody,
+html body #screen .sbody:has(.bag611){
+  scroll-padding-bottom:96px!important;padding-bottom:88px!important}
+html body #screen .bag611 .card:not(.bgdt) .brow611{
+  position:relative}
+html body #screen .bag611 .card:not(.bgdt) .brow611 > .bcnt611{
+  position:absolute;right:4px;top:4px;min-width:22px;padding:1px 5px;font-size:11px}
+`;
+document.head.appendChild(st);
+
+const paintBase=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='base')return;
+  const row=sc.querySelector('.card.bupc .row');
+  if(!row)return;
+  const f=row.querySelector('.f');
+  if(!f)return;
+  /* hide duplicate upgrade small (the one starting with 업그레이드) */
+  f.querySelectorAll(':scope > small').forEach(sm=>{
+    const t=(sm.textContent||'').trim();
+    if(/^업그레이드/.test(t)) sm.classList.add('bdup611');
+  });
+  /* split 시간당 / 보관 into two clean rows */
+  f.querySelectorAll(':scope > small').forEach(sm=>{
+    if(sm.classList.contains('bdup611')||sm.classList.contains('bp611'))return;
+    const t=(sm.textContent||'').replace(/\s+/g,' ').trim();
+    if(!/시간당/.test(t)||!/보관/.test(t))return;
+    const img=sm.querySelector('img');
+    const src=img?img.getAttribute('src'):'assets/it2_gold.png';
+    const m=t.match(/시간당\s*([+\d.,KMB]+)\s*·\s*보관\s*([\d.,KMB]+)\s*\/\s*([\d.,KMB]+)/);
+    if(!m)return;
+    const r1=document.createElement('div');r1.className='bp611';
+    r1.innerHTML=`<img src="${src}"><em>시간당</em><b>${m[1]}</b>`;
+    const r2=document.createElement('div');r2.className='bp611';
+    r2.innerHTML=`<img src="${src}"><em>보관</em><b>${m[2]}/${m[3]}</b>`;
+    sm.replaceWith(r1,r2);
+  });
+  /* move 보관 한도 chip out of absolute ribbon into card body */
+  const card=sc.querySelector('.card.bupc');
+  const ttl=card&&card.querySelector(':scope > .ttl');
+  if(ttl&&card){
+    let chip=[...ttl.querySelectorAll('small')].find(s=>/보관 한도/.test(s.textContent||''));
+    if(!chip) chip=card.querySelector('.bcap611');
+    if(chip){
+      chip.classList.add('bcap611');
+      if(chip.parentElement!==card || chip.previousElementSibling!==ttl){
+        ttl.insertAdjacentElement('afterend', chip);
+      }
+    }
+  }
+};
+
+const paintBag=()=>{
+  const sc=document.getElementById('screen');
+  if(!sc||G.screen!=='bag')return;
+  const sb=sc.querySelector('.sbody');
+  if(!sb)return;
+  sb.classList.add('bag611');
+  sb.querySelectorAll('.bagg .bi').forEach(cell=>{
+    cell.classList.add('brow611');
+    const b=cell.querySelector('b');
+    if(b&&!cell.querySelector('.bcnt611')){
+      /* count already in <b>; style it as chip via class */
+      b.classList.add('bcnt611');
+    }
+    const n=parseFloat((b&&b.textContent)||'0');
+    if(!n)cell.classList.add('lock611');
+  });
+};
+
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{
+    if(G.screen==='base')paintBase();
+    if(G.screen==='bag')paintBag();
+  }catch(_){}
+  return r;
+};
+try{paintBase();paintBag()}catch(_){}
 })();
