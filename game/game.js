@@ -6048,8 +6048,8 @@ body.nofx #panel .trainhero.trfx591,body.tglite #panel .trainhero.trfx591{animat
 `;document.head.appendChild(st);
 const flash=(sel)=>{const el=document.querySelector(sel);if(!el)return;el.classList.remove('trfx591');void el.offsetWidth;el.classList.add('trfx591');setTimeout(()=>el.classList.remove('trfx591'),520)};
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab!=='train')return r;const p=document.getElementById('panel');if(!p)return r;
-p.querySelectorAll('.tcard [data-s]').forEach(el=>{if(el._r591)return;el._r591=1;el.onclick=()=>{const k=el.dataset.s;const ok=C.train(k);renderPanel();if(!ok)return;const lv=(C.S().stl||{})[k]||0,st=(D.STATS||[]).find(x=>x.k===k);const sel=`.tcard:has([data-s="${k}"])`;flash(sel);if(G._ufx486)G._ufx486(sel,'lv','Lv '+lv,(st&&st.n)||'','lvup')}});
-const t10=document.getElementById('t10');if(t10&&!t10._r591){t10._r591=1;t10.onclick=()=>{let n=0;for(let i=0;i<300;i++){if(!C.train(C.cheapestStat().k))break;n++}toast('수련 '+n+'회 완료');renderPanel();if(n>0){flash('.trainhero');if(G._ufx486)G._ufx486('.trainhero','lv','+'+n+' 수련','최대 강화','lvup')}}}}catch(_){}return r}})();
+p.querySelectorAll('.tcard [data-s]').forEach(el=>{if(el._r591)return;el._r591=1;el.onclick=()=>{const k=el.dataset.s;const ok=C.train(k);renderPanel();if(!ok)return;const lv=(C.S().stl||{})[k]||0,st=(D.STATS||[]).find(x=>x.k===k);const sel=`.tcard:has([data-s="${k}"])`;flash(sel);if(G._ufx486)G._ufx486(sel,'lv tr593','Lv '+lv,'','lvup')}});
+const t10=document.getElementById('t10');if(t10&&!t10._r591){t10._r591=1;t10.onclick=()=>{let n=0;for(let i=0;i<300;i++){if(!C.train(C.cheapestStat().k))break;n++}toast('수련 '+n+'회 완료');renderPanel();if(n>0){flash('.trainhero');if(G._ufx486)G._ufx486('.trainhero','lv tr593','+'+n+' 수련','','lvup')}}}}catch(_){}return r}})();
 
 ;(()=>{/* r592 display: 무한의 탑 spiral plaques — replace lock/flag/door with the floor's real T.mob portrait (silhouette when locked); cleared floors keep a check; milestone crest when T.rew actually grants gem/ticket (%5/%10/%30). No invented floors/rewards. Static CSS only (nofx/tglite ok). */
 const st=document.createElement('style');
@@ -6093,4 +6093,53 @@ function decorate(){
 }
 const rs=renderScreen;
 renderScreen=function(){const r=rs.apply(this,arguments);try{decorate()}catch(e){console.warn(e)}return r};
+})();
+
+
+;(()=>{/* r593 display: (1) tower first-clear reward pill sits just above 도전 with gap; shift floor plaques up so cleared floor is never covered. (2) train ufx486 Lv pop ~45% size, anchored above medal (not over title); no stat-name sub. */
+const st=document.createElement('style');
+st.textContent=
+'#screen .twst .tw539{z-index:4;left:50%;transform:translateX(-50%)}'+
+'#ufx486.tr593 .np{font:900 15px Maplestory,sans-serif!important;-webkit-text-stroke:1px #0b3510!important;text-shadow:0 1px 0 #0b3510,0 0 6px #3aff3a!important}'+
+'#ufx486.tr593 .np small{display:none!important}'+
+'#ufx486.tr593>.np{top:85%!important}'+
+'#ufx486.tr593 .rg{width:28px!important;height:28px!important;margin:-14px 0 0 -14px!important;border-width:3px!important;top:82%!important}'+
+'#ufx486.tr593 .ry{width:72px!important;height:72px!important;margin:-36px 0 0 -36px!important;top:82%!important}'+
+'#ufx486.tr593 .fl{border-radius:10px!important}'+
+'#ufx486.tr593 .sp{top:82%!important}'+
+'#ufx486.tr593 .sp i{width:5px!important;height:5px!important;left:-2px!important;top:-2px!important}'+
+'#ufx486.tr593.go .np{animation:u593n .65s ease-out forwards!important}'+
+'#ufx486.tr593.go .rg{animation:u593r .45s ease-out!important}'+
+'#ufx486.tr593.go .ry{animation:u593y .55s ease-out!important}'+
+'#ufx486.tr593.go .sp i{animation:u593s .5s ease-out!important}'+
+'#ufx486.tr593.go .fl{animation:u486f .3s ease-out!important}'+
+'@keyframes u593n{0%{opacity:0;transform:translate(-50%,10%) scale(.7)}18%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.92)}}'+
+'@keyframes u593r{0%{opacity:.85;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}'+
+'@keyframes u593y{0%{opacity:0;transform:rotate(0) scale(.5)}30%{opacity:.65}100%{opacity:0;transform:rotate(22deg) scale(.9)}}'+
+'@keyframes u593s{0%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(1)}100%{opacity:0;transform:rotate(var(--a)) translateY(-28px) scale(.5)}}'+
+'body.nofx #ufx486.tr593 .np,body.tglite #ufx486.tr593 .np,#ufx486.tr593.lt .np{animation:none!important;opacity:1;transform:translate(-50%,0)!important;font-size:14px!important}';
+document.head.appendChild(st);
+function layout(){
+  if(G.screen!='tower')return;
+  const box=document.querySelector('#screen .twst');if(!box)return;
+  const rew=box.querySelector('.tw539'),go=box.querySelector('#twGo2');
+  const floors=[...box.querySelectorAll('.tfl')];if(!floors.length||!go)return;
+  const bR=box.getBoundingClientRect(),gR=go.getBoundingClientRect(),gap=12;
+  if(rew){
+    const bottom=Math.max(8,bR.bottom-(gR.top-gap));
+    rew.style.bottom=bottom+'px';
+  }
+  const block=rew||go,clearY=block.getBoundingClientRect().top-bR.top-8;
+  let maxB=0;for(const el of floors){const t=parseFloat(el.style.top)||0;maxB=Math.max(maxB,t+(el.offsetHeight||46))}
+  if(maxB>clearY){
+    const dy=maxB-clearY;
+    for(const el of floors){const t=parseFloat(el.style.top)||0;el.style.top=(t-dy)+'px'}
+  }
+  const li=box.querySelector('.tlina'),cp=box.querySelector('.tfl.cur');
+  if(li&&cp){const a=cp.getBoundingClientRect(),b=box.getBoundingClientRect();li.style.left=(a.right-b.left-72)+'px';li.style.top=(a.top-b.top+2)+'px'}
+}
+const rs=renderScreen;
+renderScreen=function(){const r=rs.apply(this,arguments);try{layout()}catch(e){console.warn(e)}return r};
+const wrap=()=>{const o=G._ufx486;if(!o||o._r593)return;const w=(sel,cls,txt,sub,snd)=>{o(sel,cls,txt,sub,snd);if(!cls||cls.indexOf('tr593')<0)return;const L=document.getElementById('ufx486'),card=document.querySelector(sel),medal=card&&card.querySelector('.medal');if(!L||!medal)return;const m=medal.getBoundingClientRect(),th=card.querySelector('.th556'),tr=(th||card).getBoundingClientRect(),h=56,wdt=Math.max(90,m.width+28);L.style.left=(m.left+m.width/2-wdt/2)+'px';L.style.top=(tr.top-h-12)+'px';L.style.width=wdt+'px';L.style.height=h+'px'};w._r593=1;G._ufx486=w};
+wrap();const rp=renderPanel;renderPanel=function(){const r=rp.apply(this,arguments);try{wrap()}catch(_){}return r};
 })();
