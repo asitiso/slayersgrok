@@ -7196,7 +7196,7 @@ const mark=()=>{
     bx.classList.toggle('rwmany', n>12);
   });
 };
-new MutationObserver(()=>mark()).observe(document.body,{childList:true,subtree:true});
+/* r613mo: arm rwmany scan only while .rwpop exists (not every battle DOM mut) */(()=>{let mo=null;const want=()=>document.querySelector(".rwpop");const arm=()=>{if(mo)return;mo=new MutationObserver(()=>{mark();if(!want()){mo.disconnect();mo=null}});mo.observe(document.body,{childList:true,subtree:true});mark()};new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType===1&&(n.classList&&n.classList.contains("rwpop")||(n.querySelector&&n.querySelector(".rwpop"))))arm()}}).observe(document.body,{childList:true});})();
 })();
 
 /* r605: 임무 tab icons (ic3_mq_daily/weekly/ach); unify row CTA sizes
@@ -7408,7 +7408,7 @@ html body #panel .mqr>.btn.mqgo::after{
   -webkit-text-stroke:0!important}
 
 html body #panel .mqb>em>u.pc446{display:none!important}
-html body #panel:not(:has(.mqtabs)) .mqr.rd{box-shadow:none!important}
+html body #panel.nomqt .mqr.rd{box-shadow:none!important}
 
 /* 편성 hero cards */
 html body #screen .rgrid .rcard{
@@ -7465,7 +7465,8 @@ const paintParty=()=>{
   if(!sc||G.screen!=='party')return;
   sc.querySelectorAll('.rgrid .rcard').forEach(n=>n.classList.toggle('inP',!!n.querySelector('.ck')));
 };
-const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{paintMq()}catch(_){}
+const syncNomqt=()=>{const p=document.getElementById("panel");if(p)p.classList.toggle("nomqt",!p.querySelector(".mqtabs"))};
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{paintMq();syncNomqt()}catch(_){}
 return r};
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{paintParty()}catch(_){}
 return r};
@@ -7696,7 +7697,7 @@ const st=document.createElement('style');
 st.textContent=`
 html body #stpop607{contain:layout style}
 html body #stpop607:not(.on){display:none!important;pointer-events:none!important}
-html body #screen .sbody:has(.smp)>.spity{display:none!important}
+html body #screen .sbody.has-smp>.spity{display:none!important}
 html body #screen .suown608{
   display:flex;justify-content:center;gap:8px;margin:6px 4px 2px;flex-wrap:wrap}
 html body #screen .suown608>span{
@@ -7738,6 +7739,7 @@ html body #screen .sutab>span[data-st="2"]::after{
 document.head.appendChild(st);
 
 const paintSummon=()=>{
+  /* r613flag */  {const _sb=document.querySelector('#screen .sbody');if(_sb){_sb.classList.toggle('has-suown',!!_sb.querySelector('.suown608'));_sb.classList.toggle('has-sumbtns',!!_sb.querySelector('.sumbtns'));_sb.classList.toggle('has-smp',!!_sb.querySelector('.smp'));}} 
   const sc=document.getElementById('screen');
   if(!sc||G.screen!=='summon')return;
   const s=C.S();
@@ -7788,11 +7790,11 @@ try{if(G.screen==='summon')paintSummon()}catch(_){}
 const st=document.createElement('style');
 st.textContent=`
 /* summon: hide old wallet card when strip present; clear nav */
-html body #screen .sbody:has(.suown608)>.sucd.cur365{display:none!important}
+html body #screen .sbody.has-suown>.sucd.cur365{display:none!important}
 html body #screen[data-scr=summon] .sbody,
-html body #screen .sbody:has(.sumbtns){
+html body #screen .sbody.has-sumbtns{
   scroll-padding-bottom:96px!important;padding-bottom:96px!important}
-html body #screen .sbody:has(.sumbtns)::after{
+html body #screen .sbody.has-sumbtns::after{
   content:"";display:block;height:24px;flex:none}
 
 /* —— 영지 —— */
@@ -7838,6 +7840,7 @@ html body #screen .bhs.lock .blv{
 document.head.appendChild(st);
 
 const paintSummon=()=>{
+  /* r613flag */  {const _sb=document.querySelector('#screen .sbody');if(_sb){_sb.classList.toggle('has-suown',!!_sb.querySelector('.suown608'));_sb.classList.toggle('has-sumbtns',!!_sb.querySelector('.sumbtns'));_sb.classList.toggle('has-smp',!!_sb.querySelector('.smp'));}} 
   const sc=document.getElementById('screen');
   if(!sc||G.screen!=='summon')return;
   /* remove redundant 보유 재화 card (strip already has tickets/gems/mile) */
@@ -7889,7 +7892,7 @@ try{paintSummon();paintBase()}catch(_){}
 const st=document.createElement('style');
 st.textContent=`
 html body #screen[data-scr=settings] .sbody,
-html body #screen .sbody:has(.stst){
+html body #screen .sbody.has-stst{
   scroll-padding-bottom:96px!important;padding-bottom:88px!important}
 html body #screen .stpaper #nkBtn,
 html body #screen .stpaper #ntGo,
@@ -7930,6 +7933,7 @@ html body #screen .stpaper .card .ttl{justify-content:center!important}
 `;
 document.head.appendChild(st);
 const paintSet=()=>{
+  /* r613flag */  {const _sb=document.querySelector('#screen .sbody');if(_sb)_sb.classList.toggle('has-stst',!!_sb.querySelector('.stst'));} 
   if(G.screen!=='settings')return;
   const sc=document.getElementById('screen');
   if(!sc)return;
@@ -8022,7 +8026,7 @@ html body #screen .bag611 .bagg .bi.brow611.lock611{
   filter:grayscale(.55) brightness(.78);opacity:.9;border-color:#6a6a70!important}
 html body #screen .bag611 .bagg .bi.brow611.lock611::after{content:none!important}
 html body #screen[data-scr=bag] .sbody,
-html body #screen .sbody:has(.bag611){
+html body #screen .sbody.has-bag{
   scroll-padding-bottom:96px!important;padding-bottom:88px!important}
 html body #screen .bag611 .card:not(.bgdt) .brow611{
   position:relative}
@@ -8074,6 +8078,7 @@ const paintBase=()=>{
 };
 
 const paintBag=()=>{
+  /* r613flag */  {const _sb=document.querySelector('#screen .sbody');if(_sb){_sb.classList.add('bag611');_sb.classList.toggle('has-bag',true);} } 
   const sc=document.getElementById('screen');
   if(!sc||G.screen!=='bag')return;
   const sb=sc.querySelector('.sbody');
@@ -8176,6 +8181,35 @@ const paint=()=>{
   }
   /* ensure floating chip stays hidden / removed from flow */
   card.querySelectorAll('.bcap611').forEach(el=>{el.style.display='none'});
+};
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{paint()}catch(_){}
+  return r;
+};
+try{paint()}catch(_){}
+})();
+
+/* r613b: 영지 cost row '강화 비용' label; panel.nomqt sync. Display only. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+html body #screen .card.bupc .bcost612>b.blab613{
+  flex:none;font:800 11px/1 Maplestory,sans-serif;color:#cfe0ff;
+  margin-right:4px;letter-spacing:0;text-shadow:0 1px 0 #000;opacity:.95}
+`;
+document.head.appendChild(st);
+const paint=()=>{
+  if(G.screen!=='base')return;
+  const bar=document.querySelector('#screen .card.bupc .bcost612');
+  if(!bar)return;
+  if(!bar.querySelector('.blab613')){
+    const b=document.createElement('b');b.className='blab613';b.textContent='강화 비용';
+    bar.insertBefore(b, bar.firstChild);
+  }
+  const p=document.getElementById('panel');
+  if(p)p.classList.toggle('nomqt',!p.querySelector('.mqtabs'));
 };
 const ors=renderScreen;
 renderScreen=function(){
