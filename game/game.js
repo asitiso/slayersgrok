@@ -296,6 +296,7 @@ function rateInfo(){document.querySelectorAll('.rpop').forEach(x=>x.remove());co
 
 function rewardPop(items,sub){document.querySelectorAll('.rwpop').forEach(x=>x.remove());const d=document.createElement('div');d.className='rwpop';d.innerHTML=`<div class=rwbox><div class=rwrays></div><b class=rwt>보상 획득!</b>${sub?`<small class=rws>${sub}</small>`:''}<div class=rwi>${items.map((it,i)=>`<div class=rwc style="animation-delay:${.18+i*.12}s"><img src="assets/${it[0]}"><b>${typeof it[1]=='number'?fmt(it[1]):it[1]}</b><small>${it[2]}</small></div>`).join('')}</div><span class=rwtap>화면을 터치하여 닫기</span></div>`;document.body.appendChild(d);const close=()=>{d.classList.add('out');setTimeout(()=>d.remove(),220)};setTimeout(()=>d.onclick=close,350);setTimeout(close,4000)}
 G.rewardPop=rewardPop;
+/* r614rw: ensure .rwmany marks even if MO arm races */(()=>{const o=G.rewardPop;G.rewardPop=function(){const r=o.apply(this,arguments);try{document.querySelectorAll(".rwpop .rwbox").forEach(bx=>{const ri=bx.querySelector(".rwi");if(!ri)return;bx.classList.toggle("rwmany",(ri.querySelectorAll(".rwc").length>12))})}catch(_){}return r}})();
 
 const RES=[['gold','it2_gold.png','골드'],['gems','it2_gem.png','보석'],['orbs','it2_exp.png','마정구'],['tickets','it2_ticket.png','소환권'],['stone','it2_stone.png','강화석'],['pot','it2_hp.png','회복 물약'],['mpot','it2_mp.png','마나 물약'],['dkey','it3_dungeonkey.png','던전 열쇠'],['gcoin','it3_guildcoin.png','길드 코인'],['atoken','it3_arenatoken.png','투기장 토큰'],['mile','it3_mileagestar.png','마일리지']];
 function resSnap(){const s=C.S(),o={};RES.forEach(r=>o[r[0]]=s[r[0]]||0);o._sk=JSON.stringify(s.skins||{});o._tt=C.titlesOwned?C.titlesOwned().map(t=>t.k):[];return o}
@@ -8210,6 +8211,61 @@ const paint=()=>{
   }
   const p=document.getElementById('panel');
   if(p)p.classList.toggle('nomqt',!p.querySelector('.mqtabs'));
+};
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{paint()}catch(_){}
+  return r;
+};
+try{paint()}catch(_){}
+})();
+
+/* r614: verify :has→class flags (no visual regress); defensive rwmany mark;
+   랭킹 rows — podium 1–3 plates + clearer 나 row (real L data). Display only. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+html body #screen .rkrow{
+  display:flex;align-items:center;gap:8px;padding:7px 8px;margin:4px 0;
+  border-radius:10px;background:linear-gradient(#2a1c12ee,#16100af2);
+  border:1.5px solid #c9a24a55;box-shadow:inset 0 0 0 1px #0008}
+html body #screen .rkrow .rkn{
+  flex:none;min-width:28px;height:28px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font:900 13px Maplestory,sans-serif;color:#fff6d8;background:#0a0810cc;
+  border:1.5px solid #c9a24a88;text-shadow:0 1px 0 #000}
+html body #screen .rkrow.rk1 .rkn{
+  background:linear-gradient(#f0d060,#c99520);color:#3a1a00;border-color:#ffe08a;
+  text-shadow:none}
+html body #screen .rkrow.rk2 .rkn{
+  background:linear-gradient(#d0d8e8,#8a98b0);color:#1a2030;border-color:#c8d0e0;
+  text-shadow:none}
+html body #screen .rkrow.rk3 .rkn{
+  background:linear-gradient(#d8a070,#8a5530);color:#2a1408;border-color:#e8b890;
+  text-shadow:none}
+html body #screen .rkrow.me{
+  border-color:#6ec8ffaa!important;
+  box-shadow:inset 0 0 0 1.5px #4ab0ff66,0 0 10px #4ab0ff33!important;
+  background:linear-gradient(#1a2838ee,#0e1824f2)!important}
+html body #screen .rkrow .f>b{
+  font:900 13px Maplestory,sans-serif;color:#fff6d8;text-shadow:0 1px 0 #000}
+html body #screen .rkrow .f>small{
+  font:800 10.5px Maplestory,sans-serif;color:#cfe0ff}
+html body #screen .sbody.has-rank{
+  scroll-padding-bottom:96px!important;padding-bottom:88px!important}
+`;
+document.head.appendChild(st);
+const paint=()=>{
+  if(G.screen!=='rank')return;
+  const sb=document.querySelector('#screen .sbody');
+  if(sb)sb.classList.add('has-rank');
+  [...document.querySelectorAll('#screen .rkrow')].forEach((row,i)=>{
+    row.classList.remove('rk1','rk2','rk3');
+    if(i===0)row.classList.add('rk1');
+    else if(i===1)row.classList.add('rk2');
+    else if(i===2)row.classList.add('rk3');
+  });
 };
 const ors=renderScreen;
 renderScreen=function(){
