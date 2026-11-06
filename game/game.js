@@ -7882,3 +7882,73 @@ renderScreen=function(){
 };
 try{paintSummon();paintBase()}catch(_){}
 })();
+
+/* r610: settings sheet — clearer 계정 rows (guest chip, danger reset),
+   unify top CTAs, scroll-pad clear of nav. Display only; toggles/logic untouched. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+html body #screen[data-scr=settings] .sbody,
+html body #screen .sbody:has(.stst){
+  scroll-padding-bottom:96px!important;padding-bottom:88px!important}
+html body #screen .stpaper #nkBtn,
+html body #screen .stpaper #ntGo,
+html body #screen .stpaper #cpn,
+html body #screen .stpaper #spd2{
+  min-width:64px!important;min-height:28px!important;height:28px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  font:900 12px/1 Maplestory,sans-serif!important;letter-spacing:0!important;
+  padding:0 10px!important;box-sizing:border-box!important}
+html body #screen .stpaper #nkBtn img.sbi,
+html body #screen .stpaper #ntGo img.sbi,
+html body #screen .stpaper #nkBtn img.emi,
+html body #screen .stpaper #ntGo img.emi{width:16px!important;height:16px!important;margin-right:3px}
+html body #screen .stpaper .chip527,
+html body #screen .stpaper .chip610{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:10px;
+  background:linear-gradient(#3a4658,#1e2836);border:1.5px solid #9ab0c8;
+  color:#e8f0ff;font:900 11px Maplestory,sans-serif;
+  text-shadow:0 1px 0 #000;box-shadow:inset 0 0 0 1px #0006,0 1px 2px #0008}
+html body #screen .stpaper #rst{
+  min-width:64px!important;min-height:28px!important;height:28px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  font:900 12px Maplestory,sans-serif!important;padding:0 10px!important;
+  border:6px solid transparent!important;
+  border-image:url(assets/btn_red.png) 30 fill/6px stretch!important;
+  background:none!important;border-radius:0!important;
+  color:#fff!important;text-shadow:0 1px 0 #4a0a0a!important}
+html body #screen .stpaper .card .row.acc610{
+  background:linear-gradient(#2a1c12ee,#16100af2)!important;
+  border:1.5px solid #c9a24a66!important;border-radius:10px!important;
+  margin:4px 0!important;padding:6px 8px!important;
+  box-shadow:inset 0 0 0 1px #0008!important}
+html body #screen .stpaper .card .row.acc610.dang{
+  border-color:#ff6a5a88!important;
+  background:linear-gradient(#3a1812ee,#1a0c0af2)!important}
+html body #screen .stpaper .card .ttl{justify-content:center!important}
+`;
+document.head.appendChild(st);
+const paintSet=()=>{
+  if(G.screen!=='settings')return;
+  const sc=document.getElementById('screen');
+  if(!sc)return;
+  sc.querySelectorAll('.card').forEach(card=>{
+    const ttl=card.querySelector('.ttl');
+    if(!ttl||!/계정/.test(ttl.textContent||''))return;
+    card.querySelectorAll(':scope > .row').forEach(row=>{
+      row.classList.add('acc610');
+      if(row.querySelector('#rst'))row.classList.add('dang');
+      const chip=row.querySelector('.chip527');
+      if(chip)chip.classList.add('chip610');
+    });
+  });
+};
+const ors=renderScreen;
+renderScreen=function(){
+  const r=ors.apply(this,arguments);
+  try{paintSet()}catch(_){}
+  return r;
+};
+try{paintSet()}catch(_){}
+})();
