@@ -46,7 +46,7 @@ const SIDEL=[['event','출석','ic3_calendar.png'],['shop','패키지','ic3_gift
 /* r334: 4 core icons per side; the rest fold into 더보기 (#sideF), same ids so every badge/tutorial/lock lookup still finds them */
 const SIDER=[['train','성장','ic3_train.png'],['menu','메뉴',''],['gear','장비','ic3_bag.png'],['mission','임무','ic3_quest.png'],['more','더보기','']];
 const SIDER2=[];const SIDEF=[['enhance','강화','ic3_anvil.png'],['dungeon','도전','ic4/gate.png'],['arena','투기장','ic3_arena.png'],['guild','협회','ic3_guild.png'],['relic','기보','ic3_relic.png'],['speed','배속','ic3_speed.png'],['explore','탐험','ic3_map.png']];
-const MENU=[['mail','우편함','ic3_mail.png'],['event','출석','ic3_calendar.png'],['map','지도','ic3_map.png'],['base','영지','ic3_castle.png'],['guild','협회','ic3_guild.png'],['arena','투기장','ic3_arena.png'],['dungeon','도전','ic4/gate.png'],['relic','기보','ic3_relic.png'],['explore','탐험','ic3_map.png'],['summon','소환','ic3_summon.png'],['party','편성','ic3_party.png'],['enhance','강화','ic3_anvil.png'],['bag','가방','ic3_bag.png'],['codex','도감','ic3_relic.png'],['ach','업적','ic3_trophy.png'],['wboss','월드보스','ic4/skull.png'],['tower','무한의 탑','ic4/crown.png'],['star','승급','ic_starup.png'],['pet','펫','pet/slime.png'],['rank','랭킹','ic3_podium.png'],['pass','패스','ic4/ticket.png'],['skin','코스튬','skin/lina_summer.png'],['settings','설정','ic3_settings.png']];
+const MENU=[['mail','우편함','ic3_mail.png'],['event','출석','ic3_calendar.png'],['map','지도','ic3_map.png'],['base','영지','ic3_castle.png'],['guild','협회','ic3_guild.png'],['arena','투기장','ic3_arena.png'],['dungeon','도전','ic4/gate.png'],['relic','기보','ic3_relic.png'],['explore','탐험','ic3_map.png'],['summon','소환','ic3_summon.png'],['party','편성','ic3_party.png'],['enhance','강화','ic3_anvil.png'],['bag','가방','ic3_bag.png'],['codex','도감','ic3_codex.png'],['ach','업적','ic3_trophy.png'],['wboss','월드보스','ic4/skull.png'],['tower','무한의 탑','ic4/crown.png'],['star','승급','ic_starup.png'],['pet','펫','ic3_pet.png'],['rank','랭킹','ic3_podium.png'],['pass','패스','ic4/ticket.png'],['skin','코스튬','ic3_skin.png'],['settings','설정','ic3_settings.png']];
 let pcSig='';function renderPartyCol(){const B=C.B;const sig=B.allies.map(a=>a.k).join();const el=$('#partycol');if(sig!==pcSig){pcSig=sig;el.innerHTML=B.allies.map((a,i)=>`<div class="pp ${i==0?'lead':''}"><img src="${A}${a.c?a.c.img:'hero_lina.png'}"><div class=hpb><i></i></div></div>`).join('')}
   el.querySelectorAll('.hpb i').forEach((h,i)=>{const a=B.allies[i];if(a)h.style.width=Math.max(0,a.hp/a.max*100)+'%'})}
 function compDetail(k){const s=C.S(),c=D.COMPS.find(x=>x.k==k),F=D.FACTIONS[c.fac],R2=D.RAR[c.g],lv=(s.clv||{})[k]||1,cost=C.compUpCost(k);
@@ -6930,4 +6930,74 @@ const scrub=()=>{
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const mp=document.getElementById('menuPop');if(mp&&mp.classList.contains('on'))scrub()}catch(_){}return r};
 /* rebuild once at boot; lock marks come from the existing r391/v65 menuGo→mark wrap on the same nodes */
 const om=menuGo;menuGo=function(k){const r=om.apply(this,arguments);try{if(k==='menu')scrub()}catch(_){}return r};
+})();
+/* r602: wire ic3_codex/pet/skin (new art); 보상 획득 popup polish — plate chrome, readable
+   title/amounts, static under nofx/tglite, pooled (no per-frame work). Display only. */
+;(()=>{
+/* belt-and-suspenders: force MENU icon paths if an earlier build cached old strings */
+[['codex','ic3_codex.png'],['pet','ic3_pet.png'],['skin','ic3_skin.png']].forEach(([k,i])=>{
+  const m=MENU.find(x=>x[0]===k); if(m) m[2]=i;
+});
+/* refresh mgrid imgs if menu already built */
+try{
+  const g=document.getElementById('mgrid');
+  if(g){
+    [['codex','ic3_codex.png'],['pet','ic3_pet.png'],['skin','ic3_skin.png']].forEach(([k,i])=>{
+      const a=g.querySelector(`a[data-s=${k}] img`); if(a) a.src=A+i;
+    });
+  }
+}catch(_){}
+
+const st=document.createElement('style');
+st.textContent=`
+/* 보상 획득 — 화룡전-ish reward plate */
+html body .rwpop .rwbox{
+  width:min(340px,92vw)!important;padding:28px 14px 16px!important;
+  background:linear-gradient(#1a1008f2 0%,#2a1a0ef5 18%,#24160cf5 82%,#120a06ee)!important;
+  border:2.5px solid #0b0d0f!important;border-radius:14px!important;
+  box-shadow:inset 0 0 0 1.5px #e8b860aa,0 10px 28px #000c!important;
+  border-top-color:#0b0d0f!important;border-bottom-color:#0b0d0f!important}
+html body .rwpop .rwt{
+  font:900 24px Maplestory,"Noto Sans KR",sans-serif!important;font-style:normal!important;
+  color:#ffe08a!important;
+  -webkit-text-stroke:3px #2a1406;paint-order:stroke fill;
+  text-shadow:0 2px 0 #000,0 0 10px #ffb02e66!important;letter-spacing:.5px}
+html body .rwpop .rws{
+  display:block;margin-top:4px!important;
+  font:800 12.5px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#ffe9c8!important;text-shadow:0 1px 2px #000!important}
+html body .rwpop .rwi{gap:12px!important;margin:16px 4px 12px!important}
+html body .rwpop .rwc{
+  width:82px!important;padding:10px 4px 8px!important;border-radius:12px!important;
+  background:radial-gradient(circle at 50% 30%,#5a3a18,#1a1008 75%)!important;
+  border:2px solid #0b0d0f!important;
+  box-shadow:inset 0 0 0 1.5px #e8b86099,0 3px 8px #0008!important}
+html body .rwpop .rwc img{
+  width:44px!important;height:44px!important;object-fit:contain!important;
+  filter:drop-shadow(0 2px 2px #000a)!important}
+html body .rwpop .rwc b{
+  display:block;margin-top:4px;
+  font:900 15px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#fff!important;-webkit-text-stroke:2px #1a0c04;paint-order:stroke fill;
+  text-shadow:0 1px 0 #000!important}
+html body .rwpop .rwc small{
+  display:block;max-width:74px;margin:2px auto 0;
+  font:800 10.5px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#ffd9a0!important;text-shadow:0 1px 1px #000;word-break:keep-all}
+html body .rwpop .rwtap{
+  font:700 11.5px Maplestory,"Noto Sans KR",sans-serif!important;
+  color:#fff8!important;text-shadow:0 1px 2px #000}
+/* rays: cheaper static under nofx/tglite */
+html body .rwpop .rwrays{
+  opacity:.55;filter:none!important;
+  background:repeating-conic-gradient(#ffd56a28 0 9deg,#0000 9deg 20deg)!important}
+body.nofx .rwpop .rwrays,body.tglite .rwpop .rwrays,body.fxoff .rwpop .rwrays{
+  animation:none!important;opacity:.35!important}
+body.nofx .rwpop .rwc,body.tglite .rwpop .rwc,body.fxoff .rwpop .rwc{animation:none!important}
+body.nofx .rwpop .rwtap,body.tglite .rwpop .rwtap,body.fxoff .rwpop .rwtap{animation:none!important}
+body.nofx .rwpop,body.tglite .rwpop{animation:none!important}
+/* keep clear-banner / ribbon variants readable */
+html body .rwpop.rwclr .rwbox{padding-top:36px!important}
+`;
+document.head.appendChild(st);
 })();
