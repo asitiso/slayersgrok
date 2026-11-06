@@ -6034,5 +6034,19 @@ const st=document.createElement('style');st.textContent=`
 `;document.head.appendChild(st)})();
 ;(()=>{/* r590: dock_frame.png rebaked from crimson-wood/gold source (magenta keyed, gold rails only, seamless plank fill, 7 painted sockets at CX/AUTO). No runtime compositing. Softened dock drop-shadow so button circles don't read as ghost rings. */})();
 
-
-
+;(()=>{/* r591 (display only, UX.md 경지 training): 단련 강화 tap was a silent re-render — add card flash + reuse pooled ufx486 Lv pop (same as 동료/장비). Logic untouched (still C.train / cheapestStat). nofx/tglite/gq=save: number only via ufx486.lt. */
+const st=document.createElement('style');st.textContent=`
+#panel .tcard.trfx591{animation:tr591 .48s ease-out;z-index:2}
+#panel .tcard.trfx591 .medal{filter:drop-shadow(0 0 10px #ffd76a) brightness(1.3);transform:scale(1.06)}
+#panel .tcard.trfx591 .tlv{background:#5a3a10;color:#ffe27a;box-shadow:0 0 0 1px #ffd76a}
+@keyframes tr591{0%{box-shadow:inset 0 0 0 1px #a08a64,0 0 0 #0000;filter:brightness(1)}35%{box-shadow:inset 0 0 0 2px #ffe27a,0 0 16px #ffd66aaa;filter:brightness(1.18)}100%{box-shadow:inset 0 0 0 1px #a08a64,0 0 0 #0000;filter:brightness(1)}}
+body.nofx #panel .tcard.trfx591,body.tglite #panel .tcard.trfx591{animation:none;box-shadow:inset 0 0 0 2px #ffe27a,0 0 8px #ffd66a88}
+body.nofx #panel .tcard.trfx591 .medal,body.tglite #panel .tcard.trfx591 .medal{transform:none}
+#panel .trainhero.trfx591{animation:tr591h .55s ease-out}
+@keyframes tr591h{0%{filter:brightness(1)}40%{filter:brightness(1.25) drop-shadow(0 0 12px #ffd76a)}100%{filter:brightness(1)}}
+body.nofx #panel .trainhero.trfx591,body.tglite #panel .trainhero.trfx591{animation:none;filter:drop-shadow(0 0 6px #ffd76a)}
+`;document.head.appendChild(st);
+const flash=(sel)=>{const el=document.querySelector(sel);if(!el)return;el.classList.remove('trfx591');void el.offsetWidth;el.classList.add('trfx591');setTimeout(()=>el.classList.remove('trfx591'),520)};
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab!=='train')return r;const p=document.getElementById('panel');if(!p)return r;
+p.querySelectorAll('.tcard [data-s]').forEach(el=>{if(el._r591)return;el._r591=1;el.onclick=()=>{const k=el.dataset.s;const ok=C.train(k);renderPanel();if(!ok)return;const lv=(C.S().stl||{})[k]||0,st=(D.STATS||[]).find(x=>x.k===k);const sel=`.tcard:has([data-s="${k}"])`;flash(sel);if(G._ufx486)G._ufx486(sel,'lv','Lv '+lv,(st&&st.n)||'','lvup')}});
+const t10=document.getElementById('t10');if(t10&&!t10._r591){t10._r591=1;t10.onclick=()=>{let n=0;for(let i=0;i<300;i++){if(!C.train(C.cheapestStat().k))break;n++}toast('수련 '+n+'회 완료');renderPanel();if(n>0){flash('.trainhero');if(G._ufx486)G._ufx486('.trainhero','lv','+'+n+' 수련','최대 강화','lvup')}}}}catch(_){}return r}})();
