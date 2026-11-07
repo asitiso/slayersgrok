@@ -8434,3 +8434,34 @@ else if(G.rewardPop){G.rewardPop=wrap(G.rewardPop)}
 /* neutralize r613 body-subtree rwmany arm while we have scoped MO:
    mark() already no-ops without .rwpop — keep as belt-and-suspenders */
 })();
+
+/* r617 (display only): rwmany keeps clipping on the tile grid only, so the
+   chest art (.rpic) above the box is no longer cut; >12 tiles get an
+   "총 N개 · 스크롤" cue in the close hint (outside the clipped grid).
+   지령 bar: ready state shortens to "완료!" and drops the [지령 N] tag so the
+   mission name keeps readable width; only the name ellipsizes. */
+;(()=>{
+const st=document.createElement('style');
+st.textContent=`
+html body .rwpop .rwbox.rwmany{overflow:visible!important}
+html body .rwpop .rwbox.rwmany .rwtap b.rw617{color:#ffd76a;margin-right:4px;font-weight:900}
+html body #mission .f .mn{min-width:4.5em}
+html body #mission.ready .f .mq{display:none}
+html body #mission .f b.up{flex:none}
+`;
+document.head.appendChild(st);
+const cue=()=>{
+  const d=[...document.querySelectorAll('.rwpop')].pop();if(!d)return;
+  const bx=d.querySelector('.rwbox.rwmany'),tp=bx&&bx.querySelector('.rwtap');
+  if(!tp||tp.querySelector('b.rw617'))return;
+  const n=bx.querySelectorAll('.rwi .rwc').length;
+  const b=document.createElement('b');b.className='rw617';b.textContent=`총 ${n}개 · 스크롤 ▼`;
+  tp.insertBefore(b,tp.firstChild);
+};
+const wrap=o=>function(){const r=o.apply(this,arguments);try{cue()}catch(_){}return r};
+if(typeof rewardPop==='function'){rewardPop=wrap(rewardPop);G.rewardPop=rewardPop}
+else if(G.rewardPop){G.rewardPop=wrap(G.rewardPop)}
+/* ready label: keep the claim cue, shorter so the name is not cut to one letter */
+const ms=document.getElementById('mission');
+if(ms){new MutationObserver(()=>{const u=ms.querySelector('.f > b.up');if(u&&u.textContent!=='완료!'){u.textContent='완료!';u.title='탭하여 수령'}}).observe(ms,{childList:true})}
+})();
