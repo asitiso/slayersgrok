@@ -2008,7 +2008,7 @@ const draw=()=>{const el=$('#screen'),s=C.S(),cur=Math.floor(s.si/7),mx=Math.flo
   ${NPx.map(([x,y],j)=>{const i=ch*7+j,lk=i>s.maxSi,bs=j==6,n=G.stStar?G.stStar(i):0;return `<div class="snode ${lk?'lk':''} ${i==s.si?'cur':i==s.si+1?'nx533':''} ${bs?'bs':''}" data-n=${i} style="left:${x}%;top:${y}%">${bs?`<img class=sbimg src="${A}${bo.img}">`:''}<img src="assets/node_${lk?'locked':bs?'boss':(G.nodeTheme?G.nodeTheme(ch):'normal')}.png"${!lk&&!bs&&G.nodeTheme?' class=nt':''}><b>${C.stageName(i)}</b>${lk?'':`<small>${[0,1,2].map(k=>`<i class="${k<n?'on':''}">★</i>`).join('')}</small>`}${bs?`<em>${bo.n}</em>`:''}</div>`}).join('')}
   ${s.si>=ch*7&&s.si<ch*7+7?`<img class=slina src="${A}hero_lina.png" style="left:${NPx[s.si%7][0]}%;top:${NPx[s.si%7][1]}%">`:''}
   <div class=cbar><span class=btn id=wBtn><img class="emi e_ic_map" src=assets/ic_map.png alt="">월드맵</span><span class="btn schbtn" id=schB><img src=assets/ic3_chest.png>★${G.chStars?G.chStars(ch):0}/21</span><span class=btn id=mapDun2><img src="${A}ic4/gate.png">일일 던전</span></div></div>`;
-  $('#wBtn').onclick=()=>{G.mapCh=-1;draw()};$('#schB').onclick=()=>G.starOpen&&G.starOpen(ch);$('#mapDun2').onclick=()=>openScreen('dungeon');
+  $('#wBtn').onclick=()=>{G.mapCh=-1;draw()};$('#schB').onclick=()=>G.starOpen&&G.starOpen(ch);$('#mapDun2').onclick=()=>menuGo('dungeon');
   el.querySelectorAll('.snode').forEach(n=>n.onclick=()=>{const i=+n.dataset.n;if(i>s.maxSi)return toast('이전 스테이지의 보스를 처치하세요');C.selectStage(i);toast(C.stageName(i)+' 으로 이동');closeScreen()})}
  $('#sBack').onclick=()=>{if(G.mapCh>=0||G.mapCh==null)closeScreen();else{G.mapCh=Math.floor(C.S().si/7);draw()}}};
 const os=openScreen;openScreen=function(k){if(k=='map')G.mapCh=null;return os.apply(this,arguments)};
