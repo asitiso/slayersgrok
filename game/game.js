@@ -8438,16 +8438,16 @@ else if(G.rewardPop){G.rewardPop=wrap(G.rewardPop)}
 /* r617 (display only): rwmany keeps clipping on the tile grid only, so the
    chest art (.rpic) above the box is no longer cut; >12 tiles get an
    "총 N개 · 스크롤" cue in the close hint (outside the clipped grid).
-   지령 bar: ready state shortens to "완료!" and drops the [지령 N] tag so the
-   mission name keeps readable width; only the name ellipsizes. */
+   지령 bar (r618 revised): [지령 N] tag stays (UX row21); ready label is the
+   compact on-screen "완료! 탭" cue; tag/progress/cue never shrink, only the
+   mission name ellipsizes. */
 ;(()=>{
 const st=document.createElement('style');
 st.textContent=`
 html body .rwpop .rwbox.rwmany{overflow:visible!important}
 html body .rwpop .rwbox.rwmany .rwtap b.rw617{color:#ffd76a;margin-right:4px;font-weight:900}
 html body #mission .f .mn{min-width:4.5em}
-html body #mission.ready .f .mq{display:none}
-html body #mission .f b.up{flex:none}
+html body #mission .f .mq,html body #mission .f .mp,html body #mission .f b.up{flex:none}
 `;
 document.head.appendChild(st);
 const cue=()=>{
@@ -8461,7 +8461,7 @@ const cue=()=>{
 const wrap=o=>function(){const r=o.apply(this,arguments);try{cue()}catch(_){}return r};
 if(typeof rewardPop==='function'){rewardPop=wrap(rewardPop);G.rewardPop=rewardPop}
 else if(G.rewardPop){G.rewardPop=wrap(G.rewardPop)}
-/* ready label: keep the claim cue, shorter so the name is not cut to one letter */
+/* ready label: compact visible tap cue (observer: #mission childList only; writes go to b.up's text, which is not observed, so no self-loop) */
 const ms=document.getElementById('mission');
-if(ms){new MutationObserver(()=>{const u=ms.querySelector('.f > b.up');if(u&&u.textContent!=='완료!'){u.textContent='완료!';u.title='탭하여 수령'}}).observe(ms,{childList:true})}
+if(ms){new MutationObserver(()=>{const u=ms.querySelector('.f > b.up');if(u&&u.textContent!=='완료! 탭'){u.textContent='완료! 탭';u.title='탭하여 수령'}}).observe(ms,{childList:true})}
 })();
