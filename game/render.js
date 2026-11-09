@@ -250,7 +250,13 @@ R.dmgAlly=(a,d,kind)=>{const s=AS.get(a.k);if(!s)return;later(nextDelay,()=>{con
   if(kind=='miss'){s.dodgeT=0;s.ghost={x:s.x,y:s.y};dmgText(s.x,s.y-UNIT_H-10,0,{label:'MISS'});return}
   if(kind=='parry'){s.guardT=0;for(let i=0;i<14;i++){const an=rnd(0,6.283);part({x:fx,y:fy,vx:Math.cos(an)*rnd(150,320),vy:Math.sin(an)*rnd(150,320)-60,col:'rgba(255,240,150,1)',size:rnd(2,4),life:.25,grav:500,drag:.9})}FX.push({k:'ring',x:fx,y:fy,col:'rgba(255,255,220,1)',r0:2,r1:26,life:.15,t:0,width:4,squash:1});hs=Math.max(hs,.05);dmgText(s.x,s.y-UNIT_H-10,0,{label:'PARRY'});return}
   if(kind=='block'){s.guardT=0;cx&&FX.push({k:'ring',x:fx,y:fy,col:'rgba(140,210,255,1)',r0:8,r1:40,life:.25,t:0,width:7,squash:1.4});burst(fx,fy,8,'rgba(170,230,255,1)',140,6,.25);dmgText(s.x,s.y-UNIT_H-10,d,{label:'BLOCK'});return}
-  s.hitT=0;s.hitDir=1;s.kb=10;dmgText(s.x,s.y-UNIT_H-10,d,{ally:1,key:a})})};
+  /* r648: incoming hits were silent and had no shake/flash, so enemy attacks did not feel like attacks */
+  let dir=1;const ens=C.alive();if(ens.length){let bd=1e9;ens.forEach(e=>{const q=ES.get(e);if(!q)return;const dd=(q.x-s.x)*(q.x-s.x)+(q.y-s.y)*(q.y-s.y);if(dd<bd){bd=dd;dir=q.x>=s.x?1:-1}})}else dir=s.face>=0?1:-1;
+  s.hitT=0;s.hitDir=dir;s.kb=16;s.shk=5;
+  if(!R.opt||(R.opt.shake!==false&&R.opt.shake!==0)){shake=Math.max(shake,7);R.hs=Math.max(R.hs||0,.09);flashCol='255,70,50';flash=Math.max(flash,.4)}
+  ring(s.x,s.y-44,'rgba(255,80,60,1)',4,28,.18,4);burst(s.x,s.y-48,8,'rgba(255,120,80,1)',140,8,.3);
+  if(window.G&&G.sfx)G.sfx('hit');
+  dmgText(s.x,s.y-UNIT_H-10,d,{ally:1,key:a})})};
 R.heal=(a,h)=>{const s=AS.get(a.k);if(!s)return;hfx(s.x,s.y-46,'h',78);dmgText(s.x,s.y-UNIT_H-10,h,{heal:1,key:a});for(let i=0;i<5;i++)part({x:s.x+rnd(-20,20),y:s.y-rnd(10,60),vy:-60,col:'rgba(120,255,160,1)',size:7,life:.7})};
 R.walk=()=>{walking=1};
 R.spawnAll=()=>{};R.dpose=(img,t)=>{const s={sw:{t}};const P=rigPose(s,img,0);return R.dtest(img,{rig:1,wp:P,face:1,lean:P?P.lean:0})};R.dps=(img,t,face)=>{const c0=cx;const c=document.createElement('canvas');c.width=300;c.height=320;cx=c.getContext('2d');cx.fillStyle='#4a6';cx.fillRect(0,0,300,320);const h=(/boss/.test(img)?1.25:1)*200,s={ps:{t:0,w:.14}};const r=poseStep(s,img,150,300,h,face,t);if(r!=='drawn'){const P=POSE[img];deform(img,150,300,h,{face:(P&&P.en?(FLIP.test(img)?-face:face):face),sy:r?r.sy:1,a:r?r.a:1})}cx=c0;return c.toDataURL()};R.dtest=(img,o)=>{const c0=cx;const c=document.createElement('canvas');c.width=300;c.height=320;cx=c.getContext('2d');cx.fillStyle='#4a6';cx.fillRect(0,0,300,320);deform(img,150,300,260,o);cx=c0;return c.toDataURL()};R.dbg=k=>{for(const [kk,s] of AS)if(kk==k)return{x:s.x,y:s.y};return null};
