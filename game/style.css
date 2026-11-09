@@ -236,7 +236,7 @@ body:not(.bfon) #bossNm{visibility:hidden}
 .medal{width:46px;height:46px;border-radius:50%;background:radial-gradient(#e9dcc0,#a8916a);border:3px solid #3a2a18;display:flex;align-items:center;justify-content:center;margin-top:-2px}.medal img{width:34px;height:34px}
 .tlv{background:#2a1e12;border-radius:8px;padding:0 10px;font-size:11px;font-weight:900;margin-top:-6px}.tcard b{font-size:14px}.tcard small{font-size:10px;color:#e9dcc0}.tcard .pill{width:100%;margin-top:4px;min-height:36px;font-size:13px}
 /* full screens: slate header */
-#screen .shead{background:linear-gradient(#2b3137,#1e2226)!important;border-bottom:2px solid #000!important;box-shadow:0 1px 0 #5a636b!important;justify-content:center;position:relative}
+#screen .shead{background:linear-gradient(#2b3137,#1e2226)!important;border-bottom:2px solid #000!important;box-shadow:0 1px 0 #5a636b!important;justify-content:center}
 #screen .shead b{text-shadow:-1px -1px 0 #000,1px 1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;color:#fff!important}
 /* party screen parchment cards */
 .fslot{border-radius:6px!important;border:3px solid #c9a24a!important;background:linear-gradient(#e9d9a8,#b89a5a)!important;color:#2a1a0a;text-shadow:none}
@@ -1615,3 +1615,7 @@ body.nofx #battle .vsx{animation-name:vsxO!important}
 #battle .gold .echt.echs,#battle .echt.echs.g{color:#ffe27a}
 #battle .echt.echs br{display:none}#battle .echt.echs b{font-size:12px;margin-left:6px}#battle .echt.echs b img{width:15px;vertical-align:-3px}
 #battle .echt.echs.on{opacity:1;transform:none}#battle .echt.echs.off{opacity:0}
+
+/* r647: keep the menu title bar above .sbody so #sBack stays clickable (L239 used to set position:relative and the body could cover the ‹) */
+#screen .shead{position:absolute;top:0;left:0;right:0;z-index:6}
+#screen .shead .back{position:relative;z-index:2}
