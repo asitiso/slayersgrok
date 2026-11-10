@@ -8922,3 +8922,7 @@ const ot=toast;toast=function(m){if(m==='오늘 이미 출석했습니다'&&Date
 const ot=toast;toast=function(m){if(m==='수확할 자원이 없습니다'&&Date.now()-(G._ball716||0)<800)return;return ot.apply(this,arguments)};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{const b=document.querySelector('#screen #bAll');if(b&&!b._r716){b._r716=1;const o=b.onclick;if(typeof o==='function')b.onclick=function(){try{C.bUpdate();const bd=C.S().bld||{};if(((bd.vault||{}).acc||0)>=1||((bd.mine||{}).acc||0)>=1)G._ball716=Date.now()}catch(_){}return o.apply(this,arguments)}}}catch(_){}return r};
 })();
+;(()=>{/* r718: a quick second tap right after a successful 탐험 모두 받기 is ignored silently (no 「완료된 탐험이 없습니다」 on top of the result popup) */
+const ot=toast;toast=function(m){if(m==='완료된 탐험이 없습니다'&&Date.now()-(G._exall718||0)<800)return;return ot.apply(this,arguments)};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{const b=document.querySelector('#screen #exAll');if(b&&!b._r718){b._r718=1;const o=b.onclick;if(typeof o==='function')b.onclick=function(){try{const st=C.expState(),now=C.now();if((D.EXPS||[]).some(E=>st[E.k]&&now>=st[E.k].end))G._exall718=Date.now()}catch(_){}return o.apply(this,arguments)}}}catch(_){}return r};
+})();
