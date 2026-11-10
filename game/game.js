@@ -751,13 +751,15 @@ const MK=n=>D.MONS.find(m=>m.k==n)||D.MONS[0];
 const TH={gold:{m:['goblin','bandit','garcher'],b:0,bg:'bg_mine.jpg'},exp:{m:['cultist','dmage','ghost'],b:2,bg:'bg_library.jpg'},stone:{m:['golem','skeleton','orc'],b:1,bg:'bg_forge.jpg'},frag:{m:['imp','harpy','lizard'],b:3,bg:'bg_ruins.jpg'}};
 G.rbForce=fn=>{const op=C.POW;C.POW=()=>1e18;try{return fn()}finally{C.POW=op}};
 let cb=null;
-const mob=(m,ratio,j)=>({res:j>=(C.CAP||6)?1:0,fac:m.fac,sc:m.sc,n:m.n,img:m.img,max:dps()*.9*ratio,hp:dps()*.9*ratio,atk:C.MAXHP()*.012*ratio,spd:.8,t:-Math.random()*.6,q:1,rbm:1});
-const boss=(bo,n,ratio)=>({fac:bo.fac,n,img:bo.img,sc:bo.sc,max:dps()*9*ratio,hp:dps()*9*ratio,atk:C.MAXHP()*.03*ratio,spd:.7,t:-.8,boss:1,rbb:1});
+const mob=(m,ratio,j,hm=1,am=1)=>({res:j>=(C.CAP||6)?1:0,fac:m.fac,sc:m.sc,n:m.n,img:m.img,max:dps()*.9*ratio*hm,hp:dps()*.9*ratio*hm,atk:C.MAXHP()*.012*ratio*am,spd:.8,t:-Math.random()*.6,q:1,rbm:1});
+const boss=(bo,n,ratio,hm=1,am=1)=>({fac:bo.fac,n,img:bo.img,sc:bo.sc,max:dps()*9*ratio*hm,hp:dps()*9*ratio*hm,atk:C.MAXHP()*.03*ratio*am,spd:.7,t:-.8,boss:1,rbb:1});
+/* r650 무한의 탑 only (title '무한의 탑 N층'; dungeon + 전직 시련 keep the base formulas): floors were cleared in ~5-8s of sim time (2-4s at ×2) at recommended power, so the player only mashed the next-floor button. Tower mobs/boss get more HP and a bit more ATK so a floor is a real ~15-25s fight (boss floor ~25-35s), still well inside the 45s limit. Same T.req/T.rew/towerTry/rewards. */
+const TW={hp:4.5,atk:3,bhp:3.2,batk:2};
 G.rbRun=(o,done)=>{if(B.boss||B.wb||B.br||B.rb)return toast('다른 전투 중에는 도전할 수 없습니다');cb=done;const ratio=Math.max(1.1,Math.min(3,o.req/Math.max(1,C.POW())));const waves=[];
  if(o.kind=='dun'){const th=TH[o.k]||TH.gold,rr=ratio*(1+.15*o.t);for(let w=0;w<2;w++)waves.push(Array.from({length:5},(_,j)=>mob(MK(th.m[(j+w)%th.m.length]),rr,j)));const bo=D.BOSSES[th.b];waves.push([boss(bo,bo.n,rr)]);R.bgOv=th.bg}
- else{const mm=D.MONS.find(m=>m.img==o.mob)||{n:'탑의 수호자',img:o.mob,fac:'chaos'};
-  if(o.boss){waves.push(Array.from({length:4},(_,j)=>mob(MK(['skeleton','ghost','imp','garcher'][j]),ratio,j)));const bo=D.BOSSES.find(b=>b.img==o.mob)||D.BOSSES[(o.f/10|0)%D.BOSSES.length];waves.push([boss(bo,bo.n+' · '+o.f+'층',ratio)])}
-  else for(let w=0;w<2;w++)waves.push(Array.from({length:4},(_,j)=>mob(j==0?mm:MK(['skeleton','ghost','garcher','dmage'][(j+w)%4]),ratio,j)));R.bgOv='bg_tower.jpg'}
+ else{const mm=D.MONS.find(m=>m.img==o.mob)||{n:'탑의 수호자',img:o.mob,fac:'chaos'};const tw=/^무한의 탑/.test(o.title||''),hm=tw?TW.hp:1,am=tw?TW.atk:1,bh=tw?TW.bhp:1,ba=tw?TW.batk:1;
+  if(o.boss){waves.push(Array.from({length:4},(_,j)=>mob(MK(['skeleton','ghost','imp','garcher'][j]),ratio,j,hm,am)));const bo=D.BOSSES.find(b=>b.img==o.mob)||D.BOSSES[(o.f/10|0)%D.BOSSES.length];waves.push([boss(bo,bo.n+' · '+o.f+'층',ratio,bh,ba)])}
+  else for(let w=0;w<2;w++)waves.push(Array.from({length:4},(_,j)=>mob(j==0?mm:MK(['skeleton','ghost','garcher','dmage'][(j+w)%4]),ratio,j,hm,am)));R.bgOv='bg_tower.jpg'}
  document.getElementById('screen').classList.remove('on');G.rbRet=G.screen;G.screen=null;document.querySelectorAll('.modal,.rwpop,.vic,.toast').forEach(x=>x.remove());
  B.allies.forEach(a=>{a.dead=false;a.hp=a.max});B.enemies=[];B.boss=true;B.lock=0;B.rb={waves,w:0,nx:.5,end:performance.now()+45e3,t:45};B.timer=50;document.body.classList.add('wbon','bron');
  const h=document.createElement('div');h.id='brHud';h.innerHTML=`<div class=brh1><b>${o.title}</b><span class=brhk>웨이브 <i>0/${waves.length}</i></span><span class=brht>45.0</span></div><div class=brtime><s></s></div><div class=brhn></div>`;document.getElementById('battle').appendChild(h);G.rbHud=h};
