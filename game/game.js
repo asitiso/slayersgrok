@@ -8889,3 +8889,8 @@ const bc=C.bCollect;if(typeof bc!=='function')return;
 C.bCollect=function(k){if(k!=='vault')return bc.apply(this,arguments);const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let v;try{v=bc.apply(this,arguments)}finally{C.addGold=ag}
  return (typeof v==='number'&&v>0&&got!=null&&isFinite(got)&&got>0)?got:v};
 })();
+;(()=>{// r700 무한의 탑 일일 탑 보상 gold: the 받기 reward popup listed the base r.g while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. Record the gold C.addGold actually added and report that (display only; grant, once-per-day rule, 강화석 and rates unchanged).
+const td=C.towerDaily;if(typeof td!=='function')return;
+C.towerDaily=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=td.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)&&got!==r.g)r.g=got}catch(_){}return r};/* no extra fields: same result shape as before */
+})();
