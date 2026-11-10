@@ -8863,3 +8863,9 @@ const fix=()=>{const m=[...document.querySelectorAll('.modal')].filter(x=>x.quer
 G.idleFix694=fix;
 const oi=G.idleInfo||idleInfo;const wrap=function(){const r=oi.apply(this,arguments);try{fix()}catch(e){console.warn(e)}return r};idleInfo=wrap;G.idleInfo=wrap;
 })();
+;(()=>{/* r695: 어서 오세요! (재접속 방치 보상) gold shows the gold you actually get, like r694 for the 방치 보상 pot. The return popup's 골드 tile and the 방치 보상 / 2배 보너스! reward popup after 받기 showed off.g (pre-bonus), but C.offApply adds it through C.addGold, which applies the existing 칭호 · 협회 버프 · 펫 · 인연 세트 gold bonuses, so the player got more than shown. The tile now shows off.g × the current gold multiplier (G.goldMul694, which restores gold and goldEarned exactly), and after a successful claim the reward popup shows the gold actually added. Display only - offline rates, the 8-hour cap, 2배 cost, 경험치, 마정구, 강화석, gold bonuses and saves are unchanged. */
+const oa=C.offApply;if(typeof oa==='function')C.offApply=function(r,m){const s=C.S(),g0=s.gold;const ok=oa.apply(this,arguments);try{if(ok&&r){const k=m||1,d=s.gold-g0;if(r.gBase==null)r.gBase=r.g;r.g=d/k}}catch(_){}return ok};
+const fix=off=>{const m=document.getElementById('offModal');if(!m||!off)return false;const im=[...m.querySelectorAll('.offg img')].find(x=>/it2_gold\.png$/.test(x.getAttribute('src')||''));const b=im&&im.parentElement.querySelector('b');if(!b)return false;const mul=typeof G.goldMul694==='function'?G.goldMul694():1;b.textContent=fmt(off.g*mul);b.dataset.r695='1';return true};
+G.offFix695=fix;
+const op=offPop;const wrap=function(off){const r=op.apply(this,arguments);try{fix(off)}catch(e){console.warn(e)}return r};offPop=wrap;G.offPop=wrap;
+})();
