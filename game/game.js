@@ -8899,3 +8899,8 @@ const tt=C.towerTry;if(typeof tt!=='function')return;
 C.towerTry=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=tt.apply(this,arguments)}finally{C.addGold=ag}
  try{if(r&&typeof r==='object'&&!r.fail&&got!=null&&isFinite(got)&&got!==r.g)r.g=got}catch(_){}return r};
 })();
+;(()=>{// r704 협회 출석 gold: the 「협회 출석 보상」 popup listed the base r.gold while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. Record the gold C.addGold actually added and report that (display only; grant, 협회 코인, 협회 경험치, once-per-day rule unchanged; result keeps the same fields).
+const ga=C.gAttend;if(typeof ga!=='function')return;
+C.gAttend=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=ga.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)&&got!==r.gold)r.gold=got}catch(_){}return r};
+})();
