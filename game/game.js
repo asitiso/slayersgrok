@@ -8904,3 +8904,8 @@ const ga=C.gAttend;if(typeof ga!=='function')return;
 C.gAttend=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=ga.apply(this,arguments)}finally{C.addGold=ag}
  try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)&&got!==r.gold)r.gold=got}catch(_){}return r};
 })();
+;(()=>{// r709 일일 특가 골드 상자 gold: the 「일일 특가 구매 완료」 popup listed the base r.gold (4시간분) while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. Record the gold C.addGold actually added and report that (display only; listing, discount, price, once-per-day, grant unchanged; result keeps the same fields).
+const db=C.dealBuy;if(typeof db!=='function')return;
+C.dealBuy=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=db.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&'gold' in r&&got!=null&&isFinite(got)&&got!==r.gold)r.gold=got}catch(_){}return r};
+})();
