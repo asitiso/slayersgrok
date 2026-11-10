@@ -8708,3 +8708,10 @@ G.sumDet670=(m,got)=>{if(!m||!got)return 0;const fs=[...m.querySelectorAll('.srf
   f.addEventListener('click',e=>{if(fs.length&&!f.classList.contains('open'))return;e.stopPropagation();compDetail(k)})});return n};
 const os=summon;summon=function(n){const r=os.apply(this,arguments);try{G.sumDet670(document.getElementById('sumModal'),G._sumGot)}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r671: 장착 장비 상세 → 강화 like 화룡전's item info, which has a 강화 button that opens the upgrade screen on that item. Our 장비 sheet's equipped-slot popup (r506) was read-only (+N, stats, set, sell price), so raising that piece meant 확인 → close the sheet → 단련 → 강화 → find the slot. The popup now has a green 강화 ▶ pill: it closes the popup and the sheet and opens 강화 · 육성 on the 장비 강화 tab with that slot already selected. Navigation only - it never enhances; enhance costs, rates, +15 cap, 일괄 강화 and saves are unchanged */
+const st=document.createElement('style');st.textContent=`.m506 .br506{display:flex}.m506 .en671{min-width:140px;justify-content:center;margin:10px auto 0}`;document.head.appendChild(st);
+G.enGo671=k=>{const s=G.C.S();if(!k||!s.gear||!s.gear[k])return false;try{if(G.tab&&G.tab!='battle')openSheet('battle')}catch(_){}G.enTab='gear';G.enSel=k;menuGo('enhance');return G.screen==='enhance'&&G.enSel===k};
+let pick=null;document.addEventListener('click',e=>{const q=e.target.closest&&e.target.closest('#panel .eqgrid .eq');if(!q){pick=null;return}const i=[...q.parentElement.children].indexOf(q);pick=D.SLOTS[i]?D.SLOTS[i].k:null},true);
+const om=modal;modal=function(html){const m=om.apply(this,arguments);try{const k=pick;pick=null;if(k&&typeof html=='string'&&html.indexOf('class=d506')>=0&&G.tab=='gear'&&G.C.S().gear[k]){const d=m.querySelector('.d506');
+ if(d&&!d.querySelector('.en671')){const row=document.createElement('div');row.className='br506';const b=document.createElement('span');b.className='pill green en671';b.dataset.es671=k;b.innerHTML=`<img class=ci src="${A}ic3_anvil.png" alt="">강화 ▶`;b.onclick=e=>{e.stopPropagation();m.remove();G.enGo671(k)};row.appendChild(b);d.appendChild(row)}}}catch(e){console.warn(e)}return m};
+})();
