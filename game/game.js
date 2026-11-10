@@ -8618,3 +8618,14 @@ const put=()=>{const el=document.querySelector('#screen');if(!el)return;const ex
 G.mxPut=put;
 const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{put()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
 })();
+;(()=>{/* r662: 임무 바로가기 for every in-progress daily/weekly task like 화룡전's quest list. Only 마력 수련 / 투기장 / 협회 기부 / 영지 수확 had a 바로가기; 몬스터 처치, 주문 시전, 보스 처치 and 장비 뽑기 rows only said 진행 중, so the player had to close the sheet and find the control. Those rows now get the same green 바로가기: it closes the 임무 sheet back to the battle field and briefly highlights where the task is done (보스 도전 button, skill row, 마정구 orb) with a hint toast. Navigation only - it never starts a boss fight, casts, or rolls; mission goals, progress, rewards, claims and saves are unchanged. */
+const GO={kill:['전투에서 몬스터를 처치하세요',null],spell:['스킬을 눌러 주문을 시전하세요','#skills'],boss:['보스 도전 버튼으로 보스에 도전하세요','#bossBtn'],roll:['마정구를 눌러 장비를 뽑으세요','#navroll']};
+G.mqGo662=k=>{const g=GO[k];if(!g)return false;try{const x=document.getElementById('sheetClose');if(x&&G.tab&&G.tab!='battle')x.click()}catch(_){}try{if(G.screen)closeScreen()}catch(_){}toast(g[0]);
+ if(g[1])setTimeout(()=>{const e=document.querySelector(g[1]);if(!e)return;e.classList.remove('hl662');void e.offsetWidth;e.classList.add('hl662');setTimeout(()=>e.classList.remove('hl662'),2600)},60);return true};
+const st=document.createElement('style');st.setAttribute('data-r','662');st.textContent=`.hl662{animation:hl662 .65s ease-in-out 4!important;z-index:30}@keyframes hl662{0%,100%{filter:none}50%{filter:brightness(1.5) drop-shadow(0 0 8px #ffe066) drop-shadow(0 0 3px #fff)}}body.nofx .hl662,body.tglite .hl662{animation:none!important;outline:3px solid #ffe066;outline-offset:2px;border-radius:50%}`;document.head.appendChild(st);
+const put=()=>{if(G.tab!=='mission')return;const p=document.getElementById('panel');if(!p)return;
+ p.querySelectorAll('.mqr>.btn.off[data-m],.mqr>.btn.off[data-w]').forEach(bt=>{const k=bt.dataset.m||bt.dataset.w;if(!GO[k]||bt.textContent.trim()!=='진행 중')return;
+  bt.textContent='바로가기';bt.classList.remove('ip489','pp4','h4','z4');bt.style.removeProperty('--pp4');bt.classList.add('mqgo');bt.onclick=ev=>{ev.stopPropagation();G.mqGo662(k)}})};
+G.mqPut662=put;
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
