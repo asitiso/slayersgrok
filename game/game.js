@@ -8629,3 +8629,12 @@ const put=()=>{if(G.tab!=='mission')return;const p=document.getElementById('pane
 G.mqPut662=put;
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r663: 강화석 획득처 from the 강화 screen like 화룡전's material bar. The 강화 · 육성 screen's 강화석 bar only listed where stones drop as plain text; the 획득처 popup with ▶ shortcuts (도전 던전, 우정 상점, 방치 보상, 전투) was only reachable through 가방. Tapping the bar (or its 획득처 ▶ chip) now opens that same G.itemInfo('it2_stone') popup. Navigation only - the shortcuts go through the same menuGo stage locks; costs, rates, drops, rewards and saves are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','663');st.textContent=`.enres.tap663{cursor:pointer;-webkit-tap-highlight-color:transparent}.enres .go663{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff;font:900 10.5px/1.5 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;vertical-align:middle;white-space:nowrap}`;document.head.appendChild(st);
+G.stoneSrc663=()=>{if(typeof G.itemInfo!='function')return false;G.itemInfo('it2_stone');return true};
+const put=()=>{if(G.screen!=='enhance')return;const c=document.querySelector('#screen .card.enres');if(!c||c.dataset.r663)return;c.dataset.r663='1';c.classList.add('tap663');c.setAttribute('role','button');c.setAttribute('aria-label','강화석 획득처 보기');
+ const b=c.querySelector('b');if(b){const g=document.createElement('span');g.className='go663';g.textContent='획득처 ▶';b.appendChild(g)}
+ c.onclick=e=>{e.stopPropagation();G.stoneSrc663()}};
+G.stonePut663=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
