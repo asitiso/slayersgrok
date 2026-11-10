@@ -8792,3 +8792,11 @@ const put=()=>{if(G.screen!=='codex'||G.cdT!=='s')return 0;let n=0;document.quer
 G.setPetPut685=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r686: 도감 인연 미보유 동료 → 동료 소환 like 화룡전's 획득처 jump (same travel-only pattern as r675 동료 소환 ▶ and the r685 인연 펫 부화 ▶). On the 도감 인연 tab a set's unowned companion member only said 소환 n% under its name as plain text, and tapping it did nothing, so summoning it for the set bonus meant ‹ back, then the 소환 tab. A small green 동료 소환 ▶ chip now sits under that rate text (kept as is); a tap opens the 동료 소환 screen through menuGo('summon') (G.sumGo675), with the usual lock path if one ever applies. Navigation only - it never summons and spends no gems or tickets; rates, pity, mileage, set bonuses, 도감 rewards, unlocks and saves are unchanged. Owned members (보유) and the pet-member 펫 부화 ▶ chips are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','686');st.textContent=`#screen .cdm529>span .sgo686{display:inline-block;margin-top:2px;padding:0 5px;border-radius:8px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff!important;font:900 9px/1.45 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}#screen .cdm529>span .sgo686:active{filter:brightness(.9)}`;document.head.appendChild(st);
+const go=()=>{if(typeof G.sumGo675==='function')return G.sumGo675();menuGo('summon');return G.screen==='summon'};G.setCompGo686=go;
+const put=()=>{if(G.screen!=='codex'||G.cdT!=='s')return 0;let n=0;document.querySelectorAll('#screen .cdset .cdm529>span.off').forEach(sp=>{if(sp.querySelector('.sgo686,.pgo685'))return;const sm=sp.querySelector(':scope>small');if(!sm||!/^소환 [\d.]+%$/.test(sm.textContent.trim()))return;
+ const b=document.createElement('span');b.className='sgo686';b.setAttribute('role','button');b.setAttribute('aria-label',((sp.querySelector('b')||{}).textContent||'동료')+' 동료 소환으로 이동');b.textContent='동료 소환 ▶';sm.after(b);b.onclick=e=>{e.stopPropagation();go()};n++});return n};
+G.setCompPut686=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
