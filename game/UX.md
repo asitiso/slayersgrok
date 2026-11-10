@@ -197,3 +197,6 @@ In 화룡전 the power breakdown lists every source of its percentage bonuses. O
 
 ## r693 전투력 분석 장비 도감 row → 도감 장비 tab
 The r692 장비 도감 row in 전투력 분석 → 보너스 출처 opened 도감 through the generic row tap, which lands on whatever 도감 tab was used last, so you still had to tap 장비. That one row now selects the 장비 tab before opening 도감 (`G.gcxGo693`); while 도감 is still locked it shows the usual unlock toast and leaves the last-used tab alone. The 도감 row and every other row keep their current destinations. Navigation only: no 도감 registration or reward, no spend; bonus values, unlocks and saves are unchanged.
+
+## r694 방치 보상 골드 = 실제 수령액
+In 화룡전 the idle reward window shows what you will actually receive. Our 방치 보상 popup's 골드 tile and the 방치 보상 수령 toast showed the base idle gold (`offlineCalc` × 0.5), but `C.idleClaim` adds it through `C.addGold`, which applies the existing gold bonuses (칭호, 협회 버프, 펫, 인연 세트). With any gold bonus you received more than the popup said (for example 213 shown, 291 received with 펫 +30% and 인연 +5%). The tile now shows the base amount × the current gold-bonus multiplier (`G.goldMul694`, a probe that restores gold and stats), and the toast shows the gold actually added. Display only: idle rates, the 50% rule, the 8-hour cap, 마정구, 강화석, 경험치, gold bonuses and saves are unchanged.

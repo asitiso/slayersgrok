@@ -8855,3 +8855,11 @@ const op=G.powOpen;if(typeof op!=='function')return;
 G.gcxGo693=()=>{document.querySelectorAll('.modal').forEach(x=>x.remove());if(typeof G.isOpen!=='function'||G.isOpen('codex'))G.cdT='g';menuGo('codex');return G.screen==='codex'&&G.cdT==='g'};
 G.powOpen=function(){const r=op.apply(this,arguments);try{const m=[...document.querySelectorAll('.modal')].pop();m&&m.querySelectorAll('.pwl>.pwr').forEach(row=>{const b=row.querySelector('b');if(!b||!/^장비 도감/.test(b.textContent)||row.dataset.r693)return;row.dataset.r693='1';row.onclick=e=>{e&&e.stopPropagation&&e.stopPropagation();G.gcxGo693()}})}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r694: 방치 보상 gold shows the gold you actually get, like 화룡전's idle reward window. The 방치 보상 popup's 골드 tile and the 방치 보상 수령 toast showed the base idle gold (offlineCalc × 0.5), but C.idleClaim adds it through C.addGold, which applies the existing gold bonuses (칭호 · 협회 버프 · 펫 · 인연 세트), so with any gold bonus the player received more than shown (e.g. 213 shown, 291 received with 펫 +30% and 인연 +5%). The tile now shows the base amount × the current C.addGold multiplier (measured by a side-effect-free probe), and the claim toast shows the gold actually added. Display only - idle rates, the 50% rule, caps, orbs, 강화석, exp, gold bonuses and saves are unchanged. */
+G.goldMul694=()=>{const s=C.S();if(!s)return 1;const g0=s.gold,st=s.stats||{},e0=st.goldEarned;let m=1;try{C.addGold(1e6);m=(s.gold-g0)/1e6}catch(_){m=1}s.gold=g0;if(s.stats)s.stats.goldEarned=e0;return isFinite(m)&&m>0?m:1};
+const oc=C.idleClaim;if(typeof oc==='function')C.idleClaim=function(){const s=C.S(),g0=s.gold;const r=oc.apply(this,arguments);try{if(r){r.gBase=r.g;r.g=s.gold-g0}}catch(_){}return r};
+const fix=()=>{const m=[...document.querySelectorAll('.modal')].filter(x=>x.querySelector('#idleClaim')).pop();if(!m)return false;const im=[...m.querySelectorAll('.rwgrid img')].find(x=>/it2_gold\.png$/.test(x.getAttribute('src')||''));const t=im&&im.parentElement;const b=t&&t.querySelector('b');if(!b)return false;
+ const r=C.offlineCalc(Math.max(60,C.idleSec()));b.textContent=fmt(Math.floor(r.g*.5*G.goldMul694()));b.dataset.r694='1';return true};
+G.idleFix694=fix;
+const oi=G.idleInfo||idleInfo;const wrap=function(){const r=oi.apply(this,arguments);try{fix()}catch(e){console.warn(e)}return r};idleInfo=wrap;G.idleInfo=wrap;
+})();
