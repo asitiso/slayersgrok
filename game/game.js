@@ -791,10 +791,9 @@ const of=R.frame;R.frame=dt=>{of(dt);try{if(G.screen)return;const c=R._bc();if(!
  ctx.restore()}catch(_){}};
 })();
 ;(()=>{// v31 party danger: red edge vignette + portrait pulse when an ally is low
-G.dngN=0;let on=0;
+G.dngN=0;let on=0,sig=null;
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const b=document.getElementById('battle');if(!b)return r;let v=document.getElementById('dangerV');if(!v){v=document.createElement('div');v.id='dangerV';b.appendChild(v)}
-  const A=C.B.allies||[];let low=0;const pp=document.querySelectorAll('#partycol .pp');A.forEach((a,i)=>{const l=a.hp>0&&a.hp<a.max*.3;if(l)low++;if(pp[i])pp[i].classList.toggle('dng',l)});
-  const n=low>0&&!G.screen;if(n&&!on)G.dngN++;on=n;v.classList.toggle('on',n)}catch(_){}return r};
+  const A=C.B.allies||[];let low=0,bits=G.screen?1:0;for(let i=0;i<A.length;i++){const a=A[i],l=!!(a&&a.hp>0&&a.max>0&&a.hp<a.max*.3);if(l)low++;bits=(bits<<1)|(l?1:0)}const p0=document.querySelector('#partycol .pp');if(bits!==sig||!p0||p0._dng===undefined){sig=bits;const pp=document.querySelectorAll('#partycol .pp');A.forEach((a,i)=>{const l=!!(a&&a.hp>0&&a.max>0&&a.hp<a.max*.3);const p=pp[i];if(p&&p._dng!==l){p._dng=l;p.classList.toggle('dng',l)}});const n=low>0&&!G.screen;if(n&&!on)G.dngN++;on=n;if(v._dng!==n){v._dng=n;v.classList.toggle('on',n)}}}catch(_){}return r};
 })();
 ;(()=>{// v32 loot fly: coins pop from kills and fly into the gold counter
 G.lootN=0;let live=0;const CP=[];
@@ -8991,4 +8990,13 @@ const show=()=>{if(!walking()||off())return;const wr=document.querySelector('#ba
 const cue=()=>{const id=++gen;if(!walking()||off())return;const wait=document.querySelector('#battle .wvb.wrib:not(.out)')?600:0;const go=()=>{if(id!==gen)return;show()};if(wait)setTimeout(go,wait);else go()};
 G.nextWave726=cue;
 const ow=C.ev.walk;C.ev.walk=function(){const r=ow&&ow.apply(this,arguments);try{cue()}catch(e){console.warn(e)}return r};
+})();
+
+;(()=>{/* r727: light low-HP danger emphasis on party-column portraits, like 화룡전. The existing <30% check already toggled .dng (red HP fill + border pulse, r559) and the battle vignette, but it rewrote the class every combat frame and the HUD party-column refresh dropped the class until the next tick. .dng / #dangerV.on are now toggled only when the low-HP state actually changes (no per-frame layout), and renderPartyCol reapplies the class after a rebuild. Effect-off (nofx / tglite / fxoff) keeps the static red emphasis and skips the portrait and vignette pulses. Display only: HP, the 30% threshold, stageReq and combat are unchanged. */
+const C=G.C;
+const low=a=>!!(a&&a.hp>0&&a.max>0&&a.hp<a.max*.3);
+const mark=()=>{const A=C.B.allies||[],pp=document.querySelectorAll('#partycol .pp');let n=0;for(let i=0;i<pp.length;i++){const l=low(A[i]);if(l)n++;const p=pp[i];if(p._dng!==l){p._dng=l;p.classList.toggle('dng',l)}}const b=document.getElementById('battle');if(!b)return;let v=document.getElementById('dangerV');if(!v){v=document.createElement('div');v.id='dangerV';b.appendChild(v)}const on=n>0&&!G.screen;if(v._dng!==on){v._dng=on;v.classList.toggle('on',on)}};
+G.dngMark727=mark;
+const st=document.createElement('style');st.textContent='body:is(.nofx,.tglite,.fxoff) #dangerV.on{animation:none!important;opacity:.7!important}';document.head.appendChild(st);
+if(typeof renderPartyCol==='function'){const op=renderPartyCol;renderPartyCol=function(){const r=op.apply(this,arguments);try{mark()}catch(e){console.warn(e)}return r}}
 })();
