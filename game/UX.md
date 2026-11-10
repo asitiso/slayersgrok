@@ -194,3 +194,6 @@ In 화룡전 a hero's shard counter leads to where shards come from. Our 동료 
 
 ## r692 전투력 분석 보너스 출처: 영지 마탑 · 장비 도감 · 특성
 In 화룡전 the power breakdown lists every source of its percentage bonuses. Our 전투력 분석 (tap the profile) 보너스 출처 table showed 장비 세트 · 도감 · 기보 · 동료 시너지 · 펫 · 협회 · 칭호, but three sources that really raise 공격력 / 체력 were missing even though their own screens show them: 영지 마탑 (파티 공격력 +N%, `BAL.tower.pct` × 마탑 Lv inside `C.atkPct`), 장비 도감 (공격력·체력 +N% 적용 중, `C.gcxB`) and 특성 (특성 합계, `C.talB`). They are now added at the end of the table with the same values their screens show, and the existing row tap (r384 / r385) opens 영지 / 도감 / 특성 with the same lock display. Display only: no stat, multiplier, 전투력, cost or save changes.
+
+## r693 전투력 분석 장비 도감 row → 도감 장비 tab
+The r692 장비 도감 row in 전투력 분석 → 보너스 출처 opened 도감 through the generic row tap, which lands on whatever 도감 tab was used last, so you still had to tap 장비. That one row now selects the 장비 tab before opening 도감 (`G.gcxGo693`); while 도감 is still locked it shows the usual unlock toast and leaves the last-used tab alone. The 도감 row and every other row keep their current destinations. Navigation only: no 도감 registration or reward, no spend; bonus values, unlocks and saves are unchanged.

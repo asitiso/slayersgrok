@@ -8850,3 +8850,8 @@ const oi=G.powInfo;if(typeof oi!=='function')return;
 G.powInfo=function(){const I=oi.apply(this,arguments);try{const s=C.S();if(I&&Array.isArray(I.bon)&&!I.bon.some(b=>b[0]==='특성')){
  I.bon.push(['영지 마탑',sf(()=>BAL.tower.pct*((s.bld&&s.bld.tower&&s.bld.tower.lv)||0)),0,'base'],['장비 도감',sf(()=>C.gcxB()),sf(()=>C.gcxB()),'codex'],['특성',sf(()=>C.talB('atk')),sf(()=>C.talB('hp')),'talent'])}}catch(e){console.warn(e)}return I};
 })();
+;(()=>{/* r693: 전투력 분석 장비 도감 row → 도감 장비 tab. The r692 장비 도감 row in 보너스 출처 opened 도감 through the generic r384 row tap (menuGo('codex')), which lands on whatever 도감 tab was used last, so the player still had to tap 장비. That one row now selects the 장비 tab (G.cdT='g') before opening 도감; if 도감 is still locked it shows the usual unlock toast and leaves the tab choice alone. The 도감 row and every other row keep their current destinations. Navigation only - no 도감 registration or reward, no spend; bonus values, unlocks and saves are unchanged. */
+const op=G.powOpen;if(typeof op!=='function')return;
+G.gcxGo693=()=>{document.querySelectorAll('.modal').forEach(x=>x.remove());if(typeof G.isOpen!=='function'||G.isOpen('codex'))G.cdT='g';menuGo('codex');return G.screen==='codex'&&G.cdT==='g'};
+G.powOpen=function(){const r=op.apply(this,arguments);try{const m=[...document.querySelectorAll('.modal')].pop();m&&m.querySelectorAll('.pwl>.pwr').forEach(row=>{const b=row.querySelector('b');if(!b||!/^장비 도감/.test(b.textContent)||row.dataset.r693)return;row.dataset.r693='1';row.onclick=e=>{e&&e.stopPropagation&&e.stopPropagation();G.gcxGo693()}})}catch(e){console.warn(e)}return r};
+})();
