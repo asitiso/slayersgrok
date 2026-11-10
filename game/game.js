@@ -8721,3 +8721,15 @@ const om=modal;modal=function(html){const m=om.apply(this,arguments);try{const k
 G.menuDot673=()=>{const X=G.todoX672||{};return Object.keys(X).some(k=>{try{return (!G.isOpen||G.isOpen(k))&&MENU.some(m=>m[0]==k)&&!!X[k]()}catch(_){return false}})};
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const d=document.querySelector('#sidemenu .dot');if(d&&d.style.display==='none'&&G.menuDot673())d.style.display=''}catch(_){}return r};
 })();
+;(()=>{/* r674: 강해지는 방법 on the 비무대회 (투기장) 패배 card like 화룡전. A stage DEFEAT and (r666) a 무한의 탑 / 일일 던전 도전 실패 card show the four growth tiles, but losing a 투기장 match only showed 패배 + points with 월드맵 / 확인, so growing meant 확인, ‹ back, then finding the screen. A live loss (not a 다시보기 of an old match) now gets the same r666 tiles (장비 강화 · 동료 육성 · 편성 · 소환) above the button bar; a tap closes the result and opens that screen through G.failGo666 / menuGo. Navigation only - no rematch, no ticket or gem spent; arena points, tickets, rewards, opponents, unlocks and saves are unchanged. */
+if(typeof G.failGo666!=='function')return;
+const T=[['gear','it2_sword.png','장비 강화',()=>'강화석 '+fmt(C.S().stone||0)],['comp','ally_gourry.png','동료 육성',()=>'레벨·스킬 강화'],['party','ally_amelia.png','편성',()=>'파티 배치'],['summon','it2_ticket.png','소환',()=>'새 동료·장비']];
+let live=0;const a0=arenaReplay;arenaReplay=function(r,re){live=(!re&&r&&r.o&&!r.win)?1:0;return a0.apply(this,arguments)};G.arenaReplay=arenaReplay;
+const add=m=>{const e=m&&m.querySelector('.arres.l');if(!e||e.querySelector('.gd666'))return false;const bx=e.querySelector('.rsbx')||e,bar=bx.querySelector('.vbt433')||bx.querySelector('#arOk');
+ const w=document.createElement('div');w.className='gd666 ar674';w.innerHTML=`<span class=gdt666>강해지는 방법</span><div class=gdb666>${T.map(([k,i,n,s])=>`<span data-g674=${k} role=button><img src="${A}${i}" alt=""><i><b>${n}</b><small>${s()}</small></i></span>`).join('')}</div>`;
+ bar?bar.before(w):bx.appendChild(w);
+ w.querySelectorAll('[data-g674]').forEach(x=>x.onclick=ev=>{ev.stopPropagation();m.remove();G.failGo666(x.dataset.g674)});return true};
+G.arFail674=add;
+const watch=n=>{const lv=live;live=0;if(!lv)return;const bx=n.querySelector('.arbox');if(!bx)return;let k=0;const o=new MutationObserver(()=>{if(!bx.querySelector('.arres'))return;o.disconnect();const t=()=>{if(!n.isConnected)return;/* wait for the r358/r435 card + button bar */if((!n.querySelector('.arres .vbt433')&&k++<20)){setTimeout(t,50);return}add(n)};setTimeout(t,30)});o.observe(bx,{childList:true})};
+const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('arep'))watch(n)}).observe(ap,{childList:true});
+})();
