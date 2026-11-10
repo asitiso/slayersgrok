@@ -1547,7 +1547,7 @@ const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{if(e&&e.el&&!e.boss&&G.screen!='sim'
  setTimeout(()=>w.classList.add('open'),850);setTimeout(()=>w.classList.add('out'),2500);setTimeout(()=>{w.remove();live--},3000);const r=ok(e,...a);R.ekT=null;return r}}}catch(_){}return ok(e,...a)}})();
 /* v95 breakable field crates */
 (()=>{const C=G.C;let cd=12,el=null;
-function brk(byTap){if(!el)return;const w=el,s=C.S(),g=Math.round(C.goldKill(s.si||0)*(byTap?25:20));C.addGold(g);el=null;w.classList.add('brk');
+function brk(byTap){if(!el)return;const w=el,s=C.S();let g=Math.round(C.goldKill(s.si||0)*(byTap?25:20));{/* r706: float shows the gold actually added (칭호 / 협회 버프 / 펫 / 인연 세트 included); grant unchanged */const g0=s.gold;C.addGold(g);const dg=s.gold-g0;if(isFinite(dg)&&dg>0)g=dg}el=null;w.classList.add('brk');
  const b=document.getElementById('battle');for(let i=0;i<9;i++){const p=document.createElement('i');p.className='crp';p.style.setProperty('--dx',(Math.random()-.5)*140+'px');p.style.setProperty('--dy',(-40-Math.random()*90)+'px');p.style.setProperty('--r',(Math.random()*720-360)+'deg');w.appendChild(p)}
  const t=document.createElement('div');t.className='crt';t.innerHTML=`<img src="assets/it2_gold.png">+${R.fmt(g)}`;w.appendChild(t);setTimeout(()=>w.remove(),1300)}
 function spawn(){const b=document.getElementById('battle');if(!b)return;el=document.createElement('div');el.className='crate';el.style.left=(235+Math.random()*35)+'px';el.style.top=(455+Math.random()*30)+'px';el.innerHTML='<img src="assets/prop_crate.png"><div class="crhp"><b></b></div>';el.dataset.h=4;b.appendChild(el);
