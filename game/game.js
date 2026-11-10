@@ -8646,3 +8646,12 @@ const put=()=>{if(G.screen!=='relic')return;const sb=document.querySelector('#sc
 G.fragPut664=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r665: 펫 알 획득처 like 화룡전's material source jump. The 펫 screen's 펫 부화 card only said "무한의 탑 5층마다 알 1개" as plain text, so getting more eggs meant ‹ back, 메뉴, then the 무한의 탑 entry. A green 무한의 탑 ▶ chip now sits under that line; tapping it (or the line) opens 무한의 탑 through the same menuGo('tower') stage lock. Navigation only - it never starts a floor; egg drops, hatch costs/rates, pet levels, tower floors/rewards, unlocks and saves are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','665');st.textContent=`.ptsrc665{display:inline-flex!important;align-items:center;gap:6px;margin-top:4px;padding:3px 8px;border-radius:10px;background:#0006;cursor:pointer;-webkit-tap-highlight-color:transparent}.ptsrc665 .go665{display:inline-block;padding:1px 8px;border-radius:9px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff;font:900 10.5px/1.5 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;white-space:nowrap}`;document.head.appendChild(st);
+G.eggSrc665=()=>{if(typeof G.isOpen=='function'&&!G.isOpen('tower')){menuGo('tower');return false}menuGo('tower');return G.screen==='tower'};
+const put=()=>{if(G.screen!=='pet')return;const f=document.querySelector('#screen .pth .f');if(!f||f.querySelector('.ptsrc665'))return;const sm=[...f.querySelectorAll('small')].find(x=>/무한의 탑/.test(x.textContent));if(!sm)return;
+ const r=document.createElement('span');r.className='ptsrc665';r.setAttribute('role','button');r.setAttribute('aria-label','무한의 탑으로 이동');r.innerHTML='<small>알 획득처</small><span class=go665>무한의 탑 ▶</span>';sm.after(r);
+ const go=e=>{e.stopPropagation();G.eggSrc665()};r.onclick=go;sm.style.cursor='pointer';sm.onclick=go};
+G.eggPut665=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();

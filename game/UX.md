@@ -110,3 +110,6 @@ In 화룡전 you can tap a material on the upgrade screen to see where it drops 
 
 ## r664 기보 조각 → 고대 유적 from the 기보 screen
 In 화룡전 a growth screen's material line leads straight to where it drops. Our 기보 · 클레어 바이블 screen only said "조각 획득: 도전 → 고대 유적 발굴" as plain text, so getting more fragments took ‹ back → 메뉴 → 도전 → the 고대 유적 card. That line is now a tappable row with a green 고대 유적 ▶ chip. It opens the 일일 던전 screen with the 고대 유적 card already selected (`G.dunK='frag'` + the same `menuGo('dungeon')`, so the 도전 던전 stage lock and its 개방 toast still apply). Navigation only: it never enters or sweeps. Relic costs, fragment drops, dungeon entries and rewards, unlocks and saves are unchanged.
+
+## r665 펫 알 → 무한의 탑 from the 펫 screen
+In 화룡전 a growth screen's material line leads to where it drops. Pet eggs only come from 무한의 탑 (1 per 5 floors), but the 펫 screen's 펫 부화 card only said "무한의 탑 5층마다 알 1개" as plain text, so getting more eggs took ‹ back → 메뉴 → 무한의 탑. A small row with a green 무한의 탑 ▶ chip now sits under that line; tapping it (or the egg line) opens 무한의 탑 through the same `menuGo('tower')` stage lock, so a locked tower still only shows its 개방 toast. Navigation only: it never starts a floor. Egg drops, hatch costs and rates, pet levels, tower floors and rewards, unlocks and saves are unchanged.
