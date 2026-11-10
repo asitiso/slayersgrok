@@ -83,3 +83,6 @@ Locked entries stay visible, grey, with the same stage pill, and tapping them gi
 ## r655 동료 승급 일괄 승급
 Mine (마정 광산 / 마정 농장) harvest was checked first and already matches the vault path: list 수확, map bubble, 전체 수확 (includes orbs), strip 수확 가능, nav dot, one payout, remainder kept (no change).
 승급 needed one tap per star per companion. A green 일괄 승급 (N명) pill under the companion list now runs the same `C.starUp` for every owned companion until its shards run out or it hits ★max, then shows a result popup (이름 ★a → ★b). Star-up only spends that companion's own shards, so nothing is chosen for the player. 각성 (costs gold) stays manual. Costs, STARMAX, shard values and saves are unchanged.
+
+## r656 펫 모두 부화
+Pet eggs pile up (1 per 5 무한의 탑 floors), but 알 부화 opened one egg per tap with a popup each time. With 2+ eggs a green 모두 부화 (알 N개) pill now sits under the 펫 부화 card. It runs the same `C.petHatch` once per egg and shows one result popup (each pet ×count, NEW or Lv.a → Lv.b, and how many duplicates were already at max level). It stops at 0 eggs, so it never spends gems; the 300-gem hatch stays a manual tap. Rates, PMAX, level-up costs, the tower egg drop and saves are unchanged.
