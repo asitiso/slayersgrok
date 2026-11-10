@@ -8602,3 +8602,19 @@ const put=()=>{const el=document.querySelector('#screen');if(!el)return;const ex
 G.scAllPut=put;document.addEventListener('click',()=>{if(G.screen=='map')setTimeout(()=>{try{put()}catch(_){}},0)},true);/* single chest taps (map pins / chapter popup) refresh the count */
 const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{put()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
 })();
+;(()=>{/* r661: 최고 스테이지로 one-tap return like 화룡전's stage map. After moving back to an earlier stage (to farm, or from a map node), getting back to the furthest unlocked stage meant 지도 → 월드맵 → the right chapter → its last node → stage panel → 이동. Now, whenever the current stage is below the highest unlocked one, the 지도 screen shows a 최고 N-M pill (in the chapter view's bottom bar and at the bottom of the world map) that runs the same C.selectStage(maxSi) + toast + close as tapping that node. Hidden when already on the highest stage. Travel only: stage unlocks, maxSi, rewards, star rules and saves are unchanged. */
+const C=G.C;if(!C||typeof C.selectStage!=='function')return;
+const top=()=>{const s=C.S();return Math.min(s.maxSi||0,D.FIELDS.length-1)};
+G.mxNeed=()=>{const s=C.S();return (s.si|0)<top()};
+G.mxGo=()=>{if(!G.mxNeed())return false;const i=top();C.selectStage(i);toast(C.stageName(i)+' 으로 이동');try{closeScreen()}catch(_){}return true};
+const st=document.createElement('style');st.setAttribute('data-r','661');st.textContent=`#screen .wmx661{position:absolute;z-index:6;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:5px;white-space:nowrap;padding:6px 14px;font-size:14px;box-shadow:0 4px 10px #000a}#screen .mx661 img,#screen .wmx661 img{height:18px}#screen .mx661 small,#screen .wmx661 small{font-weight:900}`;document.head.appendChild(st);
+const lbl=()=>`<img src="assets/ic_map.png" alt="">최고 <small>${C.stageName(top())}</small>`;
+const put=()=>{const el=document.querySelector('#screen');if(!el)return;const ex=el.querySelector('#mxGo');if(G.screen!='map'||!G.mxNeed()){if(ex)ex.remove();return}
+ const bar=el.querySelector('.cbar'),world=!!el.querySelector('#mapw');if(!bar&&!world){if(ex)ex.remove();return}
+ if(ex){const sm=ex.querySelector('small'),t=C.stageName(top());if(sm&&sm.textContent!==t)sm.textContent=t;return}
+ const b=document.createElement('span');b.id='mxGo';b.innerHTML=lbl();
+ if(bar){b.className='btn mx661';bar.appendChild(b)}else{b.className='pill green wmx661';el.appendChild(b)}
+ b.onclick=e=>{e.stopPropagation();G.mxGo()}};
+G.mxPut=put;
+const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{put()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
+})();
