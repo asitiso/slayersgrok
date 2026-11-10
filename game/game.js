@@ -8844,3 +8844,9 @@ const put=()=>{if(G.screen!=='star')return false;const s=C.S(),k=G.stSel;if(!k||
 G.shardPut691=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r692: 전투력 분석 보너스 출처 lists every % source like 화룡전's power breakdown. The 보너스 출처 table (프로필 → 전투력 분석) showed 장비 세트 · 도감 · 기보 · 동료 시너지 · 펫 · 협회 · 칭호, but three sources that really raise 공격력/체력 were missing even though their own screens show them: 영지 마탑 (파티 공격력 +N%, BAL.tower.pct × 마탑 Lv, part of C.atkPct), 장비 도감 (공격력·체력 +N% 적용 중, C.gcxB) and 특성 (특성 합계 공격력/체력, C.talB). They are now appended as rows 영지 마탑 / 장비 도감 / 특성 with the same values their screens show, and the existing r384/r385 row tap opens 영지 / 도감 / 특성 with the same lock display. Display only - no stat, multiplier, power, cost or save changes. */
+const sf=f=>{try{return f()||0}catch(_){return 0}};
+const oi=G.powInfo;if(typeof oi!=='function')return;
+G.powInfo=function(){const I=oi.apply(this,arguments);try{const s=C.S();if(I&&Array.isArray(I.bon)&&!I.bon.some(b=>b[0]==='특성')){
+ I.bon.push(['영지 마탑',sf(()=>BAL.tower.pct*((s.bld&&s.bld.tower&&s.bld.tower.lv)||0)),0,'base'],['장비 도감',sf(()=>C.gcxB()),sf(()=>C.gcxB()),'codex'],['특성',sf(()=>C.talB('atk')),sf(()=>C.talB('hp')),'talent'])}}catch(e){console.warn(e)}return I};
+})();

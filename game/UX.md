@@ -191,3 +191,6 @@ In 화룡전 the pass screen links to the missions that feed it. Our 마도 패�
 
 ## r691 승급 조각 획득 → 동료 소환
 In 화룡전 a hero's shard counter leads to where shards come from. Our 동료 승급 card only said 조각 획득: 희귀 5 · 영웅 10 · 전설 20 (중복 1회당) as plain text, so getting more shards for 승급 or 각성 meant ‹ back → 소환. A small green 동료 소환 ▶ chip now sits at the end of that line (hidden once that companion's 각성 is complete). A tap opens the 동료 소환 screen through `menuGo('summon')` (`G.shardSum691`). Navigation only: it never summons, 승급s or 각성s and spends nothing; shard amounts, star and 각성 costs and multipliers, rates, pity, mileage, unlocks and saves are unchanged.
+
+## r692 전투력 분석 보너스 출처: 영지 마탑 · 장비 도감 · 특성
+In 화룡전 the power breakdown lists every source of its percentage bonuses. Our 전투력 분석 (tap the profile) 보너스 출처 table showed 장비 세트 · 도감 · 기보 · 동료 시너지 · 펫 · 협회 · 칭호, but three sources that really raise 공격력 / 체력 were missing even though their own screens show them: 영지 마탑 (파티 공격력 +N%, `BAL.tower.pct` × 마탑 Lv inside `C.atkPct`), 장비 도감 (공격력·체력 +N% 적용 중, `C.gcxB`) and 특성 (특성 합계, `C.talB`). They are now added at the end of the table with the same values their screens show, and the existing row tap (r384 / r385) opens 영지 / 도감 / 특성 with the same lock display. Display only: no stat, multiplier, 전투력, cost or save changes.
