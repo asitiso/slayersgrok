@@ -107,3 +107,6 @@ In 화룡전 every unfinished quest row has a shortcut. Ours had 바로가기 on
 
 ## r663 강화석 획득처 from the 강화 screen
 In 화룡전 you can tap a material on the upgrade screen to see where it drops and jump there. Ours had a 획득처 popup with ▶ shortcuts (전투, 방치 보상, 우정 상점, 도전 던전) for 강화석, but you could only reach it through 가방. The 강화 · 육성 screen's 강화석 bar only listed the drops as plain text. Now that bar (장비 강화, 동료 육성 and 스킬 편성 tabs) has a green 획득처 ▶ chip, and tapping the bar opens the same 강화석 popup (`G.itemInfo('it2_stone')`) with the owned count. The shortcuts use the same `menuGo` stage locks, so a locked 도전 던전 still only shows its 개방 toast. Navigation only: enhance and skill costs, success rates, stone drops, rewards, unlocks and saves are unchanged.
+
+## r664 기보 조각 → 고대 유적 from the 기보 screen
+In 화룡전 a growth screen's material line leads straight to where it drops. Our 기보 · 클레어 바이블 screen only said "조각 획득: 도전 → 고대 유적 발굴" as plain text, so getting more fragments took ‹ back → 메뉴 → 도전 → the 고대 유적 card. That line is now a tappable row with a green 고대 유적 ▶ chip. It opens the 일일 던전 screen with the 고대 유적 card already selected (`G.dunK='frag'` + the same `menuGo('dungeon')`, so the 도전 던전 stage lock and its 개방 toast still apply). Navigation only: it never enters or sweeps. Relic costs, fragment drops, dungeon entries and rewards, unlocks and saves are unchanged.

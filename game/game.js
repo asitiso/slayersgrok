@@ -8638,3 +8638,11 @@ const put=()=>{if(G.screen!=='enhance')return;const c=document.querySelector('#s
 G.stonePut663=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r664: 기보 조각 획득처 like 화룡전's material source jump. The 기보 · 클레어 바이블 screen only said "조각 획득: 도전 → 고대 유적 발굴" as plain text, so getting more fragments meant ‹ back, 메뉴, 도전, then picking the 고대 유적 card. That line is now a tappable row with a green 고대 유적 ▶ chip: it opens the 일일 던전 screen with the 고대 유적 card already selected, through the same menuGo('dungeon') stage lock. Navigation only - it never enters or sweeps; relic costs, fragment drops, dungeon entries/rewards, unlocks and saves are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','664');st.textContent=`.rlsrc664{display:flex!important;align-items:center;justify-content:center;gap:6px;margin:6px auto 2px;padding:5px 10px;border-radius:10px;background:#0006;cursor:pointer;-webkit-tap-highlight-color:transparent}.rlsrc664 .go664{display:inline-block;padding:1px 8px;border-radius:9px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff;font:900 10.5px/1.5 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;white-space:nowrap}`;document.head.appendChild(st);
+G.fragSrc664=()=>{if(typeof G.isOpen=='function'&&!G.isOpen('dungeon')){menuGo('dungeon');return false}G.dunK='frag';menuGo('dungeon');return G.screen==='dungeon'};
+const put=()=>{if(G.screen!=='relic')return;const sb=document.querySelector('#screen .sbody');if(!sb)return;const f=[...sb.querySelectorAll(':scope>small')].find(x=>/조각 획득/.test(x.textContent));if(!f||f.dataset.r664)return;f.dataset.r664='1';f.classList.add('rlsrc664');f.setAttribute('role','button');f.setAttribute('aria-label','고대 유적으로 이동');
+ const g=document.createElement('span');g.className='go664';g.textContent='고대 유적 ▶';f.appendChild(g);f.onclick=e=>{e.stopPropagation();G.fragSrc664()}};
+G.fragPut664=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
