@@ -8502,3 +8502,53 @@ const st=document.createElement('style');st.setAttribute('data-r','647');st.text
 const rn=typeof renderNav==='function'?renderNav:null;
 if(rn){renderNav=function(){const r=rn.apply(this,arguments);try{document.querySelectorAll('#nav a').forEach(a=>{const t=a.dataset.t;if(!['party','shop','base','summon'].includes(t))return;const prev=a.onclick;a.onclick=function(ev){if(G.screen===t){closeScreen();return}if(prev)return prev.call(this,ev)}}) }catch(_){}return r};try{if(document.getElementById('nav')&&document.getElementById('nav').children.length)renderNav()}catch(_){}}
 })();
+;(()=>{/* r653: 화룡전-style bottom-tab hubs. 단련 and 편성 each opened a single screen, so every other growth/party screen was a detour through the 메뉴 grid. Now a compact sub-tab row docks above the bottom nav while any screen of that tab's group is open, one tap to switch. Same destinations and handlers (menuGo/openSheet), same G.isOpen locks and stage requirements, 메뉴 grid untouched; re-tapping the lit tab or ‹ still returns to battle. UI only - combat, economy, rewards and saves unchanged. */
+const HUB={train:[['train','수련','ic3_train.png'],['enhance','강화','ic3_anvil.png'],['talent','특성','ic3_skill.png'],['relic','기보','ic3_relic.png'],['bag','가방','ic3_bag.png']],
+party:[['party','편성','ic3_party.png'],['bond','인연','ic3_party.png'],['star','승급','ic_starup.png'],['pet','펫','ic3_pet.png'],['skin','코스튬','ic3_skin.png']],
+base:[['base','영지','ic3_castle.png'],['town','마을','ic3_town.png'],['fish','낚시','ic3_fish.png']]};
+const SHEETS=['train'];
+/* icons: reuse the 메뉴 grid's art for each key when it exists */
+const icon=k=>{const m=(typeof MENU!=='undefined'?MENU:[]).find(x=>x[0]===k);return m?m[2]:null};
+for(const h in HUB)HUB[h].forEach(e=>{const i=icon(e[0]);if(i)e[2]=i});
+const cur=()=>G.screen||(G.tab&&G.tab!=='battle'?G.tab:null);
+const hubOf=k=>{if(!k)return null;for(const h in HUB)if(HUB[h].some(e=>e[0]===k))return h;return null};
+const open=k=>!G.isOpen||G.isOpen(k);
+const U=()=>G.UNL||{};
+const go=k=>{if(cur()===k)return;if(!open(k))return menuGo(k);/* locked: same toast, stay where you are */
+ if(SHEETS.includes(k)){if(G.tab!==k)openSheet(k);return}
+ if(G.tab&&G.tab!=='battle')openSheet('battle');menuGo(k)};
+const toBattle=()=>{if(G.screen)closeScreen();if(G.tab&&G.tab!=='battle')openSheet('battle')};
+const dotOn=k=>{const B=G.BD||{};if(k in B)return !!B[k];const d=document.querySelector('#mgrid a[data-s="'+k+'"] .dot');return !!(d&&d.style.display!=='none')};
+const app=document.getElementById('app');let bar=document.getElementById('hub653');
+if(app&&!bar){bar=document.createElement('div');bar.id='hub653';app.appendChild(bar);
+ bar.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('#hub653 a[data-h]');if(!a)return;e.preventDefault();go(a.dataset.h)})}
+const st=document.createElement('style');st.setAttribute('data-r','653');st.textContent=`
+#hub653{position:absolute;left:0;right:0;bottom:76px;height:56px;z-index:31;display:none;align-items:stretch;justify-content:space-around;gap:2px;padding:3px 6px 2px;box-sizing:border-box;background:linear-gradient(#2a1d14f2,#140c08f8);border-top:2px solid #8a6a3a;box-shadow:0 -3px 8px #000a,inset 0 1px 0 #ffd89033}
+body.hb653 #hub653{display:flex}
+#hub653 a{position:relative;flex:1 1 0;max-width:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;transition:transform .08s}
+#hub653 a>img{width:30px;height:30px;object-fit:contain;filter:brightness(.88) drop-shadow(0 2px 2px #000)}
+#hub653 a>em{font:800 10.5px/1.1 Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#e8d0a0;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;white-space:nowrap;margin-top:1px}
+#hub653 a.on{background:radial-gradient(ellipse 60% 60% at 50% 45%,#ffcf6a55,#ff8a2a1a 60%,#0000 78%)}
+#hub653 a.on>img{filter:brightness(1.12) drop-shadow(0 0 6px #ffd66acc)}
+#hub653 a.on>em{color:#ffe37a}
+#hub653 a.on::after{content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,#0000,#ffd77a,#0000)}
+#hub653 a:active{transform:scale(.93)}
+#hub653 a>.dot{position:absolute;top:1px;right:10px;width:9px;height:9px;border-radius:50%;background:#ff3b2f;box-shadow:0 0 0 1.5px #3a0a06}
+#hub653 a.lk>img{filter:grayscale(1) brightness(.6)}
+#hub653 a.lk>em{color:#cfc8bc}
+#hub653 a.lk>.lkt{position:absolute;top:18px;right:2px;display:inline-flex;align-items:center;gap:1px;height:14px;padding:0 4px 0 2px;border-radius:7px;background:#000c;border:1px solid #9a8a6a;font:800 9px/12px Maplestory,sans-serif;color:#fff;white-space:nowrap}
+#hub653 a.lk>.lkt>img{width:10px;height:10px;margin:0}
+html body.hb653 #screen{bottom:132px!important}
+html body.hb653 #sheet,html body.hb653 #sheet#sheet{bottom:142px!important}`;document.head.appendChild(st);
+let sig='';
+const draw=()=>{if(!bar)return;const k=cur(),h=hubOf(k);document.body.classList.toggle('hb653',!!h);if(!h){if(sig){bar.innerHTML='';sig=''}bar.dataset.h='';return}
+ const items=HUB[h].map(([key,n,i])=>{const lk=!open(key);return {key,n,i,lk,on:key===k,dot:!lk&&key!==k&&dotOn(key)}});
+ const s=h+'|'+items.map(x=>x.key+(x.lk?'L':'')+(x.on?'O':'')+(x.dot?'D':'')).join(',');
+ if(s!==sig){sig=s;bar.dataset.h=h;bar.innerHTML=items.map(x=>`<a data-h=${x.key} class="${x.on?'on':''}${x.lk?' lk':''}"${x.lk?' aria-disabled=true':''}><img src="${A}${x.i}" alt=""><em>${x.n}</em>${x.lk?`<span class=lkt><img src=assets/sk_lock.png alt="">${C.stageName(U()[x.key]||0)}</span>`:''}${x.dot?'<span class=dot></span>':''}</a>`).join('')}
+ /* the hub's bottom tab stays lit on any of its sub-screens */
+ const t=document.getElementById('nav'+h);if(t&&!t.classList.contains('lk'))t.classList.add('on')};
+const rn=renderNav;renderNav=function(){const r=rn.apply(this,arguments);try{document.querySelectorAll('#nav>a').forEach(a=>{const t=a.dataset.t;if(!HUB[t])return;const prev=a.onclick;a.onclick=function(ev){const k=cur();if(k&&hubOf(k)===t&&!a.classList.contains('lk')){toBattle();return}/* re-tap of a lit hub tab (main or sub-screen) -> battle */if(prev)return prev.call(this,ev)}});draw()}catch(e){console.warn(e)}return r};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{draw();/* tab dot = any unlocked screen of its hub would show one */for(const h in HUB){const d=document.querySelector('#nav'+h+' .dot');if(!d||document.getElementById('nav'+h).classList.contains('lk'))continue;if(HUB[h].some(([k])=>open(k)&&dotOn(k)))d.style.display=''}}catch(_){}return r};
+G.HUB=HUB;G.hubGo=go;
+try{if(document.getElementById('nav')&&document.getElementById('nav').children.length)renderNav()}catch(_){}
+})();
