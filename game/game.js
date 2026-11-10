@@ -8741,3 +8741,16 @@ const put=m=>{if(!m||m.querySelector('.hdgo675'))return false;const h=[...m.quer
 G.hdPut675=put;
 const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('hdm'))put(n)}).observe(ap,{childList:true});
 })();
+;(()=>{/* r676: 업적 바로가기 like 화룡전's achievement list, where an unfinished achievement has a move button to where it is done. Our 업적 rows only showed a dimmed reward pill until the goal was met, while 임무 (r662) and the 7일 이벤트 (r667) already have 바로가기 on every in-progress row. In-progress 업적 rows now get a small green 바로가기 ▶ chip on their progress line; it reuses the same r662/r667 targets: 몬스터 처치 → field, 마법 시전 → field + skill row, 보스 처치 → field + 보스 도전, 장비 뽑기 → field + 마정구, 동료 소환 → 소환, 장비 강화 → 강화 · 육성 (장비 강화 tab), 스테이지 돌파 → field + 보스 도전 (or 지도 when on an older stage). Navigation only - it never fights, casts, rolls, summons or enhances; goals, progress, rewards, claims, 모두 받기, unlocks and saves are unchanged. */
+const C=G.C;
+const T={kill:['mq','kill'],spell:['mq','spell'],boss:['mq','boss'],roll:['mq','roll'],summon:['nb','summon'],enh:['nb','enh'],stage:['nb','stage']};
+G.achGo676=k=>{const t=T[k];if(!t)return false;if(t[0]==='mq'&&typeof G.mqGo662==='function')return G.mqGo662(t[1]);if(t[0]==='nb'&&typeof G.nbGo667==='function')return G.nbGo667(t[1]);return false};
+const st=document.createElement('style');st.setAttribute('data-r','676');st.textContent=`#screen .achr .go676{display:inline-block;margin-left:6px;padding:0 7px;border-radius:9px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff!important;font:900 10.5px/1.5 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;vertical-align:middle;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}#screen .achr .go676:active{filter:brightness(.9)}`;document.head.appendChild(st);
+const put=()=>{if(G.screen!=='ach')return;const sb=document.querySelector('#screen .sbody');if(!sb)return;const L=C.achList();
+ sb.querySelectorAll('.achr[data-ai]').forEach(r=>{const a=L[+r.dataset.ai];if(!a||a.can||a.done||!T[a.k]||r.querySelector('.go676'))return;const f=r.querySelector(':scope>.f');if(!f)return;
+  const sm=[...f.querySelectorAll(':scope>small')].find(x=>/^\s*[\d,.]+[a-zA-Z가-힣]*\s*\/\s*[\d,.]+/.test(x.textContent))||f.querySelector(':scope>.bar');if(!sm)return;
+  const g=document.createElement('span');g.className='go676';g.dataset.go676=a.k;g.setAttribute('role','button');g.setAttribute('aria-label',a.n+' 바로가기');g.textContent='바로가기 ▶';
+  sm.tagName==='SMALL'?sm.appendChild(g):sm.after(g);g.onclick=e=>{e.stopPropagation();G.achGo676(a.k)}})};
+G.achPut676=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
