@@ -502,7 +502,7 @@ C.cdxReg=(t,k)=>{const d=cx();if(!has(t,k)||d[t][k])return 0;d[t][k]=1;C.S().gem
 C.cdxRegAll=()=>{let g=0;D.COMPS.forEach(c=>g+=C.cdxReg('c',c.k));D.MONS.forEach(m=>g+=C.cdxReg('m',m.k));(C.PETS||[]).forEach(p=>g+=C.cdxReg('p',p.k));return g};
 {const oa=C.atkPct;C.atkPct=()=>oa()+C.cdxB('atk');const oh=C.MAXHP;C.MAXHP=()=>oh()*(1+C.cdxB('hp'));const og=C.addGold;C.addGold=g=>og(g*(1+C.cdxB('gold')))}
 function scr(el){const s=C.S(),d=cx(),cb=C.codexB();G.cdT=G.cdT||'c';const T=G.cdT,pend=C.cdxPend();
- const tabs=`<div class=entabs>${[['c','동료'],['m','몬스터'],['h','빛나는'],['b','보스'],['p','펫'],['s','인연']].map(([k,n])=>`<span class="${T==k?'on':''}" data-ct=${k}>${n}${k!='s'&&k!='b'&&(k=='c'?D.COMPS:k=='m'?D.MONS:C.PETS||[]).some(x=>has(k,x.k)&&!d[k][x.k])?'<i class=dot></i>':''}</span>`).join('')}</div>`;
+ const tabs=`<div class=entabs>${[['c','동료'],['m','몬스터'],['h','빛나는'],['b','보스'],['p','펫'],['s','인연']].map(([k,n])=>`<span class="${T==k?'on':''}" data-ct=${k}>${n}${k!='s'&&k!='b'&&k!='h'&&(k=='c'?D.COMPS:k=='m'?D.MONS:C.PETS||[]).some(x=>has(k,x.k)&&!d[k][x.k])?'<i class=dot></i>':''}</span>`).join('')}</div>`;
  const sum=`<div class="card cdsum"><div class=f><b>도감 보너스</b><small>공격력 +${Math.round((cb.atk+C.cdxB('atk'))*100)}% · 체력 +${Math.round((cb.hp+C.cdxB('hp'))*100)}% · 골드 +${Math.round(C.cdxB('gold')*100)}%</small></div><span class="pill gold ${pend?'':'off'}" id=cdAll>${pend?`모두 등록 (${pend})`:'등록 완료'}</span></div>`;
  const cell=(t,x,img,sub)=>{const o=has(t,x.k),r=d[t][x.k];return `<div class="bi cdc ${o?'':'lock'} ${o&&!r?'new':''}" data-cr="${t}:${x.k}"><img src="${A}${img}"><b>${o?x.n:'???'}</b><small>${sub}</small>${o&&!r?`<i class=cdrw><img class=ci src=assets/it2_gem.png>${RW[t]}</i>`:''}</div>`};
  let body='';

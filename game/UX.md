@@ -164,3 +164,6 @@ In 화룡전 the stage map carries a badge when a star chest can be opened. Our 
 
 ## r682 편성 카드 별 6칸
 In 화룡전 a hero shows the same star count wherever you look at it. Our 편성 screen's companion cards drew at most 5 stars in 5 slots, while 승급 goes up to ★6 (`C.STARMAX`) and the 승급 grid, 동료 육성, 도감 and 동료 상세 (r678) already show 6. So a ★6 companion looked like ★5 on 편성, and a ★5 one looked maxed. The card star line now draws 6 slots (filled ★ plus dim ☆), the same count as 승급. Unowned cards still say 미보유. 각성 ◆ is not added to the small card (the 승급 grid tile has none either). Display only: star-up, 각성, costs, attack multipliers, party taps, unlocks and saves are unchanged.
+
+## r683 도감 opens again once a pet is owned
+The 도감 tab row puts a red dot on a tab with an owned but unregistered entry. Its check skipped 인연 and 보스 but not 빛나는, so for 빛나는 it fell through to the pet list and read `cdx.h`, which never exists; as soon as any pet was owned, building the 도감 screen threw a TypeError and the screen could not render. 빛나는 is now skipped like 보스 (it has no registration). Display only: 펫/동료/몬스터 tab dots, registration rewards, 도감 bonuses and saves are unchanged.
