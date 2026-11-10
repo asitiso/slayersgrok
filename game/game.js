@@ -8938,3 +8938,10 @@ const put=m=>{if(m&&m.classList&&m.classList.contains('rsfail')&&m.classList.con
 G.jobFail720=put;
 const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1)put(n)}).observe(ap,{childList:true});
 })();
+
+;(()=>{/* r721: 강해지는 방법 on the 전투력 부족 confirm like 화룡전. Stage DEFEAT, 무한의 탑 / 일일 던전 실패 (r666), 투기장 (r674) and 전직 시련 실패 (r720) already show the four growth tiles, but the under-power confirm before a 던전 / 무한의 탑 / 전직 시련 challenge only showed 권장 vs 내 전투력 with 취소 / 도전, so growing meant 취소 then finding the screen. The same r666 tiles (장비 강화 · 동료 육성 · 편성 · 소환) now sit above 취소 / 도전; a tap closes the confirm without starting the fight and opens that screen through G.failGuide666 / G.failGo666 / menuGo. Navigation only - no fight start, no spend; 권장 전투력, 입장 횟수, 도전 / 취소 themselves and saves are unchanged. */
+if(typeof G.failGuide666!=='function'||typeof G.failGo666!=='function')return;
+const put=m=>{if(!m||!m.classList||!m.classList.contains('pwwarn')||m.classList.contains('rsfail')||m.querySelector('.gd666'))return;if(!m.querySelector('#pwYes')||!m.querySelector('#pwNo'))return;const bx=m.querySelector(':scope>.mbox');if(!bx)return;const bar=bx.querySelector(':scope>.pwbtn'),had=bx.classList.contains('card');bx.classList.add('card');const hook=document.createElement('div');hook.className='btn';hook.style.display='none';bar?bar.before(hook):bx.appendChild(hook);try{G.failGuide666(m)}finally{hook.remove();if(!had)bx.classList.remove('card')}};
+G.pwGuide721=put;
+const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1)put(n)}).observe(ap,{childList:true});
+})();
