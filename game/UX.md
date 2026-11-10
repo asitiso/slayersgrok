@@ -167,3 +167,6 @@ In 화룡전 a hero shows the same star count wherever you look at it. Our 편�
 
 ## r683 도감 opens again once a pet is owned
 The 도감 tab row puts a red dot on a tab with an owned but unregistered entry. Its check skipped 인연 and 보스 but not 빛나는, so for 빛나는 it fell through to the pet list and read `cdx.h`, which never exists; as soon as any pet was owned, building the 도감 screen threw a TypeError and the screen could not render. 빛나는 is now skipped like 보스 (it has no registration). Display only: 펫/동료/몬스터 tab dots, registration rewards, 도감 bonuses and saves are unchanged.
+
+## r684 도감 미획득 펫 정보 → 펫
+In 화룡전 an info window leads straight to where the thing is obtained, and our 도감 companion card already has 동료 소환 ▶ (r675). Tapping an unowned pet in 도감 opens its small info card, whose 획득처 line only said 펫 알 부화 as plain text with just 확인, so hatching meant 확인 → ‹ back → 메뉴 → 펫. A green 펫 부화 ▶ chip now sits on that line. A tap closes the card and opens the 펫 screen through `menuGo('pet')` (`G.petGo684`), so while 펫 is still locked the usual unlock toast shows instead. Navigation only: it never hatches and spends no eggs or gems; hatch rates, egg drops, pet levels, 도감 rewards, unlocks and saves are unchanged. Owned pets open no info card, so nothing changes for them. 확인 still just closes the card.
