@@ -8587,3 +8587,18 @@ const o=G.nbOpen;G.nbOpen=function(){const r=o.apply(this,arguments);try{const m
  b.onclick=e=>{e.stopPropagation();const x=G.nbClaimAll();if(!x.n)return toast('받을 보상이 없습니다');try{updateHud()}catch(_){}G.nbOpen();
   try{rewardPop(L.filter(([k])=>x.tot[k]).map(([k,i,t])=>[i,x.tot[k],t]),'7일 이벤트 '+x.n+'개 모두 받기'+(x.fin?' · 전체 완료!':''))}catch(_){}}}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r658: 장별 별 보상 모두 받기 like 화룡전's stage-star 일괄 수령. Each chapter has 3 star chests (★7/★14/★21) and every one needed its own tap - on the world map one chest at a time per chapter pin, or one chapter popup at a time - so after clearing a few chapters the earned chests piled up. With 2+ chests ready on unlocked chapters, a 별 보상 모두 받기 (N개) pill on the map screen (chapter view and world map) runs the same G.starClaim for each ready chest and shows one combined reward popup. Chest rewards are fixed per chest, nothing is spent and nothing is chosen; chests below their ★ threshold stay locked. Thresholds, rewards, star rules and save shape are unchanged. */
+if(typeof G.starClaim!=='function'||typeof G.chStars!=='function')return;
+const T=[7,14,21],L=[['gems','it2_gem.png','보석'],['stone','it2_stone.png','강화석'],['orbs','it2_exp.png','마정구'],['tk','it2_ticket.png','소환권']];
+const mxCh=()=>{const s=C.S();return Math.floor(Math.min(s.maxSi||0,D.FIELDS.length-1)/7)};
+G.starReady=()=>{const s=C.S(),sc=s.schest||{},out=[];for(let c=0;c<=mxCh();c++){const n=G.chStars(c);T.forEach((t,j)=>{if(n>=t&&!sc[c+'_'+j])out.push([c,j])})}return out};
+G.starClaimAll=()=>{const tot={},chs=new Set();let n=0;for(const [c,j] of G.starReady()){const w=G.starClaim(c,j);if(w&&typeof w=='object'){n++;chs.add(c);for(const k in w)tot[k]=(tot[k]||0)+(w[k]||0)}}return{n,tot,chs:[...chs]}};
+const st=document.createElement('style');st.setAttribute('data-r','658');st.textContent=`#screen #scAll{position:absolute;z-index:6;left:50%;bottom:60px;transform:translateX(-50%);display:flex;align-items:center;gap:5px;white-space:nowrap;padding:6px 14px;font-size:14px;box-shadow:0 4px 10px #000a}#screen #scAll img{height:22px}#screen #scAll small{font-weight:900;opacity:.9}`;document.head.appendChild(st);
+const put=()=>{const el=document.querySelector('#screen');if(!el)return;const ex=el.querySelector('#scAll');if(G.screen!='map'){if(ex)ex.remove();return}const n=G.starReady().length;if(n<2){if(ex)ex.remove();return}
+ if(ex){const sm=ex.querySelector('small');if(sm&&sm.textContent!==n+'개')sm.textContent=n+'개';return}
+ const b=document.createElement('span');b.id='scAll';b.className='pill green';b.innerHTML=`<img src="assets/ic3_chest.png" alt="">별 보상 모두 받기 <small>${n}개</small>`;el.appendChild(b);
+ b.onclick=e=>{e.stopPropagation();const x=G.starClaimAll();if(!x.n)return toast('받을 별 보상이 없습니다');try{updateHud()}catch(_){}try{renderScreen()}catch(_){}
+  try{rewardPop(L.filter(([k])=>x.tot[k]).map(([k,i,t])=>[i,x.tot[k],t]),'별 보상 '+x.n+'개 모두 받기 · '+x.chs.map(c=>'제'+(c+1)+'장').join(', '))}catch(_){}}};
+G.scAllPut=put;document.addEventListener('click',()=>{if(G.screen=='map')setTimeout(()=>{try{put()}catch(_){}},0)},true);/* single chest taps (map pins / chapter popup) refresh the count */
+const go=()=>{const el=document.querySelector('#screen');if(!el)return setTimeout(go,300);new MutationObserver(()=>{try{put()}catch(e){console.warn(e)}}).observe(el,{childList:true})};go();
+})();
