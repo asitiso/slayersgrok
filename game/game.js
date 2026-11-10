@@ -8952,3 +8952,10 @@ const put=m=>{if(!m||!m.querySelector||m.querySelector('.gd666'))return;const go
 G.bossGuide722=put;
 const ob=G.bossInfo;G.bossInfo=function(){const r=ob.apply(this,arguments);try{put([...document.querySelectorAll('.modal')].pop())}catch(e){console.warn(e)}return r};
 })();
+
+;(()=>{/* r723: 강해지는 방법 on the 지도 스테이지 패널 (G.stagePanel, .spv) when under recommended power, like 화룡전. Fail cards, the 던전/탑 전투력 부족 confirm (r721) and 보스 정보 (r722) already show the four growth tiles, but the map stage panel only showed 권장 vs 내 전투력 with 닫기 / 이동, so growing meant closing the panel and finding the screen. The same r666 tiles (장비 강화 · 동료 육성 · 편성 · 소환) now sit above 닫기 / 이동 when 내 전투력 is below 권장; a tap closes the panel (no stage change) and opens that screen through G.failGuide666 / G.failGo666 / menuGo. When power is enough, no tiles are added. Navigation only - no stage select, no spend; 닫기 / ✕ / 이동 / 진행 중, 권장 전투력, 출현 몬스터, 보상 and saves are unchanged. */
+if(typeof G.failGuide666!=='function'||typeof G.failGo666!=='function'||typeof G.stagePanel!=='function')return;
+const put=d=>{if(!d||!d.classList||!d.classList.contains('spv')||d.querySelector('.gd666'))return;if(!d.querySelector('.pw .dn'))return;const sp=d.querySelector(':scope>.sp');if(!sp)return;const bar=sp.querySelector(':scope>.go'),had=sp.classList.contains('card');sp.classList.add('card');const hook=document.createElement('div');hook.className='btn';hook.style.display='none';bar?bar.before(hook):sp.appendChild(hook);try{G.failGuide666(d)}finally{hook.remove();if(!had)sp.classList.remove('card')}};
+G.stageGuide723=put;
+const op=G.stagePanel;G.stagePanel=function(){const d=op.apply(this,arguments);try{put(d)}catch(e){console.warn(e)}return d};
+})();
