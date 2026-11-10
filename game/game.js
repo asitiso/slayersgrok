@@ -8931,3 +8931,10 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
 const oc=G.missionClaimAll;if(typeof oc!=='function')return;
 G.missionClaimAll=function(){const hide=Date.now()-(G._miss719||0)<800;const ot=toast;if(hide)toast=function(m){if(m==='받을 보상이 없습니다')return;return ot.apply(this,arguments)};let r;try{r=oc.apply(this,arguments)}finally{if(hide)toast=ot}if(r)G._miss719=Date.now();return r};
 })();
+
+;(()=>{/* r720: 강해지는 방법 on the 전직 시련 실패 card like 화룡전. Stage DEFEAT, 무한의 탑 / 일일 던전 (r666) and 투기장 (r674) already show the four growth tiles, but the r357 전직 시련 fail card only said "시련 실패… 더 강해져서 다시 도전하세요" with 확인, so growing meant 확인 then finding the screen. The same r666 tiles (장비 강화 · 동료 육성 · 편성 · 소환) now sit above 확인; a tap closes the card and opens that screen through G.failGo666 / menuGo. Navigation only - no retry, no spend; 전직 conditions, costs, trial requirements and saves are unchanged. */
+if(typeof G.failGuide666!=='function'||typeof G.failGo666!=='function')return;
+const put=m=>{if(m&&m.classList&&m.classList.contains('rsfail')&&m.classList.contains('rs357'))G.failGuide666(m)};
+G.jobFail720=put;
+const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1)put(n)}).observe(ap,{childList:true});
+})();
