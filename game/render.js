@@ -248,14 +248,14 @@ R.kill=(e,g,o)=>{const s=ES.get(e);if(!s)return;if(e.el){R.ekT={t:0,x:s.x,y:s.y-
   later(nextDelay+.5,()=>{const n=e.boss?14:e.el?7:1+(Math.random()<.4?1:0);for(let i=0;i<n;i++)if(COINS.length<COINCAP())COINS.push({x:s.x,y:s.y-30,vx:rnd(-90,90),vy:rnd(-260,-160),t:0,kind:'gold'});if(o)for(let i=0;i<Math.min(o,6);i++)if(COINS.length<COINCAP())COINS.push({x:s.x,y:s.y-30,vx:rnd(-70,70),vy:rnd(-280,-180),t:0,kind:'orb'})})};
 R.dmgAlly=(a,d,kind)=>{const s=AS.get(a.k);if(!s)return;later(nextDelay,()=>{const fx=s.x+(s.face>=0?18:-18),fy=s.y-56;
   if(kind=='miss'){s.dodgeT=0;s.ghost={x:s.x,y:s.y};dmgText(s.x,s.y-UNIT_H-10,0,{label:'MISS'});return}
-  if(kind=='parry'){s.guardT=0;for(let i=0;i<14;i++){const an=rnd(0,6.283);part({x:fx,y:fy,vx:Math.cos(an)*rnd(150,320),vy:Math.sin(an)*rnd(150,320)-60,col:'rgba(255,240,150,1)',size:rnd(2,4),life:.25,grav:500,drag:.9})}FX.push({k:'ring',x:fx,y:fy,col:'rgba(255,255,220,1)',r0:2,r1:26,life:.15,t:0,width:4,squash:1});hs=Math.max(hs,.05);dmgText(s.x,s.y-UNIT_H-10,0,{label:'PARRY'});return}
-  if(kind=='block'){s.guardT=0;cx&&FX.push({k:'ring',x:fx,y:fy,col:'rgba(140,210,255,1)',r0:8,r1:40,life:.25,t:0,width:7,squash:1.4});burst(fx,fy,8,'rgba(170,230,255,1)',140,6,.25);dmgText(s.x,s.y-UNIT_H-10,d,{label:'BLOCK'});return}
+  if(kind=='parry'){s.guardT=0;for(let i=0;i<14;i++){const an=rnd(0,6.283);part({x:fx,y:fy,vx:Math.cos(an)*rnd(150,320),vy:Math.sin(an)*rnd(150,320)-60,col:'rgba(255,240,150,1)',size:rnd(2,4),life:.25,grav:500,drag:.9})}FX.push({k:'ring',x:fx,y:fy,col:'rgba(255,255,220,1)',r0:2,r1:26,life:.15,t:0,width:4,squash:1});hs=Math.max(hs,.05);dmgText(s.x,s.y-UNIT_H-10,0,{label:'PARRY'});if(window.G&&G.sfx)G.sfx('parry');return}
+  if(kind=='block'){s.guardT=0;cx&&FX.push({k:'ring',x:fx,y:fy,col:'rgba(140,210,255,1)',r0:8,r1:40,life:.25,t:0,width:7,squash:1.4});burst(fx,fy,8,'rgba(170,230,255,1)',140,6,.25);dmgText(s.x,s.y-UNIT_H-10,d,{label:'BLOCK'});if(window.G&&G.sfx)G.sfx('block');return}
   /* r648: incoming hits were silent and had no shake/flash, so enemy attacks did not feel like attacks */
   let dir=1;const ens=C.alive();if(ens.length){let bd=1e9;ens.forEach(e=>{const q=ES.get(e);if(!q)return;const dd=(q.x-s.x)*(q.x-s.x)+(q.y-s.y)*(q.y-s.y);if(dd<bd){bd=dd;dir=q.x>=s.x?1:-1}})}else dir=s.face>=0?1:-1;
   s.hitT=0;s.hitDir=dir;s.kb=16;s.shk=5;
   if(!R.opt||(R.opt.shake!==false&&R.opt.shake!==0)){shake=Math.max(shake,7);R.hs=Math.max(R.hs||0,.09);flashCol='255,70,50';flash=Math.max(flash,.4)}
   ring(s.x,s.y-44,'rgba(255,80,60,1)',4,28,.18,4);burst(s.x,s.y-48,8,'rgba(255,120,80,1)',140,8,.3);
-  if(window.G&&G.sfx)G.sfx('hit');
+  if(window.G&&G.sfx)G.sfx('hurt');/* r651: own hurt voice instead of reusing the ally-attack impact */
   dmgText(s.x,s.y-UNIT_H-10,d,{ally:1,key:a})})};
 R.heal=(a,h)=>{const s=AS.get(a.k);if(!s)return;hfx(s.x,s.y-46,'h',78);dmgText(s.x,s.y-UNIT_H-10,h,{heal:1,key:a});for(let i=0;i<5;i++)part({x:s.x+rnd(-20,20),y:s.y-rnd(10,60),vy:-60,col:'rgba(120,255,160,1)',size:7,life:.7})};
 R.walk=()=>{walking=1};

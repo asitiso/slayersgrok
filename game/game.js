@@ -965,7 +965,7 @@ const init=()=>{if(ac)return;try{ac=new (window.AudioContext||window.webkitAudio
 document.addEventListener('visibilitychange',()=>{if(!ac)return;document.hidden?ac.suspend():ac.resume()});
 const tone=(f,t0,dur,{type='square',vol=.3,f2=null,att=.005,dest=sg}={})=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(dest);o.start(t0);o.stop(t0+dur+.02)};
 const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null}={})=>{const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(f2,t0+dur);f.Q.value=q;g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(sg);s.start(t0);s.stop(t0+dur+.02)};
-const LIM={hit:.06,crit:.08,coin:.07,kill:.05,click:.05};const last={};
+/* r651: per-voice retrigger windows (combat voices are now separate keys, so a swing no longer swallows its own impact) */const LIM={hit:.07,mhit:.07,crit:.09,skhit:.1,tick:.12,swing:.08,cast:.08,bow:.08,eswing:.1,bswing:.2,hurt:.09,parry:.08,block:.08,coin:.07,kill:.05,click:.05};const last={};
 const SFX={
  hit:t=>{noise(t,.07,{vol:.18,fq:1800,q:.8});tone(220,t,.06,{type:'triangle',vol:.12,f2:120})},
  crit:t=>{noise(t,.12,{vol:.3,fq:2600,q:.6});tone(660,t,.1,{type:'square',vol:.1,f2:330})},
@@ -982,9 +982,36 @@ const SFX={
  summon:t=>{noise(t,.8,{vol:.18,fq:400,f2:5000,q:3});[659,880,1175,1568].forEach((f,i)=>tone(f,t+.5+i*.07,.4,{type:'sine',vol:.1}))},
  click:t=>{tone(880,t,.04,{type:'square',vol:.05})},
  ult:t=>{noise(t,.25,{vol:.3,fq:4000,f2:800,q:.7});tone(440,t+.05,.4,{type:'sawtooth',vol:.07,f2:880})}};
-const play=G.sfx=k=>{G.sfxN[k]=(G.sfxN[k]||0)+1;if(!ac||!on('sfx')||document.hidden)return;const now=ac.currentTime;if(LIM[k]&&last[k]&&now-last[k]<LIM[k])return;last[k]=now;try{SFX[k](now+.005)}catch(_){}};
+/* r651: attacks were one ~70ms blip shared by swings and incoming hits; separate fight voices: swing/cast/bow (ally attack), hit/mhit/crit/skhit (impact), hurt (ally takes a hit), eswing/bswing (enemy/boss attack), parry/block, tick (DoT) */
+const whoosh=(t0,dur,{vol=.12,fq=700,f2=2600,q=1.2,pk=.45}={})=>{const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=nz;f.type='bandpass';f.frequency.setValueAtTime(fq,t0);f.frequency.exponentialRampToValueAtTime(f2,t0+dur);f.Q.value=q;g.gain.setValueAtTime(.0005,t0);g.gain.exponentialRampToValueAtTime(vol,t0+dur*pk);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(sg);s.start(t0,Math.random()*.3);s.stop(t0+dur+.02)};
+Object.assign(SFX,{
+ swing:t=>{whoosh(t,.17,{vol:.13,fq:600,f2:2800,q:1.4});whoosh(t+.02,.12,{vol:.05,fq:2500,f2:5000,q:2})},
+ cast:t=>{whoosh(t,.16,{vol:.08,fq:400,f2:1800,q:1});tone(880,t,.14,{type:'sine',vol:.06,f2:1480,att:.02});tone(1320,t+.03,.11,{type:'sine',vol:.035,f2:1980,att:.02})},
+ bow:t=>{tone(340,t,.12,{type:'triangle',vol:.1,f2:290,att:.002});whoosh(t+.01,.09,{vol:.07,fq:2000,f2:4200,q:1.6,pk:.25})},
+ hit:t=>{noise(t,.035,{vol:.2,fq:2400,q:.9});noise(t,.14,{vol:.24,fq:700,f2:140,q:.7,type:'lowpass'});tone(190,t,.13,{type:'triangle',vol:.16,f2:70,att:.002})},
+ mhit:t=>{noise(t,.12,{vol:.15,fq:3200,f2:900,q:1.2});tone(540,t,.12,{type:'sine',vol:.09,f2:260,att:.002});tone(160,t,.1,{type:'triangle',vol:.11,f2:70,att:.002})},
+ crit:t=>{noise(t,.04,{vol:.28,fq:3000,q:.7});noise(t,.2,{vol:.3,fq:1000,f2:150,q:.6,type:'lowpass'});tone(660,t,.11,{type:'square',vol:.08,f2:330});tone(110,t,.22,{type:'sine',vol:.28,f2:42,att:.002})},
+ skhit:t=>{noise(t,.3,{vol:.3,fq:1100,f2:100,q:.6,type:'lowpass'});noise(t,.18,{vol:.14,fq:3200,f2:600,q:1});tone(92,t,.3,{type:'sine',vol:.3,f2:38,att:.003})},
+ tick:t=>{noise(t,.05,{vol:.07,fq:1500,q:.9})},
+ hurt:t=>{tone(150,t,.2,{type:'sine',vol:.32,f2:52,att:.002});noise(t,.18,{vol:.26,fq:520,f2:110,q:.6,type:'lowpass'});tone(215,t,.12,{type:'sawtooth',vol:.05,f2:118,att:.004});tone(228,t,.12,{type:'sawtooth',vol:.035,f2:124,att:.004})},
+ eswing:t=>{whoosh(t,.22,{vol:.11,fq:300,f2:1150,q:.9,pk:.55});tone(92,t+.04,.13,{type:'triangle',vol:.06,f2:60})},
+ bswing:t=>{whoosh(t,.34,{vol:.16,fq:190,f2:820,q:.8,pk:.6});tone(70,t+.06,.3,{type:'sine',vol:.13,f2:38,att:.02})},
+ parry:t=>{noise(t,.04,{vol:.12,fq:5000,q:1.5});tone(1850,t,.06,{type:'square',vol:.05});tone(2650,t,.28,{type:'triangle',vol:.08,f2:2450,att:.002})},
+ block:t=>{noise(t,.08,{vol:.15,fq:900,q:1.1});tone(300,t,.11,{type:'triangle',vol:.12,f2:190,att:.002})}});
+G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};
+const CV=new Set(['hit','mhit','crit','skhit','tick','swing','cast','bow','eswing','bswing','hurt','parry','block','kill']),PRI={tick:1,swing:2,cast:2,bow:2,eswing:2,kill:2};let rec=[];
+/* global budget: at most 5 combat voices per 0.12s so big AoE/multi-ally turns do not become a wall of noise; low-priority voices (DoT ticks, swings) drop first */
+const budget=(k,now)=>{if(!CV.has(k))return true;rec=rec.filter(x=>now-x<.12);if(rec.length>=5||(PRI[k]&&rec.length>=3+PRI[k]-1))return false;rec.push(now);return true};
+const play=G.sfx=(k,dl)=>{G.sfxN[k]=(G.sfxN[k]||0)+1;if(!ac||!on('sfx')||document.hidden||!SFX[k])return;const now=ac.currentTime;if(LIM[k]&&last[k]&&now-last[k]<LIM[k])return;if(!budget(k,now))return;last[k]=now;G.sfxPlayed[k]=(G.sfxPlayed[k]||0)+1;try{SFX[k](now+.005+(dl>0?Math.min(.4,dl):0))}catch(_){}};
 // hooks
-{const oh=C.ev.hit;C.ev.hit=(e,d,cr,...a)=>{play(cr?'crit':'hit');return oh&&oh(e,d,cr,...a)}}
+/* r651: impact voice follows the hit source (basic weapon / basic magic / skill / DoT); basic hits land a beat after the swing whoosh */
+let hsrc=null;{const ohe=C.hitEnemy;C.hitEnemy=(e,d,cr,src,...r)=>{const p=hsrc;hsrc=src||null;try{return ohe(e,d,cr,src,...r)}finally{hsrc=p}}}
+const MAG={lina:1,amelia:1,xellos:1,sera:1,noel:1},BOW={lyra:1};
+G.sfxHitVoice=(cr,src,dot)=>dot||(src&&src.dot!=null&&!src.storm)?'tick':src&&(src.sp||src.storm)?'skhit':cr?'crit':src&&MAG[src.k]?'mhit':'hit';
+{const oh=C.ev.hit;C.ev.hit=(e,d,cr,...a)=>{const v=G.sfxHitVoice(cr,hsrc,C._dot);play(v,hsrc&&hsrc.k&&v!='skhit'&&v!='tick'?.09:0);return oh&&oh(e,d,cr,...a)}}
+G.sfxAtkVoice=a=>a&&a.k?(MAG[a.k]?'cast':BOW[a.k]?'bow':'swing'):a&&a.boss?'bswing':'eswing';
+{const oa=C.ev.atk;C.ev.atk=(a,...r)=>{play(G.sfxAtkVoice(a));return oa&&oa(a,...r)}}
+{const oe=C.ev.eatk;C.ev.eatk=(e,...r)=>{play(G.sfxAtkVoice(e||{}));return oe&&oe(e,...r)}}
 {const ok=C.ev.kill;C.ev.kill=(e,g,o,...a)=>{play(e&&e.boss?'brk':'kill');if(g)setTimeout(()=>play('coin'),120);return ok&&ok(e,g,o,...a)}}
 {const og=C.ev.grog;if(og)C.ev.grog=(...a)=>{play('brk');return og(...a)}}
 {const oc=C.castSpell;C.castSpell=sp=>{const r=oc(sp);if(r)play(sp.k=='ds'||sp.k=='giga'?'ds':sp.heal?'heal':'spell');return r}}
