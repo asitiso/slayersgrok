@@ -8980,3 +8980,15 @@ const ot=C.tick;C.tick=function(dt){const r=ot.apply(this,arguments);try{const r
 ;(()=>{/* r725: skill HUD last-second cooldown tenths, like 화룡전. The bar already shows a clock-wipe ring and an integer (Math.ceil) on .t, but the whole last second stayed on "1" until the icon was ready. Below 1s the label now counts 0.9 … 0.1 (floor to a tenth, still 0.1 until ready); at 1s and above it is still a whole second. The displayed string is cached on the icon (el._cdt) so a HUD tick whose text has not changed does not write the DOM — same or cheaper than the existing $st skip, not a per-frame cost bump. Display only: stored B.cds, spell lengths, cast, ready-state, and combat timing are unchanged. */
 G.cdTxt725=c=>{c=+c||0;return c<=0?'':c<1?(Math.max(1,Math.floor(c*10))/10).toFixed(1):String(Math.ceil(c))};
 })();
+
+;(()=>{/* r726: short NEXT WAVE ribbon during the 1.4s walk between field-stage waves, like 화룡전. WAVE / FINAL WAVE already appear when the next pack spawns, and WAVE CLEAR on the last hit, but the walk itself only changed the small stage-bar line to 「다음 웨이브 N/3」. On C.ev.walk for a field wave (not boss, not the wave-3-to-boss handoff), a pooled NEXT WAVE N/3 ribbon now uses the existing WAVE ribbon art and 1.15s animation. If WAVE CLEAR is still up, it keeps its readable first ~0.6s, then lifts and this cue takes the same slot — one ribbon at a time, no per-frame work. Effect-off (nofx / fx false) skips the ribbon (the stage-bar text remains). Display only: BAL.walk, lock, spawn timing, HP, stageReq and saves are unchanged. */
+const C=G.C;if(!C||!C.ev)return;
+let gen=0;
+const off=()=>document.body.classList.contains('nofx')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const walking=()=>{const B=C.B,s=C.S();return !!(B&&s&&B.lock>0&&!B.boss&&!B.wb&&!B.rb&&!B.br&&s.wave<(typeof BAL!=='undefined'?BAL.waves:3)&&!G.screen&&!G.storyOn&&!(G.saverState&&G.saverState()))};
+const fire=()=>{if(!walking()||off()||typeof R==='undefined'||typeof R.waveRib!=='function')return;if(typeof R._wrq==='function')R._wrq();const n=Math.min((typeof BAL!=='undefined'?BAL.waves:3),(C.S().wave||0)+1);R.waveRib('NEXT WAVE<small> '+n+'/3</small>');const d=document.querySelector('#battle .wvb.wrib');if(d)d.classList.add('nxt726')};
+const show=()=>{if(!walking()||off())return;const wr=document.querySelector('#battle .wvb.wrib:not(.out)');if(wr){wr.classList.add('out');setTimeout(fire,180)}else fire()};
+const cue=()=>{const id=++gen;if(!walking()||off())return;const wait=document.querySelector('#battle .wvb.wrib:not(.out)')?600:0;const go=()=>{if(id!==gen)return;show()};if(wait)setTimeout(go,wait);else go()};
+G.nextWave726=cue;
+const ow=C.ev.walk;C.ev.walk=function(){const r=ow&&ow.apply(this,arguments);try{cue()}catch(e){console.warn(e)}return r};
+})();
