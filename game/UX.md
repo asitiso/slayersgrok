@@ -185,3 +185,6 @@ In 화룡전 an unfinished guild quest has a move button to where it is done, an
 
 ## r689 소환으로 이동 on the empty 동료 육성 tab
 In 화룡전 an empty screen gives you a button to where you get what it needs. 강화 · 육성's 동료 육성 tab with no companions showed the greyed 미보유 grid and "동료는 소환에서 얻을 수 있어요…" but no button, while the empty 승급 screen and (r677) the empty 탐험 / 인연 screens already have a gold 소환으로 이동, and 장비 강화 with no gear has 장비 뽑으러 가기. The same 소환으로 이동 button (`go554` look) now sits under that line and opens the 동료 소환 screen through `menuGo('summon')` (`G.enCompSum689`). It only appears while you own no companions; once you own one, the tab is unchanged. Navigation only: it never summons; summon costs, rates, mileage, level-up and skill costs, unlocks and saves are unchanged.
+
+## r690 마도 패스 경험치 → 임무
+In 화룡전 the pass screen links to the missions that feed it. Our 마도 패스 summary only said 처치·보스·임무로 경험치 획득 as plain text, so getting more pass XP from missions meant ‹ back → 임무. A small green 임무 ▶ chip now sits at the end of that line. A tap closes the pass screen and opens the 임무 sheet through `menuGo('mission')` (`G.passMis690`). Navigation only: it never claims a mission or a pass tier and spends nothing; XP rates, tiers, rewards, premium status, mission goals and saves are unchanged. The hint text itself is unchanged.

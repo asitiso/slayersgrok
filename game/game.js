@@ -8827,3 +8827,11 @@ const put=()=>{if(G.screen!=='enhance'||G.enTab!=='comp')return false;const s=C.
 G.enCompPut689=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r690: 마도 패스 경험치 → 임무 like 화룡전's pass screen that links to its missions. The 마도 패스 summary only said 처치·보스·임무로 경험치 획득 as plain text, so getting more pass XP from missions meant ‹ back and then the 임무 tab. A small green 임무 ▶ chip now sits at the end of that line; a tap closes the pass screen and opens the 임무 sheet through menuGo('mission'). Navigation only - it never claims a mission or a pass tier and spends nothing; XP rates, tiers, rewards, premium status, mission goals and saves are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','690');st.textContent=`#screen .pagot .pmgo690{display:inline-block;margin-left:6px;padding:0 7px;border-radius:9px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff!important;font:900 10px/1.5 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;vertical-align:middle;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}#screen .pagot .pmgo690:active{filter:brightness(.9)}`;document.head.appendChild(st);
+G.passMis690=()=>{if(G.tab==='mission'){if(G.screen)closeScreen();return true}menuGo('mission');return G.tab==='mission'};
+const put=()=>{if(G.screen!=='pass')return false;const sp=[...document.querySelectorAll('#screen .pagot > span')].find(x=>/임무로 경험치/.test(x.textContent));if(!sp||sp.querySelector('.pmgo690'))return false;
+ const b=document.createElement('span');b.className='pmgo690';b.setAttribute('role','button');b.setAttribute('aria-label','임무로 이동');b.textContent='임무 ▶';sp.appendChild(b);b.onclick=e=>{e.stopPropagation();G.passMis690()};return true};
+G.passPut690=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
