@@ -8926,3 +8926,8 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
 const ot=toast;toast=function(m){if(m==='완료된 탐험이 없습니다'&&Date.now()-(G._exall718||0)<800)return;return ot.apply(this,arguments)};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{const b=document.querySelector('#screen #exAll');if(b&&!b._r718){b._r718=1;const o=b.onclick;if(typeof o==='function')b.onclick=function(){try{const st=C.expState(),now=C.now();if((D.EXPS||[]).some(E=>st[E.k]&&now>=st[E.k].end))G._exall718=Date.now()}catch(_){}return o.apply(this,arguments)}}}catch(_){}return r};
 })();
+
+;(()=>{/* r719: a quick second tap right after a successful 미션 모두 받기 is ignored silently (no 「받을 보상이 없습니다」 on top of the reward popup); missionClaimAll path only */
+const oc=G.missionClaimAll;if(typeof oc!=='function')return;
+G.missionClaimAll=function(){const hide=Date.now()-(G._miss719||0)<800;const ot=toast;if(hide)toast=function(m){if(m==='받을 보상이 없습니다')return;return ot.apply(this,arguments)};let r;try{r=oc.apply(this,arguments)}finally{if(hide)toast=ot}if(r)G._miss719=Date.now();return r};
+})();
