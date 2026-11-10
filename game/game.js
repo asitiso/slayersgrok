@@ -8820,3 +8820,10 @@ const put=()=>{if(G.screen!=='guild'||!C.S().gj)return 0;const s=C.S();C.gWeek()
 G.gmPut688=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r689: 소환으로 이동 on the empty 강화 · 육성 동료 육성 tab like 화룡전's empty-screen jump (same gold go554 button as the empty 승급 screen and r677 탐험 / 인연). With no companions the 동료 육성 tab shows the greyed 미보유 grid and "동료는 소환에서 얻을 수 있어요…" but no button, while 장비 강화 with no gear already has 장비 뽑으러 가기. The same 소환으로 이동 button now sits under that line and opens the 동료 소환 screen through menuGo('summon'). It only appears while no companion is owned; otherwise the tab is unchanged. Navigation only - it never summons; summon costs, rates, mileage, level-up / skill costs, unlocks and saves are unchanged. */
+G.enCompSum689=()=>{menuGo('summon');return G.screen==='summon'};
+const put=()=>{if(G.screen!=='enhance'||G.enTab!=='comp')return false;const s=C.S();if(D.COMPS.some(c=>s.comps[c.k]))return false;const c=document.querySelector('#screen .card.en535');if(!c||c.querySelector('.go689'))return false;const p=c.querySelector('p.en535h');
+ const b=document.createElement('button');b.className='go554 go677 go689';b.dataset.go677='enhance';b.textContent='소환으로 이동';b.onclick=e=>{e.stopPropagation();G.enCompSum689()};p?p.after(b):c.appendChild(b);return true};
+G.enCompPut689=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
