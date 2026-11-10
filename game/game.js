@@ -1126,7 +1126,7 @@ const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{con
 const T=[{m:5,w:{gold:1},n:'골드'},{m:10,w:{orbs:5},n:'마정구 ×5'},{m:20,w:{stone:10},n:'강화석 ×10'},{m:30,w:{gems:20},n:'다이아 ×20'},{m:60,w:{stone:15},n:'강화석 ×15'}];
 const st=()=>{const s=C.S();if(!s.ol||s.ol.day!=C.today())s.ol={day:C.today(),sec:0,c:{}};return s.ol};
 const gl=()=>Math.round(C.goldKill(Math.max(0,C.S().maxSi))*120);
-const give=w=>{const s=C.S();const g=w.gold?gl():0;if(g)C.addGold(g);s.orbs+=w.orbs||0;s.stone=(s.stone||0)+(w.stone||0);s.gems+=w.gems||0;s.tickets=(s.tickets||0)+(w.tk||0);return g};
+const give=w=>{const s=C.S();let g=w.gold?gl():0;if(g){/* r703: report the gold actually added (칭호 / 협회 버프 / 펫 / 인연 세트 included); grant unchanged */const g0=s.gold;C.addGold(g);const dg=s.gold-g0;if(isFinite(dg)&&dg>0)g=dg}s.orbs+=w.orbs||0;s.stone=(s.stone||0)+(w.stone||0);s.gems+=w.gems||0;s.tickets=(s.tickets||0)+(w.tk||0);return g};
 const ready=()=>{const o=st();return T.map((t,i)=>i).filter(i=>!o.c[i]&&o.sec>=T[i].m*60)};
 G.olClaimAll=()=>{const o=st(),out=[];ready().forEach(i=>{o.c[i]=1;const g=give(T[i].w);const w=T[i].w;out.push(w.gold?['it2_gold.png',g,'골드']:w.orbs?['it2_exp.png',w.orbs,'마정구']:w.stone?['it2_stone.png',w.stone,'강화석']:w.gems?['it2_gem.png',w.gems,'다이아']:['it2_ticket.png',w.tk,'소환권'])});return out};
 G.olAdd=sec=>{st().sec+=sec};G.olState=()=>({...st(),ready:ready().length});
