@@ -1515,7 +1515,7 @@ function draw(m){const w=st(),b=m.querySelector('.wbtns');b.innerHTML=w.n<1?`<sp
 function spin(m){if(spinning)return;const s=C.S(),w=st();if(w.n>=2)return;if(w.n==1){if(s.gems<100)return toast('보석이 부족합니다');s.gems-=100}w.n++;spinning=1;updateHud();
  const tot=P.reduce((a,p)=>a+p.w,0);let r=Math.random()*tot,i=0;for(;i<P.length;i++){r-=P[i].w;if(r<0)break}i=Math.min(i,P.length-1);const p=P[i],seg=360/P.length;
  const wh=m.querySelector('.wheel');const base=(+wh.dataset.rot||0);const target=base+360*5+(360-(i*seg+seg/2))-(base%360);wh.dataset.rot=target;wh.style.transition='transform 3.6s cubic-bezier(.12,.75,.2,1)';wh.style.transform=`rotate(${target}deg)`;
- setTimeout(()=>{spinning=0;const v=p.g?Math.round(C.goldKill(s.si)*p.g):p.v;if(p.k=='gold')C.addGold?C.addGold(v):(s.gold+=v);else s[p.k]=(s[p.k]||0)+v;updateHud();const big=p.w<=5;rewardPop([[p.ic,v,p.n.replace(/ \d+$/,'')]],big?'<img class="emi e_ui_confetti" src=assets/ui_confetti.png alt="">대박! 룰렛 당첨':'룰렛 당첨');if(big&&G.confetti)try{G.confetti()}catch(_){}draw(m)},3700)}
+ setTimeout(()=>{spinning=0;let v=p.g?Math.round(C.goldKill(s.si)*p.g):p.v;if(p.k=='gold'){/* r705: show the gold actually added (칭호 / 협회 버프 / 펫 / 인연 세트 included); grant, odds, segments unchanged */const g0=s.gold;C.addGold?C.addGold(v):(s.gold+=v);const dg=s.gold-g0;if(isFinite(dg)&&dg>0)v=dg}else s[p.k]=(s[p.k]||0)+v;updateHud();const big=p.w<=5;rewardPop([[p.ic,v,p.n.replace(/ \d+$/,'')]],big?'<img class="emi e_ui_confetti" src=assets/ui_confetti.png alt="">대박! 룰렛 당첨':'룰렛 당첨');if(big&&G.confetti)try{G.confetti()}catch(_){}draw(m)},3700)}
 G.wheelOpen=open})();
 /* v92 오늘의 현상수배 (일일 특정 몬스터 30마리 처치) */
 (()=>{const C=G.C,N=30;const day=()=>C.today();
