@@ -8800,3 +8800,11 @@ const put=()=>{if(G.screen!=='codex'||G.cdT!=='s')return 0;let n=0;document.quer
 G.setCompPut686=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r687: 코스튬 황금 마도사 → 마도 패스 like 화룡전's costume 획득처 jump. On the 코스튬 screen the pass-only costume (황금 마도사, granted by the 마도 패스 premium tier 20 claim) only said 패스 20단계 as plain text, and tapping it just toasted 패스 20단계 프리미엄 보상, so checking or claiming it meant ‹ back, 메뉴, then 마도 패스. A small green 마도 패스 ▶ chip now sits under that text while the costume is not owned; a tap opens 마도 패스 through menuGo('pass') (its usual stage lock applies). Navigation only - it never buys, claims or equips anything and spends no gems; pass tiers, rewards, premium status, costume prices, ownership and saves are unchanged. The card tap itself still shows the same toast. */
+const st=document.createElement('style');st.setAttribute('data-r','687');st.textContent=`#screen .skn .bpgo687{display:inline-block;margin-top:3px;padding:0 6px;border-radius:8px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff!important;font:900 9.5px/1.45 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;white-space:nowrap;cursor:pointer;position:relative;z-index:3;-webkit-tap-highlight-color:transparent}#screen .skn .bpgo687:active{filter:brightness(.9)}`;document.head.appendChild(st);
+G.skinPass687=()=>{menuGo('pass');return G.screen==='pass'};
+const put=()=>{if(G.screen!=='skin')return 0;const s=C.S();let n=0;document.querySelectorAll('#screen .skg .skn[data-sk]').forEach(c=>{const k=c.dataset.sk,x=D.SKINS.find(q=>q.k==k);if(!x||!x.bp||(s.skins||{})[k]||c.querySelector('.bpgo687'))return;const sm=c.querySelector(':scope>small');if(!sm)return;
+ const b=document.createElement('span');b.className='bpgo687';b.setAttribute('role','button');b.setAttribute('aria-label',x.n+' 마도 패스로 이동');b.textContent='마도 패스 ▶';sm.after(b);b.onclick=e=>{e.stopPropagation();G.skinPass687()};n++});return n};
+G.skinPut687=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
