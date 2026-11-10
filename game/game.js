@@ -8884,3 +8884,8 @@ const ec=C.expClaim;if(typeof ec!=='function')return;
 C.expClaim=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=ec.apply(this,arguments)}finally{C.addGold=ag}
  try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)){r.gBase=r.g;r.g=got}}catch(_){}return r};
 })();
+;(()=>{// r699 금고 수확 gold: the building 수확 toast, the 영지 map harvest-pin toast and the 전체 수확 popup all show C.bCollect's return, which was the base vault amount, while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. For the vault, return the gold C.addGold actually added (display only; mine orbs, harvest rates, storage cap, remainder and grant unchanged).
+const bc=C.bCollect;if(typeof bc!=='function')return;
+C.bCollect=function(k){if(k!=='vault')return bc.apply(this,arguments);const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let v;try{v=bc.apply(this,arguments)}finally{C.addGold=ag}
+ return (typeof v==='number'&&v>0&&got!=null&&isFinite(got)&&got>0)?got:v};
+})();
