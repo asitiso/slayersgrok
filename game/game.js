@@ -8894,3 +8894,8 @@ const td=C.towerDaily;if(typeof td!=='function')return;
 C.towerDaily=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=td.apply(this,arguments)}finally{C.addGold=ag}
  try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)&&got!==r.g)r.g=got}catch(_){}return r};/* no extra fields: same result shape as before */
 })();
+;(()=>{// r701 무한의 탑 floor-clear gold: the 「무한의 탑 N층 돌파!」 reward popup listed the base T.rew gold while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. Record the gold C.addGold actually added and report that (display only; grant, floors, req, 강화석 / 보석 / 소환권 / 5층 egg unchanged; result keeps the same fields).
+const tt=C.towerTry;if(typeof tt!=='function')return;
+C.towerTry=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=tt.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&!r.fail&&got!=null&&isFinite(got)&&got!==r.g)r.g=got}catch(_){}return r};
+})();
