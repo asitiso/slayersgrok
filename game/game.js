@@ -8959,3 +8959,20 @@ const put=d=>{if(!d||!d.classList||!d.classList.contains('spv')||d.querySelector
 G.stageGuide723=put;
 const op=G.stagePanel;G.stagePanel=function(){const d=op.apply(this,arguments);try{put(d)}catch(e){console.warn(e)}return d};
 })();
+
+;(()=>{/* r724: 던전 / 무한의 탑 / 전직 시련 보스 웨이브 entrance cue, like 화룡전. Stage bosses already have WARNING + VS, and trash waves already flash WAVE N on #brHud .brhn, but the rb boss wave skipped that label (and R.waveRib is gated off while C.B.boss, which is true for the whole rb fight). When the boss wave is actually assigned, .brhn now shows the boss name (gold, same fade as WAVE N) and a short pooled BOSS ribbon (wave_ribbon.png, same 1.15s animation as WAVE / FINAL WAVE — not the 2s VS splash, so the field stays readable in a 45s timed fight). Once per fight, CSS + one text write; nofx/tglite still get the HUD name and skip the ribbon. Display only — waves, HP, timer, req, rewards, startBoss and saves are unchanged. */
+const C=G.C;if(!C||typeof C.tick!=='function')return;
+const st=document.createElement('style');st.textContent='#brHud .brhn.boss724{color:#ffe27a;text-shadow:0 2px 0 #4a1000,0 0 12px #ff6a2a,0 0 4px #000;letter-spacing:.5px;font-size:20px}#battle .wvb.wrib.rboss724{z-index:9;pointer-events:none}';document.head.appendChild(st);
+const show=en=>{
+  const n=G.rbHud&&G.rbHud.querySelector('.brhn');
+  if(n){n.textContent=(en&&en.n)||'BOSS';n.classList.add('boss724');n.classList.remove('in');void n.offsetWidth;n.classList.add('in')}
+  if(document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false))return;
+  const b=document.getElementById('battle');if(!b||G.screen||G.storyOn)return;
+  let d=b.querySelector('.rboss724');if(d)d.remove();
+  d=document.createElement('div');d.className='wvb wrib fin rboss724';d.innerHTML='<img src="'+(typeof A==='string'?A:'assets/')+'wave_ribbon.png" alt=""><span>BOSS</span>';b.appendChild(d);
+  d._t=setTimeout(()=>{if(d.parentNode)d.remove()},1150);
+};
+G.rbBossEnter724=show;
+let shown=null;
+const ot=C.tick;C.tick=function(dt){const r=ot.apply(this,arguments);try{const rb=C.B.rb,en=C.B.enemies&&C.B.enemies[0];if(rb&&en&&en.boss){if(shown!==rb){shown=rb;show(en)}}else if(!rb)shown=null}catch(e){console.warn(e)}return r};
+})();
