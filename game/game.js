@@ -8918,3 +8918,7 @@ const ga=C.gAttend;if(typeof ga!=='function')return;
 C.gAttend=function(){const r=ga.apply(this,arguments);if(r)G._gatt715=Date.now();return r};
 const ot=toast;toast=function(m){if(m==='오늘 이미 출석했습니다'&&Date.now()-(G._gatt715||0)<800)return;return ot.apply(this,arguments)};
 })();
+;(()=>{/* r716: a quick second tap right after a successful 전체 수확 is ignored silently (no 「수확할 자원이 없습니다」 on top of the reward popup) */
+const ot=toast;toast=function(m){if(m==='수확할 자원이 없습니다'&&Date.now()-(G._ball716||0)<800)return;return ot.apply(this,arguments)};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{const b=document.querySelector('#screen #bAll');if(b&&!b._r716){b._r716=1;const o=b.onclick;if(typeof o==='function')b.onclick=function(){try{C.bUpdate();const bd=C.S().bld||{};if(((bd.vault||{}).acc||0)>=1||((bd.mine||{}).acc||0)>=1)G._ball716=Date.now()}catch(_){}return o.apply(this,arguments)}}}catch(_){}return r};
+})();
