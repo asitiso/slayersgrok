@@ -8874,3 +8874,8 @@ const qh=G.quickHunt;if(typeof qh!=='function')return;
 G.quickHunt=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=qh.apply(this,arguments)}finally{C.addGold=ag}
  try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)){r.gBase=r.g;r.g=got}}catch(_){}return r};
 })();
+;(()=>{// r697 일일 던전 result gold: 도전 clear, 소탕, 일괄 소탕 and 전체 소탕 all grant through C.dunGive, whose C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top of the base r.g, but every result popup listed the base r.g. Record the gold C.addGold actually added and report that (display only; grant, tries, first-clear gems and rates unchanged).
+const dg=C.dunGive;if(typeof dg!=='function')return;
+C.dunGive=function(r){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let o;try{o=dg.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)){r.gBase=r.g;r.g=got}}catch(_){}return o};
+})();
