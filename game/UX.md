@@ -188,3 +188,6 @@ In 화룡전 an empty screen gives you a button to where you get what it needs. 
 
 ## r690 마도 패스 경험치 → 임무
 In 화룡전 the pass screen links to the missions that feed it. Our 마도 패스 summary only said 처치·보스·임무로 경험치 획득 as plain text, so getting more pass XP from missions meant ‹ back → 임무. A small green 임무 ▶ chip now sits at the end of that line. A tap closes the pass screen and opens the 임무 sheet through `menuGo('mission')` (`G.passMis690`). Navigation only: it never claims a mission or a pass tier and spends nothing; XP rates, tiers, rewards, premium status, mission goals and saves are unchanged. The hint text itself is unchanged.
+
+## r691 승급 조각 획득 → 동료 소환
+In 화룡전 a hero's shard counter leads to where shards come from. Our 동료 승급 card only said 조각 획득: 희귀 5 · 영웅 10 · 전설 20 (중복 1회당) as plain text, so getting more shards for 승급 or 각성 meant ‹ back → 소환. A small green 동료 소환 ▶ chip now sits at the end of that line (hidden once that companion's 각성 is complete). A tap opens the 동료 소환 screen through `menuGo('summon')` (`G.shardSum691`). Navigation only: it never summons, 승급s or 각성s and spends nothing; shard amounts, star and 각성 costs and multipliers, rates, pity, mileage, unlocks and saves are unchanged.

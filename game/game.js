@@ -8835,3 +8835,12 @@ const put=()=>{if(G.screen!=='pass')return false;const sp=[...document.querySele
 G.passPut690=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r691: 승급 조각 획득 → 동료 소환 like 화룡전's hero-shard 획득처 jump (same travel-only chip as r675 / r686 동료 소환 ▶). The 동료 승급 card only said 조각 획득: 희귀 5 · 영웅 10 · 전설 20 (중복 1회당) as plain text, so getting more shards for 승급 / 각성 meant ‹ back, then the 소환 tab. A small green 동료 소환 ▶ chip now sits at the end of that line (hidden once 각성 is complete); a tap opens the 동료 소환 screen through menuGo('summon'). Navigation only - it never summons, 승급s or 각성s and spends nothing; shard amounts, star/각성 costs and multipliers, rates, pity, mileage, unlocks and saves are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','691');st.textContent=`#screen .shgo691{display:inline-block;margin-left:6px;padding:0 7px;border-radius:9px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff!important;font:900 10px/1.5 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;vertical-align:middle;white-space:nowrap;cursor:pointer;opacity:1;-webkit-tap-highlight-color:transparent}#screen .shgo691:active{filter:brightness(.9)}`;document.head.appendChild(st);
+G.shardSum691=()=>{if(typeof G.sumGo675==='function')return G.sumGo675();menuGo('summon');return G.screen==='summon'};
+const put=()=>{if(G.screen!=='star')return false;const s=C.S(),k=G.stSel;if(!k||!s.comps[k])return false;if(((s.caw||{})[k]||0)>=(C.AWMAX||3))return false;
+ const sm=[...document.querySelectorAll('#screen small')].find(x=>/^조각 획득: 희귀/.test(x.textContent.trim()));if(!sm||sm.querySelector('.shgo691'))return false;
+ const b=document.createElement('span');b.className='shgo691';b.setAttribute('role','button');b.setAttribute('aria-label','동료 소환으로 이동');b.textContent='동료 소환 ▶';sm.appendChild(b);b.onclick=e=>{e.stopPropagation();G.shardSum691()};return true};
+G.shardPut691=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
