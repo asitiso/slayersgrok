@@ -8879,3 +8879,8 @@ const dg=C.dunGive;if(typeof dg!=='function')return;
 C.dunGive=function(r){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let o;try{o=dg.apply(this,arguments)}finally{C.addGold=ag}
  try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)){r.gBase=r.g;r.g=got}}catch(_){}return o};
 })();
+;(()=>{// r698 탐험 claim gold: the single 받기 popup (탐험 완료!) and 모두 받기 both read the gold from C.expClaim's result, which is the base expReward gold, while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. Record the gold C.addGold actually added and report that (display only; grant, gems, 바이블 조각 and rates unchanged).
+const ec=C.expClaim;if(typeof ec!=='function')return;
+C.expClaim=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=ec.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)){r.gBase=r.g;r.g=got}}catch(_){}return r};
+})();
