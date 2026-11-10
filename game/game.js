@@ -8552,3 +8552,15 @@ const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{dra
 G.HUB=HUB;G.hubGo=go;
 try{if(document.getElementById('nav')&&document.getElementById('nav').children.length)renderNav()}catch(_){}
 })();
+;(()=>{/* r655: 동료 승급 일괄 승급 like 화룡전's one-tap batch growth. 승급 used one tap per star per companion, so several ready companions (or one with shards for 2+ stars) meant tap, switch, tap again. One button now runs the same C.starUp for every owned companion until its shards run out or it reaches ★max. Star-up spends only that companion's own shards (no gold, no other use before ★max), so there is no choice being made for the player. 각성 (costs gold) stays a manual tap. No cost, rate, cap or save-shape change. */
+const A='assets/';
+const ready=()=>{const s=C.S(),sh=s.csh||{};return D.COMPS.filter(x=>s.comps[x.k]&&s.comps[x.k]<C.STARMAX&&(sh[x.k]||0)>=C.starCost(x.k))};
+G.starAll=()=>{const s=C.S(),out=[];for(const c of ready()){const a=s.comps[c.k];let n=0;while(n<C.STARMAX&&C.starUp(c.k)==='ok')n++;if(n)out.push({c,a,b:s.comps[c.k]})}return out};
+const st=document.createElement('style');st.setAttribute('data-r','655');st.textContent=`#screen #stAll{display:flex!important;align-items:center;justify-content:center;gap:4px;margin:0 0 8px!important}#screen #stAll small{opacity:.9}.sa655{display:flex;flex-direction:column;gap:4px;margin:8px 0}.sa655 div{display:flex;align-items:center;gap:8px;padding:3px 8px;border-radius:8px;background:#0005}.sa655 img{width:34px;height:38px;object-fit:contain}.sa655 b{flex:1;text-align:left}.sa655 em{font-style:normal;color:#ffe37a;font-weight:900}`;document.head.appendChild(st);
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen!=='star')return r;const sb=document.querySelector('#screen .sbody'),list=sb&&sb.querySelector('.stlist');if(!list||sb.querySelector('#stAll'))return r;
+ const rd=ready();const b=document.createElement('span');b.id='stAll';b.className='pill green wide'+(rd.length?'':' off');
+ b.innerHTML=`<img class=ci src="${A}fx_starup.png" alt="">일괄 승급${rd.length?` <small>${rd.length}명</small>`:''}`;list.after(b);
+ b.onclick=()=>{if(!ready().length)return toast('승급할 수 있는 동료가 없습니다');const o=G.starAll();if(!o.length)return toast('승급할 수 있는 동료가 없습니다');
+  const t=o.reduce((a,x)=>a+(x.b-x.a),0);updateHud();renderScreen();
+  modal(`<div class=ttl style="justify-content:center;font-size:18px">일괄 승급 결과</div><div style="text-align:center;margin:6px 0"><b class=up>${o.length}명 · ★ ${t}단계</b></div><div class=sa655>${o.map(x=>`<div><img src="${A}${x.c.img}" alt=""><b>${x.c.n}</b><em>★${x.a} → ★${x.b}</em></div>`).join('')}</div><small style="display:block;text-align:center;opacity:.8">각성은 골드가 들어 동료마다 직접 진행합니다 · 전투력 ${fmt(C.POW())}</small>`)}}catch(e){console.warn(e)}return r};
+})();
