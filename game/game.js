@@ -8913,3 +8913,8 @@ C.dealBuy=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(
 ;(()=>{// r710 gold received displays (r694–r709) measure gold after − gold before. With a large balance that subtraction carries a tiny float error (e.g. 1177.9999999998 for a 1,178 grant), and fmt floors, so a result could read 1 less than before. Snap the measured amount to the nearest whole number when it is within that float error (display only; balances untouched).
 G.gd710=(a,b)=>{let d=b-a;if(!isFinite(d))return d;const r=Math.round(d),t=Math.max(1e-9,Math.max(Math.abs(a),Math.abs(b))*1e-13);return Math.abs(d-r)<=t?r:d};
 })();
+;(()=>{/* r715: a quick second tap right after a successful 협회 출석 claim is ignored silently (no 「오늘 이미 출석했습니다」 on top of the reward popup) */
+const ga=C.gAttend;if(typeof ga!=='function')return;
+C.gAttend=function(){const r=ga.apply(this,arguments);if(r)G._gatt715=Date.now();return r};
+const ot=toast;toast=function(m){if(m==='오늘 이미 출석했습니다'&&Date.now()-(G._gatt715||0)<800)return;return ot.apply(this,arguments)};
+})();
