@@ -8945,3 +8945,10 @@ const put=m=>{if(!m||!m.classList||!m.classList.contains('pwwarn')||m.classList.
 G.pwGuide721=put;
 const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1)put(n)}).observe(ap,{childList:true});
 })();
+
+;(()=>{/* r722: 강해지는 방법 on the 스테이지 보스 정보 window when under recommended power, like 화룡전. Fail cards and the 던전/탑 전투력 부족 confirm (r721) already show the four growth tiles, but G.bossInfo only offered a single 「성장하러 가기」 that opens 전투력 분석 (G.powOpen), so the four paths were one more tap away. The same r666 tiles (장비 강화 · 동료 육성 · 편성 · 소환) now sit above 「성장하러 가기」 when 내 전투력 is below 권장; a tap closes the window (no boss start) and opens that screen through G.failGuide666 / G.failGo666 / menuGo. When power is enough, 「보스 도전」 is unchanged and no tiles are added. Navigation only - no fight start, no spend; 「성장하러 가기」 still opens 전투력 분석, 확인 still closes, 권장 전투력 / 도전 기록 / 보스 패턴 / 웨이브 조건 and saves are unchanged. */
+if(typeof G.failGuide666!=='function'||typeof G.failGo666!=='function'||typeof G.bossInfo!=='function')return;
+const put=m=>{if(!m||!m.querySelector||m.querySelector('.gd666'))return;const go=m.querySelector('#biGo'),cd=m.querySelector(':scope>.card');if(!go||!cd||!m.querySelector('.bih')||!m.querySelector('.bip'))return;if(!/성장하러 가기/.test(go.textContent||''))return;const hook=document.createElement('div');hook.className='btn';hook.style.display='none';go.before(hook);try{G.failGuide666(m)}finally{hook.remove()}};
+G.bossGuide722=put;
+const ob=G.bossInfo;G.bossInfo=function(){const r=ob.apply(this,arguments);try{put([...document.querySelectorAll('.modal')].pop())}catch(e){console.warn(e)}return r};
+})();
