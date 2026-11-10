@@ -8869,3 +8869,8 @@ const fix=off=>{const m=document.getElementById('offModal');if(!m||!off)return f
 G.offFix695=fix;
 const op=offPop;const wrap=function(off){const r=op.apply(this,arguments);try{fix(off)}catch(e){console.warn(e)}return r};offPop=wrap;G.offPop=wrap;
 })();
+;(()=>{// r696 빠른 사냥 result: the 보상 획득! popup showed the pre-bonus gold (offlineCalc base) while C.addGold adds 칭호 / 협회 버프 / 펫 / 인연 세트 on top. Measure the gold that C.addGold actually added during the hunt and report that (display only; grant, gem cost and rates unchanged).
+const qh=G.quickHunt;if(typeof qh!=='function')return;
+G.quickHunt=function(){const s=C.S(),ag=C.addGold;let got=null;C.addGold=function(){const g0=s.gold;const x=ag.apply(this,arguments);got=(got||0)+(s.gold-g0);return x};let r;try{r=qh.apply(this,arguments)}finally{C.addGold=ag}
+ try{if(r&&typeof r==='object'&&got!=null&&isFinite(got)){r.gBase=r.g;r.g=got}}catch(_){}return r};
+})();

@@ -203,3 +203,7 @@ In 화룡전 the idle reward window shows what you will actually receive. Our �
 
 ## r695 어서 오세요! 골드 = 실제 수령액
 Same gap as r694, on the return popup. When you reopen the game, 어서 오세요! showed the offline 골드 before bonuses, and so did the 방치 보상 / 2배 보너스! reward popup after 받기, but `C.offApply` adds the gold through `C.addGold`, which applies the existing 칭호, 협회 버프, 펫 and 인연 세트 gold bonuses. The 골드 tile now shows the base amount × the current gold-bonus multiplier (`G.goldMul694`, which restores gold and the earnings counter exactly), and after a successful 받기 or 2배 받기 the reward popup shows the gold actually added. Display only: offline rates, the 8-hour cap, the 2배 gem cost, 경험치, 마정구, 강화석, gold bonuses and saves are unchanged.
+
+## r696 빠른 사냥 결과 골드 = 실제 수령액
+- 방치 보상 창의 「빠른 사냥 2시간」 결과 창(보상 획득! · 빠른 사냥 · 2시간)의 골드가 보너스 적용 전 기본값으로 표시되었으나, 실제로는 칭호 · 협회 버프 · 펫 · 인연 세트 보너스가 더해진 골드가 지급됨.
+- 이제 결과 창에는 실제로 지급된 골드가 표시됨 (표시만 변경; 지급량 · 다이아 비용 · 하루 3회 · 2시간 · 경험치 · 마정구 · 강화석 그대로).
