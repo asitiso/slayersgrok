@@ -8754,3 +8754,8 @@ const put=()=>{if(G.screen!=='ach')return;const sb=document.querySelector('#scre
 G.achPut676=put;
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r678: 동료 상세 별 표시 matches 승급 like 화룡전's hero info that shows the same star and awakening marks everywhere. The 동료 상세 header drew at most 5 stars (★ capped at 5 of 5 slots) while 승급 goes to ★6 (C.STARMAX) and the 승급 / 육성 screens draw 6 slots plus ◆ per 각성, so a ★6 or awakened companion looked like ★5 with no ◆ in 동료 상세. The header now draws C.STARMAX slots and the same .awv ◆ marks. Display only (star-up, 각성, costs, attack multipliers, level-up, saves unchanged) */
+const C=G.C;
+G.cdStars678=k=>{const s=C.S(),M=C.STARMAX||6,st=Math.max(0,Math.min(M,(s.comps||{})[k]||0)),aw=st?Math.min(C.AWMAX||3,(s.caw||{})[k]||0):0;return '★'.repeat(st)+'☆'.repeat(M-st)+(aw?`<span class=awv>${'◆'.repeat(aw)}</span>`:'')};
+const oc=compDetail;compDetail=function(k){const r=oc.apply(this,arguments);try{const m=[...document.querySelectorAll('.modal')].filter(x=>x.querySelector('.cdet')).pop(),el=m&&m.querySelector('.cdet > .stars');if(el){el.innerHTML=G.cdStars678(k);el.dataset.r678='1'}}catch(e){console.warn(e)}return r};
+})();
