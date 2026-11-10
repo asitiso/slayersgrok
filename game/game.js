@@ -1257,7 +1257,7 @@ G.itemData=I;/* r340: read-only handle for the 가방 detail card */G.itemInfo=i
 const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{if(G.screen=='bag'){$('#screen').querySelectorAll('.bagg .bi').forEach(b=>{const im=b.querySelector('img');if(!im)return;const m=(im.getAttribute('src')||'').match(/(it\d_[a-z]+)\.png$/);if(m&&I[m[1]]){b.classList.add('tap');b.onclick=()=>G.itemInfo(m[1])}})}}catch(_){}return r};
 })();
 ;(()=>{// v65 오늘의 할 일 (메뉴 상단 바로가기 · 레드닷 모음)
-const N={mail:'우편 수령',event:'출석 체크',summon:'동료 소환',mission:'지령 보상',base:'영지 수확',arena:'투기장 도전',guild:'협회 기부',dungeon:'던전 도전',explore:'탐험 보상',enhance:'장비 강화',wboss:'월드보스',ach:'업적 보상',pass:'패스 보상',friend:'친구 하트',talent:'특성 습득',relic:'기보 강화',star:'동료 승급',pet:'펫 부화',tower:'무한의 탑',codex:'도감 보상'};
+const N={mail:'우편 수령',event:'출석 체크',summon:'동료 소환',mission:'지령 보상',base:'영지 수확',arena:'투기장 도전',guild:'협회 기부',dungeon:'던전 도전',explore:'탐험 보상',enhance:'장비 강화',wboss:'월드보스',ach:'업적 보상',pass:'패스 보상',friend:'친구 하트',talent:'특성 습득',relic:'기보 강화',star:'동료 승급',pet:'펫 부화',tower:'무한의 탑',codex:'도감 보상',map:'별 보상'/* r681 */};
 /* r672: 오늘의 할 일 lists every menu red dot like 화룡전's to-do summary - 특성/기보 (BD), 승급/펫/탑/도감 (their own dot writers' tests) were lit in the grid while the bar said 모두 완료!. Same tests, same menuGo + stage locks. Display and navigation only */
 const X672={star:()=>!!(C.starRed&&C.starRed()),pet:()=>{const p=C.S().pet||{};return (p.egg||0)>0||!p.gift},tower:()=>!!(G.towerRed&&G.towerRed()),codex:()=>!!(C.cdxPend&&C.cdxPend()>0)};G.todoX672=X672;
 const list=()=>{const B=G.BD||{},o=[];for(const k in N){let on;try{on=k=='friend'?(C.frRed&&C.frRed()):X672[k]?X672[k]():B[k]}catch(_){on=false}if(on&&(!G.isOpen||G.isOpen(k)))o.push(k)}if(G.nbState){try{const s=G.nbState();if(s&&s.ready)o.unshift('nb')}catch(_){}}if(G.olState&&G.olState().ready)o.unshift('ol');return o};
@@ -8769,3 +8769,9 @@ const oc=compDetail;compDetail=function(k){const r=oc.apply(this,arguments);try{
  const row=document.createElement('div');row.className='br679';const b=document.createElement('span');b.className='pill gold sg679';b.dataset.sg679=k;b.setAttribute('role','button');b.setAttribute('aria-label','동료 승급으로 이동');
  b.innerHTML=`<img class=ci src="${A}fx_starup.png" alt="">승급 ▶${G.stReady679(k)?'<i class=dot></i>':''}`;b.onclick=e=>{e.stopPropagation();G.stGo679(k)};row.appendChild(b);d.appendChild(row)}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r681: 지도 red dot for ready 별 보상 like 화룡전's stage-map chest badge. Chapter star chests (★7/★14/★21, r658 모두 받기) could be ready while nothing outside the 지도 screen said so: the 메뉴 grid's 지도 entry had no dot, 오늘의 할 일 had no chip and the ▦ 메뉴 button stayed dark. Now the 지도 entry gets a red dot whenever G.starReady() lists a chest on an unlocked chapter (the same test as the map pins / 모두 받기), 오늘의 할 일 shows a 별 보상 ▶ chip that opens 지도 through menuGo('map'), and the 메뉴 button follows through the r673 G.todoX672 path. Display and navigation only: thresholds, chest rewards, star rules, claims, unlocks and saves are unchanged. */
+const rdy=()=>{try{return typeof G.starReady=='function'&&G.starReady().length>0}catch(_){return false}};G.mapRed681=rdy;
+if(G.todoX672)G.todoX672.map=rdy;
+const put=()=>{const a=document.querySelector('#mgrid a[data-s=map]');if(!a)return;let d=a.querySelector('.dot');if(!d){d=document.createElement('span');d.className='dot';a.appendChild(d)}const v=rdy()?'':'none';if(d.style.display!==v)d.style.display=v};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{put()}catch(_){}return r};
+setInterval(()=>{try{put()}catch(_){}},1000)})();
