@@ -8701,3 +8701,10 @@ const oc=compDetail;compDetail=function(k){const r=oc.apply(this,arguments);try{
  const c=document.createElement('span');c.className='cdct668';c.textContent=(i+1)+'/'+L.length;
  im.append(a,b,c)}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r670: 소환 결과 card → 동료 상세 like 화룡전's hero cards that open hero info. The 소환 결과 popup showed each summoned companion (grade, ★, NEW / 조각 +N) but the cards did nothing when tapped, so checking what you just got (level, attack multiplier, 성급, 고유 마법) meant 확인 → ‹ back → 편성 → find the card → 상세. Once a card has flipped open, tapping it opens the same compDetail popup on top of the result; closing it returns to the result. Cards still face-down are left alone (전부 열기 and the auto flip are unchanged). Display only: summon costs, rates, pity, mileage, shards, levels and saves unchanged */
+const st=document.createElement('style');st.textContent=`#sumModal .srf.open>.sumcard,#sumModal .sumcard.det670{cursor:pointer}`;document.head.appendChild(st);
+G.sumDet670=(m,got)=>{if(!m||!got)return 0;const fs=[...m.querySelectorAll('.srf')],cs=fs.length?fs:[...m.querySelectorAll('.sumcard')];let n=0;
+ cs.forEach((f,i)=>{const k=got[i];if(!k||!D.COMPS.find(x=>x.k==k)||f.dataset.det670)return;f.dataset.det670=k;n++;f.setAttribute('role','button');f.setAttribute('aria-label','동료 상세');if(!fs.length)f.classList.add('det670');
+  f.addEventListener('click',e=>{if(fs.length&&!f.classList.contains('open'))return;e.stopPropagation();compDetail(k)})});return n};
+const os=summon;summon=function(n){const r=os.apply(this,arguments);try{G.sumDet670(document.getElementById('sumModal'),G._sumGot)}catch(e){console.warn(e)}return r};
+})();
