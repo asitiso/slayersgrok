@@ -8666,3 +8666,21 @@ const add=m=>{if(!m||m.querySelector('.gd666'))return;const cd=m.querySelector('
 G.failGuide666=add;
 const om=modal;modal=function(html){const m=om.apply(this,arguments);try{if(m&&/도전 실패<\/div>/.test(String(html))&&(G.screen==='tower'||G.screen==='dungeon'))add(m)}catch(e){console.warn(e)}return m};
 })();
+;(()=>{/* r667: 7일 이벤트 바로가기 like 화룡전's event mission list. The 신규 7일 성장 이벤트 popup only said 진행 중 on unfinished tasks of opened days, while the 임무 list (r662) has a 바로가기 on every in-progress row, so the player had to close the popup and find the right control. Those rows now get a green 바로가기: 동료 소환 opens 소환, 장비 강화 opens 강화 · 육성 on 장비 강화, 장비 뽑기 / 몬스터 처치 / 레벨 go back to the field with the same r662 hint + highlight (마정구 orb), and N-M 도달 goes to the field with the 보스 도전 highlight, or to 지도 (최고 N-M) when you are on an older stage. Navigation only - it never fights, summons, enhances or rolls; tasks, goals, rewards, claims, day unlocks and saves are unchanged. */
+if(typeof G.nbOpen!=='function')return;
+const kind=t=>/도달$/.test(t)?'stage':/^레벨/.test(t)?'lv':/^동료 소환/.test(t)?'summon':/^장비 강화/.test(t)?'enh':/^장비 뽑기/.test(t)?'rolls':/^몬스터/.test(t)?'kills':null;
+const hl=sel=>setTimeout(()=>{const e=document.querySelector(sel);if(!e)return;e.classList.remove('hl662');void e.offsetWidth;e.classList.add('hl662');setTimeout(()=>e.classList.remove('hl662'),2600)},60);
+const field=(msg,sel)=>{try{const x=document.getElementById('sheetClose');if(x&&G.tab&&G.tab!='battle')x.click()}catch(_){}try{if(G.screen)closeScreen()}catch(_){}toast(msg);if(sel)hl(sel)};
+G.nbGo667=k=>{document.querySelectorAll('.modal.nbm').forEach(x=>x.remove());const s=C.S();
+ if(k==='summon'){if(G.tab&&G.tab!='battle')openSheet('battle');menuGo('summon');return G.screen==='summon'}
+ if(k==='enh'){if(G.tab&&G.tab!='battle')openSheet('battle');G.enTab='gear';menuGo('enhance');return G.screen==='enhance'}
+ if(k==='rolls'){field('마정구를 눌러 장비를 뽑으세요','#navroll');return true}
+ if(k==='kills'){field('전투에서 몬스터를 처치하세요',null);return true}
+ if(k==='lv'){field('몬스터 처치와 장비 뽑기로 경험치를 모으세요','#navroll');return true}
+ if(k==='stage'){if((s.si||0)<(s.maxSi||0)){if(G.tab&&G.tab!='battle')openSheet('battle');menuGo('map');toast('최고 스테이지로 이동해 보스를 처치하세요');return G.screen==='map'}field('보스 도전 버튼으로 보스를 처치하세요','#bossBtn');return true}
+ return false};
+const put=m=>{if(!m)return;m.querySelectorAll('.nbr').forEach(r=>{const bt=r.querySelector(':scope>.btn.off[data-c]'),b=r.querySelector('.f>b');if(!bt||!b||bt.textContent.trim()!=='진행 중')return;const k=kind(b.textContent.trim());if(!k)return;
+ bt.textContent='바로가기';bt.classList.remove('off');bt.classList.add('g','nbgo667');bt.removeAttribute('data-c');bt.dataset.go667=k;bt.onclick=ev=>{ev.stopPropagation();G.nbGo667(k)}})};
+G.nbPut667=put;
+const o=G.nbOpen;G.nbOpen=function(){const r=o.apply(this,arguments);try{put([...document.querySelectorAll('.modal.nbm')].pop())}catch(e){console.warn(e)}return r};
+})();
