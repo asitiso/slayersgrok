@@ -8684,3 +8684,18 @@ const put=m=>{if(!m)return;m.querySelectorAll('.nbr').forEach(r=>{const bt=r.que
 G.nbPut667=put;
 const o=G.nbOpen;G.nbOpen=function(){const r=o.apply(this,arguments);try{put([...document.querySelectorAll('.modal.nbm')].pop())}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r668: 동료 상세 ‹ › like 화룡전's hero detail arrows. The 동료 상세 popup showed one companion; checking or leveling the next one meant 확인 → find its card on 편성 → 상세 again. Owned companions now get ‹ › arrows on the illustration plus an N/M count: they step through owned companions in the 편성 list order (D.COMPS, wrapping), closing this popup and opening the same compDetail for the next one. Navigation only (levels, level-up costs, party, stars, unlocks, saves unchanged) */
+const C=G.C;
+const own=()=>{const s=C.S();return D.COMPS.filter(c=>(s.comps||{})[c.k]).map(c=>c.k)};
+G.cdStep668=(k,d)=>{const L=own(),i=L.indexOf(k);if(i<0||L.length<2)return null;return L[(i+d+L.length)%L.length]};
+const st=document.createElement('style');st.textContent=`.cdimg .cdnv668{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:30px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#000a;border:1px solid #ffffff55;color:#fff;font:900 24px Maplestory,sans-serif;text-shadow:0 1px 2px #000;cursor:pointer;user-select:none}
+.cdimg .cdnv668.l{left:4px}.cdimg .cdnv668.r{right:4px}
+.cdimg .cdct668{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:3;padding:1px 8px;border-radius:8px;background:#000a;color:#fff;font:700 11px Maplestory,sans-serif;text-shadow:0 1px 1px #000}`;document.head.appendChild(st);
+const oc=compDetail;compDetail=function(k){const r=oc.apply(this,arguments);try{const L=own(),i=L.indexOf(k);if(i<0||L.length<2)return r;
+ const m=[...document.querySelectorAll('.modal')].pop(),im=m&&m.querySelector('.cdet .cdimg');if(!im||im.querySelector('.cdnv668'))return r;
+ const go=d=>e=>{e.stopPropagation();const n=G.cdStep668(k,d);if(!n)return;m.remove();compDetail(n)};
+ const a=document.createElement('span');a.className='cdnv668 l';a.textContent='‹';a.setAttribute('aria-label','이전 동료');a.onclick=go(-1);
+ const b=document.createElement('span');b.className='cdnv668 r';b.textContent='›';b.setAttribute('aria-label','다음 동료');b.onclick=go(1);
+ const c=document.createElement('span');c.className='cdct668';c.textContent=(i+1)+'/'+L.length;
+ im.append(a,b,c)}catch(e){console.warn(e)}return r};
+})();
