@@ -8717,3 +8717,7 @@ let pick=null;document.addEventListener('click',e=>{const q=e.target.closest&&e.
 const om=modal;modal=function(html){const m=om.apply(this,arguments);try{const k=pick;pick=null;if(k&&typeof html=='string'&&html.indexOf('class=d506')>=0&&G.tab=='gear'&&G.C.S().gear[k]){const d=m.querySelector('.d506');
  if(d&&!d.querySelector('.en671')){const row=document.createElement('div');row.className='br506';const b=document.createElement('span');b.className='pill green en671';b.dataset.es671=k;b.innerHTML=`<img class=ci src="${A}ic3_anvil.png" alt="">강화 ▶`;b.onclick=e=>{e.stopPropagation();m.remove();G.enGo671(k)};row.appendChild(b);d.appendChild(row)}}}catch(e){console.warn(e)}return m};
 })();
+;(()=>{/* r673: ▦ 메뉴 button red dot covers every menu-grid dot like 화룡전's menu badge - BD.menu only knew BD keys, so a lit 승급/펫/무한의 탑/도감 grid dot (their own 1s writers) left the 메뉴 button dark. Outermost updateHud pass: also light it when any unlocked one of those is ready, using the same tests as their grid dots and the 오늘의 할 일 chips (G.todoX672). 수련 stays out as before. Display only */
+G.menuDot673=()=>{const X=G.todoX672||{};return Object.keys(X).some(k=>{try{return (!G.isOpen||G.isOpen(k))&&MENU.some(m=>m[0]==k)&&!!X[k]()}catch(_){return false}})};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const d=document.querySelector('#sidemenu .dot');if(d&&d.style.display==='none'&&G.menuDot673())d.style.display=''}catch(_){}return r};
+})();
