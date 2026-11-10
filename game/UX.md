@@ -86,3 +86,6 @@ Mine (마정 광산 / 마정 농장) harvest was checked first and already match
 
 ## r656 펫 모두 부화
 Pet eggs pile up (1 per 5 무한의 탑 floors), but 알 부화 opened one egg per tap with a popup each time. With 2+ eggs a green 모두 부화 (알 N개) pill now sits under the 펫 부화 card. It runs the same `C.petHatch` once per egg and shows one result popup (each pet ×count, NEW or Lv.a → Lv.b, and how many duplicates were already at max level). It stops at 0 eggs, so it never spends gems; the 300-gem hatch stays a manual tap. Rates, PMAX, level-up costs, the tower egg drop and saves are unchanged.
+
+## r657 7일 이벤트 모두 받기
+The 신규 7일 성장 이벤트 popup needed one 받기 tap per finished task, a day-tab switch for each day and a reward popup every time, so coming back after a few days meant many taps. With 2+ rewards ready a green 모두 받기 (N개) pill now sits under 전체 완료 보상. It runs the same `G.nbClaim` for every finished task on every opened day (plus `G.nbFin` once all 21 are claimed) and shows one combined reward popup. Rewards are fixed per task (보석 / 소환권 / 강화석), nothing is spent and nothing is chosen. Locked days stay locked, unfinished tasks stay unclaimed. Tasks, rewards, day unlocks and saves are unchanged.

@@ -8575,3 +8575,15 @@ const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);t
   const top=o.list.slice().sort((a,b)=>b.x.g-a.x.g)[0];if(top)G.ptSel=top.x.k;updateHud();renderScreen();
   modal(`<div class=ttl style="justify-content:center;font-size:18px">모두 부화 결과</div><div style="text-align:center;margin:6px 0"><b class=up>알 ${o.n}개 부화${nw?` · NEW ${nw}`:''}</b></div><div class=pa656>${o.list.map(x=>`<div style="--rc:${(D.RAR[x.x.g]||{c:'#888'}).c}"><img src="${A}${x.x.img}" alt=""><b>${x.x.n} <small>×${x.c}</small></b><em>${x.a?`Lv.${x.a} → Lv.${x.b}`:`NEW · Lv.${x.b}`}</em></div>`).join('')}</div>${mx?`<small style="display:block;text-align:center;opacity:.8">최대 레벨 중복 ${mx}개는 레벨이 오르지 않았습니다</small>`:''}<small style="display:block;text-align:center;opacity:.8">보석 부화는 직접 진행합니다 · 전투력 ${fmt(C.POW())}</small>`)}}catch(e){console.warn(e)}return r};
 })();
+;(()=>{/* r657: 신규 7일 성장 이벤트 모두 받기 like 화룡전's event 일괄 수령. Each finished task needed its own 받기 tap, a day-tab switch and a reward popup, so coming back after a few days meant many taps. With 2+ rewards ready a 모두 받기 (N) pill now runs the same G.nbClaim for every ready task on every opened day (plus G.nbFin once all 21 are claimed) and shows one combined reward popup. Rewards are fixed per task (gems / 소환권 / 강화석), nothing is spent and nothing is chosen. Tasks, rewards, day unlocks and save shape are unchanged. */
+if(typeof G.nbOpen!=='function'||typeof G.nbClaim!=='function')return;
+const L=[['gems','it2_gem.png','보석'],['tk','it2_ticket.png','소환권'],['stone','it2_stone.png','강화석']];
+G.nbClaimAll=()=>{const tot={},add=w=>{if(w)for(const k in w)tot[k]=(tot[k]||0)+(w[k]||0)};let n=0;
+ for(let d=0;d<7;d++)for(let i=0;i<3;i++){const w=G.nbClaim(d,i);if(w){n++;add(w)}}
+ const f=G.nbFin&&G.nbFin();if(f){n++;add(f)}return{n,tot,fin:!!f}};
+const st=document.createElement('style');st.setAttribute('data-r','657');st.textContent=`.modal.nbm #nbAll{display:flex!important;align-items:center;justify-content:center;gap:4px;margin:8px 0 0!important}.modal.nbm #nbAll img{height:18px}`;document.head.appendChild(st);
+const o=G.nbOpen;G.nbOpen=function(){const r=o.apply(this,arguments);try{const m=[...document.querySelectorAll('.modal.nbm')].pop(),f=m&&m.querySelector('.nbf');if(!f||m.querySelector('#nbAll'))return r;const S0=G.nbState?G.nbState():{ready:0,c:0,fin:1};let n=S0.ready||0;if(!S0.fin&&n&&S0.c+n===21)n++;/* the final reward unlocks during the same tap */if(n<2)return r;
+ const b=document.createElement('span');b.id='nbAll';b.className='pill green wide';b.innerHTML=`<img src="assets/fr_gift.png" alt="">모두 받기 <small>${n}개</small>`;f.after(b);
+ b.onclick=e=>{e.stopPropagation();const x=G.nbClaimAll();if(!x.n)return toast('받을 보상이 없습니다');try{updateHud()}catch(_){}G.nbOpen();
+  try{rewardPop(L.filter(([k])=>x.tot[k]).map(([k,i,t])=>[i,x.tot[k],t]),'7일 이벤트 '+x.n+'개 모두 받기'+(x.fin?' · 전체 완료!':''))}catch(_){}}}catch(e){console.warn(e)}return r};
+})();
