@@ -8784,3 +8784,11 @@ const put=m=>{if(!m||m.querySelector('.pgo684'))return false;const c=m.querySele
 G.petPut684=put;
 const ap=document.getElementById('app');ap&&new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes)if(n.nodeType===1&&n.classList.contains('modal'))put(n)}).observe(ap,{childList:true});
 })();
+;(()=>{/* r685: 도감 인연 미보유 펫 → 펫 like 화룡전's 획득처 jump (same travel-only pattern as r675 동료 소환 ▶ and r684 펫 부화 ▶). On the 도감 인연 tab a set's unowned pet member only said 펫 알 부화 under its name as plain text, and tapping it did nothing, so hatching it for the set bonus meant ‹ back, 메뉴, then 펫. A small green 펫 부화 ▶ chip now sits under that text; a tap opens the 펫 screen through menuGo('pet') (G.petGo684), so a still-locked 펫 shows the usual unlock toast. Navigation only - it never hatches and spends no eggs or gems; set bonuses, hatch rates, egg drops, 도감 rewards, unlocks and saves are unchanged. Owned members and companion members are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','685');st.textContent=`#screen .cdm529>span .pgo685{display:inline-block;margin-top:2px;padding:0 5px;border-radius:8px;background:linear-gradient(#5ec43a,#2f8a1a);border:1px solid #bff59a;color:#fff!important;font:900 9px/1.45 Maplestory,sans-serif;text-shadow:0 1px 0 #0a3a00;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}#screen .cdm529>span .pgo685:active{filter:brightness(.9)}`;document.head.appendChild(st);
+const go=()=>{if(typeof G.petGo684==='function')return G.petGo684();document.querySelectorAll('.modal').forEach(m=>m.remove());menuGo('pet');return G.screen==='pet'};G.setPetGo685=go;
+const put=()=>{if(G.screen!=='codex'||G.cdT!=='s')return 0;let n=0;document.querySelectorAll('#screen .cdset .cdm529>span.off').forEach(sp=>{if(sp.querySelector('.pgo685'))return;const sm=sp.querySelector(':scope>small');if(!sm||sm.textContent.trim()!=='펫 알 부화')return;
+ const b=document.createElement('span');b.className='pgo685';b.setAttribute('role','button');b.setAttribute('aria-label',((sp.querySelector('b')||{}).textContent||'펫')+' 펫 화면으로 이동');b.textContent='펫 부화 ▶';sm.after(b);b.onclick=e=>{e.stopPropagation();go()};n++});return n};
+G.setPetPut685=put;
+const ors=renderScreen;renderScreen=function(){const r=ors.apply(this,arguments);try{put()}catch(e){console.warn(e)}return r};
+})();
