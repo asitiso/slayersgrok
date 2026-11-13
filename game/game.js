@@ -10214,3 +10214,48 @@ const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='coins')
 Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
 G.bakHeal779=bake;G.prepHeal779=prep;G.colHeal779=COL;G.szHeal779=SZ;G.isHeal779=isHeal;G.dtHeal779=v=>{if(v!=null)dt0=v;return dt0};
 })();
+
+;(()=>{/* r780: mid-fight 회피! / 공격 저지! telegraph labels vs 화룡전. These are the v18 TX canvas labels (not r778's TXT BLOCK/MISS, and not 기술 저지! / 저항! / BREAK!). They were 16px Maplestory, 회피! in a pale #9ef and 공격 저지! in #7ad8ff, with a 4px #002 stroke, rising 26px over the 1s life and fading from 0.6s while still drifting. Effect-off still played that drift, and each frame re-stroked the glyphs. Change-only: same spawn (회피! at the ally s.x,s.y-90; 공격 저지! at the boss s.x,s.y-130), same 1s life, same teleCancel/teleHit rules, no dodge or interrupt change. Each string is baked once at 19px (회피! cream-gold, 공격 저지! brighter cyan, even 5px dark outline) and blitted; no per-frame reshape. The 26px rise is dropped so the label holds in-slot and fades in place over the last 250ms (from 75% of the 1s life). Effect-off / tglite / nofx: the same in-slot hold (no drift). 기술 저지!, 저항!, BREAK!, r778 labels, heal/hit numbers and combat timing are untouched. */
+const SZ=19,LIFE=1,HOLD=.75;
+const COL={'회피!':['#fffbe8','#ffe08a','#1a1200'],'공격 저지!':['#ffffff','#8ae0ff','#0a1a30']};
+const isLab=s=>!!COL[s];
+const cache={};
+const bake=txt=>{
+  if(!isLab(txt))return null;
+  if(cache[txt]&&cache[txt]._780)return cache[txt];
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),sz=SZ,p=COL[txt];
+  const c=document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||sz*txt.length*.6,L=w0/2+8,Rr=w0/2+8,T=sz*1.05+8,B=sz*.32+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.globalAlpha=1;
+  X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=5;
+  X.strokeStyle=p[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-sz,0,0);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  return cache[txt]={c,ox:L,oy:T,w:W2/S,h:H2/S,_780:1};
+};
+const alpha=t=>t>HOLD?(1-t)/(1-HOLD):1;
+const mine=[];
+const oc=C.ev.teleCancel,oh=C.ev.teleHit;
+C.ev.teleCancel=function(e,stun){const r=oc&&oc.apply(this,arguments);if(stun){const s=e&&R._ES&&R._ES().get(e);if(s)mine.push({x:s.x,y:s.y-130,t:0,txt:'공격 저지!'})}return r};
+C.ev.teleHit=function(e,res){const r=oh&&oh.apply(this,arguments);(res||[]).forEach(([a,d])=>{if(d)return;const s=a&&R._AS&&R._AS().get(a.k);if(s)mine.push({x:s.x,y:s.y-90,t:0,txt:'회피!'})});return r};
+const skipOn=()=>{const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;if(!P||P._s780)return()=>{};const os=P.strokeText,of=P.fillText;P._s780=1;const skip=s=>s==='회피!'||s==='공격 저지!';if(os)P.strokeText=function(s){if(skip(s))return;return os.apply(this,arguments)};if(of)P.fillText=function(s){if(skip(s))return;return of.apply(this,arguments)};return()=>{if(os)P.strokeText=os;if(of)P.fillText=of;P._s780=0}};
+const step=dt=>{
+  if(G.screen||!(R._bc&&R._bc()))return;
+  for(let i=mine.length-1;i>=0;i--){const f=mine[i];f.t+=dt;if(f.t>LIFE)mine.splice(i,1)}
+};
+const draw=()=>{
+  if(!mine.length||G.screen)return;
+  const c=R._bc&&R._bc();if(!c)return;
+  const ctx=c.getContext('2d'),sc=c.width/(c.clientWidth||c.width||1);
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.textAlign='center';
+  for(let i=0;i<mine.length;i++){
+    const f=mine[i],spr=bake(f.txt);if(!spr)continue;
+    const dim=(R._dtTop2&&f.y<R._dtTop2||R._dloB&&f.y>356&&f.y<480?.15:1);
+    ctx.globalAlpha=Math.max(0,alpha(f.t))*dim;
+    ctx.drawImage(spr.c,f.x-spr.ox,f.y-spr.oy,spr.w,spr.h);
+  }
+  ctx.restore();ctx.globalAlpha=1;
+};
+const of=R.frame;R.frame=function(dt){const off=skipOn();try{const r=of.apply(this,arguments);try{step(dt||0);draw()}catch(_){}return r}finally{off()}};
+G.bakTx780=bake;G.colTx780=COL;G.szTx780=SZ;G.isTx780=isLab;G.aTx780=alpha;G.lifeTx780=LIFE;G.holdTx780=HOLD;G.yTx780=f=>f.y;
+})();
