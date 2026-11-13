@@ -9653,3 +9653,55 @@ G.rbHold756=function(k,won,go){
 };
 G.rbHoldWin756=WIN;G.rbHoldFail756=FAIL;
 })();
+
+;(()=>{/* r757: tighten .chap.out (500ms) and .vic.out (400ms) exit fades. They are mostly visual, but they also keep a hit target and — for the chapter card — body.chapon (side-rail input/HUD hidden) plus several .chap / .vic busy checks until the node is removed. Unattended display holds (chapter ~2.6s, result ~2.3s, r741 pin ~8s) are unchanged, so combat, rewards and auto-progress timing stay put. Exit fade is now 250ms, pointer-events are dropped (and chapon cleared) as soon as .out starts, and effect-off removes the node instantly. No mandatory taps; existing card taps still dismiss. */
+const DUR=250;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.id='r757css';st.textContent=
+'html body .vic.out{animation:vicout .25s ease-in forwards;pointer-events:none!important}'+
+'html body .chap.out{animation:chout .25s ease-in forwards;pointer-events:none!important}'+
+'body:is(.nofx,.tglite,.fxoff) .vic.out,body:is(.nofx,.tglite,.fxoff) .chap.out{animation:none!important;opacity:0;pointer-events:none!important}';
+document.head.appendChild(st);
+const finish=el=>{try{if(el&&el.isConnected)el.remove()}catch(_){}
+  if(!document.querySelector('.chap'))document.body.classList.remove('chapon')};
+const startOut=el=>{
+  if(!el||el._r757out)return;el._r757out=1;
+  try{el.style.pointerEvents='none'}catch(_){}
+  if(el.classList.contains('chap'))document.body.classList.remove('chapon');
+  clearTimeout(el._t757);
+  if(off()){finish(el);return}
+  el._t757=setTimeout(()=>finish(el),DUR);
+};
+const cancelOut=el=>{
+  if(!el||!el._r757out)return;
+  clearTimeout(el._t757);el._t757=0;el._r757out=0;
+  try{el.style.pointerEvents=''}catch(_){};
+};
+const arm=el=>{
+  if(!el||!el.classList||el._r757)return;el._r757=1;
+  const cl=el.classList,oa=cl.add,or=cl.remove;
+  cl.add=function(){const r=oa.apply(this,arguments);try{if(cl.contains('out'))startOut(el)}catch(_){}return r};
+  cl.remove=function(){const r=or.apply(this,arguments);try{if(!cl.contains('out'))cancelOut(el)}catch(_){}return r};
+  mo.observe(el,{attributes:true,attributeFilter:['class']});
+  if(cl.contains('out'))startOut(el);
+};
+const mo=new MutationObserver(ms=>{
+  for(const x of ms){
+    if(x.type==='attributes'){
+      const el=x.target;
+      if(el.classList.contains('out'))startOut(el);else cancelOut(el);
+    }else for(const n of x.addedNodes){
+      if(n.nodeType===1&&n.classList&&(n.classList.contains('vic')||n.classList.contains('chap')))arm(n);
+    }
+  }
+});
+const root=document.body;
+if(root){
+  mo.observe(root,{childList:true});
+  const wrap=(obj,k)=>{if(!obj||typeof obj[k]!=='function'||obj[k]._r757)return;const o=obj[k].bind(obj);
+    const f=function(n){const r=o.apply(this,arguments);try{if(n&&n.classList&&(n.classList.contains('vic')||n.classList.contains('chap')))arm(n)}catch(_){}return r};
+    f._r757=1;obj[k]=f};
+  wrap(root,'appendChild');wrap(root,'insertBefore');
+  root.querySelectorAll('.vic,.chap').forEach(arm)}
+G.outMs757=DUR;G.armOut757=arm;
+})();
