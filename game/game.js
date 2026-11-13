@@ -11034,3 +11034,31 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel809=SEL;G.pressMs809=0;G.pressScale809=.97;G.pressScaleDg809=.98;G.relMs809=130;G.relPeak809=1.03;G.relClass809=RLS;
 })();
+;(()=>{/* r810: press snap + tightened release on pet tiles (.ptc) and title rows (.ttlr) vs 화룡전. Pet tiles only selected on click (equip is the existing #ptEq pill); title rows equip through a nested .pill[data-ttl]; neither had a pointerdown press. Change-only, presentation only: pointerdown .press snaps (transition:none; scale(.97) on pet tiles, lighter scale(.98) on wide title rows so the list does not jump). Locked title rows keep grayscale; locked selected pet tiles keep their preview glow. Release uses a dedicated .rls810 class (never .rel) for the 130ms bounce (peak 1.03). A 10px move cancels without bounce (pet/title lists scroll). Listeners stay passive, and nested pills still use the existing button press, so pet select/equip and title equip stay on click. Tiles use touch-action:pan-y and do not spawn a menu-icon fxring. Effect-off (nofx / tglite / fxoff) keeps a static press and skips the bounce. No action, layout, rest-size, stat, or economy changes, and no pointerdown action trigger. */
+const SEL='#screen .ptc,#screen .ttlr';
+const RLS='rls810';
+const SKIP=[G.pressSel802,G.pressSel803,G.pressMore732,G.pressSel805,G.pressSel806,G.pressSel807,G.pressSel808,G.pressSel809].filter(s=>typeof s==='string'&&s).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','810');st.id='r810css';
+st.textContent=[
+'#screen .ptc,#screen .ttlr{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body #screen .ptc:is(.press,:active){transition:none!important;transform:scale(.97)!important;filter:brightness(1.15)!important}',
+'html body #screen .ptc.lock.ptsel:is(.press,:active){filter:drop-shadow(0 0 3px #dbe8ff) drop-shadow(0 0 4px #5f9cff) drop-shadow(0 2px 2px #0008) brightness(1.1)!important}',
+'html body #screen .ttlr:is(.press,:active){transition:none!important;transform:scale(.98)!important;filter:brightness(1.15)!important}',
+'html body #screen .ttlr.lock:is(.press,:active){filter:grayscale(.6) brightness(.7)!important}',
+'@keyframes relb810pt{0%{transform:scale(.97)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'@keyframes relb810tt{0%{transform:scale(.98)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body #screen .ptc.'+RLS+'{animation:relb810pt 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body #screen .ttlr.'+RLS+'{animation:relb810tt 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen :is(.ptc,.ttlr){transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen :is(.ptc,.ttlr).'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel810=SEL;G.pressMs810=0;G.pressScale810=.97;G.pressScaleTt810=.98;G.relMs810=130;G.relPeak810=1.03;G.relClass810=RLS;
+})();
