@@ -11062,3 +11062,90 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel810=SEL;G.pressMs810=0;G.pressScale810=.97;G.pressScaleTt810=.98;G.relMs810=130;G.relPeak810=1.03;G.relClass810=RLS;
 })();
+
+;(()=>{/* r811: press snap + tightened release on gacha result cards. Scale the open wrapper only after the flip has settled so the card flip transform is left alone. Dedicated rls811 (never .rel). */
+const SEL='#sumModal .srf,#sumModal .sumcard.det670,.srm .srf';
+const RLS='rls811';
+const SKIP=[typeof G!=='undefined'&&G.pressSel802,typeof G!=='undefined'&&G.pressSel803,typeof G!=='undefined'&&G.pressMore732,typeof G!=='undefined'&&G.pressSel805,typeof G!=='undefined'&&G.pressSel806,typeof G!=='undefined'&&G.pressSel807,typeof G!=='undefined'&&G.pressSel808,typeof G!=='undefined'&&G.pressSel809,typeof G!=='undefined'&&G.pressSel810].filter(Boolean).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const WAIT=el=>{
+  if(!el||lite())return 0;
+  if(el.classList.contains('sumcard'))return 560;
+  return /\bg[345]\b/.test(el.className)?800:480;
+};
+const hostOf=el=>{
+  if(!el)return null;
+  if(el.classList.contains('sumcard')&&el.closest('.srf'))return el.closest('.srf');
+  return el;
+};
+const mark=el=>{
+  const t=hostOf(el);
+  if(!t)return;
+  if(t._t811){clearTimeout(t._t811);t._t811=0}
+  t.classList.add('sumready811');
+};
+const arm=el=>{
+  const t=hostOf(el);
+  if(!t||t._a811)return t;
+  t._a811=1;
+  const readyNow=()=>t.classList.contains('open')||t.classList.contains('det670');
+  const sched=()=>{
+    if(!readyNow()){
+      if(t._t811){clearTimeout(t._t811);t._t811=0}
+      t.classList.remove('sumready811','press',RLS);
+      return;
+    }
+    if(t.classList.contains('sumready811')||t._t811)return;
+    const w=WAIT(t);
+    if(w<=0){t.classList.add('sumready811');return}
+    t._t811=setTimeout(()=>{t._t811=0;if(readyNow())t.classList.add('sumready811')},w);
+  };
+  sched();
+  try{const mo=new MutationObserver(sched);mo.observe(t,{attributes:true,attributeFilter:['class']})}catch(_ ){}
+  return t;
+};
+const scan=root=>{
+  if(!root||root.nodeType!==1)return;
+  if(root.matches&&(root.matches('.srf')||root.matches('#sumModal .sumcard.det670')||root.matches('.srm .sumcard.det670')))arm(root);
+  if(root.querySelectorAll)root.querySelectorAll('#sumModal .srf,.srm .srf,#sumModal .sumcard.det670,.srm .sumcard.det670').forEach(arm);
+};
+scan(document);
+try{
+  const mo=new MutationObserver(ms=>{
+    for(const r of ms){
+      if(r.type!=='childList')continue;
+      r.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)});
+    }
+  });
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+}catch(_ ){}
+const st=document.createElement('style');st.setAttribute('data-r','811');st.id='r811css';
+st.textContent=[
+'#sumModal .srf,.srm .srf,#sumModal .sumcard.det670{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body #sumModal .srf.open.sumready811:is(.press,:active),html body .srm .srf.open.sumready811:is(.press,:active){transition:none!important;transform:scale(.97)!important}',
+'html body #sumModal .srf.one.open.sumready811:is(.press,:active),html body .srm .srf.one.open.sumready811:is(.press,:active){transform:scale(.98)!important}',
+'@keyframes relb811{0%{transform:scale(.97)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'@keyframes relb811one{0%{transform:scale(.98)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body #sumModal .srf.open.sumready811.'+RLS+',html body .srm .srf.open.sumready811.'+RLS+'{animation:relb811 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body #sumModal .srf.one.open.sumready811.'+RLS+',html body .srm .srf.one.open.sumready811.'+RLS+'{animation:relb811one 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body #sumModal .sumcard.det670.sumready811:is(.press,:active){transition:none!important;filter:brightness(1.15)!important}',
+'body:is(.nofx,.tglite,.fxoff) #sumModal .srf,body:is(.nofx,.tglite,.fxoff) .srm .srf,body:is(.nofx,.tglite,.fxoff) #sumModal .sumcard.det670{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #sumModal .srf.'+RLS+',body:is(.nofx,.tglite,.fxoff) .srm .srf.'+RLS+',body:is(.nofx,.tglite,.fxoff) #sumModal .sumcard.det670.'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{
+  if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;
+  const t0=e.target.closest&&e.target.closest(SEL);
+  if(!t0)return;
+  const t=hostOf(t0);
+  if(!t||!t.classList.contains('sumready811'))return;
+  if(t.classList.contains('srf')&&!t.classList.contains('open'))return;
+  moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press');
+},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel811=SEL;G.pressMs811=0;G.pressScale811=.97;G.pressScaleOne811=.98;G.relMs811=130;G.relPeak811=1.03;G.relClass811=RLS;G.waitSum811=WAIT;G.armSum811=arm;G.markSum811=mark;
+})();
