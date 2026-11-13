@@ -10979,3 +10979,29 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel807=SEL;G.pressMs807=0;G.pressScale807=.98;G.relMs807=130;G.relPeak807=1.03;G.relClass807=RLS;
 })();
+;(()=>{/* r808: press snap + tightened release on equipment slots (.eqgrid .eq) and formation slots (.fslot) vs 화룡전. Those surfaces had little or no press (fslot has cursor:pointer; .eq has .sel outline only). Equipment tiles are 64px squares, formation slots are taller portraits, so the press uses a light scale(.97 on .eq, .98 on .fslot) so the doll grid and party row do not jump. Change-only, presentation only: pointerdown .press snaps (transition:none). Release uses a dedicated .rls808 class (never .rel) for the 130ms bounce (peak 1.03), so the shared button-release class is untouched. A 10px move cancels without bounce (gear/party lists scroll). Listeners stay passive with no preventDefault, and no formation-slot drag path was found; existing click / equip-detail / party-remove / swap paths stay on click. Upgrade/HUD pills still use their own press. Tiles use touch-action:pan-y and do not spawn a menu-icon fxring. Effect-off (nofx / tglite / fxoff) keeps a static press and skips the bounce. No action, layout, or rest-size changes, and no pointerdown action trigger. */
+const SEL='.eqgrid .eq,.fslot';
+const RLS='rls808';
+const SKIP=[G.pressSel802,G.pressSel803,G.pressMore732,G.pressSel805,G.pressSel806,G.pressSel807].filter(s=>typeof s==='string'&&s).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','808');st.id='r808css';
+st.textContent=[
+'.eqgrid .eq,.fslot{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body .eqgrid .eq:is(.press,:active){transition:none!important;transform:scale(.97)!important;filter:brightness(1.15)!important}',
+'html body .fslot:is(.press,:active){transition:none!important;transform:scale(.98)!important;filter:brightness(1.15)!important}',
+'@keyframes relb808eq{0%{transform:scale(.97)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'@keyframes relb808fs{0%{transform:scale(.98)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body .eqgrid .eq.'+RLS+'{animation:relb808eq 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body .fslot.'+RLS+'{animation:relb808fs 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) .eqgrid .eq,body:is(.nofx,.tglite,.fxoff) .fslot{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) .eqgrid .eq.'+RLS+',body:is(.nofx,.tglite,.fxoff) .fslot.'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel808=SEL;G.pressMs808=0;G.pressScale808=.97;G.pressScaleFs808=.98;G.relMs808=130;G.relPeak808=1.03;G.relClass808=RLS;
+})();
