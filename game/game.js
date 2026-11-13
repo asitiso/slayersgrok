@@ -9402,3 +9402,26 @@ const ab=document.getElementById('autoBoss');if(ab)ab.addEventListener('click',(
 try{mark()}catch(_){}
 G.hudTog744=mark;
 })();
+
+;(()=>{/* r746: restyle the existing potion 자동 chip (#potA) to match r744 배속 / AUTO / boss-auto toggles — dim when off, a clear lit ON (green fill, glow, "자동 ON") when on. Change-only class/text writes. Effect-off keeps the lit/dim look and skips any pulse. Press feedback is kept and the chip still scales on press (it had no dedicated press style before). Layout is unchanged (#potW / potion buttons stay put). Display only — auto-potion use, counts, cooldowns and economy are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','746');st.textContent=[
+'html body #battle #potA.pota{font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif!important;color:#9a9aaa!important;background:#16181ce8!important;border:1.5px solid #3a3a48!important;box-shadow:none!important;text-shadow:0 1px 0 #000!important;opacity:.9;letter-spacing:.02em;',
+'transition:transform 70ms ease-out,filter 70ms ease-out}',
+'html body #battle #potA.pota.on{color:#fff!important;background:linear-gradient(#4ae07a,#1a8a3a)!important;border-color:#b8ffc8!important;box-shadow:0 0 8px #3ad07a,0 1px 0 #0006!important;text-shadow:0 1px 0 #0a3a14!important;opacity:1}',
+'html body #battle #potA.pota:active,html body #battle #potA.pota.prs746{transform:scale(.94);filter:brightness(.85)}',
+'body:is(.nofx,.tglite,.fxoff) #battle #potA.pota.on{animation:none!important}'
+].join('');document.head.appendChild(st);
+const mark=()=>{const a=document.getElementById('potA'),s=C.S&&C.S();if(!a||!s)return;
+  const on=s.autoPot!==false,lab=on?'자동 ON':'자동 OFF';
+  if(a._on746!==on){a._on746=on;a.classList.toggle('on',on);G.potAutoN746=(G.potAutoN746||0)+1}
+  if(a._t746!==lab){a._t746=lab;a.textContent=lab;G.potAutoN746=(G.potAutoN746||0)+1}
+  G.potAutoOff746=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const el=document.getElementById('potA');
+if(el){el.addEventListener('click',()=>{try{mark()}catch(_){}});
+  el.addEventListener('pointerdown',()=>el.classList.add('prs746'));
+  const up=()=>el.classList.remove('prs746');
+  el.addEventListener('pointerup',up);el.addEventListener('pointerleave',up);el.addEventListener('pointercancel',up)}
+try{mark()}catch(_){}
+G.potAuto746=mark;
+})();
