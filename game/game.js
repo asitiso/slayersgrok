@@ -3301,9 +3301,9 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&
 new Image().src=A+'achv_plate.png';
 const q=[];let cur=null,busy=0,endT=0,seen=null;const HOLD=2000;
 const bat=()=>document.getElementById('battle');
-const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd,.vic,.bsht,.bwarn:not(.out)');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd:not(.out),.vic,.bsht,.bwarn:not(.out)');
 const list=()=>{const o=[];D.ACH.forEach(a=>{const v=C.achVal(a.k);a.g.forEach((g,i)=>{if(v>=g)o.push({id:'a'+a.k+i,t:'업적 달성',h:a.n+' '+(i+1)+'단계',gem:a.gem[i],tk:a.t&&a.t[i],sto:a.st&&a.st[i]})})});C.titlesOwned().forEach(t=>o.push({id:'t'+t.k,t:'칭호 획득',h:'「'+t.n+'」',rw:'공격력 +'+t.atk+'%'+(t.gold?' · 골드 +'+t.gold+'%':'')}));return o};
-const fin=()=>{const d=cur;if(!d)return;if(R._acHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
+const fin=()=>{const d=cur;if(!d)return;if(R._acHold){endT=setTimeout(fin,100);return}d.classList.add('out');const z759=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);if(z759){d.remove();if(cur===d){cur=null;busy=0;pump()}return}setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},250)};
 const show=it=>{const b=bat();if(!b){busy=0;return}const rw=it.rw||[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">소환권 ${it.tk}`:'',it.sto?'강화석 '+it.sto:''].filter(Boolean).join(' ');
  const d=document.createElement('div');d.className='acp';d.innerHTML=`<img src="${A}achv_plate.png" alt=""><span class=sh></span><div class=tx><em>${it.t}</em><b></b>${rw?`<i>${it.rw?'':'보상 '}${rw}</i>`:''}</div>`;d.querySelector('b').textContent=it.h+(it.more?' 외 '+it.more+'건':'');
  b.appendChild(d);cur=d;endT=setTimeout(fin,HOLD+500)};
@@ -3334,8 +3334,8 @@ new Image().src=A+'loot_card.png';
 const q=[];let cur=null,busy=0,endT=0;const HOLD=1800;
 const bat=()=>document.getElementById('battle');
 const away=()=>G.screen||G.storyOn||(G.tab&&G.tab!='battle');
-const blk=()=>!!document.querySelector('#battle .combo,#battle .acp,.vic,.bsht,.bwarn:not(.out)');
-const fin=()=>{const d=cur;if(!d)return;if(R._lcHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
+const blk=()=>!!document.querySelector('#battle .combo,#battle .acp:not(.out),.vic,.bsht,.bwarn:not(.out)');
+const fin=()=>{const d=cur;if(!d)return;if(R._lcHold){endT=setTimeout(fin,100);return}d.classList.add('out');const z759=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);if(z759){d.remove();if(cur===d){cur=null;busy=0;pump()}return}setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},250)};
 const show=it=>{const b=bat();if(!b){busy=0;return}const rr=D.RAR[it.r]||{},sl=D.SLOTS.find(x=>x.k==it.slot)||{};
  const d=document.createElement('div');d.className='lcd r'+it.r;d.style.setProperty('--rc',rr.c||'#b07cff');d.innerHTML=`<div class=in><img class=fr src="${A}loot_card.png" alt=""><span class=wn></span><img class=ic src="${A}${sl.img}" alt="" style="${sl.f?'filter:'+sl.f+' drop-shadow(0 0 4px '+rr.c+')':''}"><div class=lb>${rr.n} 장비 획득</div><div class=nm></div>${it.more?`<div class=mo>외 ${it.more}건</div>`:''}</div>`;d.querySelector('.nm').textContent=it.name;
  const nm=d.querySelector('.nm');b.appendChild(d);if(nm.scrollWidth>nm.clientWidth+1)nm.style.fontSize=Math.max(6.5,8*nm.clientWidth/nm.scrollWidth)+'px';cur=d;endT=setTimeout(fin,HOLD+550)};
@@ -9748,4 +9748,44 @@ if(root){
   wrap(root,'appendChild');wrap(root,'insertBefore');
   root.querySelectorAll('.bwarn').forEach(arm)}
 G.outMs758=DUR;G.armOut758=arm;
+})();
+
+;(()=>{/* r759: keep achievement plates (.acp, 2s hold) and loot cards (.lcd, 1.8s hold) readable, but stop their 420ms outs from blocking the other pump. Both are already pointer-events:none (input was fine). Achievement blk waited on any #battle .lcd, loot blk waited on any #battle .acp, and each queue only called pump() after the 420ms remove — so the other toast (and the next in the same slot) sat idle through the tail. blk() now uses :not(.out), so the other pump lifts when the fade starts. The out is 250ms; the same-slot queue still waits until the node is gone so two plates do not stack. Effect-off removes instantly and pumps at once. Rewards, roll rules and achievement progress are untouched. */
+const DUR=250;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.id='r759css';st.textContent=
+'#battle .acp.out{animation:acOut .25s ease-in forwards}'+
+'#battle .lcd.out .in{animation:lcOut .25s ease-in forwards}'+
+'body:is(.nofx,.tglite,.fxoff) #battle .acp.out,body:is(.nofx,.tglite,.fxoff) #battle .lcd.out .in{animation:none!important;opacity:0}';
+document.head.appendChild(st);
+const finish=el=>{try{if(el&&el.isConnected)el.remove()}catch(_){}};
+const startOut=el=>{
+  if(!el||el._r759out)return;el._r759out=1;
+  clearTimeout(el._t759);
+  if(off()){finish(el);return}
+  el._t759=setTimeout(()=>finish(el),DUR);
+};
+const arm=el=>{
+  if(!el||!el.classList||el._r759)return;el._r759=1;
+  const cl=el.classList,oa=cl.add;
+  cl.add=function(){const r=oa.apply(this,arguments);try{if(cl.contains('out'))startOut(el)}catch(_){}return r};
+  if(cl.contains('out'))startOut(el);
+};
+const mo=new MutationObserver(ms=>{
+  for(const x of ms){
+    for(const n of x.addedNodes){
+      if(n.nodeType===1&&n.classList&&(n.classList.contains('acp')||n.classList.contains('lcd')))arm(n);
+    }
+  }
+});
+const bat=()=>document.getElementById('battle');
+const hook=()=>{const b=bat();if(!b||b._r759obs)return;b._r759obs=1;mo.observe(b,{childList:true});
+  const wrap=(obj,k)=>{if(!obj||typeof obj[k]!=='function'||obj[k]._r759)return;const o=obj[k].bind(obj);
+    const f=function(n){const r=o.apply(this,arguments);try{if(n&&n.classList&&(n.classList.contains('acp')||n.classList.contains('lcd')))arm(n)}catch(_){}return r};
+    f._r759=1;obj[k]=f};
+  wrap(b,'appendChild');wrap(b,'insertBefore');
+  b.querySelectorAll('.acp,.lcd').forEach(arm)};
+hook();
+if(!bat())document.addEventListener('DOMContentLoaded',hook,{once:true});
+G.outMs759=DUR;G.armOut759=arm;
 })();
