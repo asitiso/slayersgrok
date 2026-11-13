@@ -9276,3 +9276,43 @@ const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{mark()}ca
 if(typeof renderPartyCol==='function'){const op=renderPartyCol;renderPartyCol=function(){const r=op.apply(this,arguments);try{mark()}catch(_){}return r}}
 G.skillRdy739=mark;G.skillRdyOn739=ready;G.skillRdyHide739=hide;
 })();
+
+;(()=>{/* r740: combat keeps ticking while a full-screen menu covers the stage bar, so a compact fight-status strip (timer / remaining HP, or wave and remaining enemies) sits above the nav on those screens. Display only — no pause, HP, timing or economy change. Change-only text and show/hide, no per-frame writes. Effect-off keeps the strip static (no low-timer pulse). Tap closes the menu and returns to the fight. (A new field-sprite heal flash was not added: R.heal already shows a green +N, an fx_heal burst and particles on the healed ally.) */
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(R.opt&&R.opt.fx===false);
+const live=()=>{const B=C.B;if(!B)return null;
+  if(B.boss){const e=(B.enemies||[]).find(x=>x&&x.hp>0&&(x.boss||x.wb))||(B.enemies&&B.enemies[0]);
+    const nm=(e&&(e.n||e.nm))||(G._bs&&G._bs.nm)||'보스';
+    const t=B.timer==null?0:B.timer,pct=e&&e.max>0?Math.max(0,Math.ceil(Math.max(0,e.hp)/e.max*100)):null;
+    return{k:'boss',t:`${nm} · ${t.toFixed(2)}초`+(pct!=null?' · 잔여 '+pct+'%':''),low:t>0&&t<=10}}
+  const n=(typeof C.alive==='function'?C.alive().length:0)+(typeof C.reserve==='function'?C.reserve():0);
+  const s=C.S&&C.S(),waves=(typeof BAL!=='undefined'&&BAL.waves)||3;
+  const w=s?Math.min((s.wave||0)+1,waves):1;
+  if(n>0)return{k:'wave',t:`웨이브 ${w}/${waves} · 적 ${n}`,low:0};
+  if((B.lock||0)>0&&s&&(s.wave||0)<waves)return{k:'walk',t:`다음 웨이브 ${w}/${waves}`,low:0};
+  return null};
+const want=()=>!!(G.screen&&G.screen!=='sim'&&live());
+let el=null,st=null;
+const box=()=>{if(el)return el;st=document.createElement('style');st.textContent=
+'#fightHud740{position:absolute;left:0;right:0;bottom:72px;z-index:26;height:32px;display:none;align-items:center;justify-content:center;gap:8px;padding:0 12px;background:linear-gradient(#2a1838f2,#120a1ef2);border-top:1.5px solid #c9953f;color:#ffe9b0;font:900 12px/1 Maplestory,"Noto Sans KR",sans-serif;text-shadow:0 1px 0 #000;cursor:pointer;box-sizing:border-box}'+
+'#fightHud740 b{font:900 12px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%}'+
+'#fightHud740 small{font:700 10px/1 Maplestory,"Noto Sans KR",sans-serif;color:#ffd77a;flex-shrink:0}'+
+'#fightHud740.low b{color:#ffd0c0}'+
+'body:not(.nofx):not(.tglite):not(.fxoff) #fightHud740.low{animation:fh740p .6s ease-in-out infinite alternate}'+
+'@keyframes fh740p{from{background:linear-gradient(#4a1820f2,#2a0a10f2)}to{background:linear-gradient(#6a2028f2,#3a1014f2)}}'+
+'body.fh740 #screen.on{bottom:104px}';
+document.head.appendChild(st);
+el=document.createElement('div');el.id='fightHud740';el.innerHTML='<b></b><small>전투로 ▸</small>';
+(document.getElementById('app')||document.body).appendChild(el);
+el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{if(typeof closeScreen==='function')closeScreen();else if(G.close)G.close()}catch(_){}});
+G.fightHudEl740=el;return el};
+const sync=()=>{const on=want(),L=on&&live(),txt=L?L.t:'',low=!!(L&&L.low);
+  const show=on&&!!txt;const b=box(),tb=b.querySelector('b');
+  if(show!==!!b._on){b._on=show?1:0;b.style.display=show?'flex':'none';document.body.classList.toggle('fh740',show);G.fightHudN740=(G.fightHudN740||0)+1}
+  if(show&&tb&&tb._t!==txt){tb._t=txt;tb.textContent=txt;G.fightHudN740=(G.fightHudN740||0)+1}
+  if(show&&b._low!==low){b._low=low;b.classList.toggle('low',low);G.fightHudN740=(G.fightHudN740||0)+1}
+  G._fightHudOn740=show?1:0;G._fightHudTxt740=txt;G.fightHudOff740=off();G.fightHudLow740=low};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{sync()}catch(_){}return r};
+if(G.open){const o=G.open;G.open=function(){const r=o.apply(this,arguments);try{sync()}catch(_){}return r}}
+if(G.close){const o=G.close;G.close=function(){const r=o.apply(this,arguments);try{sync()}catch(_){}return r}}
+G.fightHud740=sync;G.fightHudLive740=live;
+})();
