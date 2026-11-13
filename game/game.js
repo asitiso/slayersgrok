@@ -9156,3 +9156,28 @@ S.eswing=t=>{whoosh(t,.24,{vol:.12,fq:260,f2:1200,q:.9,pk:.55});whoosh(t+.03,.16
 /* bswing: heavier, longer boss swing with a deep body */
 S.bswing=t=>{whoosh(t,.36,{vol:.17,fq:160,f2:900,q:.8,pk:.6});noise(t+.04,.2,{vol:.1,fq:200,f2:80,q:.7,type:'lowpass'});tone(58,t+.05,.32,{type:'sine',vol:.14,f2:32,att:.02});tone(88,t+.06,.22,{type:'triangle',vol:.05,f2:40,att:.02})};
 })();
+
+;(()=>{/* r736: field-ally low-HP sprite cue, same 30% rule as r727 party portraits. A light red foot-glow + body veil is drawn on the battle canvas for living allies below 30% HP. The low-HP flag is written only when it changes (no per-frame DOM or property thrash). Effect-off (nofx / tglite / fxoff) keeps the static cue and skips the pulse. The glow sprite is built once; the frame path allocates nothing new. Display only — HP, the 30% threshold, stageReq and combat are unchanged. */
+const low=a=>!!(a&&a.hp>0&&a.max>0&&a.hp<a.max*.3);
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(R.opt&&R.opt.fx===false);
+let glow=null,ctx0=null,cv0=null;
+const spr=()=>{if(glow)return glow;const c=document.createElement('canvas');c.width=64;c.height=88;const g=c.getContext('2d');
+  const a=g.createRadialGradient(32,80,2,32,80,30);a.addColorStop(0,'rgba(255,48,36,.55)');a.addColorStop(.55,'rgba(255,40,30,.18)');a.addColorStop(1,'rgba(255,30,20,0)');
+  g.fillStyle=a;g.beginPath();g.ellipse(32,80,28,11,0,0,7);g.fill();
+  const b=g.createRadialGradient(32,44,4,32,44,26);b.addColorStop(0,'rgba(255,70,55,.3)');b.addColorStop(1,'rgba(255,40,30,0)');
+  g.fillStyle=b;g.beginPath();g.ellipse(32,44,15,28,0,0,7);g.fill();
+  glow=c;G.fieldDngGlow736=c;G.fieldDngAlloc736=(G.fieldDngAlloc736||0)+1;return c};
+const mark=()=>{const A=C.B&&C.B.allies;if(!A)return;for(let i=0;i<A.length;i++){const a=A[i],l=low(a);if(a._fdng!==l){a._fdng=l;G.fieldDngN736=(G.fieldDngN736||0)+1}}};
+G.fieldDng736=mark;G.fieldDngLow736=low;
+const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{mark()}catch(_){}return r};
+if(typeof renderPartyCol==='function'){const op=renderPartyCol;renderPartyCol=function(){const r=op.apply(this,arguments);try{mark()}catch(_){}return r}}
+const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{if(G.screen){G._fieldDngDrew736=0;return}mark();const A=C.B&&C.B.allies;if(!A||!A.length){G._fieldDngDrew736=0;return}
+  let n=0;for(let i=0;i<A.length;i++)if(A[i]._fdng)n++;if(!n){G._fieldDngDrew736=0;return}
+  const AS=R._AS&&R._AS(),c=R._bc&&R._bc();if(!c||!AS){G._fieldDngDrew736=0;return}
+  if(c!==cv0){cv0=c;ctx0=c.getContext('2d')}const ctx=ctx0,sc=c.width/(c.clientWidth||c.width||1),im=spr();
+  const pulse=off()?1:.72+.28*Math.sin((typeof performance!=='undefined'?performance.now():0)/280);
+  G.fieldDngAlpha736=pulse;G.fieldDngOff736=off();
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
+  let drew=0;for(let i=0;i<A.length;i++){const a=A[i];if(!a._fdng)continue;const s=AS.get(a.k);if(!s||s.x==null)continue;ctx.globalAlpha=pulse;ctx.drawImage(im,s.x-32,s.y-80,64,88);drew++}
+  ctx.globalAlpha=1;ctx.restore();G._fieldDngDrew736=drew}catch(_){G._fieldDngDrew736=0}};
+})();
