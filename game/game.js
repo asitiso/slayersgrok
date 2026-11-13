@@ -9522,3 +9522,23 @@ const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function()
 try{mark()}catch(_){}
 G.mailCnt750=cnt;G.mailBadge750=mark;
 })();
+
+;(()=>{/* r751: give the existing 출석 left-rail badge (#sideevent .dot) a lit ready state when today's stamp is unclaimed. The dot already turns on via the same rule as the 출석 board (last!==C.today() and n<28), but it is an empty pulsing badge. It now lights in the r750 mail-badge style, with a ready "1" (one stamp waiting today) in MapleStory on the existing badge, and hides once today's stamp is marked claimed or the 28-day board is complete. Change-only text/class/visibility. Effect-off keeps the lit badge and skips the bounce. Layout (icon size/place, badge slot) is unchanged. Display only: attendance claims, rewards, day-reset, and the 28-day cycle are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','751');st.textContent=[
+'html body #sideevent .dot.rdy751{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;',
+'font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;-webkit-text-stroke:2px #6a0800;paint-order:stroke fill;',
+'text-shadow:0 1px 0 #000,0 0 3px #000;z-index:4}',
+'html body #sideevent .dot.rdy751:empty{display:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #sideevent .dot{animation:none!important}'
+].join('');document.head.appendChild(st);
+const ready=()=>{try{const s=C.S(),a=s.att||{};return a.last!==C.today()&&(a.n||0)<28}catch(_){return false}};
+const mark=()=>{const on=ready(),lab=on?'1':'',d=document.querySelector('#sideevent .dot');
+  if(!d)return;
+  if(d._n751!==lab){d._n751=lab;if(d.textContent!==lab)d.textContent=lab;G.attN751=(G.attN751||0)+1}
+  if(d._on751!==on){d._on751=on;d.classList.toggle('rdy751',on);if(typeof $sd==='function')$sd(d,on?'':'none');else d.style.display=on?'':'none';G.attN751=(G.attN751||0)+1}
+  G.attOff751=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function(){const r=oh.apply(this,arguments);try{mark()}catch(_){}return r};
+try{mark()}catch(_){}
+G.attReady751=ready;G.attBadge751=mark;
+})();
