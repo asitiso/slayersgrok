@@ -9130,3 +9130,29 @@ G.startBgm734=(ac,bg,nz,on)=>{if(!ac||!bg||G._bgmOn734)return;G._bgmOn734=1;
  tm=setInterval(pulse,80);pulse()};
 {const o=G.rbRun;if(typeof o==='function')G.rbRun=function(opt,done){const r=o.apply(this,arguments);try{if(C.B&&C.B.rb&&opt)C.B.rb.kind=opt.kind}catch(_){}return r}}
 })();
+
+;(()=>{/* r735: leftover combat/UI voices get the same layered treatment as r729/r730 — heal, swing/cast/bow, hurt, parry/block, plus the hooked enemy swings (eswing/bswing). Same keys/hooks, LIM windows, 5-voice combat budget, sg gain/toggles/sliders, hidden-tab suspend. Nodes disconnect on end. No audio files. ult stays unhooked. Display/feel only — economy/HP/stageReq unchanged. */
+const aud=()=>G._aud&&G._aud();
+const tone=(f,t0,dur,{type='sine',vol=.3,f2=null,att=.004}={})=>{const a=aud();if(!a||!a.ac)return;const ac=a.ac,o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(a.sg);o.start(t0);o.stop(t0+dur+.02);o.onended=()=>{try{o.disconnect();g.disconnect()}catch(_){}}};
+const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null,att=0}={})=>{const a=aud();if(!a||!a.ac||!a.nz)return;const ac=a.ac,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=a.nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);f.Q.value=q;if(att){g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att)}else g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(a.sg);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();g.disconnect()}catch(_){}}};
+const whoosh=(t0,dur,{vol=.12,fq=700,f2=2600,q=1.2,pk=.45}={})=>{const a=aud();if(!a||!a.ac||!a.nz)return;const ac=a.ac,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=a.nz;f.type='bandpass';f.frequency.setValueAtTime(Math.max(20,fq),t0);f.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);f.Q.value=q;g.gain.setValueAtTime(.0005,t0);g.gain.exponentialRampToValueAtTime(vol,t0+dur*pk);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(a.sg);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();g.disconnect()}catch(_){}}};
+const S=G._SFX;if(!S)return;
+/* heal: soft rising chime bloom + air sparkle + a quiet low bed (not three raw beeps) */
+S.heal=t=>{noise(t,.12,{vol:.05,fq:4000,q:1.4});noise(t+.18,.1,{vol:.04,fq:5200,q:1.6});tone(196,t,.5,{type:'sine',vol:.05,att:.05});[784,988,1175].forEach((f,i)=>{const t0=t+i*.07;tone(f,t0,.42,{type:'sine',vol:.1,att:.015});tone(f*2,t0,.22,{type:'triangle',vol:.03,att:.02})})};
+/* swing: blade/cloth whoosh + a felt low body (no beep) */
+S.swing=t=>{whoosh(t,.18,{vol:.13,fq:550,f2:3000,q:1.3,pk:.4});whoosh(t+.015,.1,{vol:.05,fq:2400,f2:5200,q:2,pk:.3});tone(90,t,.14,{type:'sine',vol:.07,f2:50,att:.004})};
+/* cast: airy rising whoosh, a soft hum, and two gentle motes */
+S.cast=t=>{whoosh(t,.18,{vol:.09,fq:350,f2:2000,q:1,pk:.45});noise(t,.08,{vol:.04,fq:1800,q:1.5});tone(140,t,.2,{type:'sine',vol:.05,f2:90,att:.03});tone(880,t,.16,{type:'sine',vol:.055,f2:1480,att:.02});tone(1320,t+.03,.12,{type:'triangle',vol:.03,f2:1980,att:.02})};
+/* bow: short string pluck with a decaying overtone, then a light air whoosh */
+S.bow=t=>{tone(340,t,.16,{type:'triangle',vol:.1,f2:220,att:.002});tone(680,t,.08,{type:'sine',vol:.04,f2:400,att:.002});whoosh(t+.015,.1,{vol:.07,fq:2000,f2:4500,q:1.6,pk:.25})};
+/* hurt: dull body thud + fleshy lowpass noise; no saw growl */
+S.hurt=t=>{tone(130,t,.22,{type:'sine',vol:.28,f2:48,att:.002});noise(t,.2,{vol:.24,fq:480,f2:100,q:.65,type:'lowpass'});tone(210,t,.12,{type:'triangle',vol:.06,f2:110,att:.004})};
+/* parry: bright metallic tick + short ring, no square beep */
+S.parry=t=>{noise(t,.04,{vol:.14,fq:5200,q:1.6});noise(t,.08,{vol:.08,fq:3000,q:1.2});tone(2100,t,.05,{type:'sine',vol:.06,att:.001,f2:1600});tone(2650,t,.3,{type:'triangle',vol:.07,f2:2200,att:.002})};
+/* block: heavier shield thud — lowpass body + low sine */
+S.block=t=>{noise(t,.1,{vol:.18,fq:800,q:1,type:'lowpass'});noise(t,.05,{vol:.08,fq:1800,q:1.2});tone(220,t,.14,{type:'sine',vol:.14,f2:90,att:.002});tone(110,t,.16,{type:'sine',vol:.08,f2:55,att:.003})};
+/* eswing: lower, slower enemy telegraph whoosh + a soft grunt */
+S.eswing=t=>{whoosh(t,.24,{vol:.12,fq:260,f2:1200,q:.9,pk:.55});whoosh(t+.03,.16,{vol:.05,fq:800,f2:2000,q:1.2,pk:.4});tone(80,t+.04,.16,{type:'sine',vol:.07,f2:48,att:.01})};
+/* bswing: heavier, longer boss swing with a deep body */
+S.bswing=t=>{whoosh(t,.36,{vol:.17,fq:160,f2:900,q:.8,pk:.6});noise(t+.04,.2,{vol:.1,fq:200,f2:80,q:.7,type:'lowpass'});tone(58,t+.05,.32,{type:'sine',vol:.14,f2:32,att:.02});tone(88,t+.06,.22,{type:'triangle',vol:.05,f2:40,att:.02})};
+})();
