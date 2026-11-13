@@ -9900,3 +9900,11 @@ const hook=()=>{const ou=typeof updateHud==='function'?updateHud:null;if(!ou||ou
 hook();
 G.enCls762=CLS;G.markInfo762=mark;
 })();
+
+;(()=>{/* r763: mid-fight HP readout vs 화룡전. Floating damage numbers are already clear (Maplestory, 5px stroke, 19px hits / 32px crits, rasterised once in r237 — no change, no extra per-frame cost). The stage-bar boss layer count (#hpx, "×N") was still italic 11px white with a thin shadow, smaller than the r762 remaining-enemy numeral and easy to miss on the 9px HP bar. Change-only CSS: same slot and "×N" string, 15px 900 Maplestory, normal style, stronger outline. Position (r492 right:22px, centered on the bar) and the 10-layer math are untouched, so the bar does not jump. Effect-off stays static (the existing layer-drop pulse remains suppressed). HP, timer, spawn and rewards are unchanged. */
+const st=document.createElement('style');st.id='r763css';st.textContent=
+'html body #battle #hpx{font:900 15px/1 Maplestory,"Noto Sans KR",sans-serif;font-style:normal;color:#fff;-webkit-text-stroke:.4px #1a0a00;text-shadow:0 1px 0 #000,0 0 3px #000,0 1px 2px #000;letter-spacing:0}'+
+'body:is(.nofx,.tglite,.fxoff) #battle #hpx{animation:none!important}';
+document.head.appendChild(st);
+G.hpxPx763=15;
+})();
