@@ -10458,3 +10458,55 @@ const draw=()=>{
 const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);if(!G.screen)try{draw()}catch(_){}return r};
 G.bakBrkLb785=bake;G.szBrkLb785=SZ;G.swBrkLb785=SW;G.colBrkLb785=LAB;G.isBrkLb785=isLab;G.yBrkLb785=Y;G.x0BrkLb785=X0;
 })();
+
+;(()=>{/* r786: the r368 그로기 pill under the gauge vs 화룡전. Live draw is 10px Maplestory in a 14px plate at py=265 (slot 265–279, above the ally strip, never on the boss): 그로기! in flat #ffd25a with a 2.5px #000 stroke, and  피해 +50% in flat #fff0e0 with no outline, both re-stroked every frame. Fade-in is 150ms, hold, then fade out from elapsed 2.2 over 300ms (C.BRK.dur 3.5). Change-only: same plate (14px tall, width from the original 10px measure +16, centered, py=265), same fade timing, same +50% copy, same boss-foot ellipse / in-gauge labels / BREAK! / C.BRK. The two strings are baked once at 11px (ink plus a 2px even outline still fits the 14px plate; the row is centered in the existing width so the plate does not grow) — 그로기! cream-to-gold, 피해 +50% cream with the same even dark outline — and blitted at the existing alpha; no per-frame reshape. No pop or drift; effect-off / tglite / nofx stays static aside from the same appear/disappear fade. Skip only the 10px pill glyphs so the in-gauge 8.5px 그로기! (r785) is untouched. */
+const SZ=11,SW=2,PY=265,PH=14,T1='그로기!',T2=' 피해 +50%';
+const COL={};
+COL[T1]=['#fff6c8','#ffd25a','#2a0008'];COL[T2]=['#ffffff','#fff0e0','#2a0800'];
+const isLab=s=>s===T1||s===T2;
+const a=el=>el<.15?el/.15:el>2.2?Math.max(0,1-(el-2.2)/.3):1;
+const cache={};
+const bake=txt=>{
+  if(!isLab(txt))return null;
+  if(cache[txt]&&cache[txt]._786)return cache[txt];
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),p=COL[txt];
+  const c=document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+SZ+'px Maplestory,"Noto Sans KR",sans-serif';
+  const adv=X.measureText(txt).width||SZ*txt.length*.6,pad=SW+4,L=pad,T=SZ/2+pad,W2=Math.ceil((adv+pad*2)*S),H2=Math.ceil((T+pad)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='left';X.textBaseline='middle';X.globalAlpha=1;
+  X.font='900 '+SZ+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.miterLimit=2;X.lineWidth=SW;
+  X.strokeStyle=p[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-SZ/2,0,SZ/2);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  return cache[txt]={c,ox:L,oy:T,w:W2/S,h:H2/S,adv,_786:1};
+};
+const plate=()=>{
+  if(cache._pw&&cache._pw>40)return cache;
+  const X=document.createElement('canvas').getContext('2d');
+  X.font='900 10px Maplestory,"Noto Sans KR",sans-serif';
+  const w1=X.measureText(T1).width,pw=w1+X.measureText(T2).width+16;
+  if(pw>40){cache._w1=w1;cache._pw=pw}return { _w1:w1,_pw:pw};
+};
+{const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(P&&P.strokeText&&!P._s786){const os=P.strokeText,of=P.fillText;P._s786=1;
+    const skip=function(s){return s===T2||(s===T1&&this.font&&String(this.font).indexOf('10px')>=0)};
+    P.strokeText=function(s){if(skip.call(this,s))return;return os.apply(this,arguments)};
+    if(of)P.fillText=function(s){if(skip.call(this,s))return;return of.apply(this,arguments)};
+  }}
+const draw=()=>{
+  if(G.screen||!G.bo550)return;
+  const bo=G.bo550(R,0);if(!bo||!(bo.grog>0)||!C.BRK)return;
+  const el=C.BRK.dur-bo.grog,pa=a(el);if(pa<=0)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const W=cv.clientWidth||cv.width||390,pl=plate(),pw=pl._pw,px=W/2-pw/2;
+  const s1=bake(T1),s2=bake(T2);if(!s1||!s2)return;
+  let row=s1.adv+s2.adv,scx=row>pw-4?(pw-4)/row:1;
+  const ctx=cv.getContext('2d'),sc=cv.width/(cv.clientWidth||cv.width||1);
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.globalAlpha=pa;
+  const x=px+(pw-row*scx)/2,y=PY+7.5;
+  ctx.drawImage(s1.c,x-s1.ox*scx,y-s1.oy,s1.w*scx,s1.h);
+  ctx.drawImage(s2.c,x+s1.adv*scx-s2.ox*scx,y-s2.oy,s2.w*scx,s2.h);
+  ctx.restore();
+};
+const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);if(!G.screen)try{draw()}catch(_){}return r};
+G.bakPill786=bake;G.szPill786=SZ;G.swPill786=SW;G.colPill786=COL;G.isPill786=isLab;G.aPill786=a;G.pyPill786=PY;G.hPill786=PH;G.t1Pill786=T1;G.t2Pill786=T2;
+})();
