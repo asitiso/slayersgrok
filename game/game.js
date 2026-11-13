@@ -9908,3 +9908,30 @@ const st=document.createElement('style');st.id='r763css';st.textContent=
 document.head.appendChild(st);
 G.hpxPx763=15;
 })();
+
+;(()=>{/* r764: mid-fight incoming ally damage numbers vs 화룡전. Outgoing hits are already 19px Maplestory with a 5px stroke (r237, rasterised once); incoming ally hits were the same look at only 15px, so the minus-red numbers on the party were the ones that still looked small. Change-only: when an ally number is spawned or its stack key changes, it is baked once at 19px (same red gradient, minus prefix, 5px stroke, ×N stack mark). The existing r237 draw uses that sprite and does not re-shape text. No per-frame cost when the key is unchanged; no HUD layout jump; no sprite overlay. MISS/PARRY/BLOCK, heals, outgoing hits, HP and combat timing are untouched. Effect-off (R.opt.dmg false) still skips the numbers. */
+const SZ=19;
+const keyOf=t=>((t.heal?'+':t.ally?'-':'')+R.fmt(t.v))+'|'+(t.n||0)+'|'+(t.crit?(t.nc?2:1):0)+'|'+(t.col||'');
+const bake=t=>{
+  if(!t||!t.ally||t.label||t.heal)return 0;
+  const key=keyOf(t);
+  if(t._s&&t._k===key&&t._s._sz764===SZ)return 0;
+  if(t._s&&t._s.c&&R._tp&&R._tp.length<24){R._tp.push(t._s.c);t._s=null}
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),sz=SZ;
+  const c=(R._tp&&R._tp.pop())||document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const txt='-'+R.fmt(t.v),w0=X.measureText(txt).width;
+  let wx=0;if(t.n>1){X.font='900 12px Maplestory,sans-serif';wx=X.measureText('×'+t.n).width+6}
+  const L=w0/2+8,Rr=w0/2+wx+8,T=sz*1.05+8,B=sz*.32+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.globalAlpha=1;
+  X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=5;X.strokeStyle='#3a0a10';
+  X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-sz,0,0);gr.addColorStop(0,'#ffd0d0');gr.addColorStop(1,'#ff5a5a');X.fillStyle=gr;X.fillText(txt,0,0);
+  if(t.n>1){X.font='900 12px Maplestory,sans-serif';X.lineWidth=3;X.strokeStyle='#000';X.textAlign='left';X.strokeText('×'+t.n,w0/2+3,-2);X.fillStyle='#ffe9a0';X.fillText('×'+t.n,w0/2+3,-2);X.textAlign='center'}
+  t._s={c,ox:L,oy:T,w:W2/S,h:H2/S,_sz764:SZ};t._k=key;t._k764=key;
+  return 1;
+};
+const scan=()=>{const L=R._TX&&R._TX();if(!L)return;for(let i=0;i<L.length;i++){const t=L[i];if(t&&t.ally&&!t.label)bake(t)}};
+const of=R.frame;R.frame=function(dt){try{scan()}catch(_){}return of.apply(this,arguments)};
+G.allySz764=SZ;G.bakeAlly764=bake;
+})();
