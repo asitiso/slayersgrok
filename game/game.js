@@ -268,7 +268,7 @@ G.loadSet=()=>{if(!G.set){try{G.set=Object.assign({bgm:1,sfx:1,fx:1,cut:1,shake:
 function bossWarn(i){try{if(G.screen)return;if(G.S&&R.opt&&!R.opt.cut)return;const pl=D.BOSSPLAN[Math.floor(i/7)],b=pl&&D.BOSSES[pl[i%7==6?1:0]];if(!b)return;document.querySelectorAll('.bwarn').forEach(x=>x.remove());const d=document.createElement('div');d.className='bwarn';d.innerHTML=`<div class=bwe></div><div class=bws><i>WARNING</i><i>WARNING</i><i>WARNING</i></div><div class=bwm><img src="assets/${b.img}"><div><small>${i%7==6?'챕터 보스':'보스'} 출현</small><b>${b.n}</b>${b.q?`<em>「${b.q}」</em>`:''}</div></div><div class=bws b2><i>WARNING</i><i>WARNING</i><i>WARNING</i></div>`;document.body.appendChild(d);R.hs=Math.max(R.hs||0,.25);R.ccut=null;R.ccCd=Math.max(R.ccCd||0,2.5);setTimeout(()=>d.classList.add('out'),1500);setTimeout(()=>d.remove(),1900)}catch(e){}}
 function resultPop(win){const s=C.S(),b=G._bs||{g:s.gold,st:s.stone||0,nm:''};const dg=Math.max(0,G.gd710(b.g==null?s.gold:b.g,s.gold)),ds=Math.max(0,(s.stone||0)-b.st),sec=b.t?(((b.kt||Date.now())-b.t)/1000):0;document.querySelectorAll('.vic,#battle .banner').forEach(x=>x.remove());if(!win)document.querySelectorAll('.toast').forEach(x=>{if(x.textContent.includes('보스 실패'))x.remove()});const d=document.createElement('div');d.className='vic '+(win?'win':'lose');
  d.innerHTML=win?`<div class=vt>VICTORY</div><div class=vs>${b.nm} 클리어 · ${sec.toFixed(1)}초</div><div class=vr>${dg?`<span><img class=ci src=assets/it2_gold.png> +${fmt(dg)}</span>`:''}${ds?`<span><img class=ci src=assets/it2_stone.png> +${ds}</span>`:''}${s.lv>b.lv?`<span class=up>Lv.${s.lv} ▲</span>`:''}</div><div class=vn>다음 스테이지 ▶ ${C.stageName(s.si)}</div>`:`<div class=vt>DEFEAT</div><div class=vs>${b.nm} 보스 실패</div><div class=vn>장비 강화 · 동료 육성 후 자동 재도전</div>`;
- document.body.appendChild(d);d.onclick=()=>d.remove();setTimeout(()=>d.classList.add('out'),2300);setTimeout(()=>d.remove(),2700)}
+ document.body.appendChild(d);d.onclick=()=>d.remove();d._tOut=setTimeout(()=>d.classList.add('out'),2300);d._tRm=setTimeout(()=>d.remove(),2700)}
 function chapterCard(c,si){const TAG=['평화로운 가도에 몬스터가 들끓는다','마족의 기운이 숲을 뒤덮었다','붉은 마왕이 기다리는 마지막 성','용암이 끓는 땅, 염제가 깨어났다','영원한 겨울, 얼음 여제의 성채','구름 위의 신전, 마지막 시련','바다 밑에 잠든 신전, 해신이 눈을 뜬다'];let _cw=0;const show=()=>{if((document.querySelector('.vic:not(.out),.bsht')||performance.now()-(G._koT||-1e9)<2500)&&_cw++<60){setTimeout(show,250);return}_cw=0;if(G.screen=='map')return;/* r433 (5): opened 월드맵 from the result bar - the map header already names the chapter, so the intro card no longer lands on top of the map */document.querySelectorAll('.chap').forEach(x=>x.remove());const d=document.createElement('div');d.className='chap';d.style.setProperty('--art',`url(assets/chap/ch${c+1}.jpg)`);d.innerHTML=`<div class=cl></div><div class=cn>CHAPTER ${c+1}</div><div class=ct>${D.CH[c]||''}</div><div class=cs>${TAG[c]||''}</div><div class=cst>${C.stageName(si)}</div><div class=cl></div>`;document.body.appendChild(d);document.body.classList.add('chapon');const rm=()=>{d.remove();if(!document.querySelector('.chap'))document.body.classList.remove('chapon')};d.onclick=rm;setTimeout(()=>d.classList.add('out'),2600);setTimeout(rm,3100)};if(document.querySelector('.vic:not(.out)'))setTimeout(show,2500);else show()}
 function idleBurst(g){const bt=$('#idleBtn'),cv=R._bc()||document.querySelector('canvas');if(!bt||!cv||!R.coinBurst)return;const a=bt.getBoundingClientRect(),c=cv.getBoundingClientRect(),x=a.left-c.left+a.width/2,y=a.top-c.top+18;R.coinBurst(x,y,24,'gold');if(g.o)R.coinBurst(x,y,Math.min(8,g.o),'orb');bt.classList.add('pop');setTimeout(()=>bt.classList.remove('pop'),500)}
 G.idleBurst=idleBurst;G.chapterCard=chapterCard;G.resultPop=resultPop;G.save=save;G.reset=()=>{G.noSave=1;localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_tmp');localStorage.removeItem(KEY+'_bak');location.reload()};G.open=openScreen;G.close=closeScreen;G.setTab=t=>{if(G.screen)closeScreen();G.tab='battle';openSheet(t)};G.render=renderPanel;
@@ -9315,4 +9315,25 @@ const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function()
 if(G.open){const o=G.open;G.open=function(){const r=o.apply(this,arguments);try{sync()}catch(_){}return r}}
 if(G.close){const o=G.close;G.close=function(){const r=o.apply(this,arguments);try{sync()}catch(_){}return r}}
 G.fightHud740=sync;G.fightHudLive740=live;
+})();
+
+;(()=>{/* r741: if the player taps the victory/defeat card body (not its buttons) before the usual ~2.3s auto-close, the card is pinned so rewards can be read. Untouched cards still auto-close at 2.3s and remove at 2.7s; idle auto-progress is unchanged. Existing 확인 / 다음 스테이지 / 월드맵 (and 강해지는 방법 tiles) still close it. A pinned card auto-releases after 8s, or when the app goes hidden, so AUTO/idle loops are not stuck. Display/flow only — no combat or reward-amount change. Does not touch the r733 reward-pop 150ms click-lock or r714–r722 claim guards. */
+const HOLD=8,FADE=.4;
+const btn=t=>!!(t&&t.closest&&t.closest('.vbt433>span,.vbt433 span,.gdb>span,[data-g],.btn,.xbtn'));
+const vic=()=>{const L=document.querySelectorAll('.vic');return L[L.length-1]||null};
+const hint=v=>{if(v.querySelector('.pin741'))return;const h=document.createElement('div');h.className='pin741';h.textContent='탭하여 계속';v.appendChild(h)};
+const clearRel=v=>{if(v._tRel741){clearTimeout(v._tRel741);v._tRel741=0}};
+const stopAuto=v=>{if(v._tOut){clearTimeout(v._tOut);v._tOut=0}if(v._tRm){clearTimeout(v._tRm);v._tRm=0}};
+const release=v=>{if(!v||!v.isConnected||v._gone741)return;v._gone741=1;v._pin741=0;clearRel(v);stopAuto(v);v.classList.add('out');setTimeout(()=>{try{if(v.isConnected)v.remove()}catch(_){}},FADE*1000)};
+const pin=v=>{if(!v||v._gone741)return;v._pin741=1;stopAuto(v);v.classList.remove('out');hint(v);v.classList.add('pinon741');clearRel(v);
+  const hold=G.vicPinHold741==null?HOLD:G.vicPinHold741;v._tRel741=setTimeout(()=>release(v),Math.max(0,hold)*1000);G.vicPinN741=(G.vicPinN741||0)+1};
+const arm=v=>{if(!v||v._r741)return;v._r741=1;const oc=v.onclick;
+  v.onclick=ev=>{if(btn(ev.target)){clearRel(v);v._pin741=0;v._gone741=1;return oc&&oc.call(v,ev)}
+    if(!v._pin741){if(ev.stopPropagation)ev.stopPropagation();pin(v);return}
+    clearRel(v);v._pin741=0;v._gone741=1;return oc&&oc.call(v,ev)}};
+const st=document.createElement('style');st.textContent='.vic .pin741{margin:6px 0 0;text-align:center;font:700 11px Maplestory,"Noto Sans KR",sans-serif;color:#ffe9b0;letter-spacing:.04em;opacity:.9;pointer-events:none}.vic.pinon741{box-shadow:0 0 0 2px #ffd77a88,0 8px 20px #000a}';
+document.head.appendChild(st);
+const orp=resultPop;resultPop=function(){const r=orp.apply(this,arguments);try{arm(vic())}catch(_){}return r};G.resultPop=resultPop;
+document.addEventListener('visibilitychange',()=>{if(document.hidden)document.querySelectorAll('.vic').forEach(v=>{if(v._pin741)release(v)})});
+G.vicPin741=pin;G.vicRelease741=release;G.vicPinHold741=HOLD;
 })();
