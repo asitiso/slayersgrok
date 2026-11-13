@@ -9425,3 +9425,24 @@ if(el){el.addEventListener('click',()=>{try{mark()}catch(_){}});
 try{mark()}catch(_){}
 G.potAuto746=mark;
 })();
+
+;(()=>{/* r747: remaining cooldown seconds on the HP/MP potion buttons. The skill dock already has this clock (r725: integer seconds, tenths below 1s, on #skills .sk .t) — do not add a second dock number. The potion buttons only had a dark fill for their 8s reuse wait. Show the remaining seconds in the centre of #potH / #potM, using G.cdTxt725, MapleStory, outlined, change-only, effect-off static. Count badges stay. Layout (#potW / .potb / #potA) is unchanged and r746's 자동 chip styling is left alone. Display only: potion CD length, use, auto-use, counts and combat are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','747');st.textContent=[
+'html body #battle .potb>.potcd747{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;margin:0;padding:0;font:900 13px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff6d0;',
+'-webkit-text-stroke:3px #1a0c04;paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 2px #000c;pointer-events:none;font-style:normal}',
+'html body #battle .potb>.potcd747:empty{display:none}',
+'body:is(.nofx,.tglite,.fxoff) #battle .potb>.potcd747{animation:none!important}'
+].join('');document.head.appendChild(st);
+const lab=c=>(typeof G.cdTxt725==='function')?G.cdTxt725(c):(c>0?String(Math.ceil(c)):'');
+const node=el=>{let n=el.querySelector(':scope>.potcd747');if(!n){n=document.createElement('em');n.className='potcd747';el.appendChild(n)}return n};
+const sync=()=>{const cds=typeof G.potCd==='function'?G.potCd():[0,0];
+  [['potH',cds[0]],['potM',cds[1]]].forEach(([id,c])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const n=node(el),t=lab(+c||0);
+    if(n._t747!==t){n._t747=t;n.textContent=t;G.potCdN747=(G.potCdN747||0)+1}
+  });
+  G.potCdOff747=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{sync()}catch(_){}return r};
+try{sync()}catch(_){}
+G.potCdSync747=sync;G.potCdTxt747=lab;
+})();
