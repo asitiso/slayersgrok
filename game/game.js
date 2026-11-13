@@ -10100,3 +10100,15 @@ const css='html body #battle .wvb.wrib span{font:900 italic 19px Maplestory,"Not
 const st=document.createElement('style');st.id='r774css';st.textContent=css;document.head.appendChild(st);
 G.wrCss774=css;
 })();
+
+;(()=>{/* r775: mid-fight FEVER / 광폭화 callouts vs 화룡전. Pick the weaker stamp: .fevban (FEVER!) still pops then drifts up (translateY(-16px) in the last 20% of its 1.4s life) and its 40px cream type only has an uneven 3px/1px drop shadow. .enrb (광폭화!) already holds in-slot and fades in place from 80%, so it is left untouched (same slot, life, 50% boss trigger, e.enr, r547 광폭 chip, boss presence). Change-only on .fevban: same top 300px slot, same 1.4s life / 1400ms remove, same fever trigger (40 kills, ATK ×1.3 for 8s, G.feverStart, .fevov vignette, hit-stop, centre-lane queue / .bgone unblock). 40px Maplestory kept (FEVER! ≈141px, well inside 390). Stronger even 2.5px #a02a00 outline; subtitle 13px→15px with a 1.5px stroke. After the existing 0–20% pop it holds in-slot until 82.143% (250ms before the end), then fades in place (no lift). Effect-off / tglite: static in-slot for the same 1.4s (step-end, so the centre-lane queue still reads 1.4s); .bgone can still hide it. No layout jump, no sprite overlay, no per-frame cost. Combat, HP, fever mul/duration and rewards unchanged. */
+const css='html body #battle .fevban b{font:900 italic 40px Maplestory,sans-serif!important;color:#fff6c0;-webkit-text-stroke:2.5px #a02a00;paint-order:stroke fill;text-shadow:2px 2px 0 #7a1a00,-2px -2px 0 #7a1a00,2px -2px 0 #7a1a00,-2px 2px 0 #7a1a00,0 0 14px #ff8a00}'
++'html body #battle .fevban small{font:800 15px Maplestory,"Noto Sans KR",sans-serif!important;color:#fff;-webkit-text-stroke:1.5px #3a1000;paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 4px #000}'
++'@keyframes fevb775{0%{opacity:0;transform:scale(2)}12%{opacity:1;transform:scale(.95)}20%{transform:scale(1.05)}82.143%{opacity:1;transform:none}100%{opacity:0;transform:none}}'
++'html body #battle .fevban{animation:fevb775 1.4s ease-out forwards!important}'
++'@keyframes fevS775{0%{opacity:1;transform:none}100%{opacity:0;transform:none}}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .fevban{animation:fevS775 1.4s step-end both!important}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .fevban.bgone{animation:none!important;opacity:0!important;transform:none!important}';
+const st=document.createElement('style');st.id='r775css';st.textContent=css;document.head.appendChild(st);
+G.fvCss775=css;
+})();
