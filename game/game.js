@@ -18,7 +18,7 @@ C.deferHit=R.deferHit;
 // ---------- HUD
 function updateHud(){const s=C.S();
   if(!G.nick)$st($('#hName'),'Lv.'+s.lv);{const pw=C.POW();$st($('#hPow'),fmt(pw));if(G._pw&&pw>G._pw*1.001){const d=document.createElement('div');d.className='powup';d.innerHTML='전투력 <b>+'+fmt(pw-G._pw)+'</b> ▲';document.body.appendChild(d);setTimeout(()=>d.remove(),1600)}G._pw=pw}$st($('#cGold'),fmt(s.gold));$st($('#cGem'),fmt(s.gems));renderPartyCol();
-  $st($('#stName'),'[일반] '+C.stageName(s.si)+'  '+D.CH[Math.floor(s.si/7)]);const nr=$('#navroll');if(nr&&nr.childNodes[1])$st(nr.querySelector('.cnt'),fmt(s.orbs));if(G.lastSi!==s.si){if(G.lastSi!==undefined){const nc=Math.floor(s.si/7);if(nc!==Math.floor(G.lastSi/7))chapterCard(nc,s.si);else banner(C.stageName(s.si)+' · '+D.CH[nc])}G.lastSi=s.si}{const sec=C.idleSec(),ib=$('#idleT');if(ib)$st(ib,Math.floor(sec/3600)+'h '+String(Math.floor(sec%3600/60)).padStart(2,'0')+'m');{const bt=$('#idleBtn');if(bt){bt.classList.toggle('ready',sec>=600);bt.classList.toggle('full',sec>=8*3600)}}}{const e=C.B.enemies.find(x=>x.hp>0),fm=e?C.partyFacMul(e):1,ft=$('#facTag');if(ft){$st(ft,fm>1.02?'상성 우세 ▲':fm<.98?'상성 열세 ▼':'상성 보통');{const fc='factag '+(fm>1.02?'up':fm<.98?'down':'');if(ft.className!==fc)ft.className=fc}}}$sw($('#xpBar').style,'width',Math.min(100,s.exp/C.needExp()*100)+'%');
+  $st($('#stName'),'[일반] '+C.stageName(s.si)+'  '+D.CH[Math.floor(s.si/7)]);const nr=$('#navroll');if(nr&&nr.childNodes[1])$st(nr.querySelector('.cnt'),fmt(s.orbs));if(G.lastSi!==s.si){if(G.lastSi!==undefined){const nc=Math.floor(s.si/7);if(nc!==Math.floor(G.lastSi/7))chapterCard(nc,s.si);else banner(C.stageName(s.si)+' · '+D.CH[nc])}G.lastSi=s.si}{const sec=C.idleSec(),ib=$('#idleT');if(ib)$st(ib,G.idleLab748?G.idleLab748(sec):Math.floor(sec/3600)+'h '+String(Math.floor(sec%3600/60)).padStart(2,'0')+'m');{const bt=$('#idleBtn');if(bt){bt.classList.toggle('ready',G.idleRdy748?G.idleRdy748(sec):sec>=600);bt.classList.toggle('full',sec>=8*3600)}}}{const e=C.B.enemies.find(x=>x.hp>0),fm=e?C.partyFacMul(e):1,ft=$('#facTag');if(ft){$st(ft,fm>1.02?'상성 우세 ▲':fm<.98?'상성 열세 ▼':'상성 보통');{const fc='factag '+(fm>1.02?'up':fm<.98?'down':'');if(ft.className!==fc)ft.className=fc}}}$sw($('#xpBar').style,'width',Math.min(100,s.exp/C.needExp()*100)+'%');
   const bb=$('#bossBtn');const can=s.wave>=BAL.waves&&!B.boss;bb.classList.toggle('off',!can);bb.classList.toggle('fight',!!B.boss);$st($('#autoBoss'),'자동 '+(s.autoBoss?'ON':'OFF'));$('#autoBoss').classList.toggle('on',!!s.autoBoss);
   const m=D.MISSIONS.find(x=>(s.mp[x.k]||0)>=x.goal&&!s.mc[x.k])||D.MISSIONS.find(x=>(s.mp[x.k]||0)<x.goal);const ms=$('#mission');
   if(m){const v=Math.min(m.goal,s.mp[m.k]||0),done=v>=m.goal;const key=m.k+v+done;ms.classList.toggle('ready',done);let sp;if(ms.dataset.key!==key&&ms.dataset.m===m.k&&ms._dn===done&&(sp=ms.querySelector('.f > .mp')||ms.querySelector('.f > span:not(.mq):not(.mn)'))){ms.dataset.key=key;$st(sp,`(${v}/${m.goal})`)}/* r394: count-only change patches the counter text instead of rebuilding the bar */if(ms.dataset.key!==key){ms.dataset.key=key;ms.dataset.m=m.k;ms._dn=done;ms.innerHTML=`<div class="morb ${done?'done':''}"><img src="${A}sk/ice.png"><small><img class=ci src=assets/it2_gem.png>${m.gem}</small></div><div class=f><span class=mq>[지령 ${D.MISSIONS.indexOf(m)+1}]</span> <span class=mn>${m.n}</span> <span class="mp ${done?'up':''}">(${v}/${m.goal})</span>${done?' <b class=up>완료! 탭하여 수령</b>':''}</div>`}}else if(ms.dataset.key!=='all'||!ms.firstChild){ms.dataset.key='all';ms.innerHTML=`<div class=morb><img src="${A}sk/heal.png"></div><div class=f>오늘의 지령 모두 완료!</div>`;ms.dataset.m=''}
@@ -9445,4 +9445,29 @@ const sync=()=>{const cds=typeof G.potCd==='function'?G.potCd():[0,0];
 const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{sync()}catch(_){}return r};
 try{sync()}catch(_){}
 G.potCdSync747=sync;G.potCdTxt747=lab;
+})();
+
+;(()=>{/* r748: make the existing 방치보상 button (#idleBtn / #idleT) obvious. It already showed accumulated "Xh YYm" and only lit .ready after 10 minutes, even though a claim is allowed after 1 minute (C.idleClaim, same as the popup toast). The last minute also stuck on "0h 00m" with no countdown. When a claim is not yet allowed, #idleT now shows the remaining seconds (남은 N초). When it is allowed, the chest lights up and #idleT keeps the accumulated clock; at the 8h cap, .full / MAX is unchanged. Change-only via the existing $st path. Effect-off keeps the lit/dim look and skips the bob/pulse. Layout (position/size) is unchanged. Display only: idle rates, the 1-minute claim rule, the 50% payout, the 8-hour cap and save schema are untouched. */
+const NEED=60,CAP=8*3600;
+const lab=sec=>{sec=+sec||0;const left=NEED-sec;if(left>0)return '남은 '+Math.ceil(left)+'초';const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h+'h '+String(m).padStart(2,'0')+'m'};
+const rdy=sec=>(+sec||0)>=NEED;
+const st=document.createElement('style');st.setAttribute('data-r','748');st.textContent=[
+'html body #battle #idleBtn #idleT{font:900 11px/1.1 Maplestory,"Noto Sans KR",sans-serif!important;color:#c8c8d4!important;',
+'-webkit-text-stroke:2px #1a0c04;paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 2px #000c!important}',
+'html body #battle #idleBtn:not(.ready) img{filter:grayscale(.35) brightness(.85) drop-shadow(0 2px 2px #000)!important}',
+'html body #battle #idleBtn:not(.ready) b{color:#c8c8d0!important}',
+'html body #battle #idleBtn.ready #idleT{color:#ffe27a!important;-webkit-text-stroke:2px #3a1a00;text-shadow:0 1px 0 #3a1a00,0 0 5px #ffb02e!important}',
+'html body #battle #idleBtn.ready b{color:#fff6c8!important}',
+'html body #battle #idleBtn.ready img{filter:drop-shadow(0 0 5px #fff3a0) drop-shadow(0 0 12px #ffb02e)!important}',
+'html body #battle #idleBtn.full #idleT{color:#ffd36a!important}',
+'body:is(.nofx,.tglite,.fxoff) #idleBtn.ready img,body:is(.nofx,.tglite,.fxoff) #idleBtn.full img,body:is(.nofx,.tglite,.fxoff) #idleBtn.full::before{animation:none!important}'
+].join('');document.head.appendChild(st);
+const mark=()=>{const sec=typeof C.idleSec==='function'?C.idleSec():0,t=lab(sec),on=rdy(sec),full=sec>=CAP;
+  const ib=document.getElementById('idleT'),bt=document.getElementById('idleBtn');
+  if(ib&&ib._t748!==t){ib._t748=t;$st(ib,t);G.idleN748=(G.idleN748||0)+1}
+  if(bt){if(bt._on748!==on){bt._on748=on;bt.classList.toggle('ready',on);G.idleN748=(G.idleN748||0)+1}if(bt._full748!==full){bt._full748=full;bt.classList.toggle('full',full);G.idleN748=(G.idleN748||0)+1}}
+  G.idleOff748=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+try{mark()}catch(_){}
+G.idleLab748=lab;G.idleRdy748=rdy;G.idleHud748=mark;
 })();
