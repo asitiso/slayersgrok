@@ -10087,3 +10087,16 @@ const go=()=>{const b=document.getElementById('battle');if(!b)return setTimeout(
 go();
 G.skCss773=css;G.skClamp773=clamp;
 })();
+
+;(()=>{/* r774: mid-fight WAVE CLEAR / NEXT WAVE / WAVE ribbon vs 화룡전. Live stamps share #battle .wvb.wrib (wave_ribbon.png, 220×88 at top 244, 1.15s life, removed at 1150ms). Type is 19px Maplestory with only a 1px cream shadow, and r275's wrib thins and lifts from 52% (half opacity + drift by 70%, translateY(-16px) at the end) so the stamp is already leaving after ~0.6s. Change-only: same slot, same 1.15s life, same :not(.out) unblock, same early-out 0.2s, same r726 600ms+180ms handoff and effect-off NEXT WAVE skip, same wave timing. 19px stays (WAVE CLEAR and NEXT WAVE 3/3 already fill the cream plate). Stronger 2px cream outline. After the existing 0–32% pop it holds in-slot until 78.261% (250ms before the end), then fades in place (no lift or shrink). .out fades in place over the same 0.2s (no scaleX(.6)). Effect-off / tglite: static in-slot until the existing remove, and instant hide on .out so a cut-in is not covered. No layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='html body #battle .wvb.wrib span{font:900 italic 19px Maplestory,"Noto Sans KR",sans-serif!important;-webkit-text-stroke:2px #fff3c8;paint-order:stroke fill;text-shadow:1.5px 1.5px 0 #fff7de,-1.5px -1.5px 0 #fff7de,1.5px -1.5px 0 #fff7de,-1.5px 1.5px 0 #fff7de,0 0 4px #fff3c8}'
++'html body #battle .wvb.wrib span small{font-size:13px!important;-webkit-text-stroke:1.5px #fff3c8;paint-order:stroke fill}'
++'@keyframes wrib774{0%{opacity:0;transform:scaleX(.06) scaleY(.75)}16%{opacity:1;transform:scaleX(1.1) scaleY(1.03)}26%{transform:scale(.98)}32%{transform:scale(1)}78.261%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}'
++'html body #battle .wvb.wrib{animation:wrib774 1.15s ease-out forwards!important}'
++'@keyframes wribo774{to{opacity:0;transform:none}}'
++'html body #battle .wvb.wrib.out{animation:wribo774 .2s ease-in forwards!important}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .wvb.wrib{animation:none!important;opacity:1!important;transform:none!important}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .wvb.wrib.out{animation:none!important;opacity:0!important;transform:none!important}';
+const st=document.createElement('style');st.id='r774css';st.textContent=css;document.head.appendChild(st);
+G.wrCss774=css;
+})();
