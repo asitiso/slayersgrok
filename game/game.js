@@ -10580,3 +10580,69 @@ const of=R.frame;R.frame=function(dt){
 };
 G.capUlt788=CAP;G.thUlt788=TH;G.decUlt788=DEC;G.envUlt788=()=>env;G.applyUlt788=apply;G.stepUlt788=dt=>{if(lite()){env=0;return}if(env>0)env=Math.max(0,env-(dt||0)*DEC)};G.resetUlt788=()=>{env=0;watch=0};G.liteUlt788=lite;
 })();
+
+;(()=>{/* r789: short, clean impact flash vs 화룡전. The 필살기 (드래곤 슬레이브 / 기가 슬레이브) full-screen wash is flash=.75 (visual alpha 0.75*0.42≈0.315) decaying at dt*3, so it lasts ~0.25s, and the same cast also adds 0.45 / 0.5 washes (beam and a job-level follow-up) that can chain into a longer strobe. Crits have no flash. Change-only, presentation only: the 0.75 wash becomes a brief bright snap (peak 0.32, ~0.10s, quadratic decay). During the ultimate window the lesser 0.45 / 0.5 full-screen washes are held back so they do not strobe or extend the wash. Other skills' flashes (ragna 0.6, bolt, incoming hits) pass through unchanged. Crits get a very small, low-alpha (0.14) localized gold disc (~0.08s) with a 0.22s cooldown so rapid crits do not strobe; a crit during an ultimate snap is skipped. Beams, blasts, rings, cut-in, R.hs, C.tick, C.deferHit, damage, rewards and boss presence are untouched. Effect-off / tglite / nofx / fxoff: no flash and no crit disc. No per-frame allocations (one reused crit sprite, numeric state only). */
+const HI=.28,PEAK=.32,LIFE=.1,CD=.3,WATCH=2.2,CPEAK=.14,CLIFE=.08,CCD=.22,CR=56;
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+let t=0,life=0,cd=0,watch=0,ct=0,ccd=0,cx=0,cy=0,spr=null;
+const aNow=()=>t>0&&life>0?PEAK*(t/life)*(t/life):0;
+const caNow=()=>ct>0&&CLIFE>0?CPEAK*(ct/CLIFE)*(ct/CLIFE):0;
+const start=()=>{t=LIFE;life=LIFE;cd=CD};
+const decide=(a,watching)=>{
+  if(lite()){t=0;ct=0;return'skip'}
+  if(!(a>0))return'pass';
+  if(a>=HI){if(t>0||cd>0)return'skip';start();return'snap'}
+  if(watching||watch>0)return'skip';
+  return'pass';
+};
+const parseA=s=>{if(typeof s!=='string')return 0;const i=s.lastIndexOf(',');return i<0?0:parseFloat(s.slice(i+1))||0};
+const parseRgb=s=>{if(typeof s!=='string')return'255,240,200';const p=s.indexOf('('),q=s.lastIndexOf(',');return p>=0&&q>p?s.slice(p+1,q):'255,240,200'};
+{const os=R.spell,sw=function(sp,tg){try{if(sp&&(sp.ult||sp.k==='ds'||sp.k==='giga'))watch=WATCH}catch(_){}return os.apply(this,arguments)};R.spell=sw;if(C.ev&&C.ev.spell===os)C.ev.spell=sw}
+{const oh=R.hit,wrap=function(e,d,crit){const r=oh.apply(this,arguments);try{if(crit&&!lite()&&R._hk!=='d'&&ccd<=0&&t<=0&&watch<=0){const s=e&&R._ES&&R._ES().get(e);cx=s?s.x:0;cy=s?s.y-44:0;ct=CLIFE;ccd=CCD}}catch(_){}return r};R.hit=wrap;if(C.ev&&C.ev.hit===oh)C.ev.hit=wrap}
+const hook=()=>{
+  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(!P||!P.fillRect)return()=>{};
+  const ofr=P.fillRect;
+  P.fillRect=function(x,y,w,h){
+    if(this.globalCompositeOperation==='lighter'&&w>300&&h>400){
+      const a=parseA(this.fillStyle),d=decide(a,watch>0);
+      if(d==='skip'||lite())return;
+      if(d==='snap'){const rgb=parseRgb(this.fillStyle);this.fillStyle='rgba('+rgb+','+aNow()+')';return ofr.call(this,x,y,w,h)}
+    }
+    return ofr.apply(this,arguments);
+  };
+  return()=>{P.fillRect=ofr};
+};
+const bak=()=>{
+  if(spr)return spr;
+  const c=document.createElement('canvas');c.width=c.height=128;const X=c.getContext('2d');
+  const g=X.createRadialGradient(64,64,8,64,64,64);
+  g.addColorStop(0,'rgba(255,240,180,1)');g.addColorStop(.45,'rgba(255,220,120,.45)');g.addColorStop(1,'rgba(255,200,80,0)');
+  X.fillStyle=g;X.fillRect(0,0,128,128);return spr=c;
+};
+const drawCrit=()=>{
+  if(!(ct>0)||lite())return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const ctx=cv.getContext('2d'),sc=cv.width/(cv.clientWidth||cv.width||1);
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.globalAlpha=caNow();
+  const im=bak();ctx.drawImage(im,cx-CR,cy-CR,CR*2,CR*2);
+  ctx.restore();ctx.globalAlpha=1;
+};
+const step=dt=>{
+  if(!(dt>0))return;
+  if(lite()){t=0;ct=0;watch=0;cd=0;ccd=0;return}
+  if(t>0){t=Math.max(0,t-dt)}
+  if(cd>0)cd=Math.max(0,cd-dt);
+  if(watch>0)watch=Math.max(0,watch-(dt||0));
+  if(ct>0)ct=Math.max(0,ct-dt);
+  if(ccd>0)ccd=Math.max(0,ccd-dt);
+};
+const of=R.frame;R.frame=function(dt){
+  const L=lite();step(dt||0);
+  const need=!L&&(watch>0||t>0||cd>0||ct>0);
+  if(!need){if(L){const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype,ofr=P&&P.fillRect;if(ofr){const off=hook();try{return of.apply(this,arguments)}finally{off()}}}return of.apply(this,arguments)}
+  const off=hook();
+  try{const r=of.apply(this,arguments);try{drawCrit()}catch(_){}return r}finally{off()}
+};
+G.applyFl789=decide;G.aFl789=aNow;G.peakUlt789=PEAK;G.lifeUlt789=LIFE;G.cdUlt789=CD;G.hiUlt789=HI;G.armUltFl789=()=>{watch=WATCH};G.watchFl789=()=>watch;G.cdNow789=()=>cd;G.stepFl789=step;G.resetFl789=()=>{t=0;life=0;cd=0;watch=0;ct=0;ccd=0};G.peakCrit789=CPEAK;G.lifeCrit789=CLIFE;G.cdCrit789=CCD;G.aCrit789=caNow;G.armCrit789=()=>{if(lite()||ccd>0||t>0)return 0;ct=CLIFE;ccd=CCD;return 1};G.liteFl789=lite;
+})();
