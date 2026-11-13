@@ -9935,3 +9935,39 @@ const scan=()=>{const L=R._TX&&R._TX();if(!L)return;for(let i=0;i<L.length;i++){
 const of=R.frame;R.frame=function(dt){try{scan()}catch(_){}return of.apply(this,arguments)};
 G.allySz764=SZ;G.bakeAlly764=bake;
 })();
+
+;(()=>{/* r765: mid-fight field ally HP bars vs 화룡전. The existing 52×7 bar (position, gold frame, ticks, r414 full-HP fade, r457 elite fade) is unchanged, and portrait % was r742. The fill was always green, so a wounded ally did not read as yellow/red the way 화룡전 does. Change-only: after the existing bar is drawn (R._pm 'units', before damage numbers), the same fill slot is retinted when HP is ≤50% (yellow) or ≤30% (red, same 30% band as r727/r742). Gradients are cached once. Healthy (green) bars are not redrawn. No layout jump, no sprite overlay, no per-frame work when every ally is above 50%. HP values, combat and rewards are untouched. Effect-off keeps the static tint (no pulse). */
+const W=52,H=7,UH=80,YOFF=UH+12,RAD=3.5;
+const GRN=['#9effa8','#2a9a4a'],YEL=['#ffe27a','#d49810'],RED=['#ff7a5a','#b01018'];
+const band=r=>r>.5?'g':r>.3?'y':'r';
+const colOf=r=>r>.5?GRN:r>.3?YEL:RED;
+const cache=new Map();
+const grad=(cx,pair)=>{let g=cache.get(pair[0]);if(!g){g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,pair[0]);g.addColorStop(1,pair[1]);cache.set(pair[0],g)}return g};
+const rr=(cx,x,y,w,h,r)=>{if(w<=0||h<=0)return;const e=Math.min(r,w/2,h/2);cx.beginPath();cx.moveTo(x+e,y);cx.arcTo(x+w,y,x+w,y+h,e);cx.arcTo(x+w,y+h,x,y+h,e);cx.arcTo(x,y+h,x,y,e);cx.arcTo(x,y,x+w,y,e);cx.closePath()};
+const ovAt=(x,y)=>{const q=R._enr456;return !!(q&&performance.now()-q[4]<120&&x+28>q[0]&&x-28<q[2]&&y+9>q[1]&&y-2<q[3])};
+const paint=()=>{
+  const al=C.B&&C.B.allies;if(!al||!al.length)return;
+  const AS=R._AS&&R._AS();if(!AS)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const cx=cv.getContext('2d');
+  for(let i=0;i<al.length;i++){
+    const a=al[i];if(!a||a.dead||!(a.max>0))continue;
+    const r=a.hp/a.max;if(r>.5)continue;
+    const s=AS.get(a.k);if(!s||s.x==null)continue;
+    const hb=s.hbA==null?1:Math.max(0,s.hbA);if(hb<=.02)continue;
+    const x=s.x,y=s.y-YOFF,pair=colOf(r),fw=Math.max(0,W*r);
+    cx.save();
+    let a0=hb;if(ovAt(x,y))a0*=.18;if(a0<1)cx.globalAlpha*=a0;
+    cx.translate(0,y);
+    cx.fillStyle=grad(cx,pair);
+    rr(cx,x-W/2,0,fw,H,RAD);cx.fill();
+    cx.fillStyle='rgba(255,255,255,.35)';
+    rr(cx,x-W/2+1,1,Math.max(0,fw-2),2,1);cx.fill();
+    cx.restore();
+  }
+};
+let prev=R._pm;
+const hook=k=>{if(k==='units')try{paint()}catch(_){}if(typeof prev==='function')return prev(k)};
+Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){prev=fn}});
+G.hpCol765=colOf;G.hpBand765=band;G.paintHp765=paint;
+})();
