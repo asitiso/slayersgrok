@@ -1913,7 +1913,7 @@ const st=document.createElement('style');st.textContent=`.vsx{position:absolute;
 @keyframes vsxS{0%{opacity:0;height:0}40%{opacity:1}100%{opacity:.9}}
 @keyframes vsxO{0%,80%{opacity:1}100%{opacity:0;transform:scale(1.05)}}`;document.head.appendChild(st);
 let lastB=null;G.vsShow=bo=>{const b=document.getElementById('battle');if(!b||!bo)return;b.querySelectorAll('.vsx,.stmv').forEach(n=>n.remove());const s=C.S(),job=s.job||0,lim=job>=3?'cut/lina_ult_job3.png':job>=2?'cut/lina_ult_job2.png':'cut/lina_ult.png';
- const el=document.createElement('div');el.className='vsx';el.innerHTML=`<div class=vl><img src="assets/${lim}"></div><div class=vr><img src="assets/${bo.img}"></div><b class=vs>VS</b><i class="bd t"></i><i class="bd b"></i><span class=bt>BOSS BATTLE</span><div class=nl><small>전투력 ${fmt(C.POW())}</small>리나 일행</div><div class=nr><small>HP ${fmt(Math.round(bo.max))}</small>${bo.n||'보스'}</div>`;b.appendChild(el);G._vsT=performance.now()+1900;if(R.ccCd!=null||1)R.ccCd=Math.max(R.ccCd||0,2.3);setTimeout(()=>el.remove(),2250)};
+ const el=document.createElement('div');el.className='vsx';el.innerHTML=`<div class=vl><img src="assets/${lim}"></div><div class=vr><img src="assets/${bo.img}"></div><b class=vs>VS</b><i class="bd t"></i><i class="bd b"></i><span class=bt>BOSS BATTLE</span><div class=nl><small>전투력 ${fmt(C.POW())}</small>리나 일행</div><div class=nr><small>HP ${fmt(Math.round(bo.max))}</small>${bo.n||'보스'}</div>`;b.appendChild(el);G._vsT=performance.now()+1900;if(R.ccCd!=null||1)R.ccCd=Math.max(R.ccCd||0,2.3);const z760=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);setTimeout(()=>{if(z760){try{el.remove()}catch(_){}}else if(el.isConnected)el.classList.add('out')},1800);setTimeout(()=>{try{if(el.isConnected)el.remove()}catch(_){}},z760?1800:2050)};
 {const ot=C.tick;C.tick=dt=>{if(G._vsT&&performance.now()<G._vsT)return;return ot(dt)}}
 const of=R.frame;R.frame=dt=>{of(dt);try{if(R.bossT!=null&&R.bossT<.05){const bo=G.bo550(R,0);if(bo&&bo!==lastB&&!G.screen){lastB=bo;R.bossT=1.6;G.vsShow(bo)}}}catch(_){}};
 })();
@@ -1931,7 +1931,7 @@ let last=null,pend=null;G.stMove=(from,to)=>{const b=document.getElementById('ba
  const el=document.createElement('div');el.className='stmv';let nd='';for(let k=0;k<7;k++)nd+=`<i class="nd${k==6?' bs':''}${k<=Math.max(a,0)&&a>=0?' on':''}${k==z?' nx':''}" style="left:${X(k)}px"></i>`;
  el.innerHTML=`<h4>${C.stageName(to)} 이동</h4><p>제${ch+1}장 · ${D.CH[ch]||''}${z==6?' · <b style="color:#ff8a6a">보스 스테이지</b>':''}</p><div class=pth><i class=ln></i><i class=lf style="width:${a<0?0:X(a)-10}px"></i>${nd}<span class=pin style="left:${X(a<0?0:a)}px"><img src="assets/sd_lina.png"></span></div>`;b.appendChild(el);
  requestAnimationFrame(()=>requestAnimationFrame(()=>{el.querySelector('.pin').style.left=X(z)+'px';el.querySelector('.lf').style.width=(X(z)-10)+'px';setTimeout(()=>el.querySelectorAll('.nd')[z].classList.add('on'),1200)}));setTimeout(()=>el.remove(),2650)};
-{let shown=null;const b=document.getElementById('battle');if(b)new MutationObserver(ms=>{for(const m of ms){for(const n of m.addedNodes)if(n.classList&&(n.classList.contains('bwarn')||n.classList.contains('vsx')))b.querySelectorAll('.stmv').forEach(x=>{x.style.transition='opacity .25s';x.style.animation='none';x.style.opacity='0';setTimeout(()=>x.remove(),260)});for(const n of m.removedNodes)if(n.classList&&(n.classList.contains('vic')||(n.querySelector&&n.querySelector('.vic')))){const si=C.S().si;if(shown==null)shown=si-1;if(si>shown){let n0=0,pc=null;const go=()=>{if(si<=shown||G.screen||G._fin||document.querySelector('.vic,.bwarn:not(.out),.vsx'))return;if(R.ccut&&R.ccut.t<1.3)R.ccut.t=99;const f=shown;shown=si;G.stMove(f,si)};setTimeout(go,60)}}}}).observe(document.body,{childList:true,subtree:true})}
+{let shown=null;const b=document.getElementById('battle');if(b)new MutationObserver(ms=>{for(const m of ms){for(const n of m.addedNodes)if(n.classList&&(n.classList.contains('bwarn')||n.classList.contains('vsx')))b.querySelectorAll('.stmv').forEach(x=>{x.style.transition='opacity .25s';x.style.animation='none';x.style.opacity='0';setTimeout(()=>x.remove(),260)});for(const n of m.removedNodes)if(n.classList&&(n.classList.contains('vic')||(n.querySelector&&n.querySelector('.vic')))){const si=C.S().si;if(shown==null)shown=si-1;if(si>shown){let n0=0,pc=null;const go=()=>{if(si<=shown||G.screen||G._fin||document.querySelector('.vic,.bwarn:not(.out),.vsx:not(.out)'))return;if(R.ccut&&R.ccut.t<1.3)R.ccut.t=99;const f=shown;shown=si;G.stMove(f,si)};setTimeout(go,60)}}}}).observe(document.body,{childList:true,subtree:true})}
 })();
 
 ;(()=>{// v117b 이동 카드 표시 중 동료 컷인 생략
@@ -1951,12 +1951,12 @@ const st=document.createElement('style');st.textContent=`#stInfo.tbo{font:900 14
 .tlw{position:absolute;left:185px;top:262px;transform:translateX(-50%);z-index:31;pointer-events:none;padding:5px 14px;border-radius:999px;background:linear-gradient(#d0201a,#8a0a0a);border:2px solid #ffd23a;color:#fff;font:900 14px "Noto Sans KR",sans-serif;white-space:nowrap;box-shadow:0 4px 12px #0007,0 0 14px #ff3a2a;animation:tlwA 1.8s ease-out forwards}
 @keyframes tlwA{0%{opacity:0;transform:translateX(-50%) scale(1.6)}12%{opacity:1;transform:translateX(-50%) scale(.95)}20%{transform:translateX(-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-10px)}}`;document.head.appendChild(st);
 let warned=null,lastS=null,pl=0;const of=R.frame;R.frame=dt=>{of(dt);try{const B=C.B,bo=B.boss&&G.bo550(R,0),inf=document.getElementById('stInfo');const low=!!(bo&&B.timer>0&&B.timer<=10&&!G.screen);if(inf){inf.classList.toggle('tlow',low);inf.classList.toggle('tbo',!!(bo&&!G.screen))}if(!low){if(!bo)warned=null;return}
- if(warned!==bo&&!G._fin&&!document.querySelector('.vsx,.bwarn:not(.out),.vic')){warned=bo;const b=document.getElementById('battle');if(b){const el=document.createElement('div');el.className='tlw';el.innerHTML='<img class=hi src=assets/ui_timer.png width=9 height=14 alt="">'+Math.ceil(B.timer)+'초 남음! 서두르세요';b.appendChild(el);setTimeout(()=>el.remove(),1850)}}
+ if(warned!==bo&&!G._fin&&!document.querySelector('.vsx:not(.out),.bwarn:not(.out),.vic')){warned=bo;const b=document.getElementById('battle');if(b){const el=document.createElement('div');el.className='tlw';el.innerHTML='<img class=hi src=assets/ui_timer.png width=9 height=14 alt="">'+Math.ceil(B.timer)+'초 남음! 서두르세요';b.appendChild(el);setTimeout(()=>el.remove(),1850)}}
  if(B.timer<=5){const s=Math.ceil(B.timer);if(s!==lastS){lastS=s;pl=1}}pl=Math.max(0,pl-dt*2.2);if(pl>0&&!G._fin){const c=R._bc();if(!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,W=c.clientWidth,H=c.clientHeight;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.globalAlpha=pl*.6;ctx.strokeStyle='#ff2a1a';ctx.lineWidth=10;ctx.shadowColor='#ff2a1a';ctx.shadowBlur=18;ctx.strokeRect(5,5,W-10,H-10);ctx.restore()}}catch(_){}};
 })();
 ;(()=>{// v120 보스전 실시간 MVP 왕관 (보스전 중 피해 1위 아군 머리 위 왕관 · 시각 전용)
 let base=null,bb=null,cx0=null,cy0=null,lead=null;const of=R.frame;R.frame=dt=>{of(dt);try{G._mvpK=null;const bo=C.B.boss&&G.bo550(R,0);if(!bo||G.screen||G._fin){bb=null;return}if(bb!==bo){bb=bo;base={...G.DM};lead=null}
- let bk=null,bv=0;for(const k in G.DM){const v=G.DM[k]-(base[k]||0);if(v>bv){bv=v;bk=k}}if(!bk||bv<=0)return;G._mvpK=bk;if(G.mvpHud)return;const q=R._AS().get(bk);if(!q)return;const c=R._bc();if(!c)return;if(document.querySelector('.vsx,.vic'))return;
+ let bk=null,bv=0;for(const k in G.DM){const v=G.DM[k]-(base[k]||0);if(v>bv){bv=v;bk=k}}if(!bk||bv<=0)return;G._mvpK=bk;if(G.mvpHud)return;const q=R._AS().get(bk);if(!q)return;const c=R._bc();if(!c)return;if(document.querySelector('.vsx:not(.out),.vic'))return;
  const T=performance.now()/1000,tx=Math.max(84,Math.min(286,q.x)),ty=q.y-(bk=='lina'?112:106);if(lead!==bk||cx0==null){if(cx0==null){cx0=tx;cy0=ty}lead=bk}cx0+=(tx-cx0)*Math.min(1,dt*8);cy0+=(ty-cy0)*Math.min(1,dt*8);
  const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,x=cx0,y=cy0+Math.sin(T*3)*2.5;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.translate(x,y);ctx.scale(1.4,1.4);ctx.shadowColor='#ffcc33';ctx.shadowBlur=10;
  const g=ctx.createLinearGradient(0,-12,0,6);g.addColorStop(0,'#fff6c0');g.addColorStop(.5,'#ffcf3a');g.addColorStop(1,'#c27a10');ctx.fillStyle=g;ctx.strokeStyle='#6a3a00';ctx.lineWidth=1.5;
@@ -1970,7 +1970,7 @@ R.cmbDom=1;const st=document.createElement('style');st.textContent=`.cmbx{positi
 .cmbx b{display:block;font:italic 900 28px/1 Maplestory,"Noto Sans KR",sans-serif;background:linear-gradient(var(--c0),var(--c1));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1.6px #5a1208;filter:drop-shadow(0 2px 0 #3a0a00) drop-shadow(0 0 var(--gl) var(--c1))}
 .cmbx small{display:block;margin-top:1px;font:italic 900 12px Maplestory,"Noto Sans KR",sans-serif;color:var(--lc);text-shadow:-1px -1px 0 #5a1208,1px -1px 0 #5a1208,-1px 1px 0 #5a1208,1px 1px 0 #5a1208,0 0 6px var(--c1)}`;document.head.appendChild(st);
 let el=null,lv=0,pop=0;const TC=[['#fff6c0','#ff8a2a','#ffd77a','0px'],['#fffbe0','#ff4a2a','#ffd77a','6px'],['#f6e0ff','#b04aff','#e0b0ff','10px'],['#e0fbff','#2ad0ff','#9ff0ff','14px']];
-const of=R.frame;R.frame=dt=>{of(dt);try{const [cb]=R._cmbGet?R._cmbGet():[0];const b=document.getElementById('battle');const show=cb>=5&&!G.screen&&!G._fin&&!(R.cut&&R.cut.t<1.25)&&!document.querySelector('.vsx,.vic');if(!show){if(el){el.remove();el=null}lv=0;return}
+const of=R.frame;R.frame=dt=>{of(dt);try{const [cb]=R._cmbGet?R._cmbGet():[0];const b=document.getElementById('battle');const show=cb>=5&&!G.screen&&!G._fin&&!(R.cut&&R.cut.t<1.25)&&!document.querySelector('.vsx:not(.out),.vic');if(!show){if(el){el.remove();el=null}lv=0;return}
  if(!el){el=document.createElement('div');el.className='cmbx';el.innerHTML='<b></b><small></small>';b.appendChild(el)}if(cb!==lv){if(cb>lv)pop=1;lv=cb;const t=cb>=100?3:cb>=50?2:cb>=20?1:0,c=TC[t];if(el._t!==t){el._t=t;el.style.setProperty('--c0',c[0]);el.style.setProperty('--c1',c[1]);el.style.setProperty('--lc',c[2]);el.style.setProperty('--gl',c[3]);el.lastChild.textContent=t==3?'LEGEND COMBO':t==2?'GREAT COMBO':t==1?'NICE COMBO':'COMBO'}$st(el.firstChild,cb)}/* r313: tier vars + label written only when the tier changes */
  if(pop>0){pop=0;if(el.animate){if(el._pa)el._pa.cancel();el._pa=el.animate([{transform:'translate(-50%,-70%) scale(1.25)'},{transform:'translate(-50%,-70%) scale(1)'}],{duration:167})}}/* r313: combo pop as a compositor animation (same 1.25->1 linear over 1/6s) instead of a style write every frame *//* r298: no per-frame style write once the pop settles */}catch(_){}};
 })();
@@ -4306,7 +4306,7 @@ const st=document.createElement('style');st.textContent=`
 #battle .combo:is(#_a,#_b,div):is(#_c,#_d,div){top:238px!important}body.bossfight #battle .combo:is(#_a,#_b,div):is(#_c,#_d,div){top:280px!important}/* boss fight: below the boss name/HP frame #bossFr (202-275) */
 #battle .combo.cbq{visibility:hidden!important}#battle .combo.cbq,#battle .combo.cbq *{animation-play-state:paused!important}
 #battle .combo.cbo{opacity:0!important;transition:opacity .16s ease-in!important}`;document.head.appendChild(st);
-const blk=()=>!!document.querySelector('#battle .wvb.wrib:not(.out),.bwarn:not(.out),.vsx,#battle .bcut');/* + the boss VS card and boss cut-in */
+const blk=()=>!!document.querySelector('#battle .wvb.wrib:not(.out),.bwarn:not(.out),.vsx:not(.out),#battle .bcut');/* + the boss VS card and boss cut-in */
 const pos=n=>{const dw=!!(C.B&&C.B.boss&&!C.B.wb&&n.classList.contains('duo'));if(dw&&!n.classList.contains('dlw')){n.classList.add('dlw');n.classList.remove('dlo','dfd')}/* r367: boss-fight duo card goes to the low band (~556-649, under the boss's feet, over the idle/potion row) instead of 280-392 / 362-474, which sat on the boss's crown, face and the above-head crit */const t=C.B&&C.B.boss?(dw?'540px':n.classList.contains('dlo')?'362px':'280px'):'238px';/* r325: .dlo duo banner (boss strip up when it appeared) keeps the 362 slot - this inline !important is why the r324 stylesheet rule never applied live */if(n._tp!==t){n._tp=t;n.style.setProperty('top',t,'important')}};/* boss state read when the banner shows (body.bossfight lands a beat later than C.B.boss) */
 const arm=n=>{if(n._cq)return;n._cq=1;pos(n);if(!blk()){if(n.classList.contains('dlo')&&G._dloOn)G._dloOn();return}const rm0=n.remove.bind(n);n._rm0=rm0;n.classList.add('cbq');n.remove=()=>{};/* r326: at most one banner waits - a newer one replaces it; the waiting one is no longer dropped after 2.6s, it shows once the ribbons/VS/cut-in clear */{const o=R._cbW;if(o&&o!==n&&o.isConnected&&o._rm0)o._rm0();R._cbW=n}const w=()=>{if(!n.isConnected||R._cbW!==n)return;if(blk()){setTimeout(w,100);return}R._cbW=null;if(n.classList.contains('duo')&&!n.classList.contains('dlw')&&C.B.boss&&!C.B.wb&&R.ccut&&R.ccut.t<1){n.classList.add('dlo');n.classList.remove('dfd')}if(n.classList.contains('dlo')&&G._dloOn)G._dloOn();/* r325: queued duo banner released while the boss strip is up takes the 362 slot */pos(n);n.classList.remove('cbq');R._cbQ=(R._cbQ||0)+1;setTimeout(rm0,1500)};setTimeout(w,100)};
 const hide=()=>document.querySelectorAll('#battle .combo:not(.cbq)').forEach(c=>{if(c._co)return;c._co=1;c.classList.add('cbo');const r=c.remove.bind(c);setTimeout(()=>{try{Element.prototype.remove.call(c)}catch(_){}},180)});
@@ -5670,7 +5670,7 @@ const o=G.tutTick;G.tutTick=function(){const r=o.apply(this,arguments);const a=d
 ;(function(){/* r490: 가이드 건너뛰기 as a small dark pill (display only) */const st=document.createElement('style');st.textContent=`html body .tut .tskip{background:#1a1008cc!important;color:#f0e0c0!important;font:700 11px Maplestory,sans-serif!important;padding:4px 10px!important;border-radius:11px!important;border:1px solid #c9a46a88!important;box-shadow:0 2px 6px #0008;text-decoration:none!important}`;document.head.appendChild(st)})();
 ;(function(){/* r491: guide bubble placed where it covers no HUD button and not the WAVE banner, clamped to the screen (display only) */
 const OB='#battle .side a,#bctl span,#skills .sk,#prof,#nav a,#nav span,.hudtop,#autoSp,#sheet .srow2,#sheet .n506,#sheet .r506,#sheet #rollEq,#sheet .eq,#sheet .cmpc';/* r525: 일괄 뽑기·장착 button label stays visible under the draw hint *//* r524: item stat rows / name of the gear compare cards count as obstacles, so the 장착 hint no longer covers the new item's numbers */const ov=(a,b)=>Math.max(0,Math.min(a.r,b.r)-Math.max(a.l,b.l))*Math.max(0,Math.min(a.b,b.b)-Math.max(a.t,b.t));
-const o=G.tutTick;G.tutTick=function(){const r=o.apply(this,arguments);try{const t=document.querySelector('.tut');if(!t||t.style.display=='none')return r;if(document.querySelector('#battle .vsx,.clbw')){t.style.display='none';return r}const bb=t.querySelector('.tbub'),rg=t.querySelector('.tring');if(!bb||!rg)return r;if(document.querySelector('#battle .bcut')){bb.style.setProperty('display','none','important');const q=t.querySelector('.tl493');if(q)q.style.display='none';return r}else bb.style.removeProperty('display');
+const o=G.tutTick;G.tutTick=function(){const r=o.apply(this,arguments);try{const t=document.querySelector('.tut');if(!t||t.style.display=='none')return r;if(document.querySelector('#battle .vsx:not(.out),.clbw')){t.style.display='none';return r}const bb=t.querySelector('.tbub'),rg=t.querySelector('.tring');if(!bb||!rg)return r;if(document.querySelector('#battle .bcut')){bb.style.setProperty('display','none','important');const q=t.querySelector('.tl493');if(q)q.style.display='none';return r}else bb.style.removeProperty('display');
  const R={l:parseFloat(rg.style.left)+4,t:parseFloat(rg.style.top)+4,w:parseFloat(rg.style.width)-8,h:parseFloat(rg.style.height)-8};R.r=R.l+R.w;R.b=R.t+R.h;const AP=(document.getElementById('app')||document.body).getBoundingClientRect(),X0=Math.max(0,AP.left),X1=Math.min(innerWidth,AP.right),W=innerWidth,H=innerHeight,bw=bb.offsetWidth||210,bh=bb.offsetHeight||54,g=12,m=8,cy=R.t+R.h/2-bh/2,cx=R.l+R.w/2-bw/2;
  const obs=[];document.querySelectorAll(OB).forEach(e=>{const q=e.getBoundingClientRect();if(q.width>2&&q.height>2&&!(q.left>=R.l-2&&q.right<=R.r+2&&q.top>=R.t-2&&q.bottom<=R.b+2))obs.push({l:q.left,t:q.top,r:q.right,b:q.bottom})});
  let BN=null;const HV=[];document.querySelectorAll('#battle .wvb,#battle .sktag,#bossSt,#bossFr,#battle .echs').forEach(e=>{const q=e.getBoundingClientRect(),c=getComputedStyle(e);if(q.width>2&&q.height>2&&c.display!='none'&&+c.opacity>.1)HV.push({l:q.left,t:q.top,r:q.right,b:q.bottom})});/* r519: the canvas 증원/대기 pill is an obstacle too while it is being drawn */try{const RR=window.RENDER;if(RR&&RR._pv519&&RR._pb){const cq=RR._bc().getBoundingClientRect();HV.push({l:RR._pl+cq.left-4,t:RR._pb-20+cq.top,r:RR._pr+cq.left+4,b:RR._pb+cq.top+4})}}catch(_){}/* r494/r495: elite name plate + bar (canvas-drawn) as an obstacle, using the renderer's real plate rect R._enr456 */try{const RR=window.RENDER,cv=document.getElementById('cv'),e4=RR&&RR._enr456;if(e4&&cv&&performance.now()-e4[4]<400&&G.C.B.enemies.some(e=>e.el&&e.hp>0)){const q=cv.getBoundingClientRect(),k=q.width/(cv.clientWidth||q.width);HV.push({l:q.left+e4[0]*k-6,r:q.left+e4[2]*k+6,t:q.top+e4[1]*k-6,b:q.top+e4[3]*k+6})}}catch(_){}const ba=document.getElementById('battle');if(ba){const q=ba.getBoundingClientRect();if(q.height>100){const bc=q.left+q.width/2;BN={l:bc-120,r:bc+120,t:q.top+q.height*.25,b:q.top+q.height*.37}}}const cl=(x,y)=>[Math.max(X0+m,Math.min(X1-bw-m,x)),Math.max(m,Math.min(H-bh-m,y))];
@@ -9788,4 +9788,44 @@ const hook=()=>{const b=bat();if(!b||b._r759obs)return;b._r759obs=1;mo.observe(b
 hook();
 if(!bat())document.addEventListener('DOMContentLoaded',hook,{once:true});
 G.outMs759=DUR;G.armOut759=arm;
+})();
+
+;(()=>{/* r760: keep the boss VS splash visible for ~1.8s (boss presence; C.tick still frozen until G._vsT +1900, R.ccCd 2.3 unchanged). The last ~0.4s of the 2.2s animation was a shutter, but pumps still treated any .vsx as blocking until remove at 2.25s (combo banners, tutorial, stage-move, combo HUD, timer warning, MVP crown). Input was already pointer-events:none. Those pumps now use .vsx:not(.out). .out starts at 1.8s with a 250ms shutter; effect-off snaps off at 1.8s. Landing-dust and the WARNING hand-off still watch a live .vsx node. Boss spawn, hit-stop and combat timing are untouched. */
+const VIS=1800,DUR=250;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.id='r760css';st.textContent=
+'@keyframes vsxO760{0%{opacity:1;scale:1 1;filter:none}55%{opacity:1;scale:1 .55;filter:brightness(1.5)}100%{opacity:0;scale:1 .04;filter:brightness(2)}}'+
+'html body #battle .vsx.out{animation:vsxO760 .25s ease-in forwards!important;transform-origin:50% 50%}'+
+'body:is(.nofx,.tglite,.fxoff) #battle .vsx.out{animation:none!important;opacity:0}';
+document.head.appendChild(st);
+const finish=el=>{try{if(el&&el.isConnected)el.remove()}catch(_){}};
+const startOut=el=>{
+  if(!el||el._r760out)return;el._r760out=1;
+  clearTimeout(el._t760);
+  if(off()){finish(el);return}
+  el._t760=setTimeout(()=>finish(el),DUR);
+};
+const arm=el=>{
+  if(!el||!el.classList||el._r760)return;el._r760=1;
+  const cl=el.classList,oa=cl.add;
+  cl.add=function(){const r=oa.apply(this,arguments);try{if(cl.contains('out'))startOut(el)}catch(_){}return r};
+  if(cl.contains('out'))startOut(el);
+};
+const mo=new MutationObserver(ms=>{
+  for(const x of ms){
+    for(const n of x.addedNodes){
+      if(n.nodeType===1&&n.classList&&n.classList.contains('vsx'))arm(n);
+    }
+  }
+});
+const bat=()=>document.getElementById('battle');
+const hook=()=>{const b=bat();if(!b||b._r760obs)return;b._r760obs=1;mo.observe(b,{childList:true});
+  const wrap=(obj,k)=>{if(!obj||typeof obj[k]!=='function'||obj[k]._r760)return;const o=obj[k].bind(obj);
+    const f=function(n){const r=o.apply(this,arguments);try{if(n&&n.classList&&n.classList.contains('vsx'))arm(n)}catch(_){}return r};
+    f._r760=1;obj[k]=f};
+  wrap(b,'appendChild');wrap(b,'insertBefore');
+  b.querySelectorAll('.vsx').forEach(arm)};
+hook();
+if(!bat())document.addEventListener('DOMContentLoaded',hook,{once:true});
+G.vsVis760=VIS;G.outMs760=DUR;G.armOut760=arm;
 })();
