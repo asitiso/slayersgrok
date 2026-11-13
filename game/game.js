@@ -11210,3 +11210,14 @@ st.textContent=[
 document.head.appendChild(st);
 G.screenFadeMs814=.1;G.screenFadeOld814=.15;
 })();
+
+;(()=>{/* r815: tighten #sheet enter/exit from r733's 150ms to ~100ms, like 화룡전. Dedicated override — the r733 .15s rule and G.uiDelay733 (saver / reward-pop lock) are left in place. openSheet still toggles #sheet.on in the same turn; there is no JS hide-timeout to retune. The rest state keeps pointer-events:none so taps during the exit motion do not hit the closing sheet. Effect-off stays instant. Snappy ease, no overshoot. */
+const st=document.createElement('style');st.setAttribute('data-r','815');st.id='r815css';
+st.textContent=[
+'html body #sheet{transition:transform .1s cubic-bezier(.2,.8,.35,1),opacity .1s!important}',
+'html body #sheet:not(.on){pointer-events:none}',
+'body:is(.nofx,.tglite,.fxoff) #sheet{transition:none!important}'
+].join('');
+document.head.appendChild(st);
+G.sheetMs815=.1;G.sheetMsOld815=.15;
+})();
