@@ -9870,3 +9870,33 @@ hook();
 if(!bat())document.addEventListener('DOMContentLoaded',hook,{once:true});
 G.bcutVis761=VIS;G.outMs761=DUR;G.armOut761=arm;
 })();
+
+;(()=>{/* r762: mid-fight field HUD readability vs 화룡전 — the top stage-bar wave/remaining-enemy line (#stInfo, "웨이브 N/3 · 적 K") was 11px plain white in a 126px plate, same weight as the label, so the remaining count did not pop the way the already-restyled boss countdown (.tbo) does. Change-only: when that exact line is showing, keep the same slot and string, outline the label, and draw the remaining count in a larger gold Maplestory numeral. No new row, no trow width/height change, no sprite overlay. Other #stInfo states (다음 웨이브, 보스 도전/대기, the .tbo timer) are untouched. Effect-off stays static (no pulse). Wave, spawn, HP and rewards are unchanged. */
+const CLS='en762',WV='wv762';
+const RE=/^웨이브 (.+) · 적 (\d+)$/;
+const st=document.createElement('style');st.id='r762css';st.textContent=
+'#stagebar #stInfo.wv762{font:900 11px Maplestory,"Noto Sans KR",sans-serif;color:#fff;text-shadow:0 1px 0 #000,0 0 3px #000,0 1px 2px #000;line-height:14px;letter-spacing:-.1px}'+
+'#stagebar #stInfo .en762{font:900 15px/1 Maplestory,"Noto Sans KR",sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:#ffe27a;-webkit-text-stroke:.45px #3a1a00;text-shadow:0 1px 0 #000,0 0 4px #000;display:inline-block;vertical-align:-1px;margin-left:1px}'+
+'body:is(.nofx,.tglite,.fxoff) #stagebar #stInfo .en762{animation:none}';
+document.head.appendChild(st);
+const mark=el=>{
+  if(!el)return 0;
+  const t=el.textContent;
+  const m=String(t).match(RE);
+  if(!m){
+    if(el._m762){el.classList.remove(WV);el._m762=0;el._k762='';}
+    return 0;
+  }
+  if(el._k762===t&&el.querySelector('.'+CLS))return 0;
+  el._k762=t;el._m762=1;el.classList.add(WV);
+  el.innerHTML='웨이브 '+m[1]+' · 적 <b class="'+CLS+'">'+m[2]+'</b>';
+  return 1;
+};
+const hook=()=>{const ou=typeof updateHud==='function'?updateHud:null;if(!ou||ou._r762)return;
+  const f=function(){const r=ou.apply(this,arguments);try{mark(document.getElementById('stInfo'))}catch(_){}return r};
+  f._r762=1;updateHud=f;
+  try{mark(document.getElementById('stInfo'))}catch(_){};
+};
+hook();
+G.enCls762=CLS;G.markInfo762=mark;
+})();
