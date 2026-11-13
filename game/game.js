@@ -9290,7 +9290,7 @@ const live=()=>{const B=C.B;if(!B)return null;
   if(n>0)return{k:'wave',t:`웨이브 ${w}/${waves} · 적 ${n}`,low:0};
   if((B.lock||0)>0&&s&&(s.wave||0)<waves)return{k:'walk',t:`다음 웨이브 ${w}/${waves}`,low:0};
   return null};
-const want=()=>!!(G.screen&&G.screen!=='sim'&&live());
+const want=()=>!!((G.fightHudCover740?G.fightHudCover740():G.screen&&G.screen!=='sim')&&live());
 let el=null,st=null;
 const box=()=>{if(el)return el;st=document.createElement('style');st.textContent=
 '#fightHud740{position:absolute;left:0;right:0;bottom:72px;z-index:26;height:32px;display:none;align-items:center;justify-content:center;gap:8px;padding:0 12px;background:linear-gradient(#2a1838f2,#120a1ef2);border-top:1.5px solid #c9953f;color:#ffe9b0;font:900 12px/1 Maplestory,"Noto Sans KR",sans-serif;text-shadow:0 1px 0 #000;cursor:pointer;box-sizing:border-box}'+
@@ -9303,7 +9303,7 @@ const box=()=>{if(el)return el;st=document.createElement('style');st.textContent
 document.head.appendChild(st);
 el=document.createElement('div');el.id='fightHud740';el.innerHTML='<b></b><small>전투로 ▸</small>';
 (document.getElementById('app')||document.body).appendChild(el);
-el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{if(typeof closeScreen==='function')closeScreen();else if(G.close)G.close()}catch(_){}});
+el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{(G.fightHudTap740||function(){if(typeof closeScreen==='function')closeScreen();else if(G.close)G.close()})()}catch(_){}});
 G.fightHudEl740=el;return el};
 const sync=()=>{const on=want(),L=on&&live(),txt=L?L.t:'',low=!!(L&&L.low);
   const show=on&&!!txt;const b=box(),tb=b.querySelector('b');
@@ -9355,4 +9355,20 @@ if(op)renderPartyCol=function(){const r=op.apply(this,arguments);try{sync()}catc
 const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{sync()}catch(_){}return r};
 G.hpTxt742=sync;G.hpTxtLab742=lab;
 try{sync()}catch(_){}
+})();
+
+;(()=>{/* r743: reuse the r740 fight-status strip when the ▦ 메뉴 popup (#menuPop) is open mid-fight. Same change-only text/show, one strip only (no second bar if #screen and the popup are both open), effect-off static, display only — no pause, HP or timing change. Tap closes the popup (and an open #screen) and returns to the fight. The strip is raised above the popup overlay so it stays visible. */
+const pop=()=>{const m=document.getElementById('menuPop');return !!(m&&m.classList.contains('on'))};
+G.fightHudCover740=()=>!!((G.screen&&G.screen!=='sim')||pop());
+G.fightHudTap740=()=>{const m=document.getElementById('menuPop');if(m&&m.classList.contains('on'))m.classList.remove('on');
+  if(G.screen){if(typeof closeScreen==='function')closeScreen();else if(G.close)G.close()}
+  else if(G.fightHud740)G.fightHud740()};
+const st=document.createElement('style');st.setAttribute('data-r','743');st.textContent='#menuPop.on~#fightHud740,body.fhmenu743 #fightHud740{z-index:41}';
+document.head.appendChild(st);
+const zsync=()=>{const el=G.fightHudEl740||document.getElementById('fightHud740');if(!el)return;const on=pop();if(el._m743!==on){el._m743=on;document.body.classList.toggle('fhmenu743',on)}};
+const os=G.fightHud740;G.fightHud740=function(){const r=os&&os.apply(this,arguments);try{zsync()}catch(_){}return r};
+if(typeof menuGo==='function'){const o=menuGo;menuGo=function(){const r=o.apply(this,arguments);try{G.fightHud740()}catch(_){}return r}}
+const mc=document.getElementById('menuClose');if(mc)mc.addEventListener('click',()=>{try{G.fightHud740()}catch(_){}});
+try{G.fightHud740()}catch(_){}
+G.fightHudMenu743=pop;
 })();
