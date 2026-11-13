@@ -10510,3 +10510,34 @@ const draw=()=>{
 const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);if(!G.screen)try{draw()}catch(_){}return r};
 G.bakPill786=bake;G.szPill786=SZ;G.swPill786=SW;G.colPill786=COL;G.isPill786=isLab;G.aPill786=a;G.pyPill786=PY;G.hPill786=PH;G.t1Pill786=T1;G.t2Pill786=T2;
 })();
+
+;(()=>{/* r787: combat-feel / hit-weight vs 화룡전. Audit: basics already stay light (shake 1.2, no R.hs, no flash). Crits get a 55ms combat hit-stop (R.hs, 350ms cooldown) plus a short render freeze and a 6px random shake, but no directed kick. Skills and 필살기 (드래곤 슬레이브 / 기가 슬레이브) add a large random shake and a short render-only freeze, so they rumble instead of landing with weight. Effect-off (tglite / nofx / fxoff) still lets that shake through and leaves a sliver of flash. Change-only, presentation only: a tiered, directed camera punch and a short render-only freeze on crit / skill / 필살기, so basics stay light. One punch at a time (a heavier tier may replace a lighter one; same or lighter is ignored — no multi-hit stack). Punch life is capped and decays with the already speed-scaled render dt, so ×2 auto play is not slowed. Combat hit-stop (R.hs), damage, HP, C.tick, C.deferHit, rewards and boss presence are untouched. Effect-off: no punch, no shake, no flash. */
+const TIER={crit:1,skill:2,ult:3},AMP=[0,4,7,12],LIFE=[0,.07,.1,.14],VIS=[0,.05,.07,.1],CAP=.14;
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+let tier=0,t=0,life=0,vis=0,pend=0,pendT=0,px=0,py=0;
+const xy=()=>{if(t<=0||life<=0){px=0;py=0;return}const u=t/life,k=u*u;px=0;py=AMP[tier]*k};
+const punch=k=>{if(lite()||!k||k<=tier)return;tier=k;life=LIFE[k];t=life;vis=Math.max(vis,VIS[k]);if(vis>CAP)vis=CAP;xy()};
+const feel=kind=>{if(kind==='ult')punch(3);else if(kind==='skill')punch(2);else if(kind==='crit')punch(1)};
+const step=(dt)=>{if(!(dt>0))return;if(pendT>0){pendT-=dt;if(pendT<=0){pendT=0;pend=0}}if(t>0){t=Math.max(0,t-dt);if(t<=0){t=0;tier=0;px=0;py=0}else xy()}if(vis>0)vis=Math.max(0,vis-dt)};
+const onHit=(crit)=>{if(lite())return;if(R._hk==='d')return;if(pend===3||pend===2)punch(pend);else if(crit)punch(1)};
+{const oh=R.hit,wrap=function(e,d,crit){const r=oh.apply(this,arguments);try{onHit(crit)}catch(_){}return r};R.hit=wrap;if(C.ev&&C.ev.hit===oh)C.ev.hit=wrap}
+{const os=R.spell,sw=function(sp,tg){try{if(sp&&!sp.heal){pend=sp.ult?3:2;pendT=2}}catch(_){}return os.apply(this,arguments)};R.spell=sw;if(C.ev&&C.ev.spell===os)C.ev.spell=sw}
+const hook=L=>{
+  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(!P||!P.translate)return()=>{};
+  const ot=P.translate,ofr=P.fillRect;let first=1;
+  P.translate=function(x,y){if(first){first=0;if(L)return ot.call(this,0,0);return ot.call(this,x+(px||0),y+(py||0))}return ot.apply(this,arguments)};
+  if(L&&ofr)P.fillRect=function(x,y,w,h){if(this.globalCompositeOperation==='lighter'&&w>300&&h>400)return;return ofr.apply(this,arguments)};
+  return()=>{P.translate=ot;if(ofr)P.fillRect=ofr};
+};
+const of=R.frame;R.frame=function(dt){
+  const L=lite();
+  if(L){t=0;tier=0;vis=0;px=0;py=0;if(pendT>0){pendT-=dt||0;if(pendT<=0){pendT=0;pend=0}}}
+  else step(dt||0);
+  const need=L||t>0||vis>0;
+  if(!need)return of.apply(this,arguments);
+  const off=hook(L);
+  try{return of.call(this,(!L&&vis>0)?(dt||0)*.35:(dt||0))}finally{off()}
+};
+G.feel787=feel;G.stepFeel787=step;G.liteFx787=lite;G.xyFeel787=()=>[px,py];G.tierFeel787=()=>tier;G.tFeel787=()=>t;G.ampFeel787=AMP;G.lifeFeel787=LIFE;G.visFeel787=VIS;G.capFeel787=CAP;G.pendFeel787=()=>pend;
+})();
