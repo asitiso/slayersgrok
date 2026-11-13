@@ -9000,3 +9000,7 @@ G.dngMark727=mark;
 const st=document.createElement('style');st.textContent='body:is(.nofx,.tglite,.fxoff) #dangerV.on{animation:none!important;opacity:.7!important}';document.head.appendChild(st);
 if(typeof renderPartyCol==='function'){const op=renderPartyCol;renderPartyCol=function(){const r=op.apply(this,arguments);try{mark()}catch(e){console.warn(e)}return r}}
 })();
+
+;(()=>{/* r728: snappy #screen open, like 화룡전. Menu screens used display:none/block with no enter transition, so a tap into 지도/설정/소환 etc. popped in after the synchronous render with no 100–200ms motion. #screen.on now fades in over 150ms (opacity only, no transform, so fixed-position children stay correct). closeScreen is still immediate (no exit delay, so close-then-open and callers that inspect the DOM stay correct). Effect-off (nofx / tglite) skips the animation and shows the screen at once. Display/feel only — openScreen/closeScreen still set G.screen and fill content in the same turn; menu-icon click-effect (fxring) and economy/HP/stageReq are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','728');st.textContent='html body #screen.on{animation:sc728 .15s ease-out both}body:is(.nofx,.tglite) #screen.on{animation:none!important}@keyframes sc728{from{opacity:0}to{opacity:1}}';document.head.appendChild(st);
+})();
