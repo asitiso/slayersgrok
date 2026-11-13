@@ -997,7 +997,7 @@ Object.assign(SFX,{
  bswing:t=>{whoosh(t,.34,{vol:.16,fq:190,f2:820,q:.8,pk:.6});tone(70,t+.06,.3,{type:'sine',vol:.13,f2:38,att:.02})},
  parry:t=>{noise(t,.04,{vol:.12,fq:5000,q:1.5});tone(1850,t,.06,{type:'square',vol:.05});tone(2650,t,.28,{type:'triangle',vol:.08,f2:2450,att:.002})},
  block:t=>{noise(t,.08,{vol:.15,fq:900,q:1.1});tone(300,t,.11,{type:'triangle',vol:.12,f2:190,att:.002})}});
-G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};
+G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};G._SFX=SFX;G._aud=()=>({ac,sg,nz});
 const CV=new Set(['hit','mhit','crit','skhit','tick','swing','cast','bow','eswing','bswing','hurt','parry','block','kill']),PRI={tick:1,swing:2,cast:2,bow:2,eswing:2,kill:2};let rec=[];
 /* global budget: at most 5 combat voices per 0.12s so big AoE/multi-ally turns do not become a wall of noise; low-priority voices (DoT ticks, swings) drop first */
 const budget=(k,now)=>{if(!CV.has(k))return true;rec=rec.filter(x=>now-x<.12);if(rec.length>=5||(PRI[k]&&rec.length>=3+PRI[k]-1))return false;rec.push(now);return true};
@@ -9003,4 +9003,21 @@ if(typeof renderPartyCol==='function'){const op=renderPartyCol;renderPartyCol=fu
 
 ;(()=>{/* r728: snappy #screen open, like 화룡전. Menu screens used display:none/block with no enter transition, so a tap into 지도/설정/소환 etc. popped in after the synchronous render with no 100–200ms motion. #screen.on now fades in over 150ms (opacity only, no transform, so fixed-position children stay correct). closeScreen is still immediate (no exit delay, so close-then-open and callers that inspect the DOM stay correct). Effect-off (nofx / tglite) skips the animation and shows the screen at once. Display/feel only — openScreen/closeScreen still set G.screen and fill content in the same turn; menu-icon click-effect (fxring) and economy/HP/stageReq are unchanged. */
 const st=document.createElement('style');st.setAttribute('data-r','728');st.textContent='html body #screen.on{animation:sc728 .15s ease-out both}body:is(.nofx,.tglite) #screen.on{animation:none!important}@keyframes sc728{from{opacity:0}to{opacity:1}}';document.head.appendChild(st);
+})();
+
+;(()=>{/* r729: richer layered SFX for the most-heard voices (hit, crit, click, coin, kill). Same keys/hooks, LIM windows, 5-voice combat budget, sg gain/toggles/sliders, and hidden-tab suspend. No audio files. Short-lived nodes disconnect on end. Display/feel only — economy/HP/stageReq unchanged. */
+const aud=()=>G._aud&&G._aud();
+const tone=(f,t0,dur,{type='sine',vol=.3,f2=null,att=.004,dest}={})=>{const a=aud();if(!a||!a.ac)return;const ac=a.ac,sg=dest||a.sg;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(sg);o.start(t0);o.stop(t0+dur+.02);o.onended=()=>{try{o.disconnect();g.disconnect()}catch(_){}}};
+const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null,att=0}={})=>{const a=aud();if(!a||!a.ac||!a.nz)return;const ac=a.ac,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=a.nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);f.Q.value=q;if(att){g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att)}else g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(a.sg);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();g.disconnect()}catch(_){}}};
+const S=G._SFX;if(!S)return;
+/* hit: short filtered-noise transient + low pitched-down body thump + slight high click */
+S.hit=t=>{noise(t,.03,{vol:.22,fq:2600,q:1.1});noise(t,.16,{vol:.26,fq:500,f2:90,q:.7,type:'lowpass'});tone(140,t,.16,{type:'sine',vol:.22,f2:48,att:.002});tone(2400,t,.018,{type:'sine',vol:.08,att:.001})};
+/* crit: brighter impact, metallic inharmonic partials, tiny ringing tail (no square beep) */
+S.crit=t=>{noise(t,.04,{vol:.28,fq:3500,q:.8});noise(t,.2,{vol:.28,fq:900,f2:120,q:.6,type:'lowpass'});tone(90,t,.22,{type:'sine',vol:.26,f2:40,att:.002});tone(1860,t,.09,{type:'triangle',vol:.07,f2:1240,att:.001});tone(2720,t,.07,{type:'sine',vol:.05,f2:1900,att:.001});tone(1480,t+.02,.32,{type:'sine',vol:.04,f2:990,att:.004})};
+/* click: soft wooden/UI tick — filtered noise + short sine, not a square beep */
+S.click=t=>{noise(t,.025,{vol:.08,fq:1800,q:1.4});tone(1200,t,.035,{type:'sine',vol:.05,att:.001,f2:900})};
+/* coin: bright bell, inharmonic partials, fast decay, slight random pitch variance */
+S.coin=t=>{const r=1+(Math.random()-.5)*.04,f=1480*r;tone(f,t,.12,{vol:.08,att:.002});tone(f*2.01,t,.09,{vol:.05,att:.002});tone(f*2.76,t,.07,{vol:.045,att:.002});tone(f*4.07,t,.05,{vol:.03,att:.001});noise(t,.02,{vol:.04,fq:5000,q:1.2})};
+/* kill: short noise puff + pitched-down body + a soft overtone */
+S.kill=t=>{noise(t,.08,{vol:.12,fq:2000,f2:600,q:.9});tone(320,t,.18,{type:'triangle',vol:.14,f2:90,att:.003});tone(640,t,.12,{type:'sine',vol:.05,f2:280,att:.004})};
 })();
