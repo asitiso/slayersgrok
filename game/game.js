@@ -9053,3 +9053,22 @@ const st=document.createElement('style');st.setAttribute('data-r','731');st.text
 '.mapwrap,.wmap,.town,.bscr,#skills,.tdl,.trsel,.bdsel,.skstrip,.stx .stlist{touch-action:pan-x}'
 ].join('');document.head.appendChild(st);
 })();
+
+;(()=>{/* r732: instant press feedback on #screen rows, map nodes, and other tappable chrome, like 화룡전. Existing .press (scale + brightness) was only on menu icons, nav, pills, and buttons, so a tap on a settings row or map node had no visible press before navigation. New surfaces get the same GPU transform/filter press with an 80ms ease-out; wide rows use a lighter scale(.98) so the list does not jump. Menu-icon fxring/fxsp is unchanged (these new surfaces do not spawn a ring). A move of more than 10px cancels the press without the release bounce, so list/map scrolling stays clean. Effect-off (nofx / tglite / fxoff) keeps the static press and skips the transition and release animation, same idea as other press motion. Display/feel only — no economy/HP/stageReq changes. */
+const OLD='.side a,#mgrid a,#nav a,.sk,#autoSp,#idleBtn,.pill,.btn,#bossBtn,.back';
+const MORE='#screen .row,#screen .node,.mapwrap .node,.modal .row,#panel .row,#screen .chip,#screen .tog,#screen .eni,#screen .psl,.wmin .wpin';
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','732');st.textContent=[
+'#screen .row,#screen .node,.mapwrap .node,.modal .row,#panel .row,#screen .chip,#screen .tog,#screen .eni,#screen .psl,.wmin .wpin{transition:transform .08s ease-out,filter .08s ease-out}',
+'#screen .row.press,#panel .row.press,.modal .row.press{transform:scale(.98)!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen .row,body:is(.nofx,.tglite,.fxoff) #screen .node,body:is(.nofx,.tglite,.fxoff) .mapwrap .node,body:is(.nofx,.tglite,.fxoff) .modal .row,body:is(.nofx,.tglite,.fxoff) #panel .row,body:is(.nofx,.tglite,.fxoff) #screen .chip,body:is(.nofx,.tglite,.fxoff) #screen .tog,body:is(.nofx,.tglite,.fxoff) #screen .eni,body:is(.nofx,.tglite,.fxoff) #screen .psl,body:is(.nofx,.tglite,.fxoff) .wmin .wpin{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen .row.rel,body:is(.nofx,.tglite,.fxoff) #screen .node.rel,body:is(.nofx,.tglite,.fxoff) .mapwrap .node.rel,body:is(.nofx,.tglite,.fxoff) .modal .row.rel,body:is(.nofx,.tglite,.fxoff) #panel .row.rel,body:is(.nofx,.tglite,.fxoff) #screen .chip.rel,body:is(.nofx,.tglite,.fxoff) #screen .tog.rel,body:is(.nofx,.tglite,.fxoff) #screen .eni.rel,body:is(.nofx,.tglite,.fxoff) #screen .psl.rel,body:is(.nofx,.tglite,.fxoff) .wmin .wpin.rel{animation:none!important}'
+].join('');document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add('rel');setTimeout(()=>c.classList.remove('rel'),220)}};
+document.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest(OLD))return;const t=e.target.closest&&e.target.closest(MORE);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove('rel');t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressMore732=MORE;
+})();
