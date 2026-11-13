@@ -10954,3 +10954,28 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel806=SEL;G.pressMs806=0;G.pressScale806=.96;G.relMs806=130;G.relPeak806=1.03;
 })();
+;(()=>{/* r807: press snap + tightened release on party roster cards (.rcard) and relic tiles vs 화룡전. Those surfaces had cursor:pointer and no .press / release bounce. Cards are large, so the press uses a lighter scale(.98) so the list does not jump. The relic tile class is .rel, which is also the shared button-release class (style.css .rel{animation:relb 220ms}); adding or removing .rel here would restyle a roster card as a relic tile and would retrigger the 220ms pop on a relic tile after every release. Change-only, presentation only: a dedicated .rls807 release class (never .rel) plays the 130ms bounce (peak 1.03). A more specific rest rule sets animation:none only on #screen .relgrid .rel, so the accidental relb entrance on relic tiles does not play or restart; the global .rel / relb rule for HUD buttons is untouched. pointerdown .press snaps (transition:none). A 10px move cancels without bounce (party/relic lists scroll). Tiles use touch-action:pan-y and do not spawn a menu-icon fxring. Existing click / C.relicUp / party toggle / hold / drag paths stay untouched (listeners stay passive; upgrade pills still use the existing .pill press). Effect-off (nofx / tglite / fxoff) keeps a static press and skips the bounce. No action, layout, or rest-size changes, and no pointerdown action trigger. */
+const SEL='#screen .rcard,#screen .relgrid .rel';
+const RLS='rls807';
+const SKIP=[G.pressSel802,G.pressSel803,G.pressMore732,G.pressSel805,G.pressSel806].filter(s=>typeof s==='string'&&s).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','807');st.id='r807css';
+st.textContent=[
+'#screen .rcard,#screen .relgrid .rel{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body #screen .rcard:is(.press,:active),html body #screen .relgrid .rel:is(.press,:active){transition:none!important;transform:scale(.98)!important;filter:brightness(1.15)!important}',
+'html body #screen .rgrid .rcard:not(.own):is(.press,:active){filter:grayscale(1) brightness(.65)!important}',
+'html body #screen .relgrid .rel:not(.'+RLS+'){animation:none}',
+'@keyframes relb807{0%{transform:scale(.98)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body #screen .rcard.'+RLS+',html body #screen .relgrid .rel.'+RLS+'{animation:relb807 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen .rcard,body:is(.nofx,.tglite,.fxoff) #screen .relgrid .rel{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen .rcard.'+RLS+',body:is(.nofx,.tglite,.fxoff) #screen .relgrid .rel.'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel807=SEL;G.pressMs807=0;G.pressScale807=.98;G.relMs807=130;G.relPeak807=1.03;G.relClass807=RLS;
+})();
