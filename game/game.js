@@ -10295,3 +10295,42 @@ const paint=(cx,c,W,t,a)=>{
 R.elPlq=paint;
 G.bakEl781=bake;G.szEl781=SZ;G.colEl781=COL;G.maxEl781=MAX;G.slEl781=0;G.txtEl781=txtOf;
 })();
+
+;(()=>{/* r782: mid-fight 정예 처치! vs 화룡전. The live stamp is render.js R.ekT (fixed slot y 392, x clamped 90–215, 1.3s life, slotBusy('ek') wait, fade-in 80ms and last 300ms fade). Title was italic 17px flat #ffd84a with a 5px #3a1500 stroke, the reward line 14px, and the whole stamp rose 26px for the full life (so it kept drifting while it faded). Effect-off still played that rise and the 1.6→1 pop. Change-only: same slot, life, trigger, gold-format and 「오브 +3」 wording, slotBusy and elite rules. Title is baked once at 19px italic Maplestory (cream-to-gold, even 5px dark outline); the reward line is baked when the gold key changes, at 15px. Before the blit, the 26px rise is dropped so the stamp holds at y 392 and the existing last 300ms fade plays in place. The brief first 150ms pop stays when effects are on; effect-off / tglite / nofx: no rise and no pop. 정예 출현, BREAK!, elite HP/atk and 4× / orb rewards are untouched. */
+const SZ=19,SUB=15,Y0=392,LIFE=1.3,HOLD=1,COL=['#fff6c8','#ffd84a','#2a0008'],SUBCOL=['#fffbe8','#ffe08a','#2a0008'];
+const fmtG=g=>{g=Math.round(g||0);return g>=1e6?(g/1e6).toFixed(1)+'M':g>=1e3?(g/1e3).toFixed(1)+'K':String(g)};
+const subOf=g=>'+'+fmtG(g)+' G · 오브 +3';
+const cache={};
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+const bake=(txt,sz,italic,col)=>{
+  const key=(italic?'i':'n')+'|'+sz+'|'+txt;
+  if(cache[key]&&cache[key]._782)return cache[key];
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),p=col;
+  const c=document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font=(italic?'italic ':'')+'900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||sz*txt.length*.6,L=w0/2+8,Rr=w0/2+8,T=sz*1.05+8,B=sz*.32+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.globalAlpha=1;
+  X.font=(italic?'italic ':'')+'900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=5;
+  X.strokeStyle=p[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-sz,0,0);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  return cache[key]={c,ox:L,oy:T,w:W2/S,h:H2/S,_782:1};
+};
+const bakeTitle=()=>bake('정예 처치!',SZ,1,COL);
+const bakeSub=g=>bake(subOf(g),SUB,0,SUBCOL);
+const alpha=t=>Math.max(0,Math.min(1,t/.08,(LIFE-t)/.3));
+const pop=(t,fx)=>fx===false||t>=.15?1:1.6-4*t;
+const skipOn=()=>{const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;if(!P||P._s782)return()=>{};const os=P.strokeText,of=P.fillText;P._s782=1;const skip=s=>s==='정예 처치!'||(typeof s==='string'&&s.indexOf('G · 오브 +3')>=0);if(os)P.strokeText=function(s){if(skip(s))return;return os.apply(this,arguments)};if(of)P.fillText=function(s){if(skip(s))return;return of.apply(this,arguments)};return()=>{if(os)P.strokeText=os;if(of)P.fillText=of;P._s782=0}};
+const draw=()=>{
+  const c=R.ekT;if(!c||!(c.t>0)||c.t>=LIFE||G.screen)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const ctx=cv.getContext('2d'),sc=cv.width/(cv.clientWidth||cv.width||1),W=cv.clientWidth||390;
+  const t=c.t,a=alpha(t),fx=!lite(),ps=pop(t,fx),x=Math.min(215,Math.max(90,c.x!=null?c.x:W/2)),y=Y0;
+  const title=bakeTitle(),sub=bakeSub(c.g);
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.globalAlpha=a;ctx.translate(x,y);if(ps!==1)ctx.scale(ps,ps);
+  if(title)ctx.drawImage(title.c,-title.ox,-title.oy,title.w,title.h);
+  if(sub)ctx.drawImage(sub.c,-sub.ox,18-sub.oy,sub.w,sub.h);
+  ctx.restore();ctx.globalAlpha=1;
+};
+const of=R.frame;R.frame=function(dt){const off=skipOn();try{const r=of.apply(this,arguments);try{draw()}catch(_){}return r}finally{off()}};
+G.bakEk782=bakeTitle;G.bakSubEk782=bakeSub;G.szEk782=SZ;G.subEk782=SUB;G.yEk782=Y0;G.lifeEk782=LIFE;G.colEk782=COL;G.fmtEk782=fmtG;G.subTxtEk782=subOf;G.aEk782=alpha;G.popEk782=pop;
+})();
