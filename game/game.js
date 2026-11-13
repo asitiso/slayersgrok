@@ -10043,3 +10043,9 @@ const css='#battle .tdmg small,#battle .tdmg b,#battle .tdm,#battle .tdm .tdv{fo
 const st=document.createElement('style');st.id='r768css';st.textContent=css;document.head.appendChild(st);
 G.tdCss768=css;
 })();
+;(()=>{/* r769: mid-fight skill-total .tdmg hold vs 화룡전. r768 already restyled the number; effect-off is already static. With effects on, tdIn still drifted up from 78% (translate Y -50%→-56%→-75%) and faded over the last ~350ms of the 1.6s life. Change-only: same 1.6s animation / 1.65s remove, same 185×318 slot and .tdlo drop, same 260ms settle and 2-target rule, same initial pop (0–26%). After the pop it holds in-slot at opacity 1 until 84.375% (250ms before the end), then a 250ms fade with no drift. No layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='@keyframes tdIn769{0%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}12%{opacity:1;transform:translate(-50%,-50%) scale(.94)}20%{transform:translate(-50%,-50%) scale(1.04)}26%{transform:translate(-50%,-50%) scale(1)}84.375%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}'
++'#battle .tdmg{animation:tdIn769 1.6s ease-out forwards}';
+const st=document.createElement('style');st.id='r769css';st.textContent=css;document.head.appendChild(st);
+G.tdCss769=css;
+})();
