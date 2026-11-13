@@ -52,7 +52,7 @@ More reference facts (BlueStacks guides, the LDCloud guide and the BlueStacks ap
 | Bright grass field in early stages | `bg_field2.jpg` is the default; the dark ruins field is used from chapter 3 and in boss fights |
 
 ## v6
-- Each stage gets a bright quarter-view field (`D.FIELDS`). Chapter 1: meadow, town, autumn. Chapter 2: beach, desert, autumn. Chapter 3: snow, town, desert. On a stage change the field crossfades over about 0.8s and a stage-name banner appears. Bosses keep the stage's field with a red edge vignette; the dark ruins field is no longer used by default.
+- Each stage gets a bright quarter-view field (`D.FIELDS`). Chapter 1: meadow, town, autumn. Chapter 2: beach, desert, autumn. Chapter 3: snow, town, desert. On a stage change the field crossfades over about 0.2s (r755; was ~0.8s) and a stage-name banner appears. Bosses keep the stage's field with a red edge vignette; the dark ruins field is no longer used by default.
 - All remaining square-tile icons are replaced with painted icons (`ic_equip`, `ic_relic`, `ic_speed`, `ic_chest`, `ic_explore`, `ic_orb`, `ic_settings`, `ic_chat`). Old `.btn` buttons are restyled as 화룡전-style pills (green, blue, red).
 - 탐험 (expeditions): pick a companion and send it on a 30m / 2h / 8h trip. A progress bar shows while it's away, then 받기 gives gold, gems and Bible fragments. Sent companions still fight.
 - Faction counters: the HUD shows a 상성 우세/보통/열세 tag next to 자동, and the 편성 screen shows the counter cycle.
@@ -521,4 +521,10 @@ Same gap as r694, on the return popup. When you reopen the game, 어서 오세�
 - 화룡전 영지 아이콘은 수확할 건물이 있으면 숫자 뱃지가 분명하다. 여기 아래 영지 탭(#navbase)과 영지 쪽 아이콘(#sidebase)에도 빨간 뱃지(.dot)가 켜지지만, 알맹이 없이 펄럭이기만 해서 금고와 광산 중 몇 곳이 준비됐는지는 영지를 열어야 알았다.
 - 이제 같은 뱃지에 수확 준비가 된 건물 수(기존과 같은 규칙: 금고·광산의 보관량이 한도의 절반 이상, acc ≥ 시간당 생산×보관시간×0.5)를 MapleStory 글씨로 보여 준다. 0개이면 뱃지를 숨기고, 1개 이상이면 밝게 켠다. 글자와 표시는 바뀔 때만 바꾼다. 이펙트 끄기에서는 숫자와 뱃지는 남기고 흔들림은 없다. 아이콘 크기와 자리는 그대로다.
 - 수확량, 보관 한도, 생산 속도, 업그레이드 규칙은 그대로다.
+- 소모·저장 규칙·HP·권장 전투력·전투 타이밍 없음 (표시만).
+
+## r755 스테이지 필드 전환 약 0.2초
+- 화룡전은 스테이지가 바뀔 때 배경이 약 100–200ms로 짧게 바뀐다. 여기 필드 교차 페이드(R.fade, 초당 1.2)는 약 0.8초라 다음 스테이지로 넘어가는 느낌이 길었다.
+- 이제 같은 페이드가 약 0.2초(초당 5)로 끝난다. R.fade를 기다리는 적 출현·입력·웨이브·자동 진행은 없어서, 보이는 속도만 바뀐다. 이펙트 끄기에서는 페이드 없이 바로 새 필드가 보인다. 스테이지 이름 배너는 그대로다.
+- 전투 타이밍, HP, 보상, 스테이지 진행 규칙은 그대로다. 던전·탑 CLEAR/실패 카드가 닫히기 전 대기(0.9–1.1초)는 이번이 아니다.
 - 소모·저장 규칙·HP·권장 전투력·전투 타이밍 없음 (표시만).

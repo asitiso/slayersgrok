@@ -9610,3 +9610,19 @@ const on=typeof renderNav==='function'?renderNav:null;if(on)renderNav=function()
 try{mark()}catch(_){}
 G.baseCnt754=cnt;G.baseBadge754=mark;
 })();
+
+;(()=>{/* r755: shorten the stage-change field crossfade to ~200ms (150–250ms range), like 화룡전. R.fade used to advance at dt*1.2 (~833ms, the v6 ~0.8s note). Nothing else gates on R.fade (no spawn, input, wave start, or auto-progress), so only the visual rate changes. Combat tick still uses its own dt. Effect-off (nofx / tglite / fxoff / R.opt.fx===false) snaps the field on at once. Display only — HP, rewards, and stage pacing are untouched. The 던전/탑 CLEAR/fail card holds are left for a later fix. */
+const OLD=1.2,RATE=5,SEC=1/RATE;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const of=typeof R!=='undefined'&&R.frame;if(typeof of!=='function')return;
+R.frame=function(dt){
+  const f0=R.fade,b0=R.bgn;
+  const r=of.apply(this,arguments);
+  try{
+    if(off()){if(R.fade!==1)R.fade=1}
+    else if(R.prevBg&&R.bgn!==b0){R.fade=Math.min(1,(R.fade<1?R.fade*(RATE/OLD):1))}
+    else if((f0??1)<1){const inn=R.fade;R.fade=inn>=1?1:Math.min(1,f0+(inn-f0)*(RATE/OLD))}
+  }catch(_){}
+  return r};
+G.fadeRate755=RATE;G.fadeSec755=SEC;G.fadeOld755=OLD;
+})();
