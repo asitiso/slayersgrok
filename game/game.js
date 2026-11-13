@@ -346,7 +346,7 @@ let ov=null;const ensure=()=>{if(ov)return ov;ov=document.createElement('div');o
 G.tutTick=()=>{const s=C.S();if(s.tut==null)s.tut=(s.kills||0)>150?99:0;if(s.tut>=ST.length){if(ov)ov.style.display='none';return}
  const st=ST[s.tut];if(!s.tutG||s.tutG<=s.tut){st.gift(s);s.tutG=s.tut+1}
  if(st.done(s)){s.tut++;if(ov)ov.style.display='none';if(s.tut>=ST.length){s.gems+=100;setTimeout(()=>rewardPop([['it2_gem.png',100,'보석']],'신입 마도사 가이드 완료!'),400)}else toast('가이드 '+s.tut+'/'+ST.length+' 완료!');return}
- if(document.querySelector('.rwpop,.vic:not(.out),.bwarn,.chap,#sumModal')||document.body.classList.contains('cutin')||document.body.classList.contains('wbon')){if(ov)ov.style.display='none';return}
+ if(document.querySelector('.rwpop,.vic:not(.out),.bwarn:not(.out),.chap,#sumModal')||document.body.classList.contains('cutin')||document.body.classList.contains('wbon')){if(ov)ov.style.display='none';return}
  let r=null,tx='';for(const [sel,t] of st.tg){r=vis(document.querySelector(sel));if(r){tx=t;break}}
  const o=ensure();if(!r){o.style.display='none';return}o.style.display='';const up=r.top>innerHeight*.55,a=o.querySelector('.tarr'),bb=o.querySelector('.tbub'),rg=o.querySelector('.tring');
  const ax=r.left+r.width/2;a.textContent=up?'▼':'▲';a.style.left=ax+'px';a.style.top=(up?r.top-30:r.bottom+2)+'px';rg.style.cssText=`left:${r.left-4}px;top:${r.top-4}px;width:${r.width+8}px;height:${r.height+8}px`;
@@ -807,7 +807,7 @@ const ok=C.ev.kill;C.ev.kill=(e,...a)=>{try{const q=R._ES().get(e),b=document.ge
 G.ultN=0;G._grogT=0;const FX=[];
 const og=C.ev.grog;C.ev.grog=(e,...a)=>{if(e&&e.boss)G._grogT=performance.now();return og(e,...a)};
 const ocs=R.csk;R.csk=(k,s,force)=>{if(force)return ocs(k,s,force);const cc=R.ccCd;R.ccCd=99;const r=ocs(k,s,force);R.ccCd=cc;return r};
-const busy=()=>R.slowT>0||(R.elT&&R.elT.t<1.6)||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT<1600||C.alive().some(e=>e.boss&&e.grog>0)||(R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||document.querySelector('.bwarn,.combo,.enrb,.vic,.chap');
+const busy=()=>R.slowT>0||(R.elT&&R.elT.t<1.6)||(R.bossT!=null&&R.bossT<2)||performance.now()-G._grogT<1600||C.alive().some(e=>e.boss&&e.grog>0)||(R.ccut&&R.ccut.t<1)||(R.cut&&R.cut.t<1.25)||document.querySelector('.bwarn:not(.out),.combo,.enrb,.vic,.chap');
 const ot=C.tick;C.tick=dt=>{const r=ot(dt);try{const B=C.B;if(!B||!B.allies)return r;const pp=document.querySelectorAll('#partycol .pp');let fired=0;
  B.allies.forEach((a,i)=>{const el=pp[i];if(el&&!el.querySelector('.ugb'))el.insertAdjacentHTML('beforeend','<div class=ugb><i></i></div>');
   if(!a.c||a.hp<=0||!(D.CSKI||{})[a.k])return;a._ug=Math.min(1,(a._ug||0)+dt/(a.c.healer?11:9));if(el){/* r369 perf: 1/50 steps (the bar has a .25s linear transform transition, so it still glides); string only built on change */const uq=Math.round(a._ug*50);if(!el._ugi||!el._ugi.isConnected){el._ugi=el.querySelector('.ugb i');el._ugq=-1}if(el._ugi&&el._ugq!==uq){el._ugq=uq;/* r369 perf: the write is deferred to after the canvas frame (G._post) so the frame's first canvas font set doesn't force a style recalc */let U=G._UGP;if(!U){U=G._UGP=[];(G._post=G._post||[]).push(()=>{for(let i=0;i<U.length;i++){const e2=U[i];e2._ugp=0;if(e2._ugi)e2._ugi.style.transform='scaleX('+(e2._ugq/50)+')'}U.length=0})}if(!el._ugp){el._ugp=1;U.push(el)}};el.classList.toggle('ugf',a._ug>=1)}
@@ -1690,9 +1690,9 @@ const css=document.createElement('style');css.textContent=`.bdsay{position:absol
 @keyframes bdsy{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.05)}20%{transform:translate(-50%,-100%) scale(1)}82%{opacity:1}100%{opacity:0;transform:translate(-50%,-112%)}}`;document.head.appendChild(css);
 let nx=performance.now()+9000,cur=null;
 const lv=k=>{const x=((C.S().bond||{}).x||{})[k]||0;return [0,30,80,160,280,450].filter(t=>x>=t).length-1};
-G._bdSay=k=>{const bt=document.querySelector('#battle');if(!bt||G.screen||G._fin||document.querySelector('.vic,.bsht,.bwarn,.bossin'))return 0;const al=C.aliveAllies().filter(a=>a.k!='lina'&&LN2[a.k]&&(k?a.k==k:lv(a.k)>=1));if(!al.length)return 0;const a=al[Math.floor(Math.random()*al.length)],s=R._AS().get(a.k);if(!s)return 0;
+G._bdSay=k=>{const bt=document.querySelector('#battle');if(!bt||G.screen||G._fin||document.querySelector('.vic,.bsht,.bwarn:not(.out),.bossin'))return 0;const al=C.aliveAllies().filter(a=>a.k!='lina'&&LN2[a.k]&&(k?a.k==k:lv(a.k)>=1));if(!al.length)return 0;const a=al[Math.floor(Math.random()*al.length)],s=R._AS().get(a.k);if(!s)return 0;
  if(cur)cur.el.remove();const L=LN2[a.k],l=lv(a.k);const el=document.createElement('div');el.className='bdsay';el.innerHTML=`<i>♥${Math.max(1,l)}</i>${L[Math.floor(Math.random()*Math.min(L.length,1+l))]}`;bt.appendChild(el);cur={el,k:a.k,t:performance.now()};return 1};
-const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{const n=performance.now();if(cur){const s=R._AS().get(cur.k);if(!s||n-cur.t>2800){cur.el.remove();cur=null}else if(document.querySelector('.vic,.bsht,.bwarn')||G._fin){cur.el.remove();cur=null}else{const w=cur.el.offsetWidth||80,L=Math.max(70+w/2,Math.min(296-w/2,s.x));cur.el.style.left=L+'px';cur.el.style.setProperty('--tl',Math.max(8,Math.min(w-8,s.x-L+w/2))+'px');cur.el.style.top=(s.y-114)+'px'}}
+const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{const n=performance.now();if(cur){const s=R._AS().get(cur.k);if(!s||n-cur.t>2800){cur.el.remove();cur=null}else if(document.querySelector('.vic,.bsht,.bwarn:not(.out)')||G._fin){cur.el.remove();cur=null}else{const w=cur.el.offsetWidth||80,L=Math.max(70+w/2,Math.min(296-w/2,s.x));cur.el.style.left=L+'px';cur.el.style.setProperty('--tl',Math.max(8,Math.min(w-8,s.x-L+w/2))+'px');cur.el.style.top=(s.y-114)+'px'}}
  if(n>nx){nx=n+14000+Math.random()*10000;G._bdSay()}}catch(_){}return r};
 })();
 
@@ -3301,7 +3301,7 @@ const of=R.frame;R.frame=function(){const r=of.apply(this,arguments);try{if(cur&
 new Image().src=A+'achv_plate.png';
 const q=[];let cur=null,busy=0,endT=0,seen=null;const HOLD=2000;
 const bat=()=>document.getElementById('battle');
-const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd,.vic,.bsht,.bwarn');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .lcd,.vic,.bsht,.bwarn:not(.out)');
 const list=()=>{const o=[];D.ACH.forEach(a=>{const v=C.achVal(a.k);a.g.forEach((g,i)=>{if(v>=g)o.push({id:'a'+a.k+i,t:'업적 달성',h:a.n+' '+(i+1)+'단계',gem:a.gem[i],tk:a.t&&a.t[i],sto:a.st&&a.st[i]})})});C.titlesOwned().forEach(t=>o.push({id:'t'+t.k,t:'칭호 획득',h:'「'+t.n+'」',rw:'공격력 +'+t.atk+'%'+(t.gold?' · 골드 +'+t.gold+'%':'')}));return o};
 const fin=()=>{const d=cur;if(!d)return;if(R._acHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
 const show=it=>{const b=bat();if(!b){busy=0;return}const rw=it.rw||[it.gem?`<img src="${A}it2_gem.png">${it.gem}`:'',it.tk?`<img src="${A}it2_ticket.png">소환권 ${it.tk}`:'',it.sto?'강화석 '+it.sto:''].filter(Boolean).join(' ');
@@ -3334,7 +3334,7 @@ new Image().src=A+'loot_card.png';
 const q=[];let cur=null,busy=0,endT=0;const HOLD=1800;
 const bat=()=>document.getElementById('battle');
 const away=()=>G.screen||G.storyOn||(G.tab&&G.tab!='battle');
-const blk=()=>!!document.querySelector('#battle .combo,#battle .acp,.vic,.bsht,.bwarn');
+const blk=()=>!!document.querySelector('#battle .combo,#battle .acp,.vic,.bsht,.bwarn:not(.out)');
 const fin=()=>{const d=cur;if(!d)return;if(R._lcHold){endT=setTimeout(fin,100);return}d.classList.add('out');setTimeout(()=>{d.remove();if(cur===d){cur=null;busy=0;pump()}},420)};
 const show=it=>{const b=bat();if(!b){busy=0;return}const rr=D.RAR[it.r]||{},sl=D.SLOTS.find(x=>x.k==it.slot)||{};
  const d=document.createElement('div');d.className='lcd r'+it.r;d.style.setProperty('--rc',rr.c||'#b07cff');d.innerHTML=`<div class=in><img class=fr src="${A}loot_card.png" alt=""><span class=wn></span><img class=ic src="${A}${sl.img}" alt="" style="${sl.f?'filter:'+sl.f+' drop-shadow(0 0 4px '+rr.c+')':''}"><div class=lb>${rr.n} 장비 획득</div><div class=nm></div>${it.more?`<div class=mo>외 ${it.more}건</div>`:''}</div>`;d.querySelector('.nm').textContent=it.name;
@@ -9704,4 +9704,48 @@ if(root){
   wrap(root,'appendChild');wrap(root,'insertBefore');
   root.querySelectorAll('.vic,.chap').forEach(arm)}
 G.outMs757=DUR;G.armOut757=arm;
+})();
+
+;(()=>{/* r758: keep the boss WARNING at 1.5s, but stop its 400ms out (bw2: 380ms) from blocking auto-skills and other pumps. .bwarn is already pointer-events:none (HUD/input were fine). Remaining busy checks used bare .bwarn, so companion ult auto-fire, the tutorial overlay, achievement/loot-card pumps and ally speech stayed blocked until the node was removed at 1.9s. Those checks now use .bwarn:not(.out), so they lift when the warning starts to leave. The out fade is 250ms; effect-off (nofx / tglite / fxoff / R.opt.fx===false / .lite) removes the node instantly. Hit-stop (R.hs .25), cut-in cooldown (R.ccCd 2.5), boss spawn and combat timing are untouched. The r517 landing-dust wait still looks for a live .bwarn node so the puff waits until the fade is gone. */
+const DUR=250;
+const off=el=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)||(el&&el.classList&&el.classList.contains('lite'));
+const st=document.createElement('style');st.id='r758css';st.textContent=
+'html body .bwarn.out{animation:bwout .25s both}'+
+'html body .bwarn.bw2.out{animation:bw2o .25s ease-in both}'+
+'body:is(.nofx,.tglite,.fxoff) .bwarn.out,html body .bwarn.lite.out{animation:none!important;opacity:0}';
+document.head.appendChild(st);
+const finish=el=>{try{if(el&&el.isConnected)el.remove()}catch(_){}};
+const startOut=el=>{
+  if(!el||el._r758out)return;el._r758out=1;
+  clearTimeout(el._t758);
+  if(off(el)){finish(el);return}
+  el._t758=setTimeout(()=>finish(el),DUR);
+};
+const cancelOut=el=>{
+  if(!el||!el._r758out)return;
+  clearTimeout(el._t758);el._t758=0;el._r758out=0;
+};
+const arm=el=>{
+  if(!el||!el.classList||el._r758)return;el._r758=1;
+  const cl=el.classList,oa=cl.add,or=cl.remove;
+  cl.add=function(){const r=oa.apply(this,arguments);try{if(cl.contains('out'))startOut(el)}catch(_){}return r};
+  cl.remove=function(){const r=or.apply(this,arguments);try{if(!cl.contains('out'))cancelOut(el)}catch(_){}return r};
+  if(cl.contains('out'))startOut(el);
+};
+const mo=new MutationObserver(ms=>{
+  for(const x of ms){
+    for(const n of x.addedNodes){
+      if(n.nodeType===1&&n.classList&&n.classList.contains('bwarn'))arm(n);
+    }
+  }
+});
+const root=document.body;
+if(root){
+  mo.observe(root,{childList:true});
+  const wrap=(obj,k)=>{if(!obj||typeof obj[k]!=='function'||obj[k]._r758)return;const o=obj[k].bind(obj);
+    const f=function(n){const r=o.apply(this,arguments);try{if(n&&n.classList&&n.classList.contains('bwarn'))arm(n)}catch(_){}return r};
+    f._r758=1;obj[k]=f};
+  wrap(root,'appendChild');wrap(root,'insertBefore');
+  root.querySelectorAll('.bwarn').forEach(arm)}
+G.outMs758=DUR;G.armOut758=arm;
 })();
