@@ -10367,3 +10367,56 @@ const hook=(ctx0)=>{
 };
 G.hookBrk783=hook;G.liteBrk783=lite;G.psBrk783=ps;G.aBrk783=alpha;G.lifeBrk783=LIFE;
 })();
+
+;(()=>{/* r784: mid-fight 기술 저지! / 저항! LB labels vs 화룡전. These are the v23 LB canvas labels (not r780's 회피! / 공격 저지!, and not warn names 대지 강타 / 맹렬한 돌진). Live draw is 15px Maplestory in a 116×21 plate, 저항! in #ffd25a and 기술 저지! in pale #9ef, a 4px #200 stroke, a 4px ease rise over the 1.1s life, a 150ms 0.6→1 pop, and a fade from t=0.8 (300ms). Effect-off still played the rise and pop, and each frame re-stroked the glyphs. Change-only: same spawn (stun during e.eskW), same 1.1s life, same plate slot (x clamp 80–300, y = enemy s.y+30), same follow-the-enemy. Warn labels, the red foot ellipse, fireMv, the 50% 저항 chance and e.eskW timing are untouched. Each string is baked once at 16px (fits the 21px plate; 기술 저지! brighter cyan, 저항! cream-gold, even 4px dark outline) and blitted; no per-frame reshape. The 4px rise is dropped so the label holds in-slot and fades in place over the last 250ms. The brief first 150ms pop stays when effects are on; effect-off / tglite / nofx: no rise and no pop. */
+const SZ=16,LIFE=1.1,HOLD=.85,LAB={'기술 저지!':['#ffffff','#8ae0ff','#0a1a30'],'저항!':['#fffbe8','#ffd24a','#1a1200']};
+const isLab=s=>!!LAB[s];
+const ease=t=>1-Math.pow(1-t,3);
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+const alpha=t=>t>HOLD?(LIFE-t)/(LIFE-HOLD):1;
+const pop=(t,fx)=>!fx||t>=.15?1:.6+.4*(t/.15);
+const cache={};
+const bake=txt=>{
+  if(!isLab(txt))return null;
+  if(cache[txt]&&cache[txt]._784)return cache[txt];
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),sz=SZ,p=LAB[txt];
+  const c=document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||sz*txt.length*.6,L=w0/2+8,Rr=w0/2+8,T=sz*1.05+8,B=sz*.32+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.globalAlpha=1;
+  X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=4;
+  X.strokeStyle=p[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-sz,0,0);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  return cache[txt]={c,ox:L,oy:T,w:W2/S,h:H2/S,_784:1};
+};
+const mine=[];
+const ap=Array.prototype.push;
+Array.prototype.push=function(v){if(v&&LAB[v.txt]&&v.e&&!v.warn&&!v._i784){v._i784=1;mine.push(v)}return ap.apply(this,arguments)};
+const hook=()=>{
+  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(!P||P._s784)return()=>{};
+  const ot=P.translate,os=P.strokeText,of=P.fillText;if(!ot||!os)return()=>{};
+  P._s784=1;
+  P.translate=function(x,y){if(mine.length&&typeof x==='number'){for(let i=0;i<mine.length;i++){const l=mine[i],s=l&&l.e&&R._ES&&R._ES().get(l.e);if(!s||l.t>LIFE)continue;const xx=Math.min(300,Math.max(80,s.x)),yr=s.y+30+ease(Math.min(1,l.t))*4;if(Math.abs(x-xx)<.8&&Math.abs(y-yr)<.8)return ot.call(this,x,s.y+30)}}return ot.apply(this,arguments)};
+  const skip=s=>isLab(s);if(os)P.strokeText=function(s){if(skip(s))return;return os.apply(this,arguments)};if(of)P.fillText=function(s){if(skip(s))return;return of.apply(this,arguments)};
+  return()=>{P.translate=ot;if(os)P.strokeText=os;if(of)P.fillText=of;P._s784=0};
+};
+const draw=()=>{
+  if(!mine.length||G.screen)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const ctx=cv.getContext('2d'),sc=cv.width/(cv.clientWidth||cv.width||1),fx=!lite();
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.textAlign='center';
+  for(let i=mine.length-1;i>=0;i--){
+    const l=mine[i],s=l&&l.e&&R._ES&&R._ES().get(l.e);
+    if(!l||l.t>LIFE||!s||l.e.hp<=0){mine.splice(i,1);continue}
+    const spr=bake(l.txt);if(!spr)continue;
+    const x=Math.min(300,Math.max(80,s.x)),y=s.y+30,a=Math.max(0,alpha(l.t)),ps=pop(l.t,fx);
+    ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);if(ps!==1)ctx.scale(ps,ps);
+    ctx.drawImage(spr.c,-spr.ox,-spr.oy,spr.w,spr.h);
+    ctx.restore();
+  }
+  ctx.restore();ctx.globalAlpha=1;
+};
+const of=R.frame;R.frame=function(dt){if(!mine.length)return of.apply(this,arguments);const off=hook();try{const r=of.apply(this,arguments);try{draw()}catch(_){}return r}finally{off()}};
+G.bakLb784=bake;G.szLb784=SZ;G.colLb784=LAB;G.isLb784=isLab;G.aLb784=alpha;G.popLb784=pop;G.lifeLb784=LIFE;G.holdLb784=HOLD;G.riseLb784=0;
+})();
