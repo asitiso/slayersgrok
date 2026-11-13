@@ -11005,3 +11005,32 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel808=SEL;G.pressMs808=0;G.pressScale808=.97;G.pressScaleFs808=.98;G.relMs808=130;G.relPeak808=1.03;G.relClass808=RLS;
 })();
+;(()=>{/* r809: press snap + tightened release on shop item tiles (.dcell, .shc2, .frsi) and dungeon gate cards (.dgcard, .dgfr) vs 화룡전. Those surfaces had no pointerdown press (shop buys live on nested .btn / [data-b]; dungeon cards only have .on lift / a border :active). Change-only, presentation only: pointerdown .press snaps (transition:none; scale(.97) on shop tiles, lighter scale(.98) on the larger gate cards; selected .dgcard keeps translateY(-2px)). Release uses a dedicated .rls809 class (never .rel) for the 130ms bounce (peak 1.03). A 10px move cancels without bounce (shop/dungeon lists scroll). Listeners stay passive with no preventDefault / stopPropagation, and nested .btn/.pill still use the existing button press, so click purchase, confirm dialogs, prices, and gacha pull logic stay on their existing click paths. Gacha result cards are left unchanged (flip/detail path stays as-is). Tiles use touch-action:pan-y and do not spawn a menu-icon fxring. Effect-off (nofx / tglite / fxoff) keeps a static press and skips the bounce. No action, layout, rest-size, or pointerdown action changes. */
+const SEL='#screen .dcell,#screen .shc2,#screen .frsi,#screen .dgcard,#screen .dgfr';
+const RLS='rls809';
+const SKIP=[G.pressSel802,G.pressSel803,G.pressMore732,G.pressSel805,G.pressSel806,G.pressSel807,G.pressSel808].filter(s=>typeof s==='string'&&s).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','809');st.id='r809css';
+st.textContent=[
+'#screen .dcell,#screen .shc2,#screen .frsi,#screen .dgcard,#screen .dgfr{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body #screen :is(.dcell,.shc2,.frsi):is(.press,:active){transition:none!important;transform:scale(.97)!important;filter:brightness(1.15)!important}',
+'html body #screen :is(.dgcard,.dgfr):is(.press,:active){transition:none!important;transform:scale(.98)!important;filter:brightness(1.15)!important}',
+'html body #screen .dgcard.on:is(.press,:active){transform:translateY(-2px) scale(.98)!important}',
+'@keyframes relb809sh{0%{transform:scale(.97)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'@keyframes relb809dg{0%{transform:scale(.98)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'@keyframes relb809dgon{0%{transform:translateY(-2px) scale(.98)}55%{transform:translateY(-2px) scale(1.03)}100%{transform:translateY(-2px)}}',
+'html body #screen :is(.dcell,.shc2,.frsi).'+RLS+'{animation:relb809sh 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body #screen :is(.dgcard,.dgfr).'+RLS+'{animation:relb809dg 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body #screen .dgcard.on.'+RLS+'{animation:relb809dgon 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen :is(.dcell,.shc2,.frsi,.dgcard,.dgfr){transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen :is(.dcell,.shc2,.frsi,.dgcard,.dgfr).'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel809=SEL;G.pressMs809=0;G.pressScale809=.97;G.pressScaleDg809=.98;G.relMs809=130;G.relPeak809=1.03;G.relClass809=RLS;
+})();
