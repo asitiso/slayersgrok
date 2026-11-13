@@ -10112,3 +10112,13 @@ const css='html body #battle .fevban b{font:900 italic 40px Maplestory,sans-seri
 const st=document.createElement('style');st.id='r775css';st.textContent=css;document.head.appendChild(st);
 G.fvCss775=css;
 })();
+
+;(()=>{/* r776: mid-fight 광폭화 .enrb callout vs 화룡전. The stamp already holds in-slot and fades in place over the last 20% of its 1.4s life, but the 40px red type only has a one-sided 3px drop shadow (0 3px 0 #3a0000) so it washes out on a busy field, and effect-off still plays the scale pop. Change-only: same top 362px slot, same 1.4s life / 1400ms remove, same 50% boss trigger, e.enr, spd/atk mul, hit-stop, grog/cut-in wait, centre-lane queue, and r547 광폭 chip / boss presence. 40px Maplestory kept (광폭화! ≈114px, well inside 390). Even 2.5px #3a0000 outline replaces the one-sided drop; subtitle 12px→14px Maplestory with a 1.2px stroke. Effects-on motion is unchanged. Effect-off / tglite: static in-slot for the same 1.4s (step-end, so the centre-lane queue still reads 1.4s); .bgone can still hide it. No layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='html body #battle .enrb b{font:italic 900 40px Maplestory,sans-serif!important;color:#ff5a3a;-webkit-text-stroke:2.5px #3a0000;paint-order:stroke fill;text-shadow:2px 2px 0 #1a0000,-2px -2px 0 #1a0000,2px -2px 0 #1a0000,-2px 2px 0 #1a0000,0 0 16px #ff2a00}'
++'html body #battle .enrb small{font:900 14px Maplestory,"Noto Sans KR",sans-serif!important;color:#ffd0c0;-webkit-text-stroke:1.2px #3a0000;paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 4px #000}'
++'@keyframes enrS776{0%{opacity:1;transform:none}100%{opacity:0;transform:none}}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .enrb{animation:enrS776 1.4s step-end both!important}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .enrb.bgone{animation:none!important;opacity:0!important;transform:none!important}';
+const st=document.createElement('style');st.id='r776css';st.textContent=css;document.head.appendChild(st);
+G.enCss776=css;
+})();
