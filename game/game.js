@@ -10122,3 +10122,14 @@ const css='html body #battle .enrb b{font:italic 900 40px Maplestory,sans-serif!
 const st=document.createElement('style');st.id='r776css';st.textContent=css;document.head.appendChild(st);
 G.enCss776=css;
 })();
+
+;(()=>{/* r777: mid-fight 격파! .bsht stamp vs 화룡전. The live stamp is v206 .bsht.ko2 (ko_stamp.png, 230×166 on the boss spot, node removed at 1700ms). ko2A already holds in-slot and fades in place (no late drift), so effects-on motion is left alone. 「격파!」 already has a 5px even stroke, but the extra outline is a one-sided 3px drop-shadow, the boss-name line is 11px with only a soft shadow, and effect-off (.lite / tglite / nofx) still waits 0.25s then plays ko2A + a bwin fade instead of sitting still. Change-only: same 1700ms life, same boss-kill trigger (e.boss && !e.wb), same slot clamps (x 140–250, y 222–470), same G._koT / mutex / chapter-card wait, same ko_stamp art, same 40px / 11px sizes (격파! ≈90px, longest name ≈142px, inside the 230×166 plate and the 390 app). Even 5px #5a0008 outline on the title (no one-sided drop); 1.2px stroke on the name. Effect-off / tglite / .lite: static in-slot for the same 1.7s (step-end, shards/flash stay hidden); .bgone can still hide it. No layout jump, no new sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='html body #battle .bsht.ko2 .kt b{font:900 40px/1 Maplestory,"Noto Sans KR",sans-serif!important;color:#fff;letter-spacing:2px;-webkit-text-stroke:5px #5a0008;paint-order:stroke fill;text-shadow:2px 2px 0 #3a0004,-2px -2px 0 #3a0004,2px -2px 0 #3a0004,-2px 2px 0 #3a0004;filter:none}'
++'html body #battle .bsht.ko2 .kt small{font:900 11px Maplestory,"Noto Sans KR",sans-serif!important;color:#ffe9b0;-webkit-text-stroke:1.2px #5a0008;paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 3px #5a0008}'
++'@keyframes ko2S777{0%{opacity:1}100%{opacity:0}}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .bsht.ko2,html body #battle .bsht.ko2.lite{animation:ko2S777 1.7s step-end both!important}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .bsht.ko2 .kb,html body #battle .bsht.ko2.lite .kb{animation:none!important;opacity:1!important;transform:none!important}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .bsht.ko2.bgone,html body #battle .bsht.ko2.lite.bgone{animation:none!important;opacity:0!important}';
+const st=document.createElement('style');st.id='r777css';st.textContent=css;document.head.appendChild(st);
+G.koCss777=css;
+})();
