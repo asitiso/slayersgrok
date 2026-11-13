@@ -9971,3 +9971,31 @@ const hook=k=>{if(k==='units')try{paint()}catch(_){}if(typeof prev==='function')
 Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){prev=fn}});
 G.hpCol765=colOf;G.hpBand765=band;G.paintHp765=paint;
 })();
+
+;(()=>{/* r766: mid-fight field enemy HP bars vs 화룡전. Regular mob ebar450 bars (46×6, lag chip, dim at full HP, skipped for untouched swarm mobs) already exist and bosses/elites stay on their own UI (boss stage bar; elite 56px gold + 정예 name). The regular fill was always #d0261c, so a nearly-dead mob did not read differently from a fresh one except by width. Change-only: after the existing bar is drawn (R._pm 'units', after the r765 ally tint), the same fill + 2px highlight is retinted when HP is ≤50% (hot orange-red) or ≤30% (bright critical red). Color pairs are cached. The hook is an accessor so R.frame's per-frame R._pm=null (or the PROF timer) cannot drop it. Healthy (default red, >50%) bars are not redrawn. Elites keep their gold bar; bosses are not given a field bar. No layout jump, no sprite overlay. HP, combat and rewards are unchanged. Effect-off keeps the static tint. */
+const W=46,H=6,UH=80;
+const RED=['#d0261c','#ff9a86'],HOT=['#ff6a20','#ffc078'],CRIT=['#ff2040','#ffe0a8'];
+const band=r=>r>.5?'g':r>.3?'y':'r';
+const colOf=r=>r>.5?RED:r>.3?HOT:CRIT;
+const paint=()=>{
+  const ens=C.B&&C.B.enemies;if(!ens||!ens.length)return;
+  const ES=R._ES&&R._ES();if(!ES)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const cx=cv.getContext('2d');
+  for(let i=0;i<ens.length;i++){
+    const e=ens[i];if(!e||e.boss||e.el||e.hp<=0||!(e.max>0))continue;
+    const r=e.hp/e.max;if(r>.5)continue;
+    const s=ES.get(e);if(!s||s.x==null)continue;
+    const y=s.y-UH*(e.sc||1)-8,x0=s.x-W/2,fw=Math.max(0,W*r),pair=colOf(r);
+    cx.save();
+    cx.fillStyle=pair[0];cx.fillRect(x0,y,fw,H);
+    cx.fillStyle=pair[1];cx.fillRect(x0,y,fw,2);
+    cx.restore();
+  }
+};
+const d=Object.getOwnPropertyDescriptor(R,'_pm')||{};
+const inner=d.get?d.get():R._pm;
+const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='units'){if(G._t766!=null)G._t766++;try{paint()}catch(_){}}return ret};
+Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
+G.enCol766=colOf;G.enBand766=band;G.paintEn766=paint;
+})();
