@@ -10829,3 +10829,14 @@ R.frame=function(dt){
   return r};
 G.isSpecBg797=isSpec;G.specBg797=SPEC;G.snapFade797=snap;G.enterFadeMs797=0;
 })();
+;(()=>{/* r798: skip the r728 150ms #screen fade-in only when the dungeon/tower screen (and 전직 시련, if it reopens a screen on the same go() path) reopens after CLEAR/fail, so the list snaps back like 화룡전. r728 still fades ordinary menu opens (지도, 설정, 소환, 던전, 탑, …) in over 150ms; closeScreen stays immediate; effect-off already skipped the animation. go() in the dungeon/tower fin path calls openScreen(G.rbRet) after the r756 hold (or a skip). This IIFE wraps G.rbHold756's go callback to set a one-shot flag, and openScreen then tags #screen.on with .r798 so a more-specific rule (animation:none, opacity:1) wins over r728 for that open only. The next closeScreen/openScreen wipes the class (className='on' / ''), so a later normal open still fades. No change to the r728 CSS duration, r756 600/800ms holds, r797 field snap, load, combat, cadence, rewards, or save behavior. No mandatory tap. */
+const st=document.createElement('style');st.id='r798css';st.textContent='html body #screen.on.r798{animation:none!important;opacity:1}';document.head.appendChild(st);
+const mark=()=>{const el=document.getElementById('screen');if(el&&el.classList.contains('on'))el.classList.add('r798')};
+const wrapOpen=fn=>function(k){const snap=!!G._ret798;const r=fn.apply(this,arguments);try{if(snap)mark()}catch(_){}return r};
+if(typeof openScreen==='function')openScreen=wrapOpen(openScreen);
+if(typeof G.open==='function'&&G.open!==openScreen)G.open=wrapOpen(G.open);else G.open=openScreen;
+const hold=G.rbHold756;
+if(typeof hold==='function')G.rbHold756=function(k,won,go){const w=function(){G._ret798=1;try{return go&&go.apply(this,arguments)}finally{G._ret798=0}};return hold.call(this,k,won,w)};
+G.openRet798=function(k){G._ret798=1;try{return openScreen(k)}finally{G._ret798=0}};
+G.retClass798='r798';G.menuFadeMs798=.15;G.retFadeMs798=0;
+})();
