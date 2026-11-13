@@ -764,7 +764,7 @@ G.rbRun=(o,done)=>{if(B.boss||B.wb||B.br||B.rb)return toast('다른 전투 중�
  B.allies.forEach(a=>{a.dead=false;a.hp=a.max});B.enemies=[];B.boss=true;B.lock=0;B.rb={waves,w:0,nx:.5,end:performance.now()+45e3,t:45};B.timer=50;document.body.classList.add('wbon','bron');
  const h=document.createElement('div');h.id='brHud';h.innerHTML=`<div class=brh1><b>${o.title}</b><span class=brhk>웨이브 <i>0/${waves.length}</i></span><span class=brht>45.0</span></div><div class=brtime><s></s></div><div class=brhn></div>`;document.getElementById('battle').appendChild(h);G.rbHud=h};
 const fin=won=>{const r=B.rb;if(!r)return;B.rb=null;B.boss=false;B.enemies=[];B.lock=1.4;C.S().wave=0;B.allies.forEach(a=>{a.dead=false;a.hp=a.max});document.body.classList.remove('wbon','bron');G.rbHud&&G.rbHud.remove();
- const go=()=>{R.bgOv=null;if(G.rbRet)openScreen(G.rbRet);const f=cb;cb=null;f&&f(won)};const k=document.createElement('div');k.className='brko';if(!won)k.style.color='#9ab';k.textContent=won?'CLEAR!':(r.why||'실패');document.getElementById('battle').appendChild(k);setTimeout(()=>{k.remove();go()},won?900:1100)};
+ const go=()=>{R.bgOv=null;if(G.rbRet)openScreen(G.rbRet);const f=cb;cb=null;f&&f(won)};const k=document.createElement('div');k.className='brko';if(!won)k.style.color='#9ab';k.textContent=won?'CLEAR!':(r.why||'실패');document.getElementById('battle').appendChild(k);if(typeof G.rbHold756==='function')G.rbHold756(k,won,go);else setTimeout(()=>{k.remove();go()},won?900:1100)};
 G.rbFin=fin;
 const ot=C.tick;C.tick=dt=>{const r=B.rb;if(r){r.t=(r.end-performance.now())/1000;B.timer=r.t+5;if(r.t<=0){r.why='시간 초과';fin(false);return}if(!C.aliveAllies().length){r.why='파티 전멸';fin(false);return}
   if(!C.alive().length&&!B.enemies.some(e=>e.res&&e.hp>0)){if(r.w>=r.waves.length){fin(true);return}r.nx-=dt;if(r.nx<=0){B.enemies=r.waves[r.w];r.w++;r.nx=.9;const n=G.rbHud&&G.rbHud.querySelector('.brhn');if(n&&!B.enemies[0].boss){n.textContent='WAVE '+r.w;n.classList.remove('in');void n.offsetWidth;n.classList.add('in')}}}
@@ -4726,7 +4726,7 @@ const A='assets/',st=document.createElement('style');st.textContent=`
 .rwpop.rwclr .pwc b{font:900 17px Maplestory,sans-serif;color:#fff;text-shadow:0 2px 0 #000}.rwpop.rwclr .pwc.me b{color:#7aff8a}
 .rwpop.rwclr .pwvs{font:900 13px Maplestory,sans-serif;color:#ffb04a;text-shadow:0 2px 0 #000}`;document.head.appendChild(st);
 const C=G.C;let last=null;
-const orb=G.rbRun;G.rbRun=function(o,done){if(o&&(o.kind=='dun'||o.kind=='tw')&&typeof done=='function'){const rec={req:o.req,title:o.title||'',won:0,at:0,kind:o.kind,f:o.f,t0:performance.now()/* r501 clear time */};const d0=done;done=function(won){rec.won=won?1:0;rec.at=Date.now();rec.sec=Math.max(0,(performance.now()-rec.t0-900)/1000)/* minus the 0.9s CLEAR! hold */;last=rec;try{return d0.apply(this,arguments)}finally{last=null}};arguments[1]=done}return orb.apply(this,arguments)};
+const orb=G.rbRun;G.rbRun=function(o,done){if(o&&(o.kind=='dun'||o.kind=='tw')&&typeof done=='function'){const rec={req:o.req,title:o.title||'',won:0,at:0,kind:o.kind,f:o.f,t0:performance.now()/* r501 clear time */};const d0=done;done=function(won){rec.won=won?1:0;rec.at=Date.now();rec.sec=Math.max(0,(performance.now()-rec.t0-(G.rbHoldMs756??900))/1000)/* minus the CLEAR! hold (r756: actual wait, was a fixed 0.9s) */;last=rec;try{return d0.apply(this,arguments)}finally{last=null}};arguments[1]=done}return orb.apply(this,arguments)};
 const cards=(req,pw)=>`<div class=pwcmp><div class=pwc><small><img src="${A}st_atk.png">권장 전투력</small><b>${fmt(req)}</b></div><span class=pwvs>VS</span><div class="pwc me"><small><img src="${A}st_atk.png">내 전투력</small><b>${fmt(pw)}</b></div></div>`;
 const om=modal;modal=function(html,cb){const m=om.apply(this,arguments);try{const r=last;if(r&&m&&!m.dataset.r356&&/도전 실패<\/div>/.test(html)){m.dataset.r356=1;const cd=m.querySelector('.card'),t=cd.querySelector('.ttl'),sm=cd.querySelector('small');const pw=C.POW(),req=r.req;
  m.classList.add('pwwarn','rsfail');cd.classList.add('mbox');
@@ -5694,7 +5694,7 @@ body.nofx .r502p,body.tglite .r502p,.r502p.nf{animation:none!important;opacity:1
 const nf=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||(window.R&&R.opt&&R.opt.fx===false);
 const pose=(host,win)=>{if(!host||host.querySelector('.r502p'))return;const i=document.createElement('img');i.className='r502p'+(win?'':' lo');i.src=A+(win?'sd_lina_victory.png':'sd_lina_defeat.png');i.alt='';if(nf())i.classList.add('nf');host.appendChild(i)};
 const card=(ic,l,v)=>`<div class=pwc><small>${ic?`<img src="${A}${ic}">`:''}${l}</small><b>${v}</b></div>`;
-let rec=null;const orb=G.rbRun;G.rbRun=function(o,done){if(o&&(o.kind=='dun'||o.kind=='tw')&&typeof done=='function'){const r={kind:o.kind,f:o.f,title:o.title||'',t0:performance.now()},d0=done;arguments[1]=function(won){r.sec=Math.max(0,(performance.now()-r.t0-900)/1000);rec=r;try{return d0.apply(this,arguments)}finally{rec=null}}}return orb.apply(this,arguments)};
+let rec=null;const orb=G.rbRun;G.rbRun=function(o,done){if(o&&(o.kind=='dun'||o.kind=='tw')&&typeof done=='function'){const r={kind:o.kind,f:o.f,title:o.title||'',t0:performance.now()},d0=done;arguments[1]=function(won){r.sec=Math.max(0,(performance.now()-r.t0-(G.rbHoldMs756??900))/1000);rec=r;try{return d0.apply(this,arguments)}finally{rec=null}}}return orb.apply(this,arguments)};
 const om=modal;modal=function(html,cb){const m=om.apply(this,arguments);try{const r=rec;if(r&&m&&/도전 실패<\/div>/.test(html))setTimeout(()=>{const cd=m.querySelector('.card');if(!cd||cd.querySelector('.r502s'))return;const w=document.createElement('div');w.className='rscd r502s';
  if(r.kind=='tw'){const best=(C.tower&&C.tower().f)||0;w.innerHTML=card('tt_crown.png','도전 층',r.f+'층')+card('ic_trophy.png','최고 층',best+'층')+card('ui_timer.png','전투 시간',r.sec.toFixed(1)+'초')}else w.innerHTML=card('ic_trophy.png','던전',(r.title||'').replace(/\s*던전\s*/,' ').trim()||'-')+card('ui_timer.png','전투 시간',r.sec.toFixed(1)+'초');
  const a=cd.querySelector('.rsst')||cd.querySelector('.pwhd');a&&a.after(w);pose(cd,0)},0)}catch(_){}return m};
@@ -9625,4 +9625,31 @@ R.frame=function(dt){
   }catch(_){}
   return r};
 G.fadeRate755=RATE;G.fadeSec755=SEC;G.fadeOld755=OLD;
+})();
+
+;(()=>{/* r756: shorten the 던전/탑 (and 전직 시련) CLEAR/fail card hold after the fight already ended. Was 900ms win / 1100ms fail of a .brko stamp, then go() reopens the tower/dungeon screen and runs the done callback (rewards, floor++, result pop). Unattended hold is now 600ms / 800ms (still readable, not below ~600ms). Tap anywhere skips immediately; no mandatory tap. Fight length, 45s limit, rewards, floor progression, and auto-next (there is no auto-next floor) are unchanged. Effect-off keeps the stamp static for the same unattended time (no pop/fade). .chap.out / .vic.out left alone. Displayed 클리어 시간 subtracts the actual hold, including a skip, not a fixed 900ms. */
+const WIN=600,FAIL=800;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.id='r756css';st.textContent=`
+#app .r756hit{position:absolute;inset:0;z-index:40}
+#battle .brko.r756{animation:r756ko .6s both}
+#battle .brko.r756.r756f{animation-duration:.8s}
+@keyframes r756ko{0%{transform:scale(2);opacity:0}20%{transform:scale(1);opacity:1}75%{opacity:1}100%{opacity:0}}
+body.nofx #battle .brko.r756,body.tglite #battle .brko.r756,body.fxoff #battle .brko.r756{animation:none;opacity:1;transform:none}`;
+document.head.appendChild(st);
+G.rbHold756=function(k,won,go){
+  const ms=won?WIN:FAIL,t0=performance.now();
+  let done=0;
+  if(!won)k.classList.add('r756f');
+  if(off()){k.style.animation='none';k.style.opacity='1';k.style.transform='none'}
+  else k.classList.add('r756');
+  const hit=document.createElement('div');hit.className='r756hit';
+  const app=document.getElementById('app');
+  (app||document.body).appendChild(hit);
+  const once=()=>{if(done)return;done=1;clearTimeout(tid);G.rbHoldMs756=Math.max(0,performance.now()-t0);try{hit.remove()}catch(_){}try{k.remove()}catch(_){}go&&go()};
+  hit.addEventListener('pointerdown',once,{once:true});
+  const tid=setTimeout(once,ms);
+  G.rbHoldTid756=tid;G.rbSkip756=once;
+};
+G.rbHoldWin756=WIN;G.rbHoldFail756=FAIL;
 })();
