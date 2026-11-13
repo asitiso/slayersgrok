@@ -9372,3 +9372,33 @@ const mc=document.getElementById('menuClose');if(mc)mc.addEventListener('click',
 try{G.fightHud740()}catch(_){}
 G.fightHudMenu743=pop;
 })();
+
+;(()=>{/* r744: restyle the existing battle-HUD 배속 (#bSpd), auto-skill (#autoSp) and auto-boss (#autoBoss) toggles so on/off is obvious — dim vs lit, a clear ON color/glow, and the speed number always visible. Change-only class/text writes. Effect-off keeps the lit/dim look and skips any pulse. Press feedback is left in place. Layout is unchanged (r588/r589: Dragon Slave stays the centre skill, AUTO stays at the right end, #bAutoSk stays hidden). Display only — speed, auto-skill and auto-boss behaviour are unchanged. */
+const st=document.createElement('style');st.setAttribute('data-r','744');st.textContent=[
+'html body #battle #bctl #bSpd{font:italic 900 15px/1 Maplestory,"Noto Sans KR",sans-serif!important;letter-spacing:.02em;color:#c8d0dc!important;background:radial-gradient(circle at 50% 35%,#3e4658,#1a1e28)!important;border:2px solid #5a6270!important;box-shadow:0 2px 4px #000a!important;text-shadow:0 1px 0 #000,0 0 3px #000!important}',
+'html body #battle #bctl #bSpd.on{color:#fff8e0!important;background:radial-gradient(circle at 50% 35%,#ffd36a,#c87810)!important;border-color:#ffe9a0!important;box-shadow:0 0 12px #ffb02e,0 2px 4px #000a!important;text-shadow:0 1px 0 #6a3a00,0 0 4px #ffd36a!important}',
+'html body #skills.skills>#autoSp{overflow:visible!important}',
+'html body #skills.skills>#autoSp>img{filter:grayscale(1) brightness(.75);opacity:.65}',
+'html body #skills.skills>#autoSp.on>img{filter:none;opacity:1}',
+'html body #skills.skills>#autoSp::after{content:"AUTO";position:absolute;left:0;right:0;bottom:3px;z-index:1;font:900 7px/1 Maplestory,"Noto Sans KR",sans-serif;color:#8a8a96;text-shadow:0 1px 0 #000;pointer-events:none;letter-spacing:.02em}',
+'html body #skills.skills>#autoSp.on{border-color:#ffe08a!important;background:radial-gradient(circle at 50% 35%,#ffd36a,#b86a00)!important;box-shadow:0 0 12px #ffb02e,0 2px 4px #000a!important}',
+'html body #skills.skills>#autoSp.on::after{content:"AUTO";color:#fff;text-shadow:0 0 4px #ffd36a,0 1px 0 #6a3a00}',
+'html body #battle #autoBoss.autob{color:#9a9aaa!important;background:#16181ce8!important;border:1.5px solid #3a3a48!important;box-shadow:none!important;text-shadow:0 1px 0 #000!important;opacity:.9}',
+'html body #battle #autoBoss.autob.on{color:#fff!important;background:linear-gradient(#4ae07a,#1a8a3a)!important;border-color:#b8ffc8!important;box-shadow:0 0 8px #3ad07a,0 1px 0 #0006!important;text-shadow:0 1px 0 #0a3a14!important;opacity:1}',
+'html body #battle #autoBoss.autob:active{transform:scale(.94);filter:brightness(.85)}',
+'body:is(.nofx,.tglite,.fxoff) #battle #bctl #bSpd.on,body:is(.nofx,.tglite,.fxoff) #skills.skills>#autoSp.on,body:is(.nofx,.tglite,.fxoff) #battle #autoBoss.autob.on{animation:none!important}'
+].join('');document.head.appendChild(st);
+const mark=()=>{const s=C.S&&C.S();if(!s)return;
+  const ab=document.getElementById('autoBoss');
+  if(ab){const on=!!s.autoBoss,lab='자동 '+(on?'ON':'OFF');if(ab._on744!==on){ab._on744=on;ab.classList.toggle('on',on);G.hudTogN744=(G.hudTogN744||0)+1}if(ab._t744!==lab){ab._t744=lab;ab.textContent=lab;G.hudTogN744=(G.hudTogN744||0)+1}}
+  const as=document.getElementById('autoSp');
+  if(as){const on=!!s.autoSpell;if(as._on744!==on){as._on744=on;as.classList.toggle('on',on);G.hudTogN744=(G.hudTogN744||0)+1}}
+  const sp=document.getElementById('bSpd');
+  if(sp){const n=G.speed||1,on=n>1,t='×'+n;if(sp._on744!==on){sp._on744=on;sp.classList.toggle('on',on);G.hudTogN744=(G.hudTogN744||0)+1}if(sp._t744!==t){sp._t744=t;sp.textContent=t;G.hudTogN744=(G.hudTogN744||0)+1}}
+  G.hudTogOff744=document.body.matches('.nofx,.tglite,.fxoff')||(R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const os=typeof renderSkills==='function'?renderSkills:null;if(os)renderSkills=function(){const r=os.apply(this,arguments);try{mark()}catch(_){}return r};
+const ab=document.getElementById('autoBoss');if(ab)ab.addEventListener('click',()=>{try{mark()}catch(_){}});
+try{mark()}catch(_){}
+G.hudTog744=mark;
+})();
