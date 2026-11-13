@@ -10869,3 +10869,14 @@ const oe=C.ev&&C.ev.wbEnd;
 if(typeof oe==='function'){const w=function(){const r=oe.apply(this,arguments);try{reopen()}catch(_){}return r};w.toString=()=>Function.prototype.toString.call(oe);C.ev.wbEnd=w}
 G.reopenWb801=reopen;G.wbKey801=KEY;
 })();
+;(()=>{/* r802: touch/button snap, first slice vs 화룡전. Measure: r731 already set touch-action:manipulation and a transparent tap highlight on main HUD/menu buttons, so leftover 300ms click delay is gone. Actions still fire on click (not pointerdown), and the existing icon click effect (fxring/fxsp on pointerdown) is already immediate. The remaining late beat: .side a, #mgrid a, #nav a, .sk, #autoSp, #idleBtn, .pill, .btn, #bossBtn (and .back in the press hook) use transition:transform 80ms ease-out,filter 80ms ease-out, so the existing .press / :active depress (scale/brightness) eases in instead of snapping. Change-only, presentation only: those surfaces snap the press state (transition:none on .press/:active). The 80ms rule stays for the release back to rest, and the .rel bounce is unchanged. Effect-off (nofx / tglite / fxoff) keeps a static press and skips the return transition and .rel bounce, same idea as r732. Layout, rest size, click handlers, and fxring/fxsp are untouched. No pointerdown action trigger. */
+const SEL='.side a,#mgrid a,#nav a,.sk,#autoSp,#idleBtn,.pill,.btn,#bossBtn,.back';
+const st=document.createElement('style');st.setAttribute('data-r','802');st.id='r802css';
+st.textContent=[
+'html body :is('+SEL+'):is(.press,:active){transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) :is('+SEL+'){transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) :is('+SEL+').rel{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+G.pressSel802=SEL;G.pressMs802=0;G.pressOld802=.08;
+})();
