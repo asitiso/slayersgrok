@@ -9021,3 +9021,26 @@ S.coin=t=>{const r=1+(Math.random()-.5)*.04,f=1480*r;tone(f,t,.12,{vol:.08,att:.
 /* kill: short noise puff + pitched-down body + a soft overtone */
 S.kill=t=>{noise(t,.08,{vol:.12,fq:2000,f2:600,q:.9});tone(320,t,.18,{type:'triangle',vol:.14,f2:90,att:.003});tone(640,t,.12,{type:'sine',vol:.05,f2:280,att:.004})};
 })();
+
+;(()=>{/* r730: richer layered stingers — spell, ds (rising charge + deep boom + long rumble), summon, lvup, win, plus lose/warn/brk. Same keys/hooks, LIM, 5-voice combat budget, sg gain/toggles/sliders, hidden-tab suspend. No audio files. Short-lived nodes disconnect on end. Display/feel only — economy/HP/stageReq unchanged. */
+const aud=()=>G._aud&&G._aud();
+const tone=(f,t0,dur,{type='sine',vol=.3,f2=null,att=.004,dest}={})=>{const a=aud();if(!a||!a.ac)return;const ac=a.ac,sg=dest||a.sg;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(sg);o.start(t0);o.stop(t0+dur+.02);o.onended=()=>{try{o.disconnect();g.disconnect()}catch(_){}}};
+const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null,att=0}={})=>{const a=aud();if(!a||!a.ac||!a.nz)return;const ac=a.ac,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=a.nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);f.Q.value=q;if(att){g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att)}else g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(a.sg);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();g.disconnect()}catch(_){}}};
+const S=G._SFX;if(!S)return;
+/* spell: arcane whoosh (rising filtered noise) + soft body + bright shimmer, no saw beep */
+S.spell=t=>{noise(t,.28,{vol:.16,fq:450,f2:2800,q:1.2});noise(t,.18,{vol:.08,fq:1800,f2:4200,q:2});tone(160,t,.32,{type:'sine',vol:.08,f2:110,att:.02});tone(620,t,.22,{type:'sine',vol:.05,f2:1240,att:.015});tone(980,t+.04,.2,{type:'triangle',vol:.04,f2:1680,att:.02})};
+/* ds / Dragon Slave: huge rising charge, deep boom, long rumble tail */
+S.ds=t=>{noise(t,1.25,{vol:.16,fq:180,f2:3200,q:1.6});noise(t+.2,1,{vol:.1,fq:800,f2:5000,q:2.2});for(let i=0;i<4;i++)tone(90+i*70,t+i*.18,.7,{type:'sine',vol:.045,f2:280+i*220,att:.08});tone(48,t,1.25,{type:'sine',vol:.08,f2:90,att:.2});noise(t+1.25,.8,{vol:.5,fq:700,f2:80,q:.5,type:'lowpass'});noise(t+1.25,.15,{vol:.22,fq:2500,q:.8});tone(52,t+1.25,1.1,{type:'sine',vol:.42,f2:28,att:.008});tone(78,t+1.25,.7,{type:'sine',vol:.16,f2:36,att:.01});tone(38,t+1.28,1.4,{type:'triangle',vol:.12,f2:22,att:.02});noise(t+1.5,2,{vol:.22,fq:140,f2:50,q:.6,type:'lowpass'});tone(40,t+1.6,2,{type:'sine',vol:.14,f2:24,att:.08});tone(55,t+1.8,1.8,{type:'sine',vol:.06,f2:30,att:.1})};
+/* summon: portal swirl from the first beat, chime chord, low arrival thump */
+S.summon=t=>{noise(t,.7,{vol:.14,fq:300,f2:3600,q:2.4});noise(t+.15,.5,{vol:.08,fq:2000,f2:5200,q:1.8});tone(196,t,.55,{type:'sine',vol:.06,f2:330,att:.08});[659,784,988,1318].forEach((f,i)=>tone(f,t+.42+i*.06,.38,{type:'sine',vol:.09,att:.01}));tone(523,t+.42,.5,{type:'triangle',vol:.05,att:.02});tone(98,t+.72,.35,{type:'sine',vol:.16,f2:55,att:.006})};
+/* lvup: rising sine/triangle chords + sparkle, no square arpeggio */
+S.lvup=t=>{noise(t,.12,{vol:.06,fq:4000,q:1.2});noise(t+.3,.15,{vol:.05,fq:5000,q:1.4});[[523,659],[659,784],[784,1047],[1047,1319]].forEach((p,i)=>{const t0=t+i*.09;tone(p[0],t0,.32,{type:'sine',vol:.08,att:.008});tone(p[1],t0,.36,{type:'triangle',vol:.07,att:.008})});tone(1047,t+.36,.7,{type:'sine',vol:.08,att:.02})};
+/* win: stacked fanfare chords, rising bass, sparkle, no square beep tune */
+S.win=t=>{noise(t,.08,{vol:.05,fq:4500,q:1.2});noise(t+.7,.1,{vol:.05,fq:5000,q:1.3});[[523,659,784],[659,784,1047],[784,1047,1319],[1047,1319,1568]].forEach((p,i)=>p.forEach((f,j)=>tone(f,t+[0,.16,.32,.48][i],.35,{type:j?'sine':'triangle',vol:.07-j*.012,att:.01})));tone(196,t,1.15,{type:'sine',vol:.12,f2:262,att:.03});tone(523,t+.7,.55,{type:'sine',vol:.08,att:.02})};
+/* lose: dull thud, descending minor thirds, low drone, dark noise */
+S.lose=t=>{noise(t,.35,{vol:.12,fq:600,f2:180,q:.7,type:'lowpass'});tone(90,t,1.05,{type:'sine',vol:.14,f2:48,att:.02});[[392,311],[349,277],[311,247],[262,196]].forEach((p,i)=>{const t0=t+i*.2;tone(p[0],t0,.42,{type:'triangle',vol:.1,att:.02});tone(p[1],t0,.48,{type:'sine',vol:.07,att:.03})})};
+/* warn: three alarm pulses — noise tick + detuned pair + low body */
+S.warn=t=>{for(let i=0;i<3;i++){const t0=t+i*.45;noise(t0,.08,{vol:.1,fq:2200,q:1.2});tone(220,t0,.38,{type:'triangle',vol:.11,att:.01});tone(233,t0,.38,{type:'sine',vol:.08,att:.01});tone(110,t0,.32,{type:'sine',vol:.06,att:.02})}};
+/* brk: glass/stone crack + crunch + low thump, short debris tail, no square */
+S.brk=t=>{noise(t,.08,{vol:.28,fq:4000,q:.9});noise(t,.55,{vol:.32,fq:2200,f2:280,q:.6});noise(t+.05,.4,{vol:.16,fq:800,f2:120,q:.7,type:'lowpass'});tone(140,t,.45,{type:'sine',vol:.16,f2:42,att:.003});tone(320,t,.18,{type:'triangle',vol:.07,f2:160,att:.002})};
+})();
