@@ -9471,3 +9471,33 @@ const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function()
 try{mark()}catch(_){}
 G.idleLab748=lab;G.idleRdy748=rdy;G.idleHud748=mark;
 })();
+
+;(()=>{/* r749: show the skill name on the existing skill-dock icon while it is held. MapleStory, outlined, change-only, effect-off static (no fade). The label is an absolutely positioned tag on the held icon (no dock layout jump). It does not steal or change the short-press cast, its timing, or the v74 500ms long-press auto-exclude (no preventDefault / stopPropagation, no change to ate / skOff / the 500ms timer). Display only. */
+const st=document.createElement('style');st.setAttribute('data-r','749');st.textContent=[
+'html body #battle #skHold749{position:absolute;z-index:10;display:none;transform:translate(-50%,-100%);margin:0;padding:2px 5px;',
+'font:900 10px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff6d0;-webkit-text-stroke:2.5px #1a0c04;paint-order:stroke fill;',
+'text-shadow:0 1px 0 #000;white-space:nowrap;pointer-events:none;background:#1a0c04e6;border:1px solid #c9a45a;border-radius:6px;letter-spacing:.02em}',
+'body:is(.nofx,.tglite,.fxoff) #battle #skHold749{animation:none!important}'
+].join('');document.head.appendChild(st);
+const box=()=>{const b=document.getElementById('battle');if(!b)return null;let t=document.getElementById('skHold749');if(!t){t=document.createElement('em');t.id='skHold749';t.className='skhold749';b.appendChild(t)}return t};
+const nam=el=>{const k=el&&el.dataset&&el.dataset.k,sp=(typeof D!=='undefined'&&D.SPELLS||[]).find(x=>x.k==k);return (sp&&sp.n)||''};
+const hide=()=>{const t=document.getElementById('skHold749');if(!t||t._on749===false)return;t._on749=false;t._sig749='';if(t.textContent!=='')t.textContent='';if(t.style.display!=='none')t.style.display='none';G.skHoldN749=(G.skHoldN749||0)+1;G._skHoldEl749=null};
+const show=el=>{if(!el||!el.classList||!el.classList.contains('sk'))return hide();
+  const n=nam(el);if(!n)return hide();
+  const t=box();if(!t)return;
+  const b=document.getElementById('battle');if(!b)return;
+  const br=b.getBoundingClientRect(),r=el.getBoundingClientRect();
+  const x=Math.round(r.left+r.width/2-br.left),y=Math.round(r.top-br.top);
+  const sig=n+'@'+x+','+y;
+  if(t._sig749!==sig){t._sig749=sig;if(t.textContent!==n)t.textContent=n;t.style.left=x+'px';t.style.top=y+'px';G.skHoldN749=(G.skHoldN749||0)+1}
+  if(t._on749!==true){t._on749=true;t.style.display='block';G.skHoldN749=(G.skHoldN749||0)+1}
+  G._skHoldEl749=el};
+let pid=null;
+const down=e=>{const el=e.target&&e.target.closest&&e.target.closest('#skills .sk');if(!el)return;pid=e.pointerId;try{show(el)}catch(_){}};
+const up=e=>{if(pid==null||(e&&e.pointerId!=null&&e.pointerId!==pid))return;pid=null;try{hide()}catch(_){}};
+const sk=document.getElementById('skills');
+if(sk)sk.addEventListener('pointerdown',down,true);
+['pointerup','pointercancel'].forEach(t=>{if(sk)sk.addEventListener(t,up,true);document.addEventListener(t,up,true)});
+const os=typeof renderSkills==='function'?renderSkills:null;if(os)renderSkills=function(){const r=os.apply(this,arguments);try{hide()}catch(_){}return r};
+G.skHoldShow749=show;G.skHoldHide749=hide;G.skHoldName749=nam;
+})();
