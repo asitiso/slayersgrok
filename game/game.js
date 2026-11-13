@@ -997,7 +997,7 @@ Object.assign(SFX,{
  bswing:t=>{whoosh(t,.34,{vol:.16,fq:190,f2:820,q:.8,pk:.6});tone(70,t+.06,.3,{type:'sine',vol:.13,f2:38,att:.02})},
  parry:t=>{noise(t,.04,{vol:.12,fq:5000,q:1.5});tone(1850,t,.06,{type:'square',vol:.05});tone(2650,t,.28,{type:'triangle',vol:.08,f2:2450,att:.002})},
  block:t=>{noise(t,.08,{vol:.15,fq:900,q:1.1});tone(300,t,.11,{type:'triangle',vol:.12,f2:190,att:.002})}});
-G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};G._SFX=SFX;G._aud=()=>({ac,sg,nz});
+G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};G._SFX=SFX;G._aud=()=>({ac,sg,nz,bg});
 const CV=new Set(['hit','mhit','crit','skhit','tick','swing','cast','bow','eswing','bswing','hurt','parry','block','kill']),PRI={tick:1,swing:2,cast:2,bow:2,eswing:2,kill:2};let rec=[];
 /* global budget: at most 5 combat voices per 0.12s so big AoE/multi-ally turns do not become a wall of noise; low-priority voices (DoT ticks, swings) drop first */
 const budget=(k,now)=>{if(!CV.has(k))return true;rec=rec.filter(x=>now-x<.12);if(rec.length>=5||(PRI[k]&&rec.length>=3+PRI[k]-1))return false;rec.push(now);return true};
@@ -1022,7 +1022,7 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.bt
 // BGM: soft procedural loop (calm on field, driving in boss fights)
 const PROG=[[57,60,64],[53,57,60],[55,59,62],[52,55,59]],ARP=[0,2,1,2,0,2,1,2];let step=0,nextT=0,timer=null;
 const mid=n=>440*Math.pow(2,(n-69)/12);
-function startBgm(){if(timer)return;nextT=ac.currentTime+.1;timer=setInterval(()=>{if(!ac||document.hidden)return;const boss=!!(C.B.boss);const spb=boss?.16:.24;
+function startBgm(){if(G.startBgm734)return G.startBgm734(ac,bg,nz,on);if(timer)return;nextT=ac.currentTime+.1;timer=setInterval(()=>{if(!ac||document.hidden)return;const boss=!!(C.B.boss);const spb=boss?.16:.24;
  while(nextT<ac.currentTime+.3){if(on('bgm')){const ch=PROG[Math.floor(step/16)%4],i=step%16;
    if(i%8==0)ch.forEach(n=>tone(mid(n-12),nextT,spb*8,{type:'triangle',vol:boss?.10:.07,att:.08,dest:bg}));
    if(i%2==0)tone(mid(ch[ARP[(i/2)%8]]+(boss?0:12)),nextT,spb*1.6,{type:boss?'sawtooth':'square',vol:boss?.035:.03,dest:bg});
@@ -9081,4 +9081,52 @@ const st=document.createElement('style');st.setAttribute('data-r','733');st.text
 const wrap=(k,why)=>{const o=G[k];if(typeof o!=='function')return;G[k]=function(){try{if(G.saveNow)G.saveNow(why)}catch(_){}return o.apply(this,arguments)}};
 wrap('saverOn','saverOn');wrap('saverOff','saverOff');
 G.uiDelay733={sheet:150,saver:150,rwLock:150};
+})();
+
+;(()=>{/* r734: per-scene procedural BGM. The old loop was only field-vs-boss, with square/saw leads. Each scene now has its own chords, tempo, and instrumentation (sine/triangle pads, bass, soft noise percussion, gentle lowpass). Scene changes crossfade in 0.4s on two buses so loops do not stack and notes do not click. Respects 배경음 toggle/slider, hidden-tab AudioContext suspend, and the SFX voice budget (BGM never uses sg). Nodes disconnect on end. No audio files. Display/feel only — economy/HP/stageReq unchanged. */
+const mid=n=>440*Math.pow(2,(n-69)/12);
+const ARP=[0,2,1,2,0,2,1,2];
+const SC={
+ map:    {spb:.28,prog:[[67,71,74],[64,67,71],[65,69,72],[62,66,69]],pad:'sine',lead:'triangle',oct:12,padV:.055,arpV:.022,bassV:.09,kick:0,tick:0,cut:1800},
+ town:   {spb:.30,prog:[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],pad:'sine',lead:'sine',oct:12,padV:.05,arpV:.018,bassV:.08,kick:0,tick:0,cut:1400},
+ field:  {spb:.24,prog:[[57,60,64],[53,57,60],[55,59,62],[52,55,59]],pad:'sine',lead:'triangle',oct:12,padV:.06,arpV:.025,bassV:.1,kick:0,tick:0,cut:1600},
+ dungeon:{spb:.22,prog:[[50,53,57],[46,50,53],[48,52,55],[45,48,52]],pad:'triangle',lead:'sine',oct:0,padV:.07,arpV:.02,bassV:.12,kick:.08,tick:0,cut:700},
+ tower:  {spb:.20,prog:[[59,62,66],[56,59,63],[58,61,65],[54,58,61]],pad:'sine',lead:'triangle',oct:12,padV:.055,arpV:.024,bassV:.1,kick:.05,tick:.04,cut:1200},
+ arena:  {spb:.17,prog:[[62,65,69],[57,60,64],[59,62,66],[55,59,62]],pad:'triangle',lead:'sine',oct:12,padV:.05,arpV:.028,bassV:.12,kick:.1,tick:.05,cut:2000},
+ boss:   {spb:.16,prog:[[45,48,52],[43,46,50],[44,47,51],[41,45,48]],pad:'sine',lead:'triangle',oct:0,padV:.08,arpV:.022,bassV:.14,kick:.12,tick:.04,cut:900},
+ result: {spb:.26,prog:[[60,64,67],[62,66,69],[64,67,71],[67,71,74]],pad:'sine',lead:'sine',oct:12,padV:.06,arpV:.02,bassV:.09,kick:0,tick:0,cut:2000}
+};
+const scene=()=>{try{if(document.querySelector('.vic:not(.out),.brko'))return'result';const B=C.B||{};
+ if(B.wb)return'boss';if(B.br)return'arena';
+ if(B.rb){const live=B.enemies&&B.enemies.some(e=>e&&e.boss&&e.hp>0);if(live)return'boss';const k=B.rb.kind||((typeof R!=='undefined'&&R.bgOv==='bg_tower.jpg')?'tw':'dun');return k==='dun'?'dungeon':'tower'}
+ if(B.boss)return'boss';const sc=G.screen;if(sc==='map')return'map';if(sc)return'town';return'field'}catch(_){return'field'}};
+G.bgmScene734=scene;G.bgmScenes734=Object.keys(SC);
+const fade=.4;
+G.startBgm734=(ac,bg,nz,on)=>{if(!ac||!bg||G._bgmOn734)return;G._bgmOn734=1;
+ const mk=()=>{const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=1600;f.Q.value=.7;const g=ac.createGain();g.gain.value=0;f.connect(g);g.connect(bg);return{f,g,live:0,step:0,nextT:0,sc:null}};
+ const buses=[mk(),mk()];let idx=0,cur=null,tm=null;
+ const tone=(f,t0,dur,{type='sine',vol=.1,att=.04,dest}={})=>{const o=ac.createOscillator(),gn=ac.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),t0);gn.gain.setValueAtTime(0,t0);gn.gain.linearRampToValueAtTime(vol,t0+att);gn.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(gn);gn.connect(dest);o.start(t0);o.stop(t0+dur+.02);o.onended=()=>{try{o.disconnect();gn.disconnect()}catch(_){}}};
+ const noise=(t0,dur,{vol=.1,fq=140,q=1,type='lowpass',dest}={})=>{if(!nz)return;const s=ac.createBufferSource(),f=ac.createBiquadFilter(),gn=ac.createGain();s.buffer=nz;f.type=type;f.frequency.setValueAtTime(fq,t0);f.Q.value=q;gn.gain.setValueAtTime(vol,t0);gn.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(gn);gn.connect(dest);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();gn.disconnect()}catch(_){}}};
+ const sched=(bus,t,step)=>{const S=SC[bus.sc];if(!S)return;const ch=S.prog[Math.floor(step/16)%4],i=step%16,spb=S.spb,dest=bus.f;
+  if(i%8==0)ch.forEach(n=>tone(mid(n-12),t,spb*8,{type:S.pad,vol:S.padV,att:.1,dest}));
+  if(i%2==0)tone(mid(ch[ARP[(i/2)%8]]+S.oct),t,spb*1.6,{type:S.lead,vol:S.arpV,att:.02,dest});
+  if(S.kick&&i%4==0)noise(t,.07,{vol:S.kick,fq:140,type:'lowpass',dest});
+  if(S.tick&&i%4==2)noise(t,.03,{vol:S.tick,fq:2200,q:1.3,type:'bandpass',dest});
+  if(i%4==0)tone(mid(ch[0]-24),t,spb*3,{type:'sine',vol:S.bassV,att:.05,dest})};
+ const xf=(to,now)=>{const inc=buses[1-idx],out=buses[idx];
+  const vg=g=>{try{g.gain.cancelScheduledValues(now);g.gain.setValueAtTime(Math.max(0,g.gain.value||0),now)}catch(_){}};
+  vg(out.g);out.g.gain.linearRampToValueAtTime(.0001,now+fade);out.live=0;
+  inc.sc=to;inc.step=0;inc.nextT=now+.02;inc.live=1;try{inc.f.frequency.setValueAtTime(inc.f.frequency.value||1600,now);inc.f.frequency.linearRampToValueAtTime(SC[to].cut,now+.2)}catch(_){inc.f.frequency.value=SC[to].cut}
+  vg(inc.g);inc.g.gain.linearRampToValueAtTime(on('bgm')?1:.0001,now+fade);
+  idx=1-idx;cur=to};
+ const pulse=()=>{if(!ac||document.hidden)return;const now=ac.currentTime,want=scene(),ok=on('bgm');
+  if(want!==cur)xf(want,now);
+  if(!ok){buses.forEach(b=>{try{b.g.gain.cancelScheduledValues(now);b.g.gain.setValueAtTime(Math.max(0,b.g.gain.value||0),now);b.g.gain.linearRampToValueAtTime(.0001,now+.2)}catch(_){}});G._bgmState734={scene:cur,on:0,fade,live:0};return}
+  const bus=buses[idx];if(bus&&bus.g){try{const v=bus.g.gain.value||0;if(v<.5){bus.g.gain.cancelScheduledValues(now);bus.g.gain.setValueAtTime(v,now);bus.g.gain.linearRampToValueAtTime(1,now+.2)}}catch(_){}}
+  if(!bus||!bus.live)return;if(!bus.nextT)bus.nextT=now+.02;
+  while(bus.nextT<now+.3){sched(bus,bus.nextT,bus.step);bus.step++;bus.nextT+=SC[bus.sc].spb}
+  G._bgmState734={scene:bus.sc,on:1,spb:SC[bus.sc].spb,fade,live:buses.filter(b=>b.live).length}};
+ G.bgmPulse734=pulse;buses[0].g.gain.value=0;xf(scene(),ac.currentTime);
+ tm=setInterval(pulse,80);pulse()};
+{const o=G.rbRun;if(typeof o==='function')G.rbRun=function(opt,done){const r=o.apply(this,arguments);try{if(C.B&&C.B.rb&&opt)C.B.rb.kind=opt.kind}catch(_){}return r}}
 })();
