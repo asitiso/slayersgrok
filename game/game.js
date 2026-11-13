@@ -9181,3 +9181,29 @@ const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{if(G.screen){
   let drew=0;for(let i=0;i<A.length;i++){const a=A[i];if(!a._fdng)continue;const s=AS.get(a.k);if(!s||s.x==null)continue;ctx.globalAlpha=pulse;ctx.drawImage(im,s.x-32,s.y-80,64,88);drew++}
   ctx.globalAlpha=1;ctx.restore();G._fieldDngDrew736=drew}catch(_){G._fieldDngDrew736=0}};
 })();
+
+;(()=>{/* r737: brief incoming-hit telegraph on the field ally about to take an enemy/boss blow. Display only — it rides the existing 0.32s visual windup (R.atk nextDelay) so HP and combat timing stay the same. A small "!" marker and foot flash appear on the targeted ally until the visual impact. The flag is written only when it turns on or off. The marker sprite is built once (no per-frame allocations). Effect-off (nofx / tglite / fxoff) keeps a static cue and skips the pulse. Not drawn while a menu is open. */
+const DUR=.32;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(R.opt&&R.opt.fx===false);
+const now=()=>(typeof performance!=='undefined'?performance.now():0);
+let glow=null,ctx0=null,cv0=null;
+const spr=()=>{if(glow)return glow;const c=document.createElement('canvas');c.width=48;c.height=72;const g=c.getContext('2d');
+  const a=g.createRadialGradient(24,64,1,24,64,18);a.addColorStop(0,'rgba(255,230,120,.55)');a.addColorStop(.5,'rgba(255,70,40,.32)');a.addColorStop(1,'rgba(255,40,20,0)');
+  g.fillStyle=a;g.beginPath();g.ellipse(24,64,18,7,0,0,7);g.fill();
+  g.font='900 28px Maplestory,sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineWidth=5;g.strokeStyle='#4a0000';g.strokeText('!',24,18);g.fillStyle='#ffe566';g.fillText('!',24,18);
+  glow=c;G.inHitGlow737=c;G.inHitAlloc737=(G.inHitAlloc737||0)+1;return c};
+const mark=(a,on)=>{if(!a)return;const v=on?1:0;if((a._inHit?1:0)!==v){a._inHit=v;G.inHitN737=(G.inHitN737||0)+1}if(on)a._inUntil=now()+DUR*1000;else a._inUntil=0};
+const sweep=()=>{const A=C.B&&C.B.allies;if(!A)return;const t=now();for(let i=0;i<A.length;i++){const a=A[i];if(a._inHit&&t>=(a._inUntil||0))mark(a,0)}};
+const od=C.ev.dmgAlly;C.ev.dmgAlly=function(a,d,kind){const r=od&&od.apply(this,arguments);try{if(a)mark(a,1)}catch(_){}return r};
+const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{sweep()}catch(_){}return r};
+const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{sweep();if(G.screen){G._inHitDrew737=0;return}const A=C.B&&C.B.allies;if(!A){G._inHitDrew737=0;return}
+  let n=0;for(let i=0;i<A.length;i++)if(A[i]._inHit)n++;if(!n){G._inHitDrew737=0;return}
+  const AS=R._AS&&R._AS(),c=R._bc&&R._bc();if(!c||!AS){G._inHitDrew737=0;return}
+  if(c!==cv0){cv0=c;ctx0=c.getContext('2d')}const ctx=ctx0,sc=c.width/(c.clientWidth||c.width||1),im=spr();
+  const pulse=off()?1:.75+.25*Math.sin(now()/140);
+  G.inHitAlpha737=pulse;G.inHitOff737=off();
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
+  let drew=0;for(let i=0;i<A.length;i++){const a=A[i];if(!a._inHit)continue;const s=AS.get(a.k);if(!s||s.x==null)continue;ctx.globalAlpha=pulse;ctx.drawImage(im,s.x-24,s.y-80,48,72);drew++}
+  ctx.globalAlpha=1;ctx.restore();G._inHitDrew737=drew}catch(_){G._inHitDrew737=0}};
+G.inHitDur737=DUR;G.inHitArm737=a=>mark(a,1);G.inHitSweep737=sweep;
+})();
