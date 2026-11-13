@@ -9337,3 +9337,22 @@ const orp=resultPop;resultPop=function(){const r=orp.apply(this,arguments);try{a
 document.addEventListener('visibilitychange',()=>{if(document.hidden)document.querySelectorAll('.vic').forEach(v=>{if(v._pin741)release(v)})});
 G.vicPin741=pin;G.vicRelease741=release;G.vicPinHold741=HOLD;
 })();
+
+;(()=>{/* r742: a short HP percent on each party-column portrait, over the HP bar. MapleStory font with a dark outline so it stays readable at this size. The label is absolutely positioned (no layout jump) and its text is written only when the displayed string changes — no per-frame DOM writes. Coexists with the r727 .dng low-HP styling. Effect-off does not hide or animate the readout. Display only — HP, the 30% rule, and combat are unchanged. */
+const lab=a=>{if(!a||!(a.max>0))return '';if(!(a.hp>0))return '0%';if(a.hp>=a.max)return '100%';return Math.max(1,Math.min(99,Math.round(a.hp/a.max*100)))+'%'};
+const sync=()=>{const A=C.B&&C.B.allies,col=document.getElementById('partycol');if(!A||!col)return;
+  const pp=col.querySelectorAll('.pp');
+  for(let i=0;i<pp.length;i++){const p=pp[i],a=A[i];if(!a)continue;
+    let t=p.querySelector('.hpn742');
+    if(!t){const bar=p.querySelector('.hpb');t=document.createElement('span');t.className='hpn742';(bar||p).appendChild(t);G.hpTxtAlloc742=(G.hpTxtAlloc742||0)+1}
+    const s=lab(a);if(t._t!==s){t._t=s;t.textContent=s;G.hpTxtN742=(G.hpTxtN742||0)+1}}};
+const st=document.createElement('style');st.setAttribute('data-r','742');st.textContent=
+'#partycol .pp .hpb{position:relative}'+
+'#partycol .pp .hpn742{position:absolute;left:0;right:0;bottom:0;z-index:3;height:11px;margin:0;transform:translateY(-3px);text-align:center;pointer-events:none;font:900 9px/11px Maplestory,"Noto Sans KR",sans-serif;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 2px #000;letter-spacing:0;white-space:nowrap}';
+document.head.appendChild(st);
+const op=typeof renderPartyCol==='function'?renderPartyCol:null;
+if(op)renderPartyCol=function(){const r=op.apply(this,arguments);try{sync()}catch(_){}return r};
+const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{sync()}catch(_){}return r};
+G.hpTxt742=sync;G.hpTxtLab742=lab;
+try{sync()}catch(_){}
+})();
