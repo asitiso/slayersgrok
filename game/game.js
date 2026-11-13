@@ -10891,3 +10891,19 @@ st.textContent=[
 document.head.appendChild(st);
 G.pressSel803=MORE;G.pressMs803=0;G.pressOld803=.08;
 })();
+;(()=>{/* r804: tighten the 220ms .rel release bounce on HUD buttons and list rows vs 화룡전. The press state already snaps (r802/r803), wide rows already use scale(.98) (r732), and effects-off already skips the bounce. The leftover loose beat is animation:relb 220ms with a scale(1.08) overshoot — a late, soft pop on release. Change-only, presentation only: those surfaces use a shorter, firmer bounce (~130ms, peak 1.04; wide rows peak 1.03 from the .98 press so the list does not jump). The original .rel / relb 220ms rule stays for other .rel chrome (relic cards). fxring and scroll-cancel are untouched. Effect-off (nofx / tglite / fxoff) stays static. No action, layout, or rest-size changes, and no pointerdown action trigger. */
+const SEL=(typeof G.pressSel802==='string'&&G.pressSel802)||'.side a,#mgrid a,#nav a,.sk,#autoSp,#idleBtn,.pill,.btn,#bossBtn,.back';
+const MORE=(typeof G.pressSel803==='string'&&G.pressSel803)||(typeof G.pressMore732==='string'&&G.pressMore732)||'#screen .row,#screen .node,.mapwrap .node,.modal .row,#panel .row,#screen .chip,#screen .tog,#screen .eni,#screen .psl,.wmin .wpin';
+const ROWS='#screen .row,#panel .row,.modal .row';
+const MS=130,OLD=220,PEAK=1.04,RPEAK=1.03;
+const st=document.createElement('style');st.setAttribute('data-r','804');st.id='r804css';
+st.textContent=[
+'@keyframes relb804{0%{transform:scale(.9)}55%{transform:scale('+PEAK+')}100%{transform:scale(1)}}',
+'@keyframes relb804row{0%{transform:scale(.98)}55%{transform:scale('+RPEAK+')}100%{transform:scale(1)}}',
+'html body :is('+SEL+','+MORE+').rel{animation:relb804 '+MS+'ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body :is('+ROWS+').rel{animation:relb804row '+MS+'ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) :is('+SEL+','+MORE+').rel{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+G.relMs804=MS;G.relOld804=OLD;G.relPeak804=PEAK;G.relRowPeak804=RPEAK;G.relSel804=SEL;G.relRowSel804=ROWS;
+})();
