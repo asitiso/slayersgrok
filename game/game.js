@@ -9542,3 +9542,27 @@ const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function()
 try{mark()}catch(_){}
 G.attReady751=ready;G.attBadge751=mark;
 })();
+
+;(()=>{/* r752: make the existing 임무 badge (#sidemission .dot) show a lit count of claimable missions. The dot already turns on when a daily or weekly mission can be claimed, or a claimable 업적 is waiting (md||wd||G._adv, r336/r410), but it is an empty pulsing badge with no count. It now shows that same live count (daily + weekly + claimable 업적 steps, G.achSteps) in MapleStory on the existing badge, lit when the count is above 0, hidden at 0. Change-only text/class/visibility. Effect-off keeps the badge and number and skips the bounce. Layout (icon size/place, badge slot, r512 check) is unchanged. Display only: mission progress, claim rules, and rewards are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','752');st.textContent=[
+'html body #sidemission .dot.rdy752{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;',
+'font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;-webkit-text-stroke:2px #6a0800;paint-order:stroke fill;',
+'text-shadow:0 1px 0 #000,0 0 3px #000;z-index:4}',
+'html body #sidemission .dot.rdy752:empty{display:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #sidemission .dot{animation:none!important}'
+].join('');document.head.appendChild(st);
+const cnt=()=>{try{const s=C.S();try{C.daily()}catch(_){}try{C.weekly()}catch(_){}
+  let n=0;(D.MISSIONS||[]).forEach(m=>{if((s.mp[m.k]||0)>=m.goal&&!s.mc[m.k])n++});
+  (D.WMISS||[]).forEach(m=>{if(((s.wk.p||{})[m.k]||0)>=m.goal&&!(s.wk.c||{})[m.k])n++});
+  if(typeof G.achSteps==='function')n+=G.achSteps()||0;return n}catch(_){return 0}};
+const mark=()=>{const n=cnt(),lab=n>0?String(n):'',d=document.querySelector('#sidemission .dot');
+  if(!d)return;
+  const on=n>0;
+  if(d._n752!==lab){d._n752=lab;if(d.textContent!==lab)d.textContent=lab;G.misN752=(G.misN752||0)+1}
+  if(d._on752!==on){d._on752=on;d.classList.toggle('rdy752',on);if(typeof $sd==='function')$sd(d,on?'':'none');else d.style.display=on?'':'none';G.misN752=(G.misN752||0)+1}
+  G.misOff752=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function(){const r=oh.apply(this,arguments);try{mark()}catch(_){}return r};
+try{mark()}catch(_){}
+G.misCnt752=cnt;G.misBadge752=mark;
+})();
