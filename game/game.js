@@ -11174,3 +11174,28 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel812=SEL;G.pressMs812=0;G.pressScale812=.97;G.relMs812=130;G.relPeak812=1.03;G.relClass812=RLS;
 })();
+
+;(()=>{/* r813: press snap + tightened release on 인연 gift tiles (.bdgi). No earlier press SEL covers them, so this does not double-fire with r812 .bdc or r732 rows. Dedicated rls813 (never .rel). The gift row sits in the vertical screen body, so pan-y. */
+const SEL='#screen .bdgi';
+const RLS='rls813';
+const SKIP=[typeof G!=='undefined'&&G.pressSel802,typeof G!=='undefined'&&G.pressSel803,typeof G!=='undefined'&&G.pressMore732,typeof G!=='undefined'&&G.pressSel805,typeof G!=='undefined'&&G.pressSel806,typeof G!=='undefined'&&G.pressSel807,typeof G!=='undefined'&&G.pressSel808,typeof G!=='undefined'&&G.pressSel809,typeof G!=='undefined'&&G.pressSel810,typeof G!=='undefined'&&G.pressSel811,typeof G!=='undefined'&&G.pressSel812].filter(Boolean).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','813');st.id='r813css';
+st.textContent=[
+'#screen .bdgi{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body #screen .bdgi:is(.press,:active){transition:none!important;transform:scale(.97)!important;filter:brightness(1.15)!important}',
+'html body #screen .bdgi.off:is(.press,:active){opacity:.4}',
+'@keyframes relb813{0%{transform:scale(.97)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body #screen .bdgi.'+RLS+'{animation:relb813 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen .bdgi{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen .bdgi.'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel813=SEL;G.pressMs813=0;G.pressScale813=.97;G.relMs813=130;G.relPeak813=1.03;G.relClass813=RLS;
+})();
