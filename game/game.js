@@ -9044,3 +9044,12 @@ S.warn=t=>{for(let i=0;i<3;i++){const t0=t+i*.45;noise(t0,.08,{vol:.1,fq:2200,q:
 /* brk: glass/stone crack + crunch + low thump, short debris tail, no square */
 S.brk=t=>{noise(t,.08,{vol:.28,fq:4000,q:.9});noise(t,.55,{vol:.32,fq:2200,f2:280,q:.6});noise(t+.05,.4,{vol:.16,fq:800,f2:120,q:.7,type:'lowpass'});tone(140,t,.45,{type:'sine',vol:.16,f2:42,att:.003});tone(320,t,.18,{type:'triangle',vol:.07,f2:160,att:.002})};
 })();
+
+;(()=>{/* r731: snappier taps like 화룡전. html/body/#app/#screen/.modal and common buttons, rows, tiles, and map nodes get touch-action:manipulation plus -webkit-tap-highlight-color:transparent, so leftover 300ms click delay and the grey tap flash are skipped. Vertical lists keep pan-y and horizontal maps/strips keep pan-x, so they still scroll. Existing #saver (touch-action:none) and .ntb (pan-y) are not overridden. No JS gesture/drag changes, no economy/HP/stageReq changes. */
+const st=document.createElement('style');st.setAttribute('data-r','731');st.textContent=[
+'html,body,#app,#screen,.modal{-webkit-tap-highlight-color:transparent;touch-action:manipulation}',
+'.btn,.pill,.chip,.tog,.row,.back,.navb,.node,.sk,#autoSp,#idleBtn,#bossBtn,.side a,#mgrid a,#nav a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}',
+'#panel,#screen .sbody,.chl,.pll,.rbox,.brl,.gchat,.rwpop .rwi,.rwpop .rwgl,.ntb{touch-action:pan-y}',
+'.mapwrap,.wmap,.town,.bscr,#skills,.tdl,.trsel,.bdsel,.skstrip,.stx .stlist{touch-action:pan-x}'
+].join('');document.head.appendChild(st);
+})();

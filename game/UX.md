@@ -380,3 +380,9 @@ Same gap as r694, on the return popup. When you reopen the game, 어서 오세�
 - 경고(warn): 세 번의 경보 펄스 — 노이즈 틱 + 어긋난 두 음 + 저음.
 - 파괴(brk): 깨지는 트랜지언트 + 중저음 크런치 + 낮은 섬, 짧은 파편 꼬리 (사각파 없음).
 - 노드는 짧게만 살고 끝나면 연결을 끊음. 소모·저장·HP·권장 전투력 없음 (음향만).
+
+## r731 터치 반응 — 300ms 지연 제거
+- 화룡전은 버튼을 누르면 바로 반응한다. 여기 메뉴 아이콘·일부 버튼에는 이미 touch-action:manipulation이 있어 더블탭 줌으로 생기는 약 300ms 클릭 지연을 건너뛰었지만, html·body·#app·전체 화면(#screen)·모달과 목록 줄·지도 노드 등에는 없었다.
+- 이제 그 바탕과 자주 누르는 면(버튼, 칩, 토글, 행, 뒤로, 맵 노드, 스킬 등)에 touch-action:manipulation과 -webkit-tap-highlight-color:transparent를 넣는다.
+- 세로로 스크롤하는 목록(#panel, #screen .sbody, 채팅·결과 상자 등)은 pan-y, 가로로 미는 지도·스트립(.mapwrap, .wmap, .town 등)은 pan-x를 유지해 스크롤이 막히지 않는다. 세이버 화면(#saver, touch-action:none)과 기존 .ntb(pan-y)는 그대로.
+- 제스처/드래그 코드는 건드리지 않음. 소모·저장·HP·권장 전투력 없음 (표시·체감만).
