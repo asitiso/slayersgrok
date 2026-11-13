@@ -10849,3 +10849,15 @@ if(typeof G.brRun==='function'){const same=G.brReal===G.brRun;G.brRun=wrap(G.brR
 else if(typeof G.brReal==='function')G.brReal=wrap(G.brReal,()=>C.B&&C.B.br);
 G.clrScron799=clear;G.hasScron799=on;G.hookRb799=typeof G.rbRun==='function';G.hookBr799=typeof G.brRun==='function'||typeof G.brReal==='function';G.hid799=['cmbx','combo','bwarn','vsx','wvb','bcut','banner','bubL','vic','xpo'];
 })();
+;(()=>{/* r800: after 보스 러시 TIME UP (and the same endB path on party wipe), reopen the 도전 list. Previously this dropped the player on the field: realRun hid #screen without saving a return key, and endB only mounted .brrun.brfin plus 보상 받기. Dungeon and tower already reopen their list in go() after the result stamp (r798 snap, openScreen restores scron). r800: remember the 도전 screen on rush entry (G.screen, default "dungeon") and, when the existing result card is mounted, reopen that list underneath it on the r798 snap path. The card stays as-is (TIME UP, score, 보상 받기, no new hold, no mandatory extra tap). .brrun is z-index 1000 and #screen is 25, so the list does not cover or cut the card; a specific rule keeps that stacking. #brOk still removes the card and opens the same reward pop. Scoring, rewards, entry counts, combat, cadence, and save behavior are untouched. */
+const KEY='dungeon';
+const reopen=()=>{if(G.screen)return 0;const k=G.brRet800||KEY;try{if(typeof G.openRet798==='function')G.openRet798(k);else if(typeof openScreen==='function')openScreen(k);else if(G.open)G.open(k);else return 0;return 1}catch(_){return 0}};
+const arm=el=>{if(!el||el._r800)return 0;el._r800=1;return reopen()};
+const st=document.createElement('style');st.id='r800css';st.textContent='html body #app .brrun.brfin,html body .brrun.brfin{z-index:1000}';document.head.appendChild(st);
+const mo=new MutationObserver(ms=>{for(const r of ms)for(const n of r.addedNodes){if(n.nodeType!==1)continue;if(n.classList&&n.classList.contains('brfin'))arm(n);const f=n.querySelector&&n.querySelector('.brfin');if(f)arm(f)}});
+const root=document.getElementById('app')||document.body;if(root)mo.observe(root,{childList:true,subtree:true});
+const wrapStart=fn=>{const w=function(){const was=G.screen;const r=fn.apply(this,arguments);try{if(C.B&&C.B.br)G.brRet800=was||KEY}catch(_){}return r};w.toString=()=>Function.prototype.toString.call(fn);return w};
+if(typeof G.brRun==='function'){const same=G.brReal===G.brRun;G.brRun=wrapStart(G.brRun);if(same)G.brReal=G.brRun;else if(typeof G.brReal==='function')G.brReal=wrapStart(G.brReal)}
+else if(typeof G.brReal==='function')G.brReal=wrapStart(G.brReal);
+G.reopenBr800=reopen;G.armBrFin800=arm;G.brKey800=KEY;
+})();
