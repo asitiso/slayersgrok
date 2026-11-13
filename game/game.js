@@ -10880,3 +10880,14 @@ st.textContent=[
 document.head.appendChild(st);
 G.pressSel802=SEL;G.pressMs802=0;G.pressOld802=.08;
 })();
+;(()=>{/* r803: snap the 80ms press ease-in on r732 surfaces (settings rows, map nodes, chips, toggles, and other list chrome) the same way r802 snapped the HUD/menu buttons. r732 already adds .press on pointerdown, uses a lighter scale(.98) on wide rows, cancels after a 10px move without a release bounce, and leaves menu-icon fxring alone. The leftover late beat is transition:transform .08s ease-out on those surfaces, so the depress eases in. Change-only, presentation only: .press / :active snap (transition:none). The 80ms rule stays for the return to rest, the .98 row scale and .rel bounce stay, scroll-cancel and fxring stay. Effect-off (nofx / tglite / fxoff) already keeps a static press and skips return motion (r732); this restates that. No action, layout, or rest-size changes, and no pointerdown action trigger. */
+const MORE=(typeof G.pressMore732==='string'&&G.pressMore732)||'#screen .row,#screen .node,.mapwrap .node,.modal .row,#panel .row,#screen .chip,#screen .tog,#screen .eni,#screen .psl,.wmin .wpin';
+const st=document.createElement('style');st.setAttribute('data-r','803');st.id='r803css';
+st.textContent=[
+'html body :is('+MORE+'):is(.press,:active){transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) :is('+MORE+'){transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) :is('+MORE+').rel{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+G.pressSel803=MORE;G.pressMs803=0;G.pressOld803=.08;
+})();
