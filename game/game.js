@@ -11149,3 +11149,28 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel811=SEL;G.pressMs811=0;G.pressScale811=.97;G.pressScaleOne811=.98;G.relMs811=130;G.relPeak811=1.03;G.relClass811=RLS;G.waitSum811=WAIT;G.armSum811=arm;G.markSum811=mark;
 })();
+
+;(()=>{/* r812: press snap + tightened release on 인연 cards (.bdc). 리나의 영지 building rows and scene chips already have r732/r803/r804 snap and 130ms release, so a second handler would fight that path; this covers the leftover portrait cards. Dedicated rls812 (never .rel). Horizontal strip keeps pan-x. */
+const SEL='#screen .bdc';
+const RLS='rls812';
+const SKIP=[typeof G!=='undefined'&&G.pressSel802,typeof G!=='undefined'&&G.pressSel803,typeof G!=='undefined'&&G.pressMore732,typeof G!=='undefined'&&G.pressSel805,typeof G!=='undefined'&&G.pressSel806,typeof G!=='undefined'&&G.pressSel807,typeof G!=='undefined'&&G.pressSel808,typeof G!=='undefined'&&G.pressSel809,typeof G!=='undefined'&&G.pressSel810,typeof G!=='undefined'&&G.pressSel811].filter(Boolean).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','812');st.id='r812css';
+st.textContent=[
+'#screen .bdc{-webkit-tap-highlight-color:transparent;touch-action:pan-x}',
+'html body #screen .bdc:is(.press,:active){transition:none!important;transform:scale(.97)!important;filter:brightness(1.15)!important}',
+'html body #screen .bdc.on:is(.press,:active){filter:drop-shadow(0 0 6px #ff7aa8) brightness(1.15)!important}',
+'@keyframes relb812{0%{transform:scale(.97)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body #screen .bdc.'+RLS+'{animation:relb812 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen .bdc{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen .bdc.'+RLS+'{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add(RLS);setTimeout(()=>c.classList.remove(RLS),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove(RLS);t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel812=SEL;G.pressMs812=0;G.pressScale812=.97;G.relMs812=130;G.relPeak812=1.03;G.relClass812=RLS;
+})();
