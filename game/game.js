@@ -9501,3 +9501,24 @@ if(sk)sk.addEventListener('pointerdown',down,true);
 const os=typeof renderSkills==='function'?renderSkills:null;if(os)renderSkills=function(){const r=os.apply(this,arguments);try{hide()}catch(_){}return r};
 G.skHoldShow749=show;G.skHoldHide749=hide;G.skHoldName749=nam;
 })();
+
+;(()=>{/* r750: make the existing 우편 side-icon badge (#sidemail .dot) obvious when mail is unread/claimable. The dot already turns on via C.mailLive, but it is an empty pulsing badge with no count. It now shows the live-mail count (same C.mailLive rule) in MapleStory on the existing badge, lit when the count is above 0, hidden when there is none. Change-only text/class/visibility. Effect-off keeps the badge and number and skips the bounce. Layout (icon size/place, badge slot) is unchanged. Display only: mail rewards, expiry, and C.mailClaim are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','750');st.textContent=[
+'html body #sidemail .dot.rdy750{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;',
+'font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;-webkit-text-stroke:2px #6a0800;paint-order:stroke fill;',
+'text-shadow:0 1px 0 #000,0 0 3px #000;z-index:4}',
+'html body #sidemail .dot.rdy750:empty{display:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #sidemail .dot{animation:none!important}'
+].join('');document.head.appendChild(st);
+const cnt=()=>{try{return (D.MAILS||[]).filter(m=>C.mailLive(m)).length}catch(_){return 0}};
+const mark=()=>{const n=cnt(),lab=n>0?String(n):'',d=document.querySelector('#sidemail .dot');
+  if(!d)return;
+  const on=n>0;
+  if(d._n750!==lab){d._n750=lab;if(d.textContent!==lab)d.textContent=lab;G.mailN750=(G.mailN750||0)+1}
+  if(d._on750!==on){d._on750=on;d.classList.toggle('rdy750',on);if(typeof $sd==='function')$sd(d,on?'':'none');else d.style.display=on?'':'none';G.mailN750=(G.mailN750||0)+1}
+  G.mailOff750=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function(){const r=oh.apply(this,arguments);try{mark()}catch(_){}return r};
+try{mark()}catch(_){}
+G.mailCnt750=cnt;G.mailBadge750=mark;
+})();
