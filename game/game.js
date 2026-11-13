@@ -10813,3 +10813,19 @@ const oh=R.hit;R.hit=function(e,d,crit){const k=flashK;flashK=0;const r=oh.apply
 const reset=()=>{for(let i=0;i<N;i++)POOL[i].live=0;rr=0;audK=0;flashK=0;due=0;dueK=0;seen=G.ultN||-1};
 G.ultHex796=HEX;G.ultCol796=COL;G.armUlt796=arm;G.stepUlt796=step;G.nUlt796=()=>{let n=0;for(let i=0;i<N;i++)if(POOL[i].live)n++;return n};G.peekUlt796=()=>{for(let i=0;i<N;i++){const q=POOL[(ii-1-i+N*8)%N];if(q.live)return q}return 0};G.resetUlt796=reset;G.liteUlt796=lite;G.peakUlt796=PEAK;G.lifeUlt796=LIFE;G.szUlt796=SZ;G.setUlt796=k=>{audK=k;flashK=k};G.peekAud796=()=>audK;G.fromUlt796=fromLast;G.isHealer796=isHealer;
 })();
+;(()=>{/* r797: battle-enter / return field snap vs 화룡전, first slice of the screen-transition series. Measure (fades, timeouts, input locks on dungeon/tower/boss/special entry and return): (1) hiding #screen is already instant (classList.remove("on"), display:none, no exit animation; r728 only fades screens in). (2) rb / 보스 러시 entry sets B.lock=0, with no extra input lock or setTimeout before the fight starts. (3) first-wave nx=.5 / .6 and the 45s/60s limits are combat cadence and stay. (4) boss WARNING (1.5s) and VS (~1.8s) are presence and stay, including the r758/r760/r761 out-tail pumps. (5) r756 already shortened the CLEAR/fail hold (600/800ms, skippable). (6) r755 already set the normal stage-change field crossfade to ~200ms (RATE 5; effect-off snaps). The remaining late beat: dungeon, 무한의 탑, and 전직 시련 write R.bgOv (bg_mine/library/forge/ruins/tower) on entry and clear it in go(), so they reuse that same 200ms R.fade — after the menu drops you still watch the old field dissolve, and again when the special backdrop gives way to the stage field. World boss and 보스 러시 do not swap R.bgOv, so they never paid this fade. Change-only, presentation only: when a frame's field change involves one of those special battle backdrops, snap R.fade to 1 and drop R.prevBg so the cut is instant. Normal stage-change fades (bg_f_* only, no special bgOv) stay at 200ms. r755 RATE/SEC, r728 menu fade-in, r756 holds, load, combat, boss warning/VS, cadence, rewards, and save behavior are untouched. */
+const SPEC={ 'bg_mine.jpg':1,'bg_library.jpg':1,'bg_forge.jpg':1,'bg_ruins.jpg':1,'bg_tower.jpg':1 };
+const isSpec=n=>!!(n&&SPEC[n]);
+const snap=()=>{R.fade=1;R.prevBg=null};
+const of=typeof R!=='undefined'&&R.frame;if(typeof of!=='function')return;
+R.frame=function(dt){
+  const b0=R.bgn;
+  const r=of.apply(this,arguments);
+  try{
+    if(isSpec(R.bgOv)||isSpec(b0)||isSpec(R.bgn)){
+      if((R.fade??1)<1||R.prevBg)snap();
+    }
+  }catch(_){}
+  return r};
+G.isSpecBg797=isSpec;G.specBg797=SPEC;G.snapFade797=snap;G.enterFadeMs797=0;
+})();
