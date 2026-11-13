@@ -1473,9 +1473,9 @@ const ot=C.tick;C.tick=function(dt){const r=ot.apply(this,arguments);try{clk+=dt
 G.tgState=()=>cur;
 const of=R.frame;R.frame=dt=>{of(dt);try{if(!cur||G.screen)return;const e=cur.e,s=R._ES().get(e);const c=R._bc();if(!s||!c)return;const ctx=c.getContext('2d'),sc=c.width/c.clientWidth,T=performance.now()/1000;ctx.save();ctx.setTransform(sc,0,0,sc,0,0);const h=80;ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(s.x,s.y-h*.45,4,s.x,s.y-h*.45,h*.75);g.addColorStop(0,'rgba(255,220,90,.45)');g.addColorStop(1,'rgba(255,180,40,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x,s.y-h*.45,h*.75,0,6.283);ctx.fill();for(let i=0;i<6;i++){const a=T*2+i*1.047,r=h*.5,px=s.x+Math.cos(a)*r*.7,py=s.y-h*.45+Math.sin(a)*r*.5,z=2.5+1.5*Math.sin(T*6+i);ctx.fillStyle='#fff3b0';ctx.beginPath();ctx.moveTo(px,py-z*2);ctx.lineTo(px+z*.6,py);ctx.lineTo(px,py+z*2);ctx.lineTo(px-z*.6,py);ctx.fill()}ctx.globalCompositeOperation='source-over';const y=s.y-h-30,w=56;ctx.font='900 11px Maplestory,"Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.lineWidth=3.5;ctx.strokeStyle='#4a2a00';ctx.strokeText('보물 고블린',s.x,y-6);ctx.fillStyle='#ffe066';ctx.fillText('보물 고블린',s.x,y-6);ctx.fillStyle='#2a1a00';ctx.fillRect(s.x-w/2-1,y-1,w+2,6);ctx.fillStyle=cur.t<3?'#ff6a4a':'#ffd24a';ctx.fillRect(s.x-w/2,y,w*Math.max(0,cur.t/9),4);ctx.restore()}catch(_){}}})();
 /* v87 보스 필살기 컷인 (시각 전용) */
-(()=>{const C=G.C;const SK=['파멸의 일격','암흑 폭풍','대지 분쇄','혼돈의 포효','멸망의 낙인'];const ot=C.ev.tele;C.ev.tele=function(e){const r=ot&&ot.apply(this,arguments);try{if(!e||!e.boss||e.wb||G.screen||G.storyOn||(G.saverState&&G.saverState())||(R.opt&&R.opt.fx===false))return r;const b=document.getElementById('battle');if(!b)return r;b.querySelectorAll('.bcut').forEach(x=>x.remove());const nm=SK[(e.n||'').length%SK.length];const d=document.createElement('div');d.className='bcut';d.innerHTML=`<div class=bcs></div><img src="assets/${e.img}"><div class=bct><small>${e.n}</small><b>${nm}!</b><em>붉은 영역을 피하세요</em></div>`;b.appendChild(d);[...document.querySelectorAll('#toastQ>*')].forEach(t=>{if(t.textContent.includes('강력한 공격'))t.remove()});setTimeout(()=>d.remove(),1250)}catch(_){}return r}})();
+(()=>{const C=G.C;const SK=['파멸의 일격','암흑 폭풍','대지 분쇄','혼돈의 포효','멸망의 낙인'];const ot=C.ev.tele;C.ev.tele=function(e){const r=ot&&ot.apply(this,arguments);try{if(!e||!e.boss||e.wb||G.screen||G.storyOn||(G.saverState&&G.saverState())||(R.opt&&R.opt.fx===false))return r;const b=document.getElementById('battle');if(!b)return r;b.querySelectorAll('.bcut').forEach(x=>x.remove());const nm=SK[(e.n||'').length%SK.length];const d=document.createElement('div');d.className='bcut';d.innerHTML=`<div class=bcs></div><img src="assets/${e.img}"><div class=bct><small>${e.n}</small><b>${nm}!</b><em>붉은 영역을 피하세요</em></div>`;b.appendChild(d);[...document.querySelectorAll('#toastQ>*')].forEach(t=>{if(t.textContent.includes('강력한 공격'))t.remove()});const z761=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);setTimeout(()=>{if(z761){try{d.remove()}catch(_){}}else if(d.isConnected)d.classList.add('out')},1000);setTimeout(()=>{try{if(d.isConnected)d.remove()}catch(_){}},z761?1000:1250)}catch(_){}return r}})();
 /* v87b 보스 컷인 중 아군 컷인 대기열 */
-(()=>{let until=0,qc=null,qcc=null,qd=[];const busy=()=>performance.now()<until;
+(()=>{let until=0,qc=null,qcc=null,qd=[];const busy=()=>performance.now()<until&&!!document.querySelector('#battle .bcut:not(.out)');
 const mo=new MutationObserver(ms=>{if(!busy())return;ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.classList&&n.classList.contains('combo')){n.remove();qd.push(n)}}))});
 const hook=()=>{const b=document.getElementById('battle');if(b)mo.observe(b,{childList:true});else setTimeout(hook,500)};hook();
 new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.classList&&n.classList.contains('bcut')){until=performance.now()+1300;R.cut=null;R.ccut=null;document.querySelectorAll('#battle .combo').forEach(x=>x.remove())}}))).observe(document.body,{childList:true,subtree:true});
@@ -4306,7 +4306,7 @@ const st=document.createElement('style');st.textContent=`
 #battle .combo:is(#_a,#_b,div):is(#_c,#_d,div){top:238px!important}body.bossfight #battle .combo:is(#_a,#_b,div):is(#_c,#_d,div){top:280px!important}/* boss fight: below the boss name/HP frame #bossFr (202-275) */
 #battle .combo.cbq{visibility:hidden!important}#battle .combo.cbq,#battle .combo.cbq *{animation-play-state:paused!important}
 #battle .combo.cbo{opacity:0!important;transition:opacity .16s ease-in!important}`;document.head.appendChild(st);
-const blk=()=>!!document.querySelector('#battle .wvb.wrib:not(.out),.bwarn:not(.out),.vsx:not(.out),#battle .bcut');/* + the boss VS card and boss cut-in */
+const blk=()=>!!document.querySelector('#battle .wvb.wrib:not(.out),.bwarn:not(.out),.vsx:not(.out),#battle .bcut:not(.out)');/* + the boss VS card and boss cut-in */
 const pos=n=>{const dw=!!(C.B&&C.B.boss&&!C.B.wb&&n.classList.contains('duo'));if(dw&&!n.classList.contains('dlw')){n.classList.add('dlw');n.classList.remove('dlo','dfd')}/* r367: boss-fight duo card goes to the low band (~556-649, under the boss's feet, over the idle/potion row) instead of 280-392 / 362-474, which sat on the boss's crown, face and the above-head crit */const t=C.B&&C.B.boss?(dw?'540px':n.classList.contains('dlo')?'362px':'280px'):'238px';/* r325: .dlo duo banner (boss strip up when it appeared) keeps the 362 slot - this inline !important is why the r324 stylesheet rule never applied live */if(n._tp!==t){n._tp=t;n.style.setProperty('top',t,'important')}};/* boss state read when the banner shows (body.bossfight lands a beat later than C.B.boss) */
 const arm=n=>{if(n._cq)return;n._cq=1;pos(n);if(!blk()){if(n.classList.contains('dlo')&&G._dloOn)G._dloOn();return}const rm0=n.remove.bind(n);n._rm0=rm0;n.classList.add('cbq');n.remove=()=>{};/* r326: at most one banner waits - a newer one replaces it; the waiting one is no longer dropped after 2.6s, it shows once the ribbons/VS/cut-in clear */{const o=R._cbW;if(o&&o!==n&&o.isConnected&&o._rm0)o._rm0();R._cbW=n}const w=()=>{if(!n.isConnected||R._cbW!==n)return;if(blk()){setTimeout(w,100);return}R._cbW=null;if(n.classList.contains('duo')&&!n.classList.contains('dlw')&&C.B.boss&&!C.B.wb&&R.ccut&&R.ccut.t<1){n.classList.add('dlo');n.classList.remove('dfd')}if(n.classList.contains('dlo')&&G._dloOn)G._dloOn();/* r325: queued duo banner released while the boss strip is up takes the 362 slot */pos(n);n.classList.remove('cbq');R._cbQ=(R._cbQ||0)+1;setTimeout(rm0,1500)};setTimeout(w,100)};
 const hide=()=>document.querySelectorAll('#battle .combo:not(.cbq)').forEach(c=>{if(c._co)return;c._co=1;c.classList.add('cbo');const r=c.remove.bind(c);setTimeout(()=>{try{Element.prototype.remove.call(c)}catch(_){}},180)});
@@ -5670,7 +5670,7 @@ const o=G.tutTick;G.tutTick=function(){const r=o.apply(this,arguments);const a=d
 ;(function(){/* r490: 가이드 건너뛰기 as a small dark pill (display only) */const st=document.createElement('style');st.textContent=`html body .tut .tskip{background:#1a1008cc!important;color:#f0e0c0!important;font:700 11px Maplestory,sans-serif!important;padding:4px 10px!important;border-radius:11px!important;border:1px solid #c9a46a88!important;box-shadow:0 2px 6px #0008;text-decoration:none!important}`;document.head.appendChild(st)})();
 ;(function(){/* r491: guide bubble placed where it covers no HUD button and not the WAVE banner, clamped to the screen (display only) */
 const OB='#battle .side a,#bctl span,#skills .sk,#prof,#nav a,#nav span,.hudtop,#autoSp,#sheet .srow2,#sheet .n506,#sheet .r506,#sheet #rollEq,#sheet .eq,#sheet .cmpc';/* r525: 일괄 뽑기·장착 button label stays visible under the draw hint *//* r524: item stat rows / name of the gear compare cards count as obstacles, so the 장착 hint no longer covers the new item's numbers */const ov=(a,b)=>Math.max(0,Math.min(a.r,b.r)-Math.max(a.l,b.l))*Math.max(0,Math.min(a.b,b.b)-Math.max(a.t,b.t));
-const o=G.tutTick;G.tutTick=function(){const r=o.apply(this,arguments);try{const t=document.querySelector('.tut');if(!t||t.style.display=='none')return r;if(document.querySelector('#battle .vsx:not(.out),.clbw')){t.style.display='none';return r}const bb=t.querySelector('.tbub'),rg=t.querySelector('.tring');if(!bb||!rg)return r;if(document.querySelector('#battle .bcut')){bb.style.setProperty('display','none','important');const q=t.querySelector('.tl493');if(q)q.style.display='none';return r}else bb.style.removeProperty('display');
+const o=G.tutTick;G.tutTick=function(){const r=o.apply(this,arguments);try{const t=document.querySelector('.tut');if(!t||t.style.display=='none')return r;if(document.querySelector('#battle .vsx:not(.out),.clbw')){t.style.display='none';return r}const bb=t.querySelector('.tbub'),rg=t.querySelector('.tring');if(!bb||!rg)return r;if(document.querySelector('#battle .bcut:not(.out)')){bb.style.setProperty('display','none','important');const q=t.querySelector('.tl493');if(q)q.style.display='none';return r}else bb.style.removeProperty('display');
  const R={l:parseFloat(rg.style.left)+4,t:parseFloat(rg.style.top)+4,w:parseFloat(rg.style.width)-8,h:parseFloat(rg.style.height)-8};R.r=R.l+R.w;R.b=R.t+R.h;const AP=(document.getElementById('app')||document.body).getBoundingClientRect(),X0=Math.max(0,AP.left),X1=Math.min(innerWidth,AP.right),W=innerWidth,H=innerHeight,bw=bb.offsetWidth||210,bh=bb.offsetHeight||54,g=12,m=8,cy=R.t+R.h/2-bh/2,cx=R.l+R.w/2-bw/2;
  const obs=[];document.querySelectorAll(OB).forEach(e=>{const q=e.getBoundingClientRect();if(q.width>2&&q.height>2&&!(q.left>=R.l-2&&q.right<=R.r+2&&q.top>=R.t-2&&q.bottom<=R.b+2))obs.push({l:q.left,t:q.top,r:q.right,b:q.bottom})});
  let BN=null;const HV=[];document.querySelectorAll('#battle .wvb,#battle .sktag,#bossSt,#bossFr,#battle .echs').forEach(e=>{const q=e.getBoundingClientRect(),c=getComputedStyle(e);if(q.width>2&&q.height>2&&c.display!='none'&&+c.opacity>.1)HV.push({l:q.left,t:q.top,r:q.right,b:q.bottom})});/* r519: the canvas 증원/대기 pill is an obstacle too while it is being drawn */try{const RR=window.RENDER;if(RR&&RR._pv519&&RR._pb){const cq=RR._bc().getBoundingClientRect();HV.push({l:RR._pl+cq.left-4,t:RR._pb-20+cq.top,r:RR._pr+cq.left+4,b:RR._pb+cq.top+4})}}catch(_){}/* r494/r495: elite name plate + bar (canvas-drawn) as an obstacle, using the renderer's real plate rect R._enr456 */try{const RR=window.RENDER,cv=document.getElementById('cv'),e4=RR&&RR._enr456;if(e4&&cv&&performance.now()-e4[4]<400&&G.C.B.enemies.some(e=>e.el&&e.hp>0)){const q=cv.getBoundingClientRect(),k=q.width/(cv.clientWidth||q.width);HV.push({l:q.left+e4[0]*k-6,r:q.left+e4[2]*k+6,t:q.top+e4[1]*k-6,b:q.top+e4[3]*k+6})}}catch(_){}const ba=document.getElementById('battle');if(ba){const q=ba.getBoundingClientRect();if(q.height>100){const bc=q.left+q.width/2;BN={l:bc-120,r:bc+120,t:q.top+q.height*.25,b:q.top+q.height*.37}}}const cl=(x,y)=>[Math.max(X0+m,Math.min(X1-bw-m,x)),Math.max(m,Math.min(H-bh-m,y))];
@@ -9828,4 +9828,45 @@ const hook=()=>{const b=bat();if(!b||b._r760obs)return;b._r760obs=1;mo.observe(b
 hook();
 if(!bat())document.addEventListener('DOMContentLoaded',hook,{once:true});
 G.vsVis760=VIS;G.outMs760=DUR;G.armOut760=arm;
+})();
+
+;(()=>{/* r761: keep the boss telegraph cut-in (.bcut) visible for ~1s (80% of the existing 1.25s animation — boss presence). The last 250ms was already a fade, but combo banners (blk + v87b G.bcutBusy / until+1300) and the tutorial still treated any .bcut as blocking until the node was removed at 1.25s (busy actually until 1.3s). Input was already pointer-events:none. Those checks now use .bcut:not(.out), and G.bcutBusy also lifts once .out starts. .out is added at 1s with a 250ms fade; the node still leaves at 1.25s. Effect-off snaps off at 1s. C.ev.tele, teleHit, boss spawn, the WARNING hand-off and combat timing are untouched. */
+const VIS=1000,DUR=250;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.id='r761css';st.textContent=
+'@keyframes bcutO761{0%{opacity:1}100%{opacity:0}}'+
+'html body #battle .bcut.out{animation:bcutO761 .25s ease-in forwards!important}'+
+'html body #battle .bcut.out img,html body #battle .bcut.out .bct{animation-play-state:paused}'+
+'body:is(.nofx,.tglite,.fxoff) #battle .bcut.out{animation:none!important;opacity:0}';
+document.head.appendChild(st);
+const finish=el=>{try{if(el&&el.isConnected)el.remove()}catch(_){}};
+const startOut=el=>{
+  if(!el||el._r761out)return;el._r761out=1;
+  clearTimeout(el._t761);
+  if(off()){finish(el);return}
+  el._t761=setTimeout(()=>finish(el),DUR);
+};
+const arm=el=>{
+  if(!el||!el.classList||el._r761)return;el._r761=1;
+  const cl=el.classList,oa=cl.add;
+  cl.add=function(){const r=oa.apply(this,arguments);try{if(cl.contains('out'))startOut(el)}catch(_){}return r};
+  if(cl.contains('out'))startOut(el);
+};
+const mo=new MutationObserver(ms=>{
+  for(const x of ms){
+    for(const n of x.addedNodes){
+      if(n.nodeType===1&&n.classList&&n.classList.contains('bcut'))arm(n);
+    }
+  }
+});
+const bat=()=>document.getElementById('battle');
+const hook=()=>{const b=bat();if(!b||b._r761obs)return;b._r761obs=1;mo.observe(b,{childList:true});
+  const wrap=(obj,k)=>{if(!obj||typeof obj[k]!=='function'||obj[k]._r761)return;const o=obj[k].bind(obj);
+    const f=function(n){const r=o.apply(this,arguments);try{if(n&&n.classList&&n.classList.contains('bcut'))arm(n)}catch(_){}return r};
+    f._r761=1;obj[k]=f};
+  wrap(b,'appendChild');wrap(b,'insertBefore');
+  b.querySelectorAll('.bcut').forEach(arm)};
+hook();
+if(!bat())document.addEventListener('DOMContentLoaded',hook,{once:true});
+G.bcutVis761=VIS;G.outMs761=DUR;G.armOut761=arm;
 })();
