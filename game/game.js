@@ -10056,3 +10056,12 @@ const css='@keyframes mkb770{0%{opacity:0;transform:translateX(-50%) scale(1.8)}
 const st=document.createElement('style');st.id='r770css';st.textContent=css;document.head.appendChild(st);
 G.mkbCss770=css;
 })();
+;(()=>{/* r771: mid-fight .mkb typography vs 화룡전. r770 already holds the banner in-slot (effect-off static). The gold title was a clipped gradient with a 1.5px stroke, and a later rule shrank MULTI KILL to 28px (smaller than TRIPLE's 30px) and ×N to 15px, so mid-fight contrast and the multi-kill size were weaker than 화룡전. Change-only: same 34% slot and dodge tops, same 1.2s life / strings / kill rules. Stronger 2.5px outline, Maplestory kept; DOUBLE 26px, TRIPLE 30px, MULTI restored to 34px (at least as large as the others), ×N to 18px. Measured Maplestory-Bold: MULTI 34px + ×9 18px is ~245px, under the 390px app even with the brief 1.8 pop while opacity is still low. No top/left/width change, no layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='#battle .mkb b,#battle .mkb small{font-family:Maplestory,"Noto Sans KR",sans-serif!important}'
++'#battle .mkb b{font-size:26px;font-weight:900;font-style:italic;-webkit-text-stroke:2.5px #7a2a00}'
++'#battle .mkb.k3 b{font-size:30px}'
++'#battle .mkb.k4 b{font-size:34px;-webkit-text-stroke-color:#5a0020}'
++'#battle .mkb small{font-size:18px;font-weight:900;-webkit-text-stroke:1.8px #5a0020}';
+const st=document.createElement('style');st.id='r771css';st.textContent=css;document.head.appendChild(st);
+G.mkbCss771=css;
+})();
