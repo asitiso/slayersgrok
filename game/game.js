@@ -10075,3 +10075,15 @@ const css='#battle .combo small,#battle .combo i,#battle .combo.duo .pl i{font-f
 const st=document.createElement('style');st.id='r772css';st.textContent=css;document.head.appendChild(st);
 G.cmbCss772=css;
 })();
+;(()=>{/* r773: mid-fight .sktag skill-name tag vs 화룡전. The pooled tag (icon + name above the caster) was 11px with only a 1px shadow, and sktI drifted up to translateY(-150%) in the last 250ms of the 1.25s life. Change-only: same 1.25s life (animationend still clears .on), same trigger (Lina spells / companion ults; still skipped for that cast's own cut-in, 스킬 연출 off / nofx, and other screens), same anchor (s.y-112, translate(-50%,-100%)). 14px Maplestory with a 1.5px outline. After the brief settle pop (0–20%) it holds in-slot until 80%, then a 250ms in-slot fade (no late drift). Effect-off / tglite: static in-slot for the same 1.25s (step-end, so animationend still fires). A post-place x clamp keeps a 14px tag (longest name ~120px) inside the 390px app without moving the dock or #skHold749. Height stays 20px so the existing dodge boxes stay valid. No layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='html body #battle .sktag b{font:900 14px/1 Maplestory,"Noto Sans KR",sans-serif!important;color:#fff6d8;-webkit-text-stroke:1.5px #1a0c04;paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 3px #000}'
++'@keyframes sktI773{0%{opacity:0;transform:translate(-50%,-60%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.08)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1;transform:translate(-50%,-100%) scale(1)}100%{opacity:0;transform:translate(-50%,-100%) scale(1)}}'
++'html body #battle .sktag.on{animation:sktI773 1.25s ease-out both}'
++'@keyframes sktS773{0%{opacity:1;transform:translate(-50%,-100%)}100%{opacity:0;transform:translate(-50%,-100%)}}'
++'html body:is(.tglite,.nofx,.fxoff) #battle .sktag.on{animation:sktS773 1.25s step-end both!important}';
+const st=document.createElement('style');st.id='r773css';st.textContent=css;document.head.appendChild(st);
+const clamp=d=>{if(!d||!d.classList||!d.classList.contains('sktag'))return;let w=d.offsetWidth||0;if(w<2)w=parseFloat(d.style.width)||0;if(w<2)w=90;const tx=parseFloat(d.style.left);if(!isFinite(tx))return;const c=Math.max(w/2+6,Math.min(390-w/2-6,tx));if(c!==tx)d.style.left=c+'px';d._x=c;d._w=w};
+const go=()=>{const b=document.getElementById('battle');if(!b)return setTimeout(go,300);new MutationObserver(ms=>{for(const m of ms){const n=m.target;if(m.type==='attributes'&&n.classList&&n.classList.contains('sktag')&&n.classList.contains('on'))try{clamp(n)}catch(_){}for(const x of m.addedNodes||[])if(x.classList&&x.classList.contains('sktag')&&x.classList.contains('on'))try{clamp(x)}catch(_){}}}).observe(b,{subtree:true,childList:true,attributes:true,attributeFilter:['class']})};
+go();
+G.skCss773=css;G.skClamp773=clamp;
+})();
