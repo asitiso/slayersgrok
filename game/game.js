@@ -10541,3 +10541,42 @@ const of=R.frame;R.frame=function(dt){
 };
 G.feel787=feel;G.stepFeel787=step;G.liteFx787=lite;G.xyFeel787=()=>[px,py];G.tierFeel787=()=>tier;G.tFeel787=()=>t;G.ampFeel787=AMP;G.lifeFeel787=LIFE;G.visFeel787=VIS;G.capFeel787=CAP;G.pendFeel787=()=>pend;
 })();
+
+;(()=>{/* r788: tame the oversized random shake on 필살기 vs 화룡전. Dragon Slave / 기가 슬레이브 still set shake=26 at the main impact and (Dragon Slave II) shake=30 at the job-level follow-up. Other combat shakes top out at 12, and the r787 downward punch is 12px, so a 26–30px random jitter drowns the kick and lasts ~0.6s on the existing decay (pow(.004,dt)-dt*6). Change-only, presentation only: those two oversized jitters are capped to a 14px residual (still the largest shake in a fight, so the ultimate stays the biggest moment) that decays in about 0.25s, so the downward punch reads cleanly. Flash, beams, blasts, rings, cut-in, R.hs, C.tick, C.deferHit, damage, rewards and boss presence are untouched. Skills at 4–12px and all other shakes are not capped. Effect-off / tglite / nofx / fxoff: no residual and no shake (r787 already zeros the camera when effects are off). */
+const CAP=14,TH=12.5,DEC=56,WATCH=2.2;
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+let env=0,watch=0;
+const apply=(sx,sy)=>{
+  if(lite()){env=0;return[0,0]}
+  const implied=Math.max(Math.abs(sx),Math.abs(sy)/.6);
+  if(implied>TH)env=CAP;
+  if(env>0){const m=env,my=m*.6;if(sx>m)sx=m;else if(sx<-m)sx=-m;if(sy>my)sy=my;else if(sy<-my)sy=-my}
+  return[sx,sy];
+};
+{const os=R.spell,sw=function(sp,tg){try{if(sp&&(sp.ult||sp.k==='ds'||sp.k==='giga'))watch=WATCH}catch(_){}return os.apply(this,arguments)};R.spell=sw;if(C.ev&&C.ev.spell===os)C.ev.spell=sw}
+const hook=()=>{
+  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(!P||!P.translate)return()=>{};
+  const ot=P.translate;let first=1;
+  P.translate=function(x,y){
+    if(!first)return ot.apply(this,arguments);
+    first=0;
+    if(lite())return ot.call(this,0,0);
+    let sx=x,sy=y;const p=(G.xyFeel787&&G.xyFeel787())||[0,0];
+    sx-=p[0];sy-=p[1];
+    const c=apply(sx,sy);
+    return ot.call(this,c[0]+p[0],c[1]+p[1]);
+  };
+  return()=>{P.translate=ot};
+};
+const of=R.frame;R.frame=function(dt){
+  const L=lite();
+  if(L)env=0;else if(env>0)env=Math.max(0,env-(dt||0)*DEC);
+  if(watch>0)watch=Math.max(0,watch-(dt||0));
+  const need=!L&&(env>0||watch>0);
+  if(!need)return of.apply(this,arguments);
+  const off=hook();
+  try{return of.apply(this,arguments)}finally{off()}
+};
+G.capUlt788=CAP;G.thUlt788=TH;G.decUlt788=DEC;G.envUlt788=()=>env;G.applyUlt788=apply;G.stepUlt788=dt=>{if(lite()){env=0;return}if(env>0)env=Math.max(0,env-(dt||0)*DEC)};G.resetUlt788=()=>{env=0;watch=0};G.liteUlt788=lite;
+})();
