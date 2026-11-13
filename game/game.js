@@ -10420,3 +10420,41 @@ const draw=()=>{
 const of=R.frame;R.frame=function(dt){if(!mine.length)return of.apply(this,arguments);const off=hook();try{const r=of.apply(this,arguments);try{draw()}catch(_){}return r}finally{off()}};
 G.bakLb784=bake;G.szLb784=SZ;G.colLb784=LAB;G.isLb784=isLab;G.aLb784=alpha;G.popLb784=pop;G.lifeLb784=LIFE;G.holdLb784=HOLD;G.riseLb784=0;
 })();
+
+;(()=>{/* r785: mid-fight 그로기! / 브레이크 임박 / 브레이크 gauge labels vs 화룡전. These are the v17 in-gauge labels (8.5px Maplestory, not the 10px 그로기 pill under the bar, and not BREAK!). Live draw is flat #ffd0c0 (그로기!) / #fff2c0 (the other two), a 2.5px #000 stroke, re-stroked every frame, sitting in the 10px plate at (x0+w/2, y+3.5). The pale fills wash out on the gold/red bar, and 브레이크 임박 is not distinct from 브레이크. Change-only: same gauge slot (x0=104, y=226+30, w=W-232, 10×(w+4) plate, 6px fill), same 80% 임박 timing, same boss lookup (G.bo550), same grog duration / pill / boss-foot ellipse / BREAK!. Each of the three strings is baked once at 9px (ink of the longest label plus a 2px even outline still matches the current 8.5px+2.5 footprint inside the 10px plate) — 그로기! coral, 브레이크 임박 bright gold, 브레이크 cream-gold, even 2px dark outline — and blitted; no per-frame reshape. The label itself has no motion; effect-off / tglite / nofx stays static. Skip only the 8.5px in-gauge stroke so the 10px pill 그로기! is untouched. */
+const SZ=9,SW=2,Y=226+30,X0=104,LAB={'그로기!':['#fff4e8','#ff8a5a','#2a0008'],'브레이크 임박':['#fffbe0','#ffd24a','#1a1200'],'브레이크':['#fff8e0','#ffe27a','#1a1400']};
+const isLab=s=>!!LAB[s];
+const cache={};
+const bake=txt=>{
+  if(!isLab(txt))return null;
+  if(cache[txt]&&cache[txt]._785)return cache[txt];
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),p=LAB[txt];
+  const c=document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+SZ+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||SZ*txt.length*.6,L=w0/2+SW+4,T=SZ/2+SW+4,W2=Math.ceil((L*2)*S),H2=Math.ceil((T*2)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.textBaseline='middle';X.globalAlpha=1;
+  X.font='900 '+SZ+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.miterLimit=2;X.lineWidth=SW;
+  X.strokeStyle=p[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-SZ/2,0,SZ/2);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  return cache[txt]={c,ox:L,oy:T,w:W2/S,h:H2/S,_785:1};
+};
+const skip=function(s){return isLab(s)&&this.font&&String(this.font).indexOf('8.5px')>=0};
+{const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(P&&P.strokeText&&!P._s785){const os=P.strokeText,of=P.fillText;P._s785=1;
+    P.strokeText=function(s){if(skip.call(this,s))return;return os.apply(this,arguments)};
+    if(of)P.fillText=function(s){if(skip.call(this,s))return;return of.apply(this,arguments)};
+  }}
+const draw=()=>{
+  if(G.screen||!G.bo550)return;
+  const bo=G.bo550(R,0);if(!bo)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const W=cv.clientWidth||cv.width||390,w=W-232,g=bo.grog>0,v=g?(C.BRK&&C.BRK.dur?bo.grog/C.BRK.dur:0):Math.min(1,bo.brk||0);
+  const lb=g?'그로기!':(!g&&v>=.8)?'브레이크 임박':'브레이크',spr=bake(lb);if(!spr)return;
+  const ctx=cv.getContext('2d'),sc=cv.width/(cv.clientWidth||cv.width||1);
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);ctx.globalAlpha=1;
+  ctx.drawImage(spr.c,X0+w/2-spr.ox,Y+3.5-spr.oy,spr.w,spr.h);
+  ctx.restore();
+};
+const of=R.frame;R.frame=function(dt){const r=of.apply(this,arguments);if(!G.screen)try{draw()}catch(_){}return r};
+G.bakBrkLb785=bake;G.szBrkLb785=SZ;G.swBrkLb785=SW;G.colBrkLb785=LAB;G.isBrkLb785=isLab;G.yBrkLb785=Y;G.x0BrkLb785=X0;
+})();
