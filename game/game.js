@@ -9249,3 +9249,30 @@ const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{sweep();const
   ctx.globalAlpha=1;ctx.restore();G._guardDrew738=drew}catch(_){G._guardDrew738=0}};
 G.guardDur738=DELAY;G.guardLife738=LIFE;G.guardArm738=mark;
 })();
+
+;(()=>{/* r739: soft gold rim/sparkle on a field ally whose skill (필살 gauge a._ug) is charged. Display only — fill rate, auto-cast, HP and combat timing stay the same. Change-only flag a._skRdy. Cached rim+sparkle sprite, no per-frame allocations. Effect-off keeps a static rim and skips the pulse. Not drawn while a menu is open. Lower priority than the r736 low-HP cue and the r737/r738 hit cues: suppressed while those are showing (including the incoming-hit telegraph) so the sprite does not get cluttered. */
+const ready=a=>!!(a&&a.hp>0&&(a._ug||0)>=1&&D.CSKI&&D.CSKI[a.k]);
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(R.opt&&R.opt.fx===false);
+const now=()=>(typeof performance!=='undefined'?performance.now():0);
+const hide=a=>{if(!a)return 1;if(a._inHit)return 1;if(a._fdng)return 1;if(a._gdOn){const t=now();if(t>=(a._gdAt||0)&&t<(a._gdUntil||0))return 1}return 0};
+let glow=null,ctx0=null,cv0=null;
+const spr=()=>{if(glow)return glow;const c=document.createElement('canvas');c.width=72;c.height=96;const g=c.getContext('2d');
+  const rim=g.createRadialGradient(36,50,10,36,50,34);rim.addColorStop(0,'rgba(255,232,140,0)');rim.addColorStop(.55,'rgba(255,210,80,.2)');rim.addColorStop(.82,'rgba(255,220,120,.55)');rim.addColorStop(1,'rgba(255,200,60,0)');
+  g.fillStyle=rim;g.beginPath();g.ellipse(36,52,22,32,0,0,7);g.fill();
+  g.save();g.translate(54,16);g.rotate(Math.PI/4);g.fillStyle='rgba(255,244,180,.95)';g.fillRect(-3,-1.2,6,2.4);g.fillRect(-1.2,-3,2.4,6);g.restore();
+  const sp=g.createRadialGradient(54,16,0,54,16,8);sp.addColorStop(0,'rgba(255,250,220,.7)');sp.addColorStop(1,'rgba(255,230,120,0)');g.fillStyle=sp;g.beginPath();g.arc(54,16,8,0,7);g.fill();
+  glow=c;G.skillRdyGlow739=c;G.skillRdyAlloc739=(G.skillRdyAlloc739||0)+1;return c};
+const mark=()=>{const A=C.B&&C.B.allies;if(!A)return;for(let i=0;i<A.length;i++){const a=A[i],r=ready(a);if(a._skRdy!==r){a._skRdy=r;G.skillRdyN739=(G.skillRdyN739||0)+1}}};
+const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{mark();if(G.screen){G._skillRdyDrew739=0;return}const A=C.B&&C.B.allies;if(!A||!A.length){G._skillRdyDrew739=0;return}
+  let n=0;for(let i=0;i<A.length;i++)if(A[i]._skRdy&&!hide(A[i]))n++;if(!n){G._skillRdyDrew739=0;return}
+  const AS=R._AS&&R._AS(),c=R._bc&&R._bc();if(!c||!AS){G._skillRdyDrew739=0;return}
+  if(c!==cv0){cv0=c;ctx0=c.getContext('2d')}const ctx=ctx0,sc=c.width/(c.clientWidth||c.width||1),im=spr();
+  const pulse=off()?1:.74+.26*Math.sin(now()/260);
+  G.skillRdyAlpha739=pulse;G.skillRdyOff739=off();
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
+  let drew=0;for(let i=0;i<A.length;i++){const a=A[i];if(!a._skRdy||hide(a))continue;const s=AS.get(a.k);if(!s||s.x==null)continue;ctx.globalAlpha=pulse;ctx.drawImage(im,s.x-36,s.y-84,72,96);drew++}
+  ctx.globalAlpha=1;ctx.restore();G._skillRdyDrew739=drew}catch(_){G._skillRdyDrew739=0}};
+const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{mark()}catch(_){}return r};
+if(typeof renderPartyCol==='function'){const op=renderPartyCol;renderPartyCol=function(){const r=op.apply(this,arguments);try{mark()}catch(_){}return r}}
+G.skillRdy739=mark;G.skillRdyOn739=ready;G.skillRdyHide739=hide;
+})();
