@@ -10049,3 +10049,10 @@ const css='@keyframes tdIn769{0%{opacity:0;transform:translate(-50%,-50%) scale(
 const st=document.createElement('style');st.id='r769css';st.textContent=css;document.head.appendChild(st);
 G.tdCss769=css;
 })();
+;(()=>{/* r770: mid-fight .mkb kill banner vs 화룡전 (picked as the weaker of .mkb and the 연계기 .combo skill-cast banner). .combo already holds in-slot until 80% then fades; .mkb popped then drifted up (translateY -6px at 75%, -18px at 100%) over its 1.2s life, and effect-off still played that motion. Change-only: same 1.2s life / 1200ms remove, same top 34% slot and dodge tops, same DOUBLE/TRIPLE/MULTI strings and kill rules, same initial pop (0–20%) plus a short settle to scale 1 at 26%. It then holds in-slot at opacity 1 until 79.167% (250ms before the end) and fades in-slot over 250ms with no drift. Effect-off / tglite / nofx: static in-slot until the existing remove. No layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='@keyframes mkb770{0%{opacity:0;transform:translateX(-50%) scale(1.8)}12%{opacity:1;transform:translateX(-50%) scale(.95)}20%{transform:translateX(-50%) scale(1.05)}26%{opacity:1;transform:translateX(-50%) scale(1)}79.167%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(1)}}'
++'#battle .mkb{animation:mkb770 1.2s ease-out forwards}'
++'body:is(.tglite,.nofx,.fxoff) #battle .mkb{animation:none!important;opacity:1!important;transform:translateX(-50%)!important}';
+const st=document.createElement('style');st.id='r770css';st.textContent=css;document.head.appendChild(st);
+G.mkbCss770=css;
+})();
