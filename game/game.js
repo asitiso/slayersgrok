@@ -10840,3 +10840,12 @@ if(typeof hold==='function')G.rbHold756=function(k,won,go){const w=function(){G.
 G.openRet798=function(k){G._ret798=1;try{return openScreen(k)}finally{G._ret798=0}};
 G.retClass798='r798';G.menuFadeMs798=.15;G.retFadeMs798=0;
 })();
+;(()=>{/* r799: clear body.scron on dungeon / 무한의 탑 / 보스 러시 entry (and 전직 시련, which starts through the same G.rbRun path), the way world-boss entry already does. r324/r328 hide combo (.cmbx, .combo), WARNING (.bwarn), VS (.vsx), wave banners, cut-ins, banners, speech, and result cards while a menu screen is open (body.scron). openScreen adds scron; closeScreen and the 월드 보스 도전 button remove it. rbRun and 보스 러시 only drop #screen.on and null G.screen, so scron was left on for the whole fight and that chrome stayed hidden. Change-only, presentation only: after G.rbRun / G.brRun actually starts a special battle (C.B.rb or C.B.br is set), remove scron. A power-warning or "already in a fight" early return does not start those flags, so the menu keeps scron. When go() reopens the list (r798 / openScreen), openScreen adds scron again, so combo and warning/VS hide under the menu as usual. Normal menu open/close is unchanged. World-boss already cleared scron; this does not touch C.wbStart, load, combat, cadence, rewards, boss WARNING/VS timing, or save behavior. No mandatory tap. */
+const on=()=>document.body.classList.contains('scron');
+const clear=()=>{document.body.classList.remove('scron')};
+const wrap=(fn,live)=>{const w=function(){const r=fn.apply(this,arguments);try{if(live())clear()}catch(_){}return r};w.toString=()=>Function.prototype.toString.call(fn);return w};
+if(typeof G.rbRun==='function')G.rbRun=wrap(G.rbRun,()=>C.B&&C.B.rb);
+if(typeof G.brRun==='function'){const same=G.brReal===G.brRun;G.brRun=wrap(G.brRun,()=>C.B&&C.B.br);if(same)G.brReal=G.brRun;else if(typeof G.brReal==='function')G.brReal=wrap(G.brReal,()=>C.B&&C.B.br)}
+else if(typeof G.brReal==='function')G.brReal=wrap(G.brReal,()=>C.B&&C.B.br);
+G.clrScron799=clear;G.hasScron799=on;G.hookRb799=typeof G.rbRun==='function';G.hookBr799=typeof G.brRun==='function'||typeof G.brReal==='function';G.hid799=['cmbx','combo','bwarn','vsx','wvb','bcut','banner','bubL','vic','xpo'];
+})();
