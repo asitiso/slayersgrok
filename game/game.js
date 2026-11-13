@@ -10174,3 +10174,43 @@ const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='coins')
 Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
 G.bakLab778=bake;G.prepLab778=prep;G.colLab778=colOf;G.szLab778=SZ;G.isLab778=isLab;G.dtLab778=v=>{if(v!=null)dt0=v;return dt0};
 })();
+
+;(()=>{/* r779: mid-fight heal numbers vs 화룡전. Outgoing hits and incoming ally numbers are already 19px (r764); BLOCK/MISS/PARRY were restyled in r778. Heal totals were the same Maplestory bake at only 17px, with a pale mint-to-#4adf7a fill, and they rise 38px and keep rising while they fade from 70% of the 1s life. Effect-off still plays that drift. Change-only: when a heal number is spawned or its stack key changes, it is baked once at 19px (clearer green gradient, + prefix, darker even 5px stroke). No ×N (party heals already merge into one total). The existing r237 draw uses that sprite and does not re-shape text. Before the draw (R._pm 'coins'), the 38px rise is cancelled so the number holds in-slot and the existing last ~300ms fade plays in place. Spawn still uses 17px for lane/sideAvoid so slots do not jump. Life stays 1s, r305 merge and R.heal amounts untouched. Labels, ally numbers, outgoing hits, HP and combat timing are untouched. Effect-off / tglite / nofx: the same in-slot hold (no drift). R.opt.dmg still lets heals show. */
+const SZ=19,COL=['#f2ffe8','#22e05a','#053016'];
+const isHeal=t=>t&&t.heal&&!t.label;
+const txtK=t=>('+'+R.fmt(t.v))+'|'+(t.n||0)+'|'+(t.crit?(t.nc?2:1):0)+'|'+(t.col||'');
+const ease=x=>1-Math.pow(1-x,3);
+let dt0=0;
+const bake=t=>{
+  if(!isHeal(t)||typeof R==='undefined'||!R.fmt)return 0;
+  const key=txtK(t);
+  if(t._s&&t._k===key&&t._s._779)return 0;
+  if(t._s&&t._s.c&&R._tp&&R._tp.length<24){R._tp.push(t._s.c);t._s=null}
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),sz=SZ,txt='+'+R.fmt(t.v);
+  const c=(R._tp&&R._tp.pop())||document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||sz*txt.length*.6,L=w0/2+8,Rr=w0/2+8,T=sz*1.05+8,B=sz*.32+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.globalAlpha=1;
+  X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=5;
+  X.strokeStyle=COL[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-sz,0,0);gr.addColorStop(0,COL[0]);gr.addColorStop(1,COL[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  t._s={c,ox:L,oy:T,w:W2/S,h:H2/S,_779:1};t._k=key;return 1;
+};
+const prep=()=>{
+  const L=R._TX&&R._TX();if(!L||!L.length)return;
+  for(let i=0;i<L.length;i++){
+    const t=L[i];
+    if(!isHeal(t)){if(t._h779){if(!t._h778)t.lf468=0;t._h779=0}continue}
+    try{bake(t)}catch(_){}
+    const k=(t.t+dt0)/t.life;
+    if(!(k<1)){t.lf468=0;t._h779=0;continue}
+    t.lf468=-ease(Math.min(1,k*1.2))*(t.nr?8:38);t._h779=1;
+  }
+};
+const of=R.frame;R.frame=function(dt){dt0=dt||0;return of.apply(this,arguments)};
+const d=Object.getOwnPropertyDescriptor(R,'_pm')||{};
+const inner=d.get?d.get():R._pm;
+const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='coins')try{prep()}catch(_){}return ret};
+Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
+G.bakHeal779=bake;G.prepHeal779=prep;G.colHeal779=COL;G.szHeal779=SZ;G.isHeal779=isHeal;G.dtHeal779=v=>{if(v!=null)dt0=v;return dt0};
+})();
