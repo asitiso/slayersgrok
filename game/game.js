@@ -9566,3 +9566,25 @@ const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function()
 try{mark()}catch(_){}
 G.misCnt752=cnt;G.misBadge752=mark;
 })();
+
+;(()=>{/* r753: make the existing 패키지 badge (#sideshop .dot) show a lit count of unclaimed daily free shop items. The same shd rule already lights #navshop when a D.SHOP item is cur=='free' and bought < (daily||1), but the left-rail 패키지 badge stayed empty. It now shows that count in MapleStory on the existing #sideshop badge, lit when the count is above 0, hidden at 0. Change-only text/class/visibility. Effect-off keeps the badge and number and skips the bounce. Layout (icon size/place, badge slot) is unchanged. Display only: shop stock, purchase rules, and rewards are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','753');st.textContent=[
+'html body #sideshop .dot.rdy753{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;',
+'font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;-webkit-text-stroke:2px #6a0800;paint-order:stroke fill;',
+'text-shadow:0 1px 0 #000,0 0 3px #000;z-index:4}',
+'html body #sideshop .dot.rdy753:empty{display:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #sideshop .dot{animation:none!important}'
+].join('');document.head.appendChild(st);
+const cnt=()=>{try{const s=C.S();try{C.daily()}catch(_){}
+  return (D.SHOP||[]).filter(it=>it.cur=='free'&&((s.shop.bought||{})[it.k]||0)<(it.daily||1)).length}catch(_){return 0}};
+const mark=()=>{const n=cnt(),lab=n>0?String(n):'',d=document.querySelector('#sideshop .dot');
+  if(!d)return;
+  const on=n>0;
+  if(d._n753!==lab){d._n753=lab;if(d.textContent!==lab)d.textContent=lab;G.shopN753=(G.shopN753||0)+1}
+  if(d._on753!==on){d._on753=on;d.classList.toggle('rdy753',on);if(typeof $sd==='function')$sd(d,on?'':'none');else d.style.display=on?'':'none';G.shopN753=(G.shopN753||0)+1}
+  G.shopOff753=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function(){const r=oh.apply(this,arguments);try{mark()}catch(_){}return r};
+try{mark()}catch(_){}
+G.shopCnt753=cnt;G.shopBadge753=mark;
+})();
