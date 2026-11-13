@@ -10033,3 +10033,13 @@ const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='deaths'
 Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
 G.elCol767=colOf;G.elBand767=band;G.paintEl767=paint;
 })();
+;(()=>{/* r768: mid-fight skill-total .tdmg vs 화룡전. The existing slot (185×318, .tdlo 392), 1.6s lifetime, lower-slot dodges and combo-banner merge (.tdm) stay. The gold total was 30px with a 1.2px stroke, and the mid-fight merge was 22px Noto, so contrast was weaker than 화룡전 while the fight was moving; effect-off still played the pop/drift/fade. Change-only: same slots and strings, stronger 2.5px outline, Maplestory on both forms; .tdm .tdv matches the main 30px total. Effect-off / tglite / nofx: no pop, drift or fade — static until the existing 1.65s remove. No layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='#battle .tdmg small,#battle .tdmg b,#battle .tdm,#battle .tdm .tdv{font-family:Maplestory,"Noto Sans KR",sans-serif!important}'
++'#battle .tdmg small{font-size:13px;font-weight:800;-webkit-text-stroke:.6px #2a1008}'
++'#battle .tdmg b{font-size:30px;font-weight:900;line-height:1;-webkit-text-stroke:2.5px #6a2200;filter:drop-shadow(0 2px 0 #3a1000) drop-shadow(0 0 8px #ff9a2a)}'
++'#battle .tdm{font-size:13px;font-weight:800}'
++'#battle .tdm .tdv{font:900 30px/1 Maplestory,"Noto Sans KR",sans-serif!important;color:#ffd23a!important;-webkit-text-fill-color:#ffd23a;-webkit-text-stroke:2.5px #6a2200;text-shadow:0 2px 0 #3a1000,0 0 8px #ff9a2a}'
++'body:is(.tglite,.nofx,.fxoff) #battle .tdmg{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}';
+const st=document.createElement('style');st.id='r768css';st.textContent=css;document.head.appendChild(st);
+G.tdCss768=css;
+})();
