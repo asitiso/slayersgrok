@@ -9999,3 +9999,37 @@ const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='units')
 Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
 G.enCol766=colOf;G.enBand766=band;G.paintEn766=paint;
 })();
+;(()=>{/* r767: mid-fight elite field HP bars vs 화룡전. The existing 56×6 gold ebar450 (frame, lag chip, 「정예」 name, plaque dodge, stagger, r499 late redraw) stays, and regular-mob / boss bars are untouched. The fill was always #e88a10, so a nearly-dead elite did not read as urgent except by width. Change-only: after the late gold redraw (R._pm 'deaths'), the same fill + 2px highlight is retinted when HP is ≤50% (deeper amber) or ≤30% (deeper orange), staying in the gold family. Color pairs are cached. Healthy (default gold, >50%) bars are not redrawn. Position comes from the existing plate cache so the bar does not jump. No sprite overlay. Effect-off keeps the static tint (no pulse). HP, combat and rewards are unchanged. The hook is an accessor so R.frame's per-frame R._pm=null (or the PROF timer) cannot drop it. */
+const W=56,H=6;
+const GOLD=['#e88a10','#ffe08a'],AMB=['#d46c08','#ffc45a'],ORG=['#c44a00','#ff9a38'];
+const band=r=>r>.5?'g':r>.3?'a':'o';
+const colOf=r=>r>.5?GOLD:r>.3?AMB:ORG;
+const yOf=s=>{
+  const n=R._enn458;if(n&&s&&n[5]===s.x&&n[6]!=null)return n[6];
+  const P=R._pl500,c=R._pln500||0;if(P&&c){for(let j=0;j<c;j++)if(P[j*2]===s.x)return P[j*2+1]}
+  if(s&&R._eb454!=null&&R._eb454x===s.x)return R._eb454;
+  return null;
+};
+const paint=()=>{
+  const ens=C.B&&C.B.enemies;if(!ens||!ens.length)return;
+  const ES=R._ES&&R._ES();if(!ES)return;
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const cx=cv.getContext('2d'),lite=document.body.classList.contains('tglite');
+  for(let i=0;i<ens.length;i++){
+    const e=ens[i];if(!e||!e.el||e.boss||e.hp<=0||!(e.max>0))continue;
+    const r=e.hp/e.max;if(r>.5)continue;
+    const s=ES.get(e);if(!s||s.x==null)continue;
+    const y=yOf(s);if(y==null)continue;
+    const x0=s.x-W/2,fw=Math.max(0,W*r),pair=colOf(r);
+    cx.save();
+    cx.fillStyle=pair[0];cx.fillRect(x0,y,fw,H);
+    if(!lite){cx.fillStyle=pair[1];cx.fillRect(x0,y,fw,2)}
+    cx.restore();
+  }
+};
+const d=Object.getOwnPropertyDescriptor(R,'_pm')||{};
+const inner=d.get?d.get():R._pm;
+const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='deaths'){if(G._t767!=null)G._t767++;try{paint()}catch(_){}}return ret};
+Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
+G.elCol767=colOf;G.elBand767=band;G.paintEl767=paint;
+})();
