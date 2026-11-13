@@ -9588,3 +9588,25 @@ const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function()
 try{mark()}catch(_){}
 G.shopCnt753=cnt;G.shopBadge753=mark;
 })();
+
+;(()=>{/* r754: make the existing 영지 badges (#navbase / #sidebase .dot) show a lit count of buildings ready to harvest. The dots already turn on when vault or mine has acc>=C.bRate(k)*BAL.store*.5, but they are empty pulsing badges with no count. They now show that same live count (how many of vault/mine pass the rule) in MapleStory on the existing badges, lit when the count is above 0, hidden at 0. Change-only text/class/visibility. Effect-off keeps the badge and number and skips the bounce. Layout (icon size/place, badge slot) is unchanged. Display only: harvest amounts, storage caps, and rates are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','754');st.textContent=[
+'html body #navbase:not(.lk) .dot.rdy754,html body #sidebase:not(.lk) .dot.rdy754{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;',
+'font:900 11px/1 Maplestory,"Noto Sans KR",sans-serif;color:#fff;-webkit-text-stroke:2px #6a0800;paint-order:stroke fill;',
+'text-shadow:0 1px 0 #000,0 0 3px #000;z-index:4}',
+'html body #navbase .dot.rdy754:empty,html body #sidebase .dot.rdy754:empty{display:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #navbase .dot,body:is(.nofx,.tglite,.fxoff) #sidebase .dot{animation:none!important}'
+].join('');document.head.appendChild(st);
+const KS=['vault','mine'];
+const cnt=()=>{try{const s=C.S();return KS.filter(k=>{const b=s.bld&&s.bld[k];return !!b&&b.acc>=C.bRate(k)*BAL.store*.5}).length}catch(_){return 0}};
+const paint=d=>{if(!d)return;const n=cnt(),lab=n>0?String(n):'',on=n>0;
+  if(d._n754!==lab){d._n754=lab;if(d.textContent!==lab)d.textContent=lab;G.baseN754=(G.baseN754||0)+1}
+  if(d._on754!==on){d._on754=on;d.classList.toggle('rdy754',on);if(typeof $sd==='function')$sd(d,on?'':'none');else d.style.display=on?'':'none';G.baseN754=(G.baseN754||0)+1}};
+const mark=()=>{paint(document.querySelector('#navbase .dot'));paint(document.querySelector('#sidebase .dot'));
+  G.baseOff754=document.body.matches('.nofx,.tglite,.fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false)};
+const ou=typeof updateHud==='function'?updateHud:null;if(ou)updateHud=function(){const r=ou.apply(this,arguments);try{mark()}catch(_){}return r};
+const oh=typeof renderHub==='function'?renderHub:null;if(oh)renderHub=function(){const r=oh.apply(this,arguments);try{mark()}catch(_){}return r};
+const on=typeof renderNav==='function'?renderNav:null;if(on)renderNav=function(){const r=on.apply(this,arguments);try{mark()}catch(_){}return r};
+try{mark()}catch(_){}
+G.baseCnt754=cnt;G.baseBadge754=mark;
+})();
