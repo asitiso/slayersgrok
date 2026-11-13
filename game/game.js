@@ -10907,3 +10907,28 @@ st.textContent=[
 document.head.appendChild(st);
 G.relMs804=MS;G.relOld804=OLD;G.relPeak804=PEAK;G.relRowPeak804=RPEAK;G.relSel804=SEL;G.relRowSel804=ROWS;
 })();
+;(()=>{/* r805: press snap + tightened release on screen tab bars vs 화룡전, the most-used leftover tappable chrome. Measure: r802-r804 already cover HUD/menu buttons, settings rows, map nodes, chips/toggles, and their release bounce. Leftover groups: (1) tab bars (#screen .entabs span, .duntabs span, .shtb span) on 강화, 도감, 갤러리, 상점, 가방, 소환, 유물, 메일, 업적, 칭호, 패스, 펫, 던전, and shop section tabs — no .press, almost no :active (only .shtb has scale(.95)), and #screen .entabs/.shtb spans already use transition:transform .12s for the selected-tab lift, so a press would ease in over 120ms. (2) bag/codex tiles (.bi) have only :active scale(.95), no pointerdown press or release bounce. (3) party roster cards (.rcard) and relic tiles have cursor:pointer and no press. Tabs are the single most-used group. Change-only, presentation only: pointerdown .press snaps (transition:none; light scale(.96) so the bar does not jump; selected tabs keep translateY(-2px)), tightened ~130ms release (peak 1.03, selected tabs return to the lift). The 120ms rule stays for the selected-tab lift. A 10px move cancels without bounce. Menu-icon fxring is unchanged (tabs do not spawn a ring). Effect-off (nofx / tglite / fxoff) keeps a static press and skips the bounce. No action, layout, or rest-size changes, and no pointerdown action trigger. */
+const SEL='#screen .entabs span,#screen .duntabs span,#screen .shtb span';
+const SKIP=[G.pressSel802,G.pressSel803,G.pressMore732].filter(s=>typeof s==='string'&&s).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','805');st.id='r805css';
+st.textContent=[
+'#screen .entabs span,#screen .duntabs span,#screen .shtb span{-webkit-tap-highlight-color:transparent;touch-action:manipulation}',
+'html body #screen :is(.entabs,.duntabs,.shtb) span:is(.press,:active){transition:none!important;transform:scale(.96)!important;filter:brightness(1.25) drop-shadow(0 2px 2px #0008)!important}',
+'html body #screen :is(.entabs,.duntabs,.shtb) span.on:is(.press,:active){transform:translateY(-2px) scale(.96)!important}',
+'@keyframes relb805{0%{transform:scale(.96)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'@keyframes relb805on{0%{transform:translateY(-2px) scale(.96)}55%{transform:translateY(-2px) scale(1.03)}100%{transform:translateY(-2px)}}',
+'html body #screen :is(.entabs,.duntabs,.shtb) span.rel{animation:relb805 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'html body #screen :is(.entabs,.duntabs,.shtb) span.on.rel{animation:relb805on 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen :is(.entabs,.duntabs,.shtb) span{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen :is(.entabs,.duntabs,.shtb) span.rel{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add('rel');setTimeout(()=>c.classList.remove('rel'),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove('rel');t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel805=SEL;G.pressMs805=0;G.pressScale805=.96;G.relMs805=130;G.relPeak805=1.03;G.relOn805='relb805on';
+})();
