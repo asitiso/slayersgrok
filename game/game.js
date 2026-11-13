@@ -10334,3 +10334,36 @@ const draw=()=>{
 const of=R.frame;R.frame=function(dt){const off=skipOn();try{const r=of.apply(this,arguments);try{draw()}catch(_){}return r}finally{off()}};
 G.bakEk782=bakeTitle;G.bakSubEk782=bakeSub;G.szEk782=SZ;G.subEk782=SUB;G.yEk782=Y0;G.lifeEk782=LIFE;G.colEk782=COL;G.fmtEk782=fmtG;G.subTxtEk782=subOf;G.aEk782=alpha;G.popEk782=pop;
 })();
+
+;(()=>{/* r783: BREAK! vs 화룡전, effect-off only. The live FT2 stamp is already 25/34px gold Maplestory with a 5–6px even #3a0a00 outline, holds until 1s, then a 300ms in-place fade, and rides with the boss (r368 / r374). Effects-on still pops for 150ms (boss 1.15→1, non-boss 2→1). Effect-off / tglite / nofx still played that pop. Change-only: when effects are off, the existing draw is kept (same 1.3s life, same fade from t=1, same follow-the-boss slot and typography) but the pop scale is forced to 1. No bake, no second blit, no layout jump. Effects-on look, C.ev.grog, R.hs, the 그로기 pill / break gauge, and break rules are untouched. Hooks are installed only while effects are off, so there is no extra per-frame cost when they are on. */
+const LIFE=1.3;
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+const alpha=t=>t>1?Math.max(0,1-(t-1)/.3):1;
+const ps=(t,bb,fx)=>{if(!fx)return 1;const k=Math.min(1,t/.15);return k>=1?1:(bb?1.15-.15*k:2-k)};
+const NAMES=['save','restore','translate','setTransform','resetTransform','transform','rotate','drawImage','fillRect','strokeRect','clearRect','fill','stroke','beginPath','clip','putImageData','scale','strokeText','fillText'];
+const hook=(ctx0)=>{
+  let pending=null;
+  const offs=[];
+  const apply=()=>{if(!pending)return;const p=pending;pending=null;p.scale.call(p.ctx,p.sx,p.sy)};
+  const patch=obj=>{
+    if(!obj||obj._s783)return;
+    const orig={},had={};
+    for(let i=0;i<NAMES.length;i++){const n=NAMES[i];if(typeof obj[n]==='function'){had[n]=Object.prototype.hasOwnProperty.call(obj,n);orig[n]=obj[n]}}
+    if(!orig.scale||!orig.strokeText)return;
+    obj._s783=1;
+    const txt=function(s,fn){if(pending&&s==='BREAK!'){orig.scale.call(this,1,1);pending=null;G._ps783=1}else apply();return fn.apply(this,arguments)};
+    const sc=function(sx,sy){apply();if(typeof sx==='number'&&sx===sy&&sx>1&&sx<=2){pending={ctx:this,sx,sy,scale:orig.scale};return}return orig.scale.apply(this,arguments)};
+    const st=function(s){return txt.call(this,s,orig.strokeText)};
+    try{Object.defineProperty(obj,'scale',{configurable:true,writable:true,value:sc});Object.defineProperty(obj,'strokeText',{configurable:true,writable:true,value:st});if(orig.fillText)Object.defineProperty(obj,'fillText',{configurable:true,writable:true,value:function(s){return txt.call(this,s,orig.fillText)}})}catch(_){obj.scale=sc;obj.strokeText=st;if(orig.fillText)obj.fillText=function(s){return txt.call(this,s,orig.fillText)}}
+    for(const n in orig){if(n==='scale'||n==='strokeText'||n==='fillText')continue;const fn=function(){apply();return orig[n].apply(this,arguments)};try{Object.defineProperty(obj,n,{configurable:true,writable:true,value:fn})}catch(_){obj[n]=fn}}
+    offs.push(()=>{for(const n in orig){if(had[n])obj[n]=orig[n];else try{delete obj[n]}catch(_){obj[n]=orig[n]}}obj._s783=0});
+  };
+  if(typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype)patch(CanvasRenderingContext2D.prototype);
+  const live=ctx0||(R._bc&&R._bc()&&typeof R._bc().getContext==='function'&&R._bc().getContext('2d'));
+  if(live)patch(live);
+  const CE=typeof HTMLCanvasElement!=='undefined'&&HTMLCanvasElement.prototype;
+  if(CE&&typeof CE.getContext==='function'&&!CE._g783){const og=CE.getContext;CE._g783=1;CE.getContext=function(){const c=og.apply(this,arguments);try{patch(c)}catch(_){}return c};offs.push(()=>{CE.getContext=og;CE._g783=0})}
+  return()=>{while(offs.length)try{offs.pop()()}catch(_){}pending=null};
+};
+G.hookBrk783=hook;G.liteBrk783=lite;G.psBrk783=ps;G.aBrk783=alpha;G.lifeBrk783=LIFE;
+})();
