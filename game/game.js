@@ -10065,3 +10065,13 @@ const css='#battle .mkb b,#battle .mkb small{font-family:Maplestory,"Noto Sans K
 const st=document.createElement('style');st.id='r771css';st.textContent=css;document.head.appendChild(st);
 G.mkbCss771=css;
 })();
+;(()=>{/* r772: mid-fight 연계기 .combo skill-cast banner vs 화룡전. The source plate's 연계기 label was 12px and the caster line 11px, both with almost no outline; dress() then lifts the same banner onto the duo plate where the caster line is 9px in a 137px slot. Change-only: same 1.5s life / 1500ms remove, same slots (238/280/362/540) and dodge/scale rules, same hold/fade and trigger. 연계기 → 15px Maplestory with a stronger outline; undressed caster line → 14px; live duo caster line → 13px with a cream outline. Longest name pair (아멜리아 × 세라피나) is ~112px at 13px, under the 137px plate and the 390px app. Effect-off / tglite / nofx: no scale-Y pop, no duo slide/glow — animation:none only (does not override .cbo opacity or the slot-fit scale). No top/left/width/height change, no layout jump, no sprite overlay, no per-frame cost. Combat, HP and rewards unchanged. */
+const css='#battle .combo small,#battle .combo i,#battle .combo.duo .pl i{font-family:Maplestory,"Noto Sans KR",sans-serif!important}'
++'#battle .combo small{font-size:15px;font-weight:900;letter-spacing:2px;-webkit-text-stroke:.8px #3a1a00;text-shadow:0 1px 0 #000,0 0 4px #5a2000}'
++'#battle .combo i{font-size:14px;font-weight:700;font-style:normal;-webkit-text-stroke:.8px #1a1028;text-shadow:0 1px 0 #000}'
++'#battle .combo.duo .pl i{font-size:13px;font-weight:700;-webkit-text-stroke:.6px #fff8e4;text-shadow:0 1px 0 #fff8e4,0 0 2px #3a1250;max-width:100%;overflow:hidden}'
++'body:is(.tglite,.nofx,.fxoff) #battle .combo,body:is(.tglite,.nofx,.fxoff) #battle .combo .cl,body:is(.tglite,.nofx,.fxoff) #battle .combo .cr,body:is(.tglite,.nofx,.fxoff) #battle .combo .dw img,body:is(.tglite,.nofx,.fxoff) #battle .combo .gm{animation:none!important}'
++'body:is(.tglite,.nofx,.fxoff) #battle .combo .gm{opacity:0!important}';
+const st=document.createElement('style');st.id='r772css';st.textContent=css;document.head.appendChild(st);
+G.cmbCss772=css;
+})();
