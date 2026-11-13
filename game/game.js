@@ -10660,3 +10660,28 @@ const ov=G.sfxHitVoice;
 G.sfxHitVoice=(cr,src,dot)=>{if(!dot&&src&&(src.sp==='ds'||src.sp==='giga'||src.k==='ds'||src.k==='giga'))return'dsHit';return ov(cr,src,dot)};
 G.limDsHit790=.35;
 })();
+;(()=>{/* r791: per-element skill impact color vs 화룡전, layered on the r790 skhit body. Existing skill element data is the loadout ring table (fire, ice, heal, bolt, poison, charm, ragna, bash, dark, holy; ds/giga stay on the r790 dsHit sting). Fire gets a short crackle/whoosh, ice a glassy shatter, bolt a sharp zap; the other elements get their own short color. The field 낙뢰 폭풍 (src.storm) uses the bolt color. Anything without an element (companion ults, unknown keys) falls back to the r790 body alone. Same skhit key, so the 0.1s LIM window and 5-voice combat budget still apply. Same G.sfx path, sg gain, 효과음 toggle/slider, hidden-tab suspend. Nodes disconnect on end. No audio files. No extra audio work on the hot path. dsHit, CAST ds, hit/crit, combat, HP, timing and rewards unchanged. */
+const aud=()=>G._aud&&G._aud();
+const tone=(f,t0,dur,{type='sine',vol=.3,f2=null,att=.004}={})=>{const a=aud();if(!a||!a.ac)return;const ac=a.ac,o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(a.sg);o.start(t0);o.stop(t0+dur+.02);o.onended=()=>{try{o.disconnect();g.disconnect()}catch(_){}}};
+const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null,att=0}={})=>{const a=aud();if(!a||!a.ac||!a.nz)return;const ac=a.ac,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=a.nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);f.Q.value=q;if(att){g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att)}else g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(a.sg);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();g.disconnect()}catch(_){}}};
+const S=G._SFX;if(!S)return;
+const COL={
+  fire:t=>{noise(t,.1,{vol:.09,fq:900,f2:2800,q:1.2});noise(t,.04,{vol:.1,fq:3500,q:1.6});noise(t+.03,.03,{vol:.07,fq:2800,q:1.4})},
+  ice:t=>{noise(t,.08,{vol:.09,fq:4800,q:1.8});tone(3200,t,.07,{type:'sine',vol:.05,f2:1800,att:.001});tone(4100,t+.015,.09,{type:'triangle',vol:.04,f2:2400,att:.001});tone(2600,t+.03,.06,{type:'sine',vol:.03,f2:1400,att:.001})},
+  bolt:t=>{noise(t,.03,{vol:.12,fq:5500,q:1.2});tone(2400,t,.05,{type:'triangle',vol:.07,f2:280,att:.001});tone(1800,t+.012,.04,{type:'sine',vol:.05,f2:200,att:.001})},
+  poison:t=>{noise(t,.14,{vol:.08,fq:2200,f2:900,q:.9});noise(t,.1,{vol:.05,fq:3600,q:1.4});tone(210,t,.12,{type:'sine',vol:.04,f2:90,att:.006})},
+  charm:t=>{noise(t,.08,{vol:.05,fq:4000,q:1.6});tone(1320,t,.1,{type:'sine',vol:.04,f2:1980,att:.008});tone(1760,t+.03,.12,{type:'triangle',vol:.03,f2:2200,att:.01})},
+  ragna:t=>{noise(t,.07,{vol:.1,fq:2200,f2:4800,q:1.3});noise(t,.05,{vol:.06,fq:1500,q:1});tone(620,t,.08,{type:'triangle',vol:.06,f2:280,att:.001})},
+  bash:t=>{noise(t,.06,{vol:.08,fq:700,q:.9,type:'lowpass'});tone(240,t,.1,{type:'triangle',vol:.07,f2:110,att:.002});tone(140,t,.12,{type:'sine',vol:.05,f2:70,att:.002})},
+  dark:t=>{noise(t,.16,{vol:.08,fq:280,f2:80,q:.7,type:'lowpass'});tone(90,t,.18,{type:'sine',vol:.06,f2:40,att:.008})},
+  holy:t=>{noise(t,.07,{vol:.05,fq:5000,q:1.5});tone(1568,t,.12,{type:'sine',vol:.045,att:.004});tone(2093,t+.02,.1,{type:'triangle',vol:.03,att:.005})},
+  heal:t=>{noise(t,.08,{vol:.04,fq:4200,q:1.4});tone(988,t,.12,{type:'sine',vol:.04,att:.008});tone(1175,t+.04,.12,{type:'sine',vol:.03,att:.008})}
+};
+let pend=0;
+const elOf=src=>{if(!src)return 0;if(src.sp==='ds'||src.sp==='giga'||src.k==='ds'||src.k==='giga')return 0;if(src.storm)return 'bolt';const k=src.sp;return(k&&COL[k])?k:0};
+const ov=G.sfxHitVoice;
+G.sfxHitVoice=(cr,src,dot)=>{const v=ov(cr,src,dot);pend=v==='skhit'?elOf(src):0;return v};
+/* r790 body, plus a short element color when pend is set */
+S.skhit=t=>{noise(t,.035,{vol:.22,fq:2600,q:1});noise(t,.3,{vol:.22,fq:750,f2:110,q:.65,type:'lowpass'});tone(108,t,.3,{type:'sine',vol:.2,f2:44,att:.002});tone(380,t,.1,{type:'triangle',vol:.07,f2:160,att:.002});const fn=pend&&COL[pend];pend=0;if(fn)fn(t)};
+G.skEl791=elOf;G.skCol791=COL;G.skCols791=Object.keys(COL);
+})();
