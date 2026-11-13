@@ -10861,3 +10861,11 @@ if(typeof G.brRun==='function'){const same=G.brReal===G.brRun;G.brRun=wrapStart(
 else if(typeof G.brReal==='function')G.brReal=wrapStart(G.brReal);
 G.reopenBr800=reopen;G.armBrFin800=arm;G.brKey800=KEY;
 })();
+;(()=>{/* r801: world boss does not return to the 월드 보스 lobby after its result. Entry already hides #screen, clears scron, and nulls G.screen; C.ev.wbEnd only mounts the existing 토벌 종료 reward pop and leaves the player on the field. Like r800, reopen the lobby (openScreen("wboss")) underneath that card on the r798 snap path; openScreen restores scron. The card stays above the list (#screen z-index 25, .rwpop 80); the existing hold, auto-dismiss, and tap-to-close stay, with no extra tap. Tries, damage records, rewards, combat, cadence, and save behavior are untouched. */
+const KEY='wboss';
+const reopen=()=>{if(G.screen)return 0;const k=G.wbRet801||KEY;try{if(typeof G.openRet798==='function')G.openRet798(k);else if(typeof openScreen==='function')openScreen(k);else if(G.open)G.open(k);else return 0;return 1}catch(_){return 0}};
+const st=document.createElement('style');st.id='r801css';st.textContent='html body .rwpop{z-index:80}';document.head.appendChild(st);
+const oe=C.ev&&C.ev.wbEnd;
+if(typeof oe==='function'){const w=function(){const r=oe.apply(this,arguments);try{reopen()}catch(_){}return r};w.toString=()=>Function.prototype.toString.call(oe);C.ev.wbEnd=w}
+G.reopenWb801=reopen;G.wbKey801=KEY;
+})();
