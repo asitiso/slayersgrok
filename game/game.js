@@ -964,7 +964,7 @@ const init=()=>{if(ac)return;try{ac=new (window.AudioContext||window.webkitAudio
 document.addEventListener('visibilitychange',()=>{if(!ac)return;document.hidden?ac.suspend():ac.resume()});
 const tone=(f,t0,dur,{type='square',vol=.3,f2=null,att=.005,dest=sg}={})=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(dest);o.start(t0);o.stop(t0+dur+.02)};
 const noise=(t0,dur,{vol=.3,fq=1200,q=1,type='bandpass',f2=null}={})=>{const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=nz;f.type=type;f.frequency.setValueAtTime(fq,t0);if(f2)f.frequency.exponentialRampToValueAtTime(f2,t0+dur);f.Q.value=q;g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(sg);s.start(t0);s.stop(t0+dur+.02)};
-/* r651: per-voice retrigger windows (combat voices are now separate keys, so a swing no longer swallows its own impact) */const LIM={hit:.07,mhit:.07,crit:.09,skhit:.1,tick:.12,swing:.08,cast:.08,bow:.08,eswing:.1,bswing:.2,hurt:.09,parry:.08,block:.08,coin:.07,kill:.05,click:.05};const last={};
+/* r651: per-voice retrigger windows (combat voices are now separate keys, so a swing no longer swallows its own impact) */const LIM={hit:.07,mhit:.07,crit:.09,skhit:.1,tick:.12,swing:.08,cast:.08,bow:.08,eswing:.1,bswing:.2,hurt:.09,parry:.08,block:.08,miss:.08,coin:.07,kill:.05,click:.05};const last={};
 const SFX={
  hit:t=>{noise(t,.07,{vol:.18,fq:1800,q:.8});tone(220,t,.06,{type:'triangle',vol:.12,f2:120})},
  crit:t=>{noise(t,.12,{vol:.3,fq:2600,q:.6});tone(660,t,.1,{type:'square',vol:.1,f2:330})},
@@ -998,7 +998,7 @@ Object.assign(SFX,{
  parry:t=>{noise(t,.04,{vol:.12,fq:5000,q:1.5});tone(1850,t,.06,{type:'square',vol:.05});tone(2650,t,.28,{type:'triangle',vol:.08,f2:2450,att:.002})},
  block:t=>{noise(t,.08,{vol:.15,fq:900,q:1.1});tone(300,t,.11,{type:'triangle',vol:.12,f2:190,att:.002})}});
 G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};G._SFX=SFX;G._aud=()=>({ac,sg,nz,bg});
-const CV=new Set(['hit','mhit','crit','skhit','tick','swing','cast','bow','eswing','bswing','hurt','parry','block','kill']),PRI={tick:1,swing:2,cast:2,bow:2,eswing:2,kill:2};let rec=[];
+const CV=new Set(['hit','mhit','crit','skhit','tick','swing','cast','bow','eswing','bswing','hurt','parry','block','miss','kill']),PRI={tick:1,swing:2,cast:2,bow:2,eswing:2,kill:2};let rec=[];
 /* global budget: at most 5 combat voices per 0.12s so big AoE/multi-ally turns do not become a wall of noise; low-priority voices (DoT ticks, swings) drop first */
 const budget=(k,now)=>{if(!CV.has(k))return true;rec=rec.filter(x=>now-x<.12);if(rec.length>=5||(PRI[k]&&rec.length>=3+PRI[k]-1))return false;rec.push(now);return true};
 const play=G.sfx=(k,dl)=>{G.sfxN[k]=(G.sfxN[k]||0)+1;if(!ac||!on('sfx')||document.hidden||!SFX[k])return;const now=ac.currentTime;if(LIM[k]&&last[k]&&now-last[k]<LIM[k])return;if(!budget(k,now))return;last[k]=now;G.sfxPlayed[k]=(G.sfxPlayed[k]||0)+1;try{SFX[k](now+.005+(dl>0?Math.min(.4,dl):0))}catch(_){}};
@@ -9206,4 +9206,46 @@ const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{sweep();if(G.
   let drew=0;for(let i=0;i<A.length;i++){const a=A[i];if(!a._inHit)continue;const s=AS.get(a.k);if(!s||s.x==null)continue;ctx.globalAlpha=pulse;ctx.drawImage(im,s.x-24,s.y-80,48,72);drew++}
   ctx.globalAlpha=1;ctx.restore();G._inHitDrew737=drew}catch(_){G._inHitDrew737=0}};
 G.inHitDur737=DUR;G.inHitArm737=a=>mark(a,1);G.inHitSweep737=sweep;
+})();
+
+;(()=>{/* r738: when an incoming blow on a field ally is missed, parried, or blocked, a short confirmation (MISS / PARRY / BLOCK in MapleStory, distinct colors, plus a brief flash) appears at the existing 0.32s visual impact. Display only — HP and combat timing stay the same. Change-only flags, cached label/flash sprites, no per-frame allocations. Effect-off keeps a static cue and skips the pulse. Not drawn while a menu is open. Also wires a light evade whoosh (miss) and keeps the r735 parry/block recipes on those events, with LIM windows and the 5-voice combat budget. */
+const DELAY=.32,LIFE=.55;
+const off=()=>document.body.matches('.nofx,.tglite,.fxoff')||(R.opt&&R.opt.fx===false);
+const now=()=>(typeof performance!=='undefined'?performance.now():0);
+const KIND={miss:1,parry:1,block:1};
+let ctx0=null,cv0=null,lab=null,flash=null;
+const mkLab=(txt,c0,c1)=>{const c=document.createElement('canvas');c.width=200;c.height=56;const g=c.getContext('2d');g.font='italic 900 22px Maplestory,"Noto Sans KR",sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=6;g.strokeStyle='#1a0a08';g.strokeText(txt,100,30);const gr=g.createLinearGradient(0,12,0,44);gr.addColorStop(0,c0);gr.addColorStop(1,c1);g.fillStyle=gr;g.fillText(txt,100,30);return c};
+const mkFlash=col=>{const c=document.createElement('canvas');c.width=64;c.height=64;const g=c.getContext('2d');const a=g.createRadialGradient(32,32,2,32,32,28);a.addColorStop(0,col);a.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=a;g.beginPath();g.arc(32,32,28,0,7);g.fill();return c};
+const sprites=()=>{if(lab)return;lab={miss:mkLab('MISS','#f4f7ff','#9aa8c0'),parry:mkLab('PARRY','#fff6c0','#ffb020'),block:mkLab('BLOCK','#e8f6ff','#3a9aee')};
+  flash={miss:mkFlash('rgba(230,240,255,.55)'),parry:mkFlash('rgba(255,220,90,.6)'),block:mkFlash('rgba(140,210,255,.6)')};
+  G.guardSpr738=lab;G.guardAlloc738=(G.guardAlloc738||0)+1};
+const hideTxt=()=>{const L=R._txtL&&R._txtL();if(!L)return;for(let i=0;i<L.length;i++){const t=L[i],lb=t&&t.label;if(lb&&(lb==='MISS'||lb==='PARRY'||lb==='BLOCK'||/^BLOCK\b/.test(lb)))t.t=t.life||1}};
+const mark=(a,kind)=>{if(!a||!KIND[kind])return;const on=a._gdOn?1:0;a._gdKind=kind;a._gdAt=now()+DELAY*1000;a._gdUntil=a._gdAt+LIFE*1000;a._gdSnd=0;a._gdHid=0;if(!on){a._gdOn=1;G.guardN738=(G.guardN738||0)+1}};
+const sweep=()=>{const A=C.B&&C.B.allies;if(!A)return;const t=now();for(let i=0;i<A.length;i++){const a=A[i];if(a._gdOn&&t>=(a._gdUntil||0)){a._gdOn=0;a._gdKind=null;G.guardN738=(G.guardN738||0)+1}}};
+const od=C.ev.dmgAlly;C.ev.dmgAlly=function(a,d,kind){const r=od&&od.apply(this,arguments);try{if(KIND[kind])mark(a,kind)}catch(_){}return r};
+const ot=C.tick;C.tick=function(){const r=ot.apply(this,arguments);try{sweep()}catch(_){}return r};
+/* miss: light evade whoosh (no square/saw); parry/block already live on G._SFX from r735 */
+{const S=G._SFX,aud=()=>G._aud&&G._aud();
+ if(S&&!S.miss){const tone=(f,t0,dur,{type='sine',vol=.3,f2=null,att=.004}={})=>{const a=aud();if(!a||!a.ac)return;const ac=a.ac,o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),t0);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);o.connect(g);g.connect(a.sg);o.start(t0);o.stop(t0+dur+.02);o.onended=()=>{try{o.disconnect();g.disconnect()}catch(_){}}};
+  const whoosh=(t0,dur,{vol=.1,fq=800,f2=2800,q=1.2,pk=.35}={})=>{const a=aud();if(!a||!a.ac||!a.nz)return;const ac=a.ac,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=a.nz;f.type='bandpass';f.frequency.setValueAtTime(Math.max(20,fq),t0);f.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t0+dur);f.Q.value=q;g.gain.setValueAtTime(.0005,t0);g.gain.exponentialRampToValueAtTime(vol,t0+dur*pk);g.gain.exponentialRampToValueAtTime(.0005,t0+dur);s.connect(f);f.connect(g);g.connect(a.sg);s.start(t0);s.stop(t0+dur+.02);s.onended=()=>{try{s.disconnect();f.disconnect();g.disconnect()}catch(_){}}};
+  S.miss=t=>{whoosh(t,.16,{vol:.1,fq:800,f2:2800,q:1.2,pk:.35});whoosh(t+.01,.1,{vol:.04,fq:2000,f2:4200,q:1.8,pk:.3});tone(520,t,.1,{type:'sine',vol:.04,f2:880,att:.004});tone(180,t,.12,{type:'sine',vol:.03,f2:90,att:.006})}}
+ if(G.sfxLim&&G.sfxLim.miss==null)G.sfxLim.miss=.08}
+const of=R.frame;R.frame=function(dt){of.apply(this,arguments);try{sweep();const A=C.B&&C.B.allies;if(!A){G._guardDrew738=0;return}
+  if(G.screen){G._guardDrew738=0;return}
+  const t=now();let n=0;for(let i=0;i<A.length;i++)if(A[i]._gdOn&&t>=(A[i]._gdAt||0)&&t<(A[i]._gdUntil||0))n++;if(!n){G._guardDrew738=0;return}
+  const AS=R._AS&&R._AS(),c=R._bc&&R._bc();if(!c||!AS){G._guardDrew738=0;return}
+  sprites();if(c!==cv0){cv0=c;ctx0=c.getContext('2d')}const ctx=ctx0,sc=c.width/(c.clientWidth||c.width||1);
+  const pulse=off()?1:.78+.22*Math.sin(t/120);
+  G.guardAlpha738=pulse;G.guardOff738=off();
+  ctx.save();ctx.setTransform(sc,0,0,sc,0,0);
+  let drew=0;for(let i=0;i<A.length;i++){const a=A[i];if(!a._gdOn||t<(a._gdAt||0)||t>=(a._gdUntil||0))continue;const k=a._gdKind;if(!lab[k])continue;
+   if(!a._gdHid){a._gdHid=1;hideTxt()}
+   if(!a._gdSnd){a._gdSnd=1;try{G.sfx&&G.sfx(k)}catch(_){}}
+   const s=AS.get(a.k);if(!s||s.x==null)continue;
+   const u=Math.max(0,t-(a._gdAt||0))/1000,rise=off()?0:Math.min(14,u*36);
+   ctx.globalAlpha=pulse*(u<.08?u/.08:u>LIFE-.12?(LIFE-u)/.12:1);
+   ctx.drawImage(flash[k],s.x-32,s.y-72,64,64);
+   ctx.drawImage(lab[k],s.x-50,s.y-96-rise,100,28);drew++;G._guardKind738=k}
+  ctx.globalAlpha=1;ctx.restore();G._guardDrew738=drew}catch(_){G._guardDrew738=0}};
+G.guardDur738=DELAY;G.guardLife738=LIFE;G.guardArm738=mark;
 })();
