@@ -10932,3 +10932,25 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel805=SEL;G.pressMs805=0;G.pressScale805=.96;G.relMs805=130;G.relPeak805=1.03;G.relOn805='relb805on';
 })();
+ ;(()=>{/* r806: press snap + tightened release on bag/codex inventory tiles (.bi) vs 화룡전. r802-r805 already cover HUD/menu buttons, list rows, map nodes, chips/toggles, and screen tab bars. .bi tiles only had .bi.tap:active{scale(.95)} — no pointerdown .press, so the depress often missed, and there was no tightened release. Bag grids scroll inside #screen .sbody. Change-only, presentation only: pointerdown .press snaps (transition:none; light scale(.96) so the grid does not jump). Release is the same 130ms bounce (peak 1.03). A 10px move cancels without bounce so scrolling stays clean. Tiles use touch-action:pan-y (same idea as r731 list surfaces) and do not spawn a menu-icon fxring. Existing click / G.itemInfo / hold and tooltip paths are untouched (listeners stay passive; no pointerdown action). Effect-off (nofx / tglite / fxoff) keeps a static press and skips the bounce. The original .bi.tap:active rule stays in style.css. No action, layout, or rest-size changes. */
+const SEL='#screen .bi';
+const SKIP=[G.pressSel802,G.pressSel803,G.pressMore732,G.pressSel805].filter(s=>typeof s==='string'&&s).join(',');
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','806');st.id='r806css';
+st.textContent=[
+'#screen .bi{-webkit-tap-highlight-color:transparent;touch-action:pan-y}',
+'html body #screen .bi:is(.press,:active){transition:none!important;transform:scale(.96)!important;filter:brightness(1.25)!important}',
+'@keyframes relb806{0%{transform:scale(.96)}55%{transform:scale(1.03)}100%{transform:scale(1)}}',
+'html body #screen .bi.rel{animation:relb806 130ms cubic-bezier(.22,1.15,.45,1) both}',
+'body:is(.nofx,.tglite,.fxoff) #screen .bi{transition:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #screen .bi.rel{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+let cur=null,sx=0,sy=0,moved=0;
+const clear=(bounce)=>{if(!cur)return;const c=cur;cur=null;moved=0;c.classList.remove('press');if(bounce&&!lite()){c.classList.add('rel');setTimeout(()=>c.classList.remove('rel'),130)}};
+document.addEventListener('pointerdown',e=>{if(SKIP&&e.target.closest&&e.target.closest(SKIP))return;const t=e.target.closest&&e.target.closest(SEL);if(!t)return;moved=0;sx=e.clientX||0;sy=e.clientY||0;cur=t;t.classList.remove('rel');t.classList.add('press')},{passive:true});
+document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot((e.clientX||0)-sx,(e.clientY||0)-sy)>10){moved=1;clear(0)}},{passive:true});
+['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>document.addEventListener(ev,()=>clear(1),{passive:true}));
+window.addEventListener('blur',()=>clear(1));
+G.pressSel806=SEL;G.pressMs806=0;G.pressScale806=.96;G.relMs806=130;G.relPeak806=1.03;
+})();
