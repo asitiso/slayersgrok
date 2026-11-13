@@ -10133,3 +10133,44 @@ const css='html body #battle .bsht.ko2 .kt b{font:900 40px/1 Maplestory,"Noto Sa
 const st=document.createElement('style');st.id='r777css';st.textContent=css;document.head.appendChild(st);
 G.koCss777=css;
 })();
+
+;(()=>{/* r778: mid-fight BLOCK / MISS / PARRY labels vs 화룡전. Outgoing hits (19px, 5px stroke) and incoming ally numbers (r764, 19px) and .tdmg (r768/r769) stay untouched. These dodge/guard labels already use the same 19px Maplestory bake, but MISS fills to a weak gray (#c0c0c0), they rise 38px and keep rising while they fade from 70% of the 1.05s life, and effect-off still plays that drift. Change-only: same 19px size and 1.05s life (lane boxes and r501 strip dodge stay valid), same trigger (BAL.dodge / parry / block, R.dmgAlly), same 5px stroke. MISS is cream-gold, PARRY is gold, BLOCK is a brighter cyan, each with a darker even outline. A one-time bake (only when the key changes) is what the r237 draw already blits — no per-frame reshape. Before the existing draw (R._pm 'coins'), the 38px rise is cancelled so the label holds in-slot and the existing last ~315ms fade plays in place. Effect-off / tglite / nofx: the same in-slot hold (no drift). 매혹! / 드래곤 슬레이브 labels, heals, outgoing hits, HP and combat timing are untouched. R.opt.dmg still skips the numbers. */
+const LAB={MISS:1,PARRY:1,BLOCK:1};
+const isLab=t=>t&&LAB[t.label];
+const txtK=t=>(t.v>=1?t.label+' -'+R.fmt(t.v):t.label)+'|'+(t.n||0)+'|'+(t.crit?(t.nc?2:1):0)+'|'+(t.col||'');
+const colOf=t=>t.label==='MISS'?['#fffbe8','#ffe08a','#1a1200']:t.label==='PARRY'?['#fffbe0','#ffd24a','#3a1a00']:['#ffffff','#8ae0ff','#0a1a30'];
+const SZ=19,ease=x=>1-Math.pow(1-x,3);
+let dt0=0;
+const bake=t=>{
+  if(!isLab(t)||typeof R==='undefined'||!R.fmt)return 0;
+  const key=txtK(t);
+  if(t._s&&t._k===key&&t._s._778)return 0;
+  if(t._s&&t._s.c&&R._tp&&R._tp.length<24){R._tp.push(t._s.c);t._s=null}
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),sz=SZ,txt=t.v>=1?t.label+' -'+R.fmt(t.v):t.label;
+  const c=(R._tp&&R._tp.pop())||document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||sz*txt.length*.6,L=w0/2+8,Rr=w0/2+8,T=sz*1.05+8,B=sz*.32+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.globalAlpha=1;
+  X.font='900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=5;
+  const p=colOf(t);X.strokeStyle=p[2];X.strokeText(txt,0,0);
+  const gr=X.createLinearGradient(0,-sz,0,0);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0);
+  t._s={c,ox:L,oy:T,w:W2/S,h:H2/S,_778:1};t._k=key;return 1;
+};
+const prep=()=>{
+  const L=R._TX&&R._TX();if(!L||!L.length)return;
+  for(let i=0;i<L.length;i++){
+    const t=L[i];
+    if(!isLab(t)){if(t._h778){t.lf468=0;t._h778=0}continue}
+    try{bake(t)}catch(_){}
+    const k=(t.t+dt0)/t.life;
+    if(!(k<1)){t.lf468=0;t._h778=0;continue}
+    t.lf468=-ease(Math.min(1,k*1.2))*(t.nr?8:38);t._h778=1;
+  }
+};
+const of=R.frame;R.frame=function(dt){dt0=dt||0;return of.apply(this,arguments)};
+const d=Object.getOwnPropertyDescriptor(R,'_pm')||{};
+const inner=d.get?d.get():R._pm;
+const hook=k=>{let ret;if(typeof inner==='function')ret=inner(k);if(k==='coins')try{prep()}catch(_){}return ret};
+Object.defineProperty(R,'_pm',{configurable:true,enumerable:true,get(){return hook},set(fn){if(d.set)d.set(fn)}});
+G.bakLab778=bake;G.prepLab778=prep;G.colLab778=colOf;G.szLab778=SZ;G.isLab778=isLab;G.dtLab778=v=>{if(v!=null)dt0=v;return dt0};
+})();
