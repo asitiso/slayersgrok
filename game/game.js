@@ -10259,3 +10259,39 @@ const draw=()=>{
 const of=R.frame;R.frame=function(dt){const off=skipOn();try{const r=of.apply(this,arguments);try{step(dt||0);draw()}catch(_){}return r}finally{off()}};
 G.bakTx780=bake;G.colTx780=COL;G.szTx780=SZ;G.isTx780=isLab;G.aTx780=alpha;G.lifeTx780=LIFE;G.holdTx780=HOLD;G.yTx780=f=>f.y;
 })();
+
+;(()=>{/* r781: mid-fight 정예 출현 strip vs 화룡전. BREAK! (FT2) is already 25/34px gold Maplestory with a 5–6px even #3a0a00 outline, holds until 1s, then a 300ms in-place fade, and rides with the boss — left alone. The live 정예 출현 path is R.elPlq (r500 compact top strip, 200×26 at SXC 180 / SY 258): 13px italic, flat #ffe08a, 3.5px #2a0004 stroke, a 10px slide-in over the first 160ms, and the glyphs are re-stroked every frame. Effect-off still plays that slide. Change-only: same slot, 1.6s life, R.elT trigger, 「보상 4배」 wording, boss early-return, r520 cut-in fade and r569 strip dodge. The 10px slide is dropped so the strip holds in-slot and the existing last ~300ms fade plays in place. Type is 15px italic Maplestory (still inside the 26px plate; long names keep the same 170px maxWidth squeeze). Cream-to-gold fill, even 4px dark outline, baked once per name — no per-frame reshape. Effect-off / tglite / nofx: the same in-slot hold (no slide). BREAK!, 정예 처치, elite HP/atk, and 4× reward rules are untouched. */
+const SZ=15,MAX=170,COL=['#fff6c8','#ffc23a','#2a0008'];
+const txtOf=c=>'정예 출현! '+((c&&c.n)||'정예')+' · 보상 4배';
+const cache={};
+const bake=txt=>{
+  if(!txt)return null;
+  if(cache[txt]&&cache[txt]._781)return cache[txt];
+  const S=Math.min(4,Math.max(1,(window.devicePixelRatio||1)*1.25)),sz=SZ,p=COL;
+  const c=document.createElement('canvas'),X=c.getContext('2d');
+  X.setTransform(1,0,0,1,0,0);X.font='italic 900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';
+  const w0=X.measureText(txt).width||sz*txt.length*.6,used=Math.min(w0,MAX);
+  const L=used/2+8,Rr=used/2+8,T=sz/2+6,B=sz/2+6,W2=Math.ceil((L+Rr)*S),H2=Math.ceil((T+B)*S);
+  c.width=W2;c.height=H2;X.setTransform(S,0,0,S,L*S,T*S);X.textAlign='center';X.textBaseline='middle';X.globalAlpha=1;
+  X.font='italic 900 '+sz+'px Maplestory,"Noto Sans KR",sans-serif';X.lineJoin='round';X.lineWidth=4;
+  X.strokeStyle=p[2];X.strokeText(txt,0,0,MAX);
+  const gr=X.createLinearGradient(0,-sz/2,0,sz/2);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);X.fillStyle=gr;X.fillText(txt,0,0,MAX);
+  return cache[txt]={c,ox:L,oy:T,w:W2/S,h:H2/S,_781:1};
+};
+const paint=(cx,c,W,t,a)=>{
+  R._stB501=performance.now()+120;
+  try{
+    if(C.B.boss)return false;
+    const q=R._ccb520;if(q&&performance.now()-q[4]<80){const sy=R._elSY500||258;if(sy+14>q[1]&&sy-14<q[3])a=0}
+    const SW=200,SH=26,SY=R._elSY500||258,SXC=180,dk=Math.min(4,Math.abs((cx.getTransform&&cx.getTransform().a)||1));
+    const bg=R.gspr&&R.gspr('elS500',SW,SH,dk,(q,w,h)=>{const g=q.createLinearGradient(0,0,w,0);g.addColorStop(0,'rgba(70,0,8,0)');g.addColorStop(.14,'rgba(92,6,14,.9)');g.addColorStop(.86,'rgba(92,6,14,.9)');g.addColorStop(1,'rgba(70,0,8,0)');q.fillStyle=g;q.fillRect(0,0,w,h);q.fillStyle='#ffc23a';q.fillRect(w*.12,0,w*.76,1.2);q.fillRect(w*.12,h-1.2,w*.76,1.2)});
+    const spr=bake(txtOf(c));
+    cx.save();cx.globalAlpha=Math.max(0,a);
+    if(bg)cx.drawImage(bg,SXC-SW/2,SY-SH/2,SW,SH);
+    if(spr)cx.drawImage(spr.c,SXC-spr.ox,SY+1-spr.oy,spr.w,spr.h);
+    cx.restore();return true;
+  }catch(_){return false}
+};
+R.elPlq=paint;
+G.bakEl781=bake;G.szEl781=SZ;G.colEl781=COL;G.maxEl781=MAX;G.slEl781=0;G.txtEl781=txtOf;
+})();
