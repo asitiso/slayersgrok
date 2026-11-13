@@ -11199,3 +11199,14 @@ document.addEventListener('pointermove',e=>{if(!cur||moved)return;if(Math.hypot(
 window.addEventListener('blur',()=>clear(1));
 G.pressSel813=SEL;G.pressMs813=0;G.pressScale813=.97;G.relMs813=130;G.relPeak813=1.03;G.relClass813=RLS;
 })();
+
+;(()=>{/* r814: tighten the ordinary #screen fade-in on openScreen from r728's 150ms to ~100ms, like 화룡전. Dedicated override — the r728 sc728 .15s rule is left in place. closeScreen stays immediate. r798's #screen.on.r798 {animation:none} still wins for dungeon/tower return-after-CLEAR. Effect-off stays instant. Opacity only (no transform), snappy ease-out, no overshoot. Special and boss intros are untouched. */
+const st=document.createElement('style');st.setAttribute('data-r','814');st.id='r814css';
+st.textContent=[
+'html body #screen.on:not(.r798){animation:sc814 .1s ease-out both}',
+'@keyframes sc814{from{opacity:0}to{opacity:1}}',
+'body:is(.nofx,.tglite,.fxoff) #screen.on{animation:none!important}'
+].join('');
+document.head.appendChild(st);
+G.screenFadeMs814=.1;G.screenFadeOld814=.15;
+})();
