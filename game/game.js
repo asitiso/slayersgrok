@@ -11251,3 +11251,49 @@ scan(document);
 try{new MutationObserver(ms=>{for(const r of ms){if(r.addedNodes)r.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)})}}).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}
 G.closeMs816=.1;G.closeMsOld816=.22;
 })();
+
+;(()=>{/* r817: installable web app + fit to each phone. Display / platform plumbing only — no gameplay, economy, save or layout-proportion change. (1) Registers sw.js (network-first code, cached art; Supabase / Google sign-in are never touched) only on https or localhost. (2) The fixed 390x844 stage is scaled into the SAFE area (notch, punch hole, home indicator, rounded corners) of the real window and centred; with no insets it keeps the old formula and old inline style exactly. (3) Settings gets an 앱 설치 row only when the browser offers it (Android beforeinstallprompt) or on iOS Safari (text tip); hidden once installed; never a popup. */
+const doc=document,root=doc.documentElement;
+const isStandalone=()=>{try{return (window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||navigator.standalone===true}catch(_){return false}};
+const isIOS=()=>{const u=navigator.userAgent||'';return /iPad|iPhone|iPod/.test(u)||(/Macintosh/.test(u)&&(navigator.maxTouchPoints||0)>1)};
+G.swOk817=(loc)=>{loc=loc||location;return !!loc&&(loc.protocol==='https:'||loc.hostname==='localhost'||loc.hostname==='127.0.0.1'||loc.hostname==='[::1]')};
+/* ---- 1. service worker ---- */
+G.regSW817=()=>{try{if(!('serviceWorker' in navigator)||!G.swOk817())return false;const go=()=>navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(()=>{});if(doc.readyState==='complete')go();else addEventListener('load',go,{once:true});return true}catch(_){return false}};
+G.regSW817();
+/* ---- 2. fit the stage into the safe area ---- */
+const envOK=()=>{try{return !!(window.CSS&&CSS.supports&&CSS.supports('padding-top','env(safe-area-inset-top)'))}catch(_){return false}};
+const insets=()=>{try{if(!envOK())return{t:0,r:0,b:0,l:0};const probe=doc.createElement('div');probe.setAttribute('aria-hidden','true');probe.style.cssText='position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:var(--sat,env(safe-area-inset-top,0px)) var(--sar,env(safe-area-inset-right,0px)) var(--sab,env(safe-area-inset-bottom,0px)) var(--sal,env(safe-area-inset-left,0px))';(doc.body||root).appendChild(probe);
+ const cs=getComputedStyle(probe),n=v=>Math.max(0,Math.round(parseFloat(v)||0)),o={t:n(cs.paddingTop),r:n(cs.paddingRight),b:n(cs.paddingBottom),l:n(cs.paddingLeft)};probe.remove();return o}catch(_){return{t:0,r:0,b:0,l:0}}};
+G.fit817=()=>{const app=doc.getElementById('app');if(!app)return null;
+ const I=insets(),W=Math.max(1,innerWidth-I.l-I.r),H=Math.max(1,innerHeight-I.t-I.b),s=Math.min(W/390,H/844);
+ app.style.transform=`translateX(-50%) scale(${s})`;
+ app.style.left=(I.l||I.r)?(I.l+W/2)+'px':'';
+ app.style.top=I.t?I.t+'px':'';
+ root.style.setProperty('--vh',(innerHeight*.01)+'px');
+ const sa=isStandalone();if(doc.body&&doc.body.classList.contains('sa817')!==sa)doc.body.classList.toggle('sa817',sa);
+ G.fit817.last={s,W,H,I,sa};return G.fit817.last};
+G.insets817=insets;
+['resize','orientationchange','pageshow'].forEach(e=>addEventListener(e,()=>G.fit817()));
+try{if(window.visualViewport)visualViewport.addEventListener('resize',()=>{if(Math.abs(visualViewport.scale-1)<.01&&visualViewport.height>=innerHeight-1)G.fit817()})}catch(_){}
+try{['standalone','fullscreen'].forEach(m=>{const q=matchMedia('(display-mode: '+m+')');q.addEventListener&&q.addEventListener('change',()=>G.fit817())})}catch(_){}
+/* no pinch / double-tap page zoom (iOS ignores user-scalable=no) */
+['gesturestart','gesturechange'].forEach(e=>doc.addEventListener(e,ev=>ev.preventDefault(),{passive:false}));
+G.fit817();
+/* ---- 3. settings: 앱 설치 ---- */
+let dp=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;paint()});
+addEventListener('appinstalled',()=>{dp=null;paint()});
+G.pwaState817=()=>isStandalone()?'installed':dp?'prompt':isIOS()?'ios':'none';
+function paint(){try{
+ if(G.screen!=='settings')return;const sc=doc.getElementById('screen'),acc=sc&&sc.querySelector('#accRow');if(!acc)return;
+ let r=sc.querySelector('#pwaRow817');const st=G.pwaState817();
+ if(st==='installed'||st==='none'){if(r)r.remove();return}
+ const h=st==='prompt'?'<div class=f><b>앱 설치</b><small class=srd style="display:block">홈 화면에 추가해 앱처럼 열어요</small></div><span class="pill blue" id=pwaBtn817>설치</span>'
+  :'<div class=f><b>앱 설치</b><small class=srd style="display:block">공유 → 홈 화면에 추가</small></div>';
+ if(!r){const card=acc.closest('.card')||acc.parentNode;card.insertAdjacentHTML('beforeend','<div class=row id=pwaRow817></div>');r=sc.querySelector('#pwaRow817')}
+ if(r._h!==h){r._h=h;r.innerHTML=h;const b=r.querySelector('#pwaBtn817');if(b)b.addEventListener('click',()=>{const p=dp;if(!p)return;dp=null;try{p.prompt();Promise.resolve(p.userChoice).catch(()=>{}).then(()=>paint())}catch(_){}paint()})}
+}catch(_){}}
+G.pwaPaint817=paint;
+if(typeof renderScreen=='function'){const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);paint();return r}}
+G.pwa817=1;
+})();
