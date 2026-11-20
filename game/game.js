@@ -11221,3 +11221,33 @@ st.textContent=[
 document.head.appendChild(st);
 G.sheetMs815=.1;G.sheetMsOld815=.15;
 })();
+
+;(()=>{/* r816: tighten chat and notice close from 220ms (~.2s fade) to ~100ms, like 화룡전. Dedicated override — the original #chatP.out / #notice.out .2s rules and the 220ms remove timeouts are left in place. A hook removes the node at 100ms (immediately when effects are off) so the panel does not linger after the fade, and the later 220ms remove is a no-op. .out sets pointer-events:none so taps during close do not hit the closing panel. Reward-pop click-lock, saver delay, and stage crossfade are untouched. Snappy ease-out, no overshoot. */
+const MS=100;
+const lite=()=>document.body.classList.contains('nofx')||document.body.classList.contains('tglite')||document.body.classList.contains('fxoff')||(typeof R!=='undefined'&&R.opt&&R.opt.fx===false);
+const st=document.createElement('style');st.setAttribute('data-r','816');st.id='r816css';
+st.textContent=[
+'html body #chatP.out,html body #notice.out{transition:opacity .1s ease-out!important;pointer-events:none!important}',
+'body:is(.nofx,.tglite,.fxoff) #chatP.out,body:is(.nofx,.tglite,.fxoff) #notice.out{transition:none!important}'
+].join('');
+document.head.appendChild(st);
+const arm=el=>{
+  if(!el||el._a816)return;
+  el._a816=1;
+  const go=()=>{
+    if(!el.classList.contains('out')||el._rm816)return;
+    el._rm816=1;
+    setTimeout(()=>{if(el.isConnected)el.remove()},lite()?0:MS);
+  };
+  if(el.classList.contains('out'))go();
+  try{new MutationObserver(go).observe(el,{attributes:true,attributeFilter:['class']})}catch(_){}
+};
+const scan=root=>{
+  if(!root||root.nodeType!==1)return;
+  if(root.id==='chatP'||root.id==='notice')arm(root);
+  if(root.querySelector){const a=root.querySelector('#chatP');if(a)arm(a);const b=root.querySelector('#notice');if(b)arm(b)}
+};
+scan(document);
+try{new MutationObserver(ms=>{for(const r of ms){if(r.addedNodes)r.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)})}}).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}
+G.closeMs816=.1;G.closeMsOld816=.22;
+})();
