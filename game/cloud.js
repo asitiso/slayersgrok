@@ -12,19 +12,22 @@ CL.reload=()=>location.reload();
 const bootAt=Date.now(),bootLast=(()=>{try{if(typeof saved!=='undefined'&&saved&&typeof saved=='object')return +saved.last||0}catch(_){}return 0})();
 const io=()=>!!(CL.sb&&CL.user&&!G.noSave);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+/* r823: this project's game_states row can hold another app's save (same Supabase user, different game: no lv/si/gold). Such a row is never downloaded, never overwritten, and pauses sync for the session. */
+const own=s=>!!s&&typeof s=='object'&&!Array.isArray(s)&&('lv' in s||'si' in s||'maxSi' in s||'gold' in s);CL.own=own;
 const real=s=>!!s&&typeof s=='object'&&((s.lv||1)>1||(s.maxSi||0)>0||(s.kills||0)>=30);
-const readSave=u=>{for(const k of [ukey(u),ukey(u)+'_tmp',ukey(u)+'_bak']){try{const v=JSON.parse(get(k));if(v&&typeof v=='object')return v}catch(_){}}return null};
+const readSave=u=>{for(const k of [ukey(u),ukey(u)+'_tmp',ukey(u)+'_bak']){try{const v=JSON.parse(get(k));if(v&&typeof v=='object'&&own(v))return v}catch(_){}}return null};
 const getBase=u=>{try{return JSON.parse(get(syncK(u)))||null}catch(_){return null}};
 const setBase=(u,rev,last)=>put(syncK(u),JSON.stringify({rev:+rev||0,last:+last||0}));
 const noLast=s=>{try{const o=Object.assign({},s);delete o.last;return JSON.stringify(o)}catch(_){return ''}};
 const tip=(t)=>{try{if(typeof toast=='function')toast(t)}catch(_){}};
 /* ---- cloud row I/O (own row only; RLS also enforces auth.uid() = user_id) ---- */
 async function upsertState(u,state,prevRev){
+ if(CL.foreign)throw new Error('foreign cloud save: sync paused');/* r823 */
  const rev=(+prevRev||0)+1,st=JSON.parse(JSON.stringify(state));
  const row={user_id:u,revision:rev,state:st,updated_at:new Date().toISOString()};
  const {error}=await CL.sb.from(TB).upsert(row,{onConflict:'user_id'});if(error)throw error;
  CL.rev=rev;setBase(u,rev,st.last||0);CL.lastSync=Date.now();CL.err='';CL.status='ok';return rev}
-async function deleteRow(u){const {error}=await CL.sb.from(TB).delete().eq('user_id',u);if(error)throw error;return true}
+async function deleteRow(u){if(CL.foreign)return false;/* r823: never delete another app's row — look first */const q=await CL.sb.from(TB).select('state').eq('user_id',u).maybeSingle();if(q&&q.error)throw q.error;if(q&&q.data&&!own(q.data.state)){CL.foreign=1;return false}const {error}=await CL.sb.from(TB).delete().eq('user_id',u);if(error)throw error;return true}
 /* ---- debounced/throttled upload after each successful local save ---- */
 let tmr=0,dirty=0,lastPush=0,pushing=null;
 async function push(why){
@@ -64,6 +67,7 @@ async function onUser(user){
   if(get(rstK(u))){try{await deleteRow(u);del(rstK(u))}catch(_){}}
   const {data:row,error}=await CL.sb.from(TB).select('revision,state,updated_at').eq('user_id',u).maybeSingle();if(error)throw error;
   if(!CL.user||CL.user.id!==u||G.noSave)return;
+  if(row&&!own(row.state)){CL.foreign=1;CL.ready=0;CL.status='fail';CL.err='클라우드에 이 게임이 아닌 다른 저장이 있어 동기화를 멈췄어요 (이 기기 진행은 그대로)';paint();if(!CL._fTip){CL._fTip=1;tip('클라우드 저장 형식이 달라 동기화를 멈췄어요. 이 기기 진행은 그대로예요')}return}/* r823 */
   const same=u===bootUid,local=same?G.S():readSave(u),guest=!same&&!bootUid?G.S():null;
   const lcmp=same&&local&&Date.now()-bootAt<60e3?Object.assign({},local,{last:bootLast}):local;
   if(!row){/* (a) account has no cloud save yet: adopt this device's progress (account cache, else guest) as its first save */
