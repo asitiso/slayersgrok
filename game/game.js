@@ -11408,3 +11408,15 @@ try{if(/[?&]fit\b/.test(location.search)){const d=doc.createElement('div');d.id=
 G.fit822();burst();
 G.fit822ok=1;G._fit817orig=f817;
 })();
+;(()=>{/* r825: difficulty up a little ("too easy, auto clears everything"). Measured first (qa618/bal825sim.js, r825 notes in UX.md): main-stage walls cost the same 0-3 boss tries per stage in every chapter, the 무한의 탑 fight was won at minHp 0.7-0.9 even with power 20% under the floor's 권장 (the first-clear win bypassed C.POW), and 던전 mobs never touched the party. One central table D.BAL.d825 (data.js) now sets enemy HP/ATK only: (1) main stage: per-chapter ramp, boss multipliers per chapter and an extra spike on each chapter-final boss (x-7); applied right after C.spawn, so mobHP/goldKill/expKill/stageReq maths used by rewards, offline gains, raid and world boss stay as they were; (2) 무한의 탑: ATK and HP grow with the floor (up to x1.7) and being under 권장 power now hurts faster (ratio^1.35); (3) 일일 던전: mobs hit harder. Rewards, drops, unlock thresholds, costs, HP formulas of the party, save format: unchanged. 보스 러시 (open-ended score), 월드 보스, 레이드, 전직 시련 untouched. All-ones table = old behaviour. */
+const B=C.B,BL=D.BAL,lerp=(a,b,t)=>a+(b-a)*t;
+G.d825=i=>{const T=BL.d825.ch,c=Math.max(0,Math.min(T.length-1,Math.floor(i/7))),r=T[c],k=(((i%7)+7)%7)/6,hp=lerp(r[0],r[1],k),at=lerp(r[2],r[3],k),fin=i%7==6;return{fh:hp,fa:at,bh:hp*r[4]*(fin?r[6]:1),ba:at*r[5]*(fin?r[7]:1)}};
+{const os=C.spawn;C.spawn=function(){const r=os.apply(this,arguments);try{if(!B.rb&&!B.wb&&!B.br){const m=G.d825(C.S().si);B.enemies.forEach(e=>{if(e.tg)return;const h=e.boss?m.bh:m.fh,a=e.boss?m.ba:m.fa;e.max*=h;e.hp*=h;e.atk*=a})}}catch(_){}return r}}
+{const osr=C.stageReq;C.stageReq=i=>{const v=osr(i);if(!v)return v;const m=G.d825(i);return Math.ceil(v*Math.sqrt(m.bh*m.ba)/10)*10}}
+{const orr=G.rbRun;G.rbRun=function(opt,done){G.o825=opt;const r=orr.apply(this,arguments);try{if(C.B&&C.B.rb&&opt)C.B.rb.kind=opt.kind}catch(_){}return r}}
+{const ot=C.tick;C.tick=function(dt){const r=B.rb;if(r&&!r.s825){r.s825=1;try{const o=G.o825||{},X=BL.d825;let hm=1,am=1;
+  if(o.kind=='dun'){const ra=Math.max(1.1,Math.min(3,(o.req||0)/Math.max(1,C.POW()))),x=Math.pow(ra,X.dun.rx-1);hm=X.dun.hp*x;am=X.dun.atk*x}
+  else if(/^무한의 탑 \d+층/.test(o.title||'')){const f=+o.f||1,g=Math.min(X.tw.cap,1+X.tw.per*f),ra=Math.max(1.1,Math.min(3,(o.req||0)/Math.max(1,C.POW()))),x=Math.pow(ra,X.tw.rx-1);hm=X.tw.hp*(1+(g-1)*.5)*x;am=X.tw.atk*g*x}
+  if(hm!==1||am!==1)r.waves.forEach(w=>w.forEach(e=>{e.max*=hm;e.hp*=hm;e.atk*=am}))}catch(_){}}
+ return ot.apply(this,arguments)}}
+})();

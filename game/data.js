@@ -42,6 +42,10 @@ BAL:{
  vault:{rate:.08, cost:[120,1.55], time:[30,1.55]}, mine:{rate:4, cost:[200,1.6], time:[60,1.55]}, tower:{pct:.05, cost:[400,1.7], time:[120,1.55]}, store:4*3600,
  donate:{goldMul:200, gem:50, buff:.05, max:5}, raid:{mul:5, g:1.5, tries:3, time:30},
  arena:{tickets:5, regen:7200, win:25, lose:-15},
- summon:300, summon10:2700, orbGold:[150,1.30]
+ summon:300, summon10:2700, orbGold:[150,1.30],
+ /* r825 difficulty curve (enemy HP/ATK only; rewards, economy, unlock thresholds, save format untouched). One row per chapter (1-1..6-7 = 7 stages each):
+    [field HP x at stage 1, at stage 7, field ATK x at stage 1, at stage 7, stage-boss HP x, stage-boss ATK x, chapter-final (x-7) boss extra HP x, extra ATK x]; linear inside a chapter so walls rise gradually. Set all to 1 to switch the whole r825 tuning off. */
+ d825:{ch:[[1,1,1,1,1,1,1.06,1.04],[1.03,1.10,1.04,1.14,1,1.02,1.08,1.06],[1.10,1.18,1.14,1.24,1.02,1.03,1.10,1.08],[1.18,1.24,1.24,1.30,1.03,1.04,1.10,1.08],[1.24,1.30,1.30,1.36,1.04,1.05,1.10,1.08],[1.30,1.36,1.36,1.42,1.05,1.06,1.10,1.08],[1.36,1.42,1.42,1.48,1.06,1.07,1.10,1.08]],
+  tw:{atk:1.35,hp:1.0,per:.01,cap:1.7,rx:1.6},dun:{atk:1.8,hp:1.25,rx:1.5}}
 }};
 if(typeof module!=='undefined')module.exports=DATA;
