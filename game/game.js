@@ -11297,3 +11297,18 @@ G.pwaPaint817=paint;
 if(typeof renderScreen=='function'){const o=renderScreen;renderScreen=function(){const r=o.apply(this,arguments);paint();return r}}
 G.pwa817=1;
 })();
+
+;(()=>{/* r818: the ▦ 메뉴 popup could not scroll. Since r601 added the grouped sections (성장 / 콘텐츠 / 소셜·기록 / 기타) its panel (#menuPop .mbox, overflow:visible for the gold trim) is ~1033px tall inside the 844px stage and the popup is a centred flex box, so the top (ribbon, ✕) and the bottom (기타 section) were clipped by #app and nothing inside was a scroll container. Fix: the panel is capped to the stage (flex column), the ribbon stays put and only the icon grid #mgrid scrolls (overflow-y auto, touch-action pan-y, overscroll-behavior contain so it never chains to the page / pull-to-refresh). Existing scroll lists (#screen .sbody, #sheet bodies) also get overscroll contain. Display / input plumbing only — no entries, handlers, economy or save change. */
+G.menuScroll818=1;
+const st=document.createElement('style');st.setAttribute('data-r','818');
+st.textContent=`
+html body #menuPop.on{box-sizing:border-box;padding:40px 0 84px}
+html body #menuPop.on .mbox{display:flex!important;flex-direction:column!important;max-height:100%!important;min-height:0}
+html body #menuPop .mbox .sheethead{flex:0 0 auto}
+html body #menuPop .mbox #mgrid.mgrid{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+html body #menuPop .mbox #mgrid.mgrid::-webkit-scrollbar{display:none}
+html body #menuPop .mbox #mgrid a{touch-action:pan-y}
+html body #screen .sbody{overscroll-behavior-y:contain}
+`;
+document.head.appendChild(st);
+})();
