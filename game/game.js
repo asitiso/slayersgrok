@@ -11312,3 +11312,53 @@ html body #screen .sbody{overscroll-behavior-y:contain}
 `;
 document.head.appendChild(st);
 })();
+/* r819: an already-open installed app picks up a new deploy by itself. Platform plumbing only — no gameplay, economy, save schema or layout change. (1) Checks for a new service worker (registration.update()) at start, when the app comes back to the foreground, and every 5 minutes while it is visible. A new worker installs, skipWaiting()s and clients.claim()s (sw.js), the page sees controllerchange. (2) First-ever install (no previous controller) never reloads; one reload per update, and none within 20s of the last update reload (sessionStorage) so it can never loop. (3) The reload waits until it is safe: not in a boss / world boss / dungeon / tower / boss-rush fight, no menu screen or bottom sheet open, no modal / reward / summon / victory / chapter / story / tutorial overlay, not while cloud sign-in sync is deciding or saving is switched off. Then the normal local save is flushed (saveNow) and a pending cloud upload is awaited (max 5s) before a short 새 버전 적용 중 toast and reload. Save data is never read or changed. */
+;(()=>{const doc=document,Q='.modal,.rwpop,.vic:not(.out),.chap,.sty,.unl,.tut,.bsht,.cloud618,.sumcard',KEY='slayers_upd819',LOOP=20000;
+const st={pending:0,done:0,hadCtrl:0,timer:0,busy:0,why:'',n:0};G.upd819=st;
+G.reload819=()=>location.reload();
+/* '' = safe, otherwise the reason it must wait */
+G.unsafe819=()=>{try{const B=(G.C&&G.C.B)||{};
+ if(G.noSave)return 'nosave';
+ if(B.boss||B.wb||B.rb||B.br)return 'battle';
+ if(G.storyOn)return 'story';
+ if(G.screen)return 'screen';
+ const sh=doc.getElementById('sheet');if(sh&&sh.classList.contains('on'))return 'sheet';
+ if([...doc.querySelectorAll(Q)].some(e=>{try{return getComputedStyle(e).display!=='none'}catch(_){return true}}))return 'overlay';/* the tutorial layer (.tut) always exists, hidden */
+ const CL=G.cloud;if(CL&&(CL.reloading||(CL.user&&!CL.ready)))return 'cloud';
+ return ''}catch(_){return 'error'}};
+const recent=()=>{try{const t=+sessionStorage.getItem(KEY)||0;return t&&Date.now()-t<LOOP&&Date.now()>=t}catch(_){return false}};
+const mark=()=>{try{sessionStorage.setItem(KEY,String(Date.now()))}catch(_){}};
+/* flush the normal save path, wait for a running / queued cloud upload (max 5s) */
+const flushAll=async()=>{try{if(typeof G.saveNow==='function')G.saveNow('update')}catch(_){}
+ try{const CL=G.cloud;if(CL&&typeof CL.flushNow==='function'){const p=CL.flushNow();if(p)await Promise.race([Promise.resolve(p).catch(()=>{}),new Promise(r=>setTimeout(r,5000))])}}catch(_){}};
+const go=async()=>{if(!st.pending||st.done||st.busy)return false;
+ if(doc.hidden){st.why='hidden';return false}
+ const w=G.unsafe819();st.why=w;if(w)return false;
+ st.busy=1;try{await flushAll();
+  if(st.done||doc.hidden||G.unsafe819()){st.busy=0;return false}/* the player moved on while the upload ran: keep waiting */
+  st.done=1;st.busy=0;mark();try{toast('새 버전 적용 중')}catch(_){}
+  setTimeout(()=>{try{G.reload819()}catch(_){}},500);return true}catch(_){st.busy=0;return false}};
+G.tryReload819=go;
+const poll=()=>{if(st.timer||!st.pending||st.done)return;let ok=0;st.timer=setInterval(async()=>{if(st.done||!st.pending){clearInterval(st.timer);st.timer=0;return}
+ if(G.unsafe819()||doc.hidden){ok=0;return}if(++ok<2)return;/* quiet for ~1.5s in a row */
+ if(await go()){clearInterval(st.timer);st.timer=0}},1000)};
+/* a new worker now controls this page */
+G.onCtrl819=()=>{if(!st.hadCtrl){st.hadCtrl=1;return 'first'}/* first-ever install: nothing old to replace */
+ if(st.done||st.pending)return 'dup';
+ if(recent()){return 'loop'}
+ st.pending=1;st.n++;go().then(r=>{if(!r)poll()});return 'pending'};
+G.initUpd819=(sw)=>{try{if(!sw||st.sw===sw)return false;st.sw=sw;st.hadCtrl=sw.controller?1:0;
+ sw.addEventListener('controllerchange',()=>G.onCtrl819());
+ const watch=reg=>{if(!reg)return;st.reg=reg;
+  const hook=w=>{if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&sw.controller)try{w.postMessage('skipWaiting')}catch(_){}})};
+  reg.addEventListener('updatefound',()=>hook(reg.installing));
+  if(reg.waiting&&sw.controller)try{reg.waiting.postMessage('skipWaiting')}catch(_){}};
+ const upd=()=>{try{const r=st.reg;if(r&&r.update)Promise.resolve(r.update()).catch(()=>{})}catch(_){}};
+ G.checkUpd819=upd;
+ Promise.resolve(sw.ready).then(r=>{watch(r);upd()}).catch(()=>{});
+ doc.addEventListener('visibilitychange',()=>{if(doc.hidden)return;upd();if(st.pending)setTimeout(()=>go().then(r=>{if(!r)poll()}),300)});
+ st.iv=setInterval(()=>{if(!doc.hidden)upd()},300000);
+ return true}catch(_){return false}};
+try{if(typeof G.swOk817==='function'&&G.swOk817()&&'serviceWorker' in navigator)G.initUpd819(navigator.serviceWorker)}catch(_){}
+G.upd819ok=1;
+})();

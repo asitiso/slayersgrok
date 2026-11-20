@@ -35,6 +35,7 @@ async function push(why){
  return pushing}
 function flush(){if(tmr){clearTimeout(tmr);tmr=0}if(!dirty)return Promise.resolve();dirty=0;lastPush=Date.now();return push('flush')}
 window.__slayersSaved=()=>{if(!io()||!CL.ready||CL.user.id!==bootUid)return;dirty=1;if(tmr)return;tmr=setTimeout(()=>{tmr=0;flush()},Math.max(3000,30000-(Date.now()-lastPush)))};
+CL.pending=()=>!!(tmr||dirty||pushing);CL.flushNow=()=>flush();/* r819: read-only helpers for the auto-update reload (is an upload waiting / running, upload now) */
 document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
 window.addEventListener('pagehide',()=>{flush()});
 /* ---- slot switching ---- */
@@ -90,12 +91,35 @@ function init(){if(CL.sb||!window.supabase||typeof window.supabase.createClient!
  CL.sb.auth.onAuthStateChange((ev,s)=>{if(!CL.inited)return;setTimeout(()=>{if(ev==='SIGNED_OUT'||!s)return onNoUser();if(s.user&&(!CL.user||CL.user.id!==s.user.id))onUser(s.user);else if(s.user){CL.user=s.user;paint()}},0)});
  CL.sb.auth.getSession().then(({data,error})=>{cleanUrl();CL.inited=1;const s=data&&data.session;if(s&&s.user)onUser(s.user);else if(!error)onNoUser();else{CL.status='fail';paint()}}).catch(()=>{cleanUrl();CL.inited=1;CL.status='fail';paint()})}
 CL.init=init;
-CL.login=async()=>{if(!CL.sb){init();if(!CL.sb){tip('로그인 모듈을 불러오지 못했어요. 잠시 후 다시 시도해 주세요');return}}
- try{if(!G.noSave)G.saveNow('login')}catch(_){}
- const {error}=await CL.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)tip('로그인 실패: '+String(error.message||error).slice(0,60))};
-CL.logout=async()=>{if(!CL.sb||!CL.user)return;if(!confirm('로그아웃할까요? 진행은 계정에 저장돼 있어요.'))return;
- try{if(!G.noSave)G.saveNow('logout')}catch(_){}dirty=1;await Promise.race([flush(),sleep(3000)]);
- try{await Promise.race([CL.sb.auth.signOut({scope:'local'}),sleep(3000)])}catch(_){}onNoUser()};
+/* r820: one tap = one Google sign-in. The installed PWA used to fire 2-3 authorize calls from repeated taps and showed nothing. Now: busy guard (cleared after 10s, when the page is hidden, or on error), instant toast, skipBrowserRedirect + one explicit location.assign, visible error toast. */
+let loginBusy=0,loginT=0;
+const loginFree=()=>{loginBusy=0;if(loginT){clearTimeout(loginT);loginT=0}};
+CL.loginBusy=()=>!!loginBusy;
+CL.login=async()=>{if(loginBusy)return;
+ loginBusy=1;loginT=setTimeout(()=>{loginT=0;loginBusy=0},10000);tip('구글로 이동 중…');
+ try{if(!CL.sb){init();if(!CL.sb){tip('로그인 모듈을 불러오지 못했어요. 잠시 후 다시 시도해 주세요');loginFree();return}}
+  try{if(!G.noSave)G.saveNow('login')}catch(_){}
+  const {data,error}=await CL.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname,skipBrowserRedirect:true}});
+  if(error||!data||!data.url){tip('로그인 실패: '+String(error&&error.message||'주소를 받지 못했어요').slice(0,60));loginFree();return}
+  CL.go(data.url)}catch(e){tip('로그인 실패: '+String(e&&e.message||e).slice(0,60));loginFree()}};
+CL.go=u=>location.assign(u);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)loginFree()});
+window.addEventListener('pagehide',loginFree);
+/* r820: a sign-in finished in another window / the browser (or restored from bfcache) is picked up without restarting the app. getSession() only; routed through the same onUser / onNoUser (onUser already ignores a user it is syncing, so no double cloud load). */
+let rfAt=0,rfBusy=0;
+CL.refresh=async()=>{if(!CL.sb||!CL.inited||rfBusy||G.noSave||CL.reloading||Date.now()-rfAt<1000)return;rfAt=Date.now();rfBusy=1;
+ try{const {data,error}=await CL.sb.auth.getSession();if(error||CL.reloading)return;const se=data&&data.session;
+  if(se&&se.user){if(!CL.user||CL.user.id!==se.user.id)onUser(se.user)}
+  else if(CL.user&&CL.ready)onNoUser()}catch(_){}finally{rfBusy=0}};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)CL.refresh()});
+window.addEventListener('pageshow',()=>CL.refresh());
+window.addEventListener('focus',()=>CL.refresh());
+window.addEventListener('storage',e=>{if(e.key===null||/^sb-.*-auth-token/.test(e.key||''))CL.refresh()});
+/* r820: 로그아웃 (설정 → 계정, shown only when signed in): confirm once, flush the normal local + cloud save, local sign-out, back to 게스트. Progress (local slots, cloud row) is never deleted. A second tap while it runs is ignored. */
+let outBusy=0;
+CL.logout=async()=>{if(outBusy||!CL.sb||!CL.user)return;if(!confirm('로그아웃할까요? 진행은 계정에 저장돼 있어요.'))return;outBusy=1;
+ try{try{if(!G.noSave)G.saveNow('logout')}catch(_){}dirty=1;await Promise.race([flush(),sleep(3000)]);
+  try{await Promise.race([CL.sb.auth.signOut({scope:'local'}),sleep(3000)])}catch(_){}onNoUser()}finally{outBusy=0}};
 /* ---- reset: logged-in reset also removes this account's cloud row (guest slot untouched) ---- */
 const oReset=G.reset;
 G.reset=async function(){const u=CL.user&&CL.user.id;if(!u||!CL.sb||u!==bootUid)return oReset.apply(this,arguments);

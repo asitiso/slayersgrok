@@ -2,7 +2,7 @@
    - HTML / JS / CSS / manifest (same origin): network-first, cache is only the offline / slow-network fallback.
    - Images, fonts, audio (same origin): cached copy first, refreshed in the background (versioned cache name).
    - Everything cross-origin (Supabase, Google sign-in, CDN) and any /auth /api path or OAuth callback URL: not touched at all. */
-const V = 'v818';
+const V = 'v819';
 const CODE = 'slayers-code-' + V;
 const STATIC = 'slayers-static-' + V;
 const MAX_STATIC = 500;
@@ -13,6 +13,8 @@ const SKIP_PATH = /^\/(?:auth|api|rest|realtime|functions|storage|_vercel|~oauth
 const OAUTH_QS = /[?&#](?:code|access_token|refresh_token|id_token|error|error_description|state|provider_token|token_hash)=/i;
 
 self.addEventListener('install', e => { self.skipWaiting(); });
+/* r819: the page may also ask a waiting worker to take over (normally install already did) */
+self.addEventListener('message', e => { if (e.data === 'skipWaiting' || (e.data && e.data.type === 'SKIP_WAITING')) self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil((async () => {
     const keep = [CODE, STATIC];
