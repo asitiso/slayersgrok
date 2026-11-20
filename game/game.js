@@ -11362,3 +11362,45 @@ G.initUpd819=(sw)=>{try{if(!sw||st.sw===sw)return false;st.sw=sw;st.hadCtrl=sw.c
 try{if(typeof G.swOk817==='function'&&G.swOk817()&&'serviceWorker' in navigator)G.initUpd819(navigator.serviceWorker)}catch(_){}
 G.upd819ok=1;
 })();
+
+;(()=>{/* r822: installed app (Android 10, Chrome 157) opened with the stage shifted right — left half black, stage starting at the screen centre and cut off on the right, full height. r276 / r817 placed #app with CSS left:50% of its containing block + translateX(-50%) scale(s) about a 'top center' origin, so the result depended on (a) the containing block being exactly the visible screen (r817 made body position:fixed in standalone, so #app is laid out against whatever width the browser gives that fixed body / layout viewport) and (b) the inline transform actually winning the cascade; with either off, the stage's left edge lands on the screen centre, which is exactly what the phone showed. Fix: the stage no longer relies on 50% of anything. Every fit computes the visible box (smallest sane width of innerWidth / clientWidth / visualViewport / a fixed inset:0 probe, minus safe-area insets), the scale, and the exact top-left target in screen coordinates, pins #app with left:0 top:0 origin 0 0 translate(x,y) scale(s) as !important inline styles, then MEASURES the stage and corrects any leftover offset (containing block shifted or wider than the screen). A stray horizontal scroll of the page / body is reset. Refits on resize, orientationchange, visualViewport resize, pageshow, visibilitychange, display-mode change, fonts ready, load, a ResizeObserver on <html>, and a few delayed retries after launch / rotation. Display only — no gameplay, save, economy change. */
+const doc=document,root=doc.documentElement;
+const num=v=>typeof v==='number'&&isFinite(v)&&v>0;
+const probeBox=()=>{try{const p=doc.createElement('div');p.setAttribute('aria-hidden','true');p.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;visibility:hidden;pointer-events:none;z-index:-1';(doc.body||root).appendChild(p);const r=p.getBoundingClientRect();p.remove();return r}catch(_){return null}};
+G.view822=()=>{const vv=window.visualViewport,pb=probeBox(),ws=[innerWidth,root.clientWidth],hs=[innerHeight];
+ if(vv&&Math.abs((vv.scale||1)-1)<.01)ws.push(vv.width);if(pb&&pb.width>0){ws.push(pb.width);hs.push(pb.height)}
+ const W=Math.min(...ws.filter(v=>num(v)&&v>=50)),H=Math.min(...hs.filter(v=>num(v)&&v>=50));
+ return{W:isFinite(W)?W:390,H:isFinite(H)?H:844}};
+const imp=(el,k,v)=>{if(el.style.getPropertyValue(k)!==v||el.style.getPropertyPriority(k)!=='important')el.style.setProperty(k,v,'important')};
+const place=(app,x,y,s)=>{imp(app,'left','0px');imp(app,'top','0px');imp(app,'right','auto');imp(app,'margin','0px');imp(app,'transform-origin','0px 0px');imp(app,'translate','none');imp(app,'scale','none');imp(app,'transform',`translate(${+x.toFixed(3)}px, ${+y.toFixed(3)}px) scale(${s})`)};
+const unscroll=()=>{try{if(scrollX)scrollTo(0,scrollY);if(root.scrollLeft)root.scrollLeft=0;if(doc.body&&doc.body.scrollLeft)doc.body.scrollLeft=0}catch(_){}};
+G.fit822=()=>{const app=doc.getElementById('app');if(!app)return null;
+ unscroll();
+ const I=(G.insets817&&G.insets817())||{t:0,r:0,b:0,l:0},V=G.view822();
+ const W=Math.max(1,V.W-I.l-I.r),H=Math.max(1,V.H-I.t-I.b);let s=Math.min(W/390,H/844);if(!num(s))s=1;
+ const tx=I.l+(W-390*s)/2,ty=I.t;
+ place(app,tx,ty,s);
+ /* measure & correct: whatever the containing block / origin did, put the real box on the target */
+ let dx=0,dy=0,r=null;try{r=app.getBoundingClientRect()}catch(_){}
+ if(r&&r.width>0&&r.height>0){dx=tx-r.left;dy=ty-r.top;if(Math.abs(dx)>.5||Math.abs(dy)>.5)place(app,tx+dx,ty+dy,s)}
+ root.style.setProperty('--vh',(V.H*.01)+'px');
+ try{const sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||navigator.standalone===true;if(doc.body&&doc.body.classList.contains('sa817')!==!!sa)doc.body.classList.toggle('sa817',!!sa)}catch(_){}
+ const last={s,W,H,I,x:tx,y:ty,dx,dy,vw:V.W,vh:V.H,mw:r?r.width:0};G.fit822.last=last;G.fit817.last=last;
+ if(G.fitDbg822)G.fitDbg822(last);return last};
+/* every older caller (r276 scale(), r817 listeners) ends in the r822 placement */
+const f817=G.fit817;G.fit817=()=>G.fit822();
+try{if(typeof scale==='function'){const o=scale;scale=function(){try{o()}catch(_){}return G.fit822()}}}catch(_){}
+let raf=0;const soon=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;G.fit822()})};
+const burst=()=>{soon();[60,250,700,1500].forEach(t=>setTimeout(()=>G.fit822(),t))};
+['resize','pageshow','load'].forEach(e=>addEventListener(e,e==='resize'?soon:burst));
+addEventListener('orientationchange',burst);
+doc.addEventListener('visibilitychange',()=>{if(!doc.hidden)burst()});
+try{if(window.visualViewport)visualViewport.addEventListener('resize',soon)}catch(_){}
+try{['standalone','fullscreen','minimal-ui'].forEach(m=>{const q=matchMedia('(display-mode: '+m+')');q&&q.addEventListener&&q.addEventListener('change',burst)})}catch(_){}
+try{if(window.ResizeObserver)new ResizeObserver(soon).observe(root)}catch(_){}
+try{doc.fonts&&doc.fonts.ready&&doc.fonts.ready.then(soon)}catch(_){}
+/* ?fit in the URL: tiny on-screen readout of the numbers, for a phone screenshot */
+try{if(/[?&]fit\b/.test(location.search)){const d=doc.createElement('div');d.id='fitDbg822';d.style.cssText='position:fixed;left:2px;bottom:2px;z-index:2147483647;font:10px/1.2 monospace;color:#0f0;background:#000c;padding:2px 4px;pointer-events:none;white-space:pre';doc.body.appendChild(d);G.fitDbg822=L=>{d.textContent=`iw ${innerWidth} ih ${innerHeight} cw ${root.clientWidth} vv ${window.visualViewport?Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height)+'@'+visualViewport.scale:'-'}\nW ${L.vw} H ${L.vh} s ${L.s.toFixed(3)} x ${L.x.toFixed(1)} dx ${L.dx.toFixed(1)} mw ${Math.round(L.mw)} ins ${L.I.t},${L.I.r},${L.I.b},${L.I.l} sa ${doc.body.classList.contains('sa817')?1:0}`}}}catch(_){}
+G.fit822();burst();
+G.fit822ok=1;G._fit817orig=f817;
+})();
