@@ -8,9 +8,9 @@ const f=(p,i)=>p[0]*Math.pow(p[1],i), rnd=(a,b)=>a+C.rand()*(b-a), pick=a=>a[Mat
 C.f=f;C.pick=pick;
 C.fresh=()=>({gold:100,gems:300,orbs:10,tickets:0,lv:1,exp:0,si:0,maxSi:0,wave:0,stl:{atk:0,hp:0,def:0,crit:0},gear:{},bag:null,comps:{},party:[],autoSpell:true,autoBoss:true,filter:3,day:'',mp:{},mc:{},last:0,kills:0,failPow:0,failAt:0,
   bld:{vault:{lv:1,up:0,last:0,acc:0},mine:{lv:1,up:0,last:0,acc:0},tower:{lv:0,up:0}},guild:{lv:1,exp:0,dDay:'',don:{}},raid:{lv:1,dmg:0,day:'',tries:0},
-  arena:{pts:1000,tickets:5,tAt:0,opps:[],week:-1,pend:null,win:0,streak:0},shop:{day:'',bought:{}},stats:{rolls:[0,0,0,0,0,0],goldEarned:0,goldSpent:{train:0,build:0,shop:0,donate:0},bossFails:0}});
+  arena:{pts:1000,tickets:5,tAt:0,opps:[],week:-1,pend:null,win:0,streak:0},shop:{day:'',bought:{}},stats:{rolls:[0,0,0,0,0,0],goldEarned:0,goldSpent:{train:0,build:0,shop:0,donate:0},bossFails:0},cmat:0,ftok:{light:0,chaos:0,human:0,wild:0},facLv:{light:0,chaos:0,human:0,wild:0}});
 let S=C.fresh();C.S=()=>S;
-C.load=d=>{S=Object.assign(C.fresh(),d||{});if(!S.idleAt)S.idleAt=C.now();const fr=C.fresh();for(const k of ['bld','guild','raid','arena','shop','stats','stl'])S[k]=Object.assign(fr[k],S[k]||{});const t=C.now();if(!S.last)S.last=t;for(const b of ['vault','mine'])if(!S.bld[b].last)S.bld[b].last=t;if(!S.arena.tAt)S.arena.tAt=t;if(S.arena.week<0)S.arena.week=C.week();if(C.mailStamp)C.mailStamp();return S};
+C.load=d=>{S=Object.assign(C.fresh(),d||{});if(!S.idleAt)S.idleAt=C.now();const fr=C.fresh();for(const k of ['bld','guild','raid','arena','shop','stats','stl','ftok','facLv'])S[k]=Object.assign(fr[k]||{},S[k]||{});S.cmat=S.cmat||0;const t=C.now();if(!S.last)S.last=t;for(const b of ['vault','mine'])if(!S.bld[b].last)S.bld[b].last=t;if(!S.arena.tAt)S.arena.tAt=t;if(S.arena.week<0)S.arena.week=C.week();if(C.mailStamp)C.mailStamp();return S};
 // ---- derived
 C.stat=k=>{const s=D.STATS.find(x=>x.k==k);return s.mult?Math.pow(s.mult,S.stl[k]):Math.min(s.max||1e18,s.base+s.inc*S.stl[k])};
 C.cost=s=>s.max&&C.stat(s.k)>=s.max?Infinity:Math.floor(s.cost*Math.pow(s.g,S.stl[s.k]));
@@ -125,8 +125,20 @@ C.autoRollStep=()=>{if(S.bag){const o=S.gear[S.bag.slot];if(C.itemPow(S.bag)>C.i
 C.train=k=>{const s=D.STATS.find(x=>x.k==k),c=C.cost(s);if(!isFinite(c)||!C.spend('train',c))return false;S.stl[k]++;C.mAdd('train');C.refreshMax();return true};
 C.cheapestStat=()=>D.STATS.reduce((a,b)=>C.cost(a)<=C.cost(b)?a:b);
 // ---- companions
-C.GW={2:72,3:25,4:3};C.PITY=80;C.RU='xellos';C.cw=c=>{const L=D.COMPS.filter(x=>x.g==c.g);if(c.g==4&&C.RU&&L.some(x=>x.k==C.RU))return C.GW[4]*(c.k==C.RU?.5:.5/(L.length-1));return C.GW[c.g]/L.length};C.gpick=()=>{let r=C.rand()*100;for(const c of D.COMPS){r-=C.cw(c);if(r<0)return c}return D.COMPS[0]};C.rates=()=>D.COMPS.map(c=>({k:c.k,n:c.n,g:c.g,p:C.cw(c),up:c.k==C.RU}));
-C.summon=n=>{const c=n==10?BAL.summon10:BAL.summon;if(S.tickets>=n)S.tickets-=n;else if(S.gems>=c)S.gems-=c;else return null;S.mile=(S.mile||0)+n;const got=[];C.lastNew={};for(let i=0;i<n;i++){S.pity=(S.pity||0)+1;let k=C.gpick().k;if(S.pity>=C.PITY&&D.COMPS.find(c=>c.k==k).g<4){const L=D.COMPS.filter(c=>c.g==4&&c.k!=C.RU);k=C.RU&&C.rand()<.5?C.RU:L[Math.floor(C.rand()*L.length)].k}if(D.COMPS.find(c=>c.k==k).g>=4)S.pity=0;if(!S.comps[k])C.lastNew[k]=1;S.comps[k]=(S.comps[k]||0)+1;got.push(k);if(S.party.length<4&&!S.party.includes(k))S.party.push(k)}C.mAdd('summon',n);C.buildAllies();return got};
+C.SUMCOMP=10;C.GW={2:65,3:25,4:10};C.PITY=80;C.RU='xellos';/* r827: 동료 10% of all pulls, 전설 1% of all (=10% of companion results). 영웅 stays 25% of companions (2.5% of all); 희귀 absorbs the rest (6.5%). Items 90%. D.RAR (equipment) unchanged. */
+C.SUMIT=[{t:'cmat',n:1,w:40,name:'동료 수련서',img:'rl_tome.png'},{t:'cmat',n:3,w:15,name:'동료 수련서',img:'rl_tome.png'},{t:'cmat',n:5,w:5,name:'동료 수련서',img:'rl_tome.png'},{t:'ftok',n:1,w:20,name:'세력 증표',img:'fac_light.png'},{t:'ftok',n:3,w:10,name:'세력 증표',img:'fac_light.png'}];
+C.gRate=g=>C.GW[g]*C.SUMCOMP/100;
+C.cw=c=>{const L=D.COMPS.filter(x=>x.g==c.g);const share=c.g==4&&C.RU&&L.some(x=>x.k==C.RU)?C.GW[4]*(c.k==C.RU?.5:.5/(L.length-1)):C.GW[c.g]/L.length;return share*C.SUMCOMP/100};
+C.gpick=()=>{let r=C.rand()*C.SUMCOMP;for(const c of D.COMPS){r-=C.cw(c);if(r<0)return c}return D.COMPS.find(c=>c.g==2)||D.COMPS[0]};
+C.rates=()=>D.COMPS.map(c=>({k:c.k,n:c.n,g:c.g,p:C.cw(c),up:c.k==C.RU}));
+C.FACLIST=['light','chaos','human','wild'];
+C.mkSumIt=it=>{const o={t:it.t,n:it.n,name:it.name,img:it.img};if(it.t==='ftok'){const f=C.pick(C.FACLIST);o.f=f;o.img='fac_'+f+'.png';o.name=((D.FACTIONS[f]||{}).n||f)+' 증표'}return o};
+C.ipick=()=>{let r=C.rand()*C.SUMIT.reduce((a,x)=>a+x.w,0);for(const it of C.SUMIT){r-=it.w;if(r<0)return C.mkSumIt(it)}return C.mkSumIt(C.SUMIT[0])};
+C.grantSumIt=it=>{if(!it)return;if(it.t==='cmat')S.cmat=(S.cmat||0)+it.n;if(it.t==='ftok'){S.ftok=S.ftok||{};const f=it.f||C.pick(C.FACLIST);it.f=f;S.ftok[f]=(S.ftok[f]||0)+it.n}};
+C.isSumComp=x=>typeof x==='string';
+C.itemRates=()=>C.SUMIT.map(it=>({t:it.t,n:it.n,name:it.name,img:it.img,p:it.w}));
+
+C.summon=n=>{const c=n==10?BAL.summon10:BAL.summon;if(S.tickets>=n)S.tickets-=n;else if(S.gems>=c)S.gems-=c;else return null;S.mile=(S.mile||0)+n;const got=[];C.lastNew={};for(let i=0;i<n;i++){S.pity=(S.pity||0)+1;const force=S.pity>=C.PITY;if(force||C.rand()*100<C.SUMCOMP){let k=C.gpick().k;if(force&&D.COMPS.find(c=>c.k==k).g<4){const L=D.COMPS.filter(c=>c.g==4&&c.k!=C.RU);k=C.RU&&C.rand()<.5?C.RU:L[Math.floor(C.rand()*L.length)].k}if(D.COMPS.find(c=>c.k==k).g>=4)S.pity=0;if(!S.comps[k])C.lastNew[k]=1;S.comps[k]=(S.comps[k]||0)+1;got.push(k);if(S.party.length<4&&!S.party.includes(k))S.party.push(k)}else{const res=C.ipick();C.grantSumIt(res);got.push(res)}}C.mAdd('summon',n);C.buildAllies();return got};
 // ---- buildings
 C.bProd=k=>{const b=S.bld[k];if(k=='vault')return b.lv*BAL.vault.rate*C.goldKill(S.maxSi)*60;if(k=='mine')return b.lv*BAL.mine.rate;return 0};// per hour? vault per minute-> convert below
 C.bRate=k=>k=='vault'?S.bld.vault.lv*BAL.vault.rate*C.goldKill(S.maxSi):k=='mine'?S.bld.mine.lv*BAL.mine.rate/3600:0;// per second
@@ -174,7 +186,12 @@ C.dunRun=k=>{const d=C.dunDaily();if(!(d.t[k]>0))return null;d.t[k]--;const i=S.
 C.idleSec=()=>Math.min(BAL.offCap,(C.now()-(S.idleAt||C.now()))/1000);
 C.idleClaim=()=>{const sec=C.idleSec();if(sec<60)return null;const r=C.offlineCalc(sec);r.g*=.5;r.x*=.5;r.o=Math.floor(r.o*.5);C.addGold(r.g);C.gainExp(r.x);S.orbs+=r.o;r.st=Math.floor(sec/900);S.stone=(S.stone||0)+r.st;S.idleAt=C.now();return r};
 C.compUpCost=k=>Math.floor(300*Math.pow(1.45,((S.clv||{})[k]||1)-1));
-C.compUp=k=>{S.clv=S.clv||{};if(!S.comps[k])return false;const c=C.compUpCost(k);if(S.gold<c)return false;S.gold-=c;S.clv[k]=(S.clv[k]||1)+1;C.buildAllies();return true};
+C.compUpMat=()=>1;
+C.compUpWhy=k=>{if(!S.comps[k])return '보유하지 않은 동료입니다';const c=C.compUpCost(k);if(S.gold<c)return '골드가 부족합니다';return ''};
+C.compUp=k=>{S.clv=S.clv||{};if(!S.comps[k])return false;const c=C.compUpCost(k),m=C.compUpMat(k);S.cmat=S.cmat||0;if(S.gold<c)return false;S.gold-=c;if(S.cmat>=m)S.cmat-=m;S.clv[k]=(S.clv[k]||1)+1;C.buildAllies();return true};
+C.FACMAX=10;C.facUpCost=f=>8;
+C.facUp=f=>{S.facLv=S.facLv||{};S.ftok=S.ftok||{};const lv=S.facLv[f]||0;if(lv>=C.FACMAX)return 'max';const need=C.facUpCost(f);if((S.ftok[f]||0)<need)return 'tok';S.ftok[f]-=need;S.facLv[f]=lv+1;C.buildAllies();return 'ok'};
+
 C.mileSummon=k=>{if((S.mile||0)<100)return false;S.mile-=100;S.comps[k]=(S.comps[k]||0)+1;C.buildAllies();return true};
 C.MAILTTL=7*864e5;C.mailStamp=()=>{S.mailt=S.mailt||{};const t=C.now();let ch=0;for(const m of D.MAILS)if(!S.mailt[m.k]){S.mailt[m.k]=t;ch=1}return ch};C.mailLeft=k=>{C.mailStamp();return S.mailt[k]+C.MAILTTL-C.now()};C.mailLive=m=>!(S.mailc||{})[m.k]&&C.mailLeft(m.k)>0;
 C.mailClaim=(k)=>{S.mailc=S.mailc||{};let n=0;const r={g:0,o:0,t:0};for(const m of D.MAILS)if(!S.mailc[m.k]&&C.mailLeft(m.k)>0&&(k==null||m.k==k)){S.mailc[m.k]=1;S.gems+=m.g||0;S.orbs+=m.o||0;S.tickets+=m.t||0;r.g+=m.g||0;r.o+=m.o||0;r.t+=m.t||0;n++}r.n=n;return r};
@@ -223,7 +240,7 @@ C.dealRefresh=()=>{const d=C.deals();if(d.ref>=C.DEAL_REFMAX)return 'max';if(S.g
 // ---- v13: 승급/각성 (duplicate shards)
 C.STARMAX=6;C.AWMAX=3;C.SHV={2:5,3:10,4:20};
 C.starCost=k=>10*(S.comps[k]||1);C.awCost=k=>{const a=(S.caw||{})[k]||0;return{sh:60+a*40,g:Math.floor(5000*Math.pow(3,a))}};
-{const os=C.summon;C.summon=n=>{const pre=Object.assign({},S.comps);const got=os(n);if(!got)return got;S.csh=S.csh||{};C.lastDup={};for(const k of new Set(got)){const base=pre[k]||1,dup=(S.comps[k]||0)-(pre[k]?pre[k]:1);if(dup>0){const v=dup*(C.SHV[D.COMPS.find(x=>x.k==k).g]||5);S.csh[k]=(S.csh[k]||0)+v;C.lastDup[k]=v;S.comps[k]=base}}C.buildAllies();return got}}
+{const os=C.summon;C.summon=n=>{const pre=Object.assign({},S.comps);const got=os(n);if(!got)return got;S.csh=S.csh||{};C.lastDup={};for(const k of new Set(got)){if(typeof k!=='string')continue;const base=pre[k]||1,dup=(S.comps[k]||0)-(pre[k]?pre[k]:1);if(dup>0){const v=dup*(C.SHV[D.COMPS.find(x=>x.k==k).g]||5);S.csh[k]=(S.csh[k]||0)+v;C.lastDup[k]=v;S.comps[k]=base}}C.buildAllies();return got}}
 {const om=C.compMul;C.compMul=k=>om(k)*(1+.15*((S.caw||{})[k]||0))}
 C.starUp=k=>{if(!S.comps[k])return 'none';if(S.comps[k]>=C.STARMAX)return 'max';const c=C.starCost(k);S.csh=S.csh||{};if((S.csh[k]||0)<c)return 'sh';S.csh[k]-=c;S.comps[k]++;C.buildAllies();return 'ok'};
 C.awake=k=>{S.caw=S.caw||{};if(!S.comps[k])return 'none';if(S.comps[k]<C.STARMAX)return 'star';const a=S.caw[k]||0;if(a>=C.AWMAX)return 'max';const c=C.awCost(k);S.csh=S.csh||{};if((S.csh[k]||0)<c.sh)return 'sh';if(S.gold<c.g)return 'gold';S.csh[k]-=c.sh;S.gold-=c.g;S.caw[k]=a+1;C.buildAllies();return 'ok'};
@@ -248,5 +265,8 @@ C.TELE={first:4.5,cd:7.5,wind:1.4,mul:2.6};
  const stunned=bo.st&&(bo.st.stun||bo.st.frz);
  if(B.tele){const t=B.tele;if(t.e!==bo||stunned){B.tele=null;emit('teleCancel',bo,1);return}t.t-=dt;if(t.t<=0){B.tele=null;const res=[];C.aliveAllies().forEach(a=>{const ch=.45+(a.spd>1.3?.2:0)+(a.k=='lina'?.1:0);if(C.rand()<ch){res.push([a,0]);return}const d=Math.max(1,bo.atk*C.TELE.mul*(1-Math.min(.6,C.stat('def')/200)));a.hp-=d;res.push([a,d]);emit('dmgAlly',a,d,'');if(a.hp<=0){a.hp=0;a.dead=true;emit('allyDead',a)}});emit('teleHit',bo,res)}return}
  if(bo.tcd==null)bo.tcd=C.TELE.first;if(!stunned)bo.tcd-=dt;if(bo.tcd<=0){bo.tcd=C.TELE.cd;B.tele={e:bo,t:C.TELE.wind,T:C.TELE.wind};emit('tele',bo)}}}
+
+/* r827: 세력 증표 spend raises a small per-faction ATK bonus (cap 10, +1%/lv) for that faction's companions. Old saves default facLv 0. */
+{const om=C.compMul;C.compMul=k=>{const c=D.COMPS.find(x=>x.k==k);return om(k)*(1+.01*((S.facLv||{})[c.fac]||0))}}
 })(typeof window!=='undefined'?window:globalThis);
 

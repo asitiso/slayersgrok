@@ -120,7 +120,7 @@ function renderPanel(){const p=$('#panel'),t=G.tab,s=C.S();C.daily();
  if(t=='mission'){C.weekly();p.innerHTML=`<div class=card><div class=ttl>주간 임무 <small>월요일 초기화</small></div>${D.WMISS.map(m=>{const v=Math.min(m.goal,s.wk.p[m.k]||0),done=v>=m.goal,cl=s.wk.c[m.k];return `<div class=row style="${cl?'opacity:.5':''}"><div class=f><b>${m.n}</b> <small><img class=ci src=assets/it2_gem.png> ${m.gem}${m.tk?` <img class=ci src=assets/it2_ticket.png> ${m.tk}`:''}</small><div class=bar style="margin-top:4px"><i style="width:${v/m.goal*100}%"></i></div><small>${fmt(v)}/${fmt(m.goal)}</small></div><span class="btn ${cl?'p off':done?'':'p off'}" data-w=${m.k}>${cl?'완료':done?'받기':'진행 중'}</span></div>`}).join('')}</div><div class=card><div class=ttl>일일 지령 <small>매일 05:00 초기화 (KST)</small></div>${D.MISSIONS.map(m=>{const v=Math.min(m.goal,s.mp[m.k]||0),done=v>=m.goal,cl=s.mc[m.k];return `<div class=row style="${cl?'opacity:.5':''}"><div class=f><b>${m.n}</b> <small><img class=ci src=assets/it2_gem.png> ${m.gem}</small><div class=bar style="margin-top:4px"><i style="width:${v/m.goal*100}%"></i></div><small>${v}/${m.goal}</small></div><span class="btn ${cl?'p off':done?'':'p off'}" data-m=${m.k}>${cl?'완료':done?'받기':'진행 중'}</span></div>`}).join('')}</div>`;
   p.querySelectorAll('[data-m]').forEach(el=>el.onclick=()=>{const g=C.claimMission(el.dataset.m);renderPanel()});p.querySelectorAll('[data-w]').forEach(el=>el.onclick=()=>{const g=C.claimW(el.dataset.w);renderPanel()})}
 }
-function summon(n){const got=C.summon(n);if(!got)return toast('보석이 부족합니다');if(G.screen=='summon')renderScreen();modal(`<div class=ttl style="justify-content:center;font-size:18px">소환 결과</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">${got.map((k,gi)=>{const c=D.COMPS.find(x=>x.k==k);return `<div class="sumcard ${c.g>=3?'hi':''}" style="--rc:${D.RAR[c.g].c};animation-delay:${.15+gi*.16}s"><img src="${A}${c.img}" style="height:${n>1?66:170}px"><span class=gr>${D.RAR[c.g].n}</span><b>${c.n}</b><small>★${C.S().comps[k]}</small>${(C.lastNew||{})[k]&&got.indexOf(k)==gi?'<em class=snew>NEW</em>':`<small class=sdup>조각 +${C.SHV[c.g]||5}</small>`}${k==C.RU?'<em class=snew style="left:-6px;right:auto;background:linear-gradient(#ffb03a,#d65a00)">UP</em>':''}</div>`}).join('')}</div>`).id='sumModal';renderPanel()}
+function summon(n){const got=C.summon(n);if(!got)return toast('보석이 부족합니다');if(G.screen=='summon')renderScreen();modal(`<div class=ttl style="justify-content:center;font-size:18px">소환 결과</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">${got.map((k,gi)=>{if(typeof k!=='string'){const it=k||{};return `<div class="sumcard it827" style="--rc:#e8d080;animation-delay:${.15+gi*.16}s"><img src="${A}${it.img||'rl_tome.png'}" style="height:${n>1?66:170}px"><span class=gr>아이템</span><b>${it.name||''}</b><small>×${it.n||1}</small></div>`}const c=D.COMPS.find(x=>x.k==k);if(!c)return '';return `<div class="sumcard ${c.g>=3?'hi':''}" style="--rc:${D.RAR[c.g].c};animation-delay:${.15+gi*.16}s"><img src="${A}${c.img}" style="height:${n>1?66:170}px"><span class=gr>${D.RAR[c.g].n}</span><b>${c.n}</b><small>★${C.S().comps[k]}</small>${(C.lastNew||{})[k]&&got.indexOf(k)==gi?'<em class=snew>NEW</em>':`<small class=sdup>조각 +${C.SHV[c.g]||5}</small>`}${k==C.RU?'<em class=snew style="left:-6px;right:auto;background:linear-gradient(#ffb03a,#d65a00)">UP</em>':''}</div>`}).join('')}</div>`).id='sumModal';renderPanel()}
 // ---------- full screens
 function shell(title,bg,body,pos='center'){return `<img class=sbg src="${A}${bg}" style="object-position:${pos}"><div class=shade></div><div class=shead><span class=back id=sBack>‹</span><b>${title}</b><span class=chip><img class=ci src=assets/it2_gold.png> ${fmt(C.S().gold)}</span><span class=chip><img class=ci src=assets/it2_gem.png> ${fmt(C.S().gems)}</span></div><div class=sbody>${body}</div>`}
 function openScreen(k){G.screen=k;$('#screen').className='on';document.body.classList.add('scron');renderNav();renderScreen(true)}
@@ -175,7 +175,7 @@ function renderScreen(first){const k=G.screen,el=$('#screen'),s=C.S();if(!k)retu
   el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{if(C.buy(b.dataset.b))toast('구매 완료');else toast('구매할 수 없습니다');renderScreen()});
   el.querySelectorAll('[data-pkg]').forEach(b=>b.onclick=()=>modal(`<div class=ttl style="justify-content:center;font-size:17px">결제 안내</div><small style="font-size:13px;color:#fff">이 빌드는 프로토타입입니다.<br>실제 결제는 이루어지지 않으며 상품도 지급되지 않습니다.</small>`)) }
  if(k=='summon'){const mile=s.mile||0;el.innerHTML=shell('동료 소환','bg_lobby.jpg',`<div class=sumban><img class=b1 src="${A}ally_xellos.png"><img class=b2 src="${A}ally_amelia.png"><img class=b3 src="${A}ally_gourry.png"><div class=bt><b>마도사 동료 소환</b><small>전설 동료 「제로스」 등장 확률 UP!</small></div></div>
-   <div class=card><div class=ttl>소환 확률 <small>${[4,3,2].map(g=>`<span style="color:${D.RAR[g].c}">${D.RAR[g].n} ${C.GW[g]}%</span>`).join(' · ')} · ${C.PITY}회 전설 확정</small></div>
+   <div class=card><div class=ttl>소환 확률 <small>동료 ${C.SUMCOMP}% (${[4,3,2].map(g=>`<span style="color:${D.RAR[g].c}">${D.RAR[g].n} ${C.gRate(g)}%</span>`).join(' · ')}) · 수련서·세력 증표 ${100-C.SUMCOMP}% · ${C.PITY}회 전설 확정</small></div>
    <div class=milebar><span>마일리지</span><div class=bar><i style="width:${Math.min(100,mile)}%"></i></div><b>${mile}/100</b></div>
    ${mile>=100?`<div class=chips style="margin-top:6px">${D.COMPS.map(c=>`<span class=chip data-mile=${c.k}>${c.n} 선택 소환</span>`).join('')}</div>`:'<small>소환 1회당 마일리지 +1 · 100 달성 시 원하는 동료 선택 소환</small>'}</div>
    <div class=sumbtns><span class="pill blue" id=su1>1회 소환<small>${s.tickets?'<img class=ci src=assets/it2_ticket.png> 1':'<img class=ci src=assets/it2_gem.png> '+BAL.summon}</small></span><span class="pill red" id=su10>10회 소환<small>${s.tickets>=10?'<img class=ci src=assets/it2_ticket.png> 10':'<img class=ci src=assets/it2_gem.png> '+fmt(BAL.summon10)}</small></span></div><div class=spity><div class=spb><i style="width:${Math.min(100,(s.pity||0)/C.PITY*100)}%"></i></div><span>전설 확정까지 <b>${C.PITY-(s.pity||0)}</b>회</span></div><small style="display:block;text-align:center">보유 <img class=ci src=assets/it2_ticket.png> ${s.tickets} · <img class=ci src=assets/it2_gem.png> ${fmt(s.gems)}</small>`);
@@ -1981,7 +1981,7 @@ const of=R.frame;R.frame=dt=>{of(dt);try{const [cb]=R._cmbGet?R._cmbGet():[0];co
 /* v123 소환 연출 (마법진 → 등급색 구슬 강림 → 전설 이상 단독 등장 · 탭으로 건너뛰기, 시각 전용) */
 ;(()=>{const oc=C.summon;C.summon=n=>{const r=oc(n);G._sumGot=r;return r};
 const os=summon;summon=function(n){G._sumGot=null;os(n);const got=G._sumGot,m=document.getElementById('sumModal');if(!got||!m)return;
- const cs=got.map(k=>D.COMPS.find(x=>x.k==k)),top=Math.max(...cs.map(c=>c.g)),col=D.RAR[top].c;m.style.display='none';
+ const cs=got.map(k=>typeof k==='string'&&D.COMPS.find(x=>x.k==k)).filter(Boolean),top=cs.length?Math.max(...cs.map(c=>c.g)):0,col=(D.RAR[top]||{c:'#c8b8ff'}).c;m.style.display='none';
  const v=document.createElement('div');v.className='sumcin'+(top>=4?' leg':'');v.style.setProperty('--oc',col);
  v.innerHTML=`<div class=scc><i class=r1></i><i class=r2></i><i class=r3></i></div><div class=sco></div><div class=scf></div><div class=scl>${top>=4?'<i class=dm362></i>강렬한 빛이 쏟아진다!<i class=dm362></i>':'소환 중…'}</div><small class=scs>탭하여 건너뛰기</small>`;
  document.body.appendChild(v);let done=0;const heroes=cs.filter((c,i)=>c.g>=4&&got.indexOf(c.k)==i);
@@ -2491,7 +2491,7 @@ const st=document.createElement('style');st.textContent=`.smal .sumban{position:
 .smal .sumbtns .pill>img.smt{position:absolute;left:6px;top:50%;transform:translateY(-50%);height:42px;filter:drop-shadow(0 2px 2px #000a)}`;document.head.appendChild(st);
 const deco=()=>{if(G.screen!='summon')return;const sc=$('#screen'),bn=sc.querySelector('.sumban');if(!bn||sc.querySelector('.smr'))return;const C=G.C,s=C.S(),D=C.D;sc.querySelector('.sbody')?.classList.add('smal');
  bn.insertAdjacentHTML('afterbegin',`<img class=smc src="${A}sm_circle.png">`);const card=bn.nextElementSibling,tt=card&&card.querySelector('.ttl');
- if(tt)tt.insertAdjacentHTML('afterend',`<div class=smr>${[4,3,2].map((g,i)=>`<div><img src="${A}sm_crystal.png" style="filter:hue-rotate(${[0,250,170][i]}deg) saturate(${g==4?1.3:.9})"><div><b>${C.GW[g]}%</b><small style="color:${D.RAR[g].c}">${D.RAR[g].n}</small></div></div>`).join('')}</div>`);
+ if(tt)tt.insertAdjacentHTML('afterend',`<div class=smr>${[4,3,2].map((g,i)=>`<div><img src="${A}sm_crystal.png" style="filter:hue-rotate(${[0,250,170][i]}deg) saturate(${g==4?1.3:.9})"><div><b>${C.gRate(g)}%</b><small style="color:${D.RAR[g].c}">${D.RAR[g].n}</small></div></div>`).join('')}</div>`);
  if(C.PITY){const p=s.pity||0,sp=sc.querySelector('.spity');(sp||card).insertAdjacentHTML(sp?'beforebegin':'beforeend',`<div class=smp><div class=bar><i style="width:${Math.min(100,p/C.PITY*100)}%"></i></div><img src="${A}sm_crystal.png"><b>${p}/${C.PITY} · 확정까지 ${C.PITY-p}회</b></div>`)}
  ['#su1','#su10'].forEach(id=>{const b=sc.querySelector(id);if(b)b.insertAdjacentHTML('afterbegin',`<img class=smt src="${A}${id=='#su1'?'sm_scroll':'sm_circle'}.png">`)})};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{deco()}catch(e){console.warn(e)}return r};
@@ -11434,4 +11434,255 @@ const ofc=C.offlineCalc;C.offlineCalc=function(sec){const r=ofc.apply(this,argum
 const st=document.createElement('style');st.textContent='#panel .tcard .t826r{display:block;margin:4px 2px 0;color:#ffe27a;font:800 10px/1.35 Maplestory,sans-serif;text-align:center;text-wrap:balance;word-break:keep-all;text-shadow:0 1px 0 #000}#panel .tcard .pill.off.t826{cursor:pointer}';document.head.appendChild(st);
 const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab!=='train')return r;const p=document.getElementById('panel');if(!p)return r;const s=C.S();p.querySelectorAll('.tcard [data-s]').forEach(el=>{const k=el.dataset.s,stt=D.STATS.find(x=>x.k===k),c=stt?C.cost(stt):Infinity,mx=!isFinite(c),blocked=!mx&&!can(k),card=el.closest('.tcard');let note=card&&card.querySelector('.t826r');if(blocked){el.classList.add('off','t826');const msg=why(k);if(!note){note=document.createElement('small');note.className='t826r';el.after(note)}note.textContent=msg;el.addEventListener('click',ev=>{ev.preventDefault();ev.stopImmediatePropagation();toast(msg)},true)}else if(note)note.remove()});const t10=document.getElementById('t10');if(t10){const any=D.STATS.some(stt=>{const c=C.cost(stt);return isFinite(c)&&can(stt.k)&&s.gold>=c});t10.classList.toggle('off',!any)}}catch(_){}return r};
 const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const s=C.S(),on=D.STATS.some(stt=>{const c=C.cost(stt);return isFinite(c)&&can(stt.k)&&s.gold>=c});document.querySelectorAll('#navtrain .dot,#sidetrain .dot').forEach(x=>{if(x)$sd(x,on?'':'none')})}catch(_){}return r};
+})();
+;(()=>{/* r827: (1) 동료 소환 연출 — CSS-gradient rings/orbs/flares replaced with drawn WebP assets (magic circle, light pillar, burst, orb, sparkles, rarity card glow) matching the game's painted 2D gacha style. transform/opacity only, preloaded, 효과 끄기 (nofx/tglite/fxoff) freezes motion and hides sparks, tap-to-skip and 1.9s/2.6s timings kept (all-item pulls use a lighter ~0.9s reveal). (2) 소환 결과 구성: 10% companion / 90% items (동료 수련서, 세력 증표). 전설 is 1% of ALL pulls (=10% of companion results); 영웅 stays 25% of companions (2.5% of all); 희귀 6.5% of all. 신화 is equipment-only in D.RAR (unchanged). Pity 80 and 선택 소환 mileage unchanged; no 10연 등급 보장 existed and none was added. Duplicate companions still become 조각 (C.csh) for 승급. 수련서 is consumed by 동료 레벨 업 (plus the existing gold cost). 세력 증표 is spent on a small per-faction ATK bonus (C.facUp, cap 10, +1%/lv). New save fields default 0. Costs, rates table for equipment, and save schema otherwise unchanged. */
+const FX='assets/sumfx/',KEYS=['n','r','e','l'],KINDS=['circle','pillar','burst','orb','glow'];
+const AS=KINDS.flatMap(k=>KEYS.map(v=>FX+k+'_'+v+'.webp')).concat([FX+'spark.webp',FX+'spark_sheet.webp']);
+G.sumFx827=AS;G.sumT827={n:1900,l:2600,item:900};
+const gkey=g=>g>=4?'l':g>=3?'e':g>=2?'r':'n';
+G.sumKey827=gkey;
+const off=()=>{const c=document.body.classList;return c.contains('nofx')||c.contains('tglite')||c.contains('fxoff')};
+G.fxOff827=off;
+AS.forEach(s=>{const i=new Image();i.src=s});
+['rl_tome.png','fac_light.png','fac_chaos.png','fac_human.png','fac_wild.png'].forEach(s=>{const i=new Image();i.src=A+s});
+
+const st=document.createElement('style');st.setAttribute('data-r','827');
+st.textContent=`
+html body .sumcin.r827{perspective:800px}
+html body .sumcin.r827 .scc{width:340px;height:340px;top:683px;left:50%;transform:translate(-50%,-50%) rotateX(66deg);transform-style:preserve-3d;overflow:visible;z-index:3}
+html body .sumcin.r827 .scc>i{display:none!important}
+.sumcin.r827 .sc827c{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;will-change:transform}
+.sumcin.r827 .sc827cA{animation:sc827spin 10s linear infinite}
+.sumcin.r827 .sc827cB{opacity:.55;animation:sc827spin2 7s linear infinite}
+@keyframes sc827spin{to{transform:rotate(360deg)}}
+@keyframes sc827spin2{from{transform:scale(.72) rotate(0deg)}to{transform:scale(.72) rotate(-360deg)}}
+.sumcin.r827 .sc827p{position:absolute;left:50%;top:40px;width:180px;height:660px;margin-left:-90px;object-fit:contain;opacity:0;transform-origin:50% 100%;transform:translate3d(0,-20px,0) scaleY(.2);animation:sc827pil 1.1s .2s both;pointer-events:none;z-index:2;will-change:transform,opacity}
+@keyframes sc827pil{0%{opacity:0;transform:translate3d(0,-24px,0) scaleY(.15)}40%{opacity:1;transform:none}100%{opacity:.85;transform:none}}
+html body .sumcin.r827 .sco{background:none!important;box-shadow:none!important;width:96px;height:96px;margin-left:-48px;overflow:visible;z-index:4}
+html body .sumcin.r827.leg .sco{width:120px;height:120px;margin-left:-60px}
+.sumcin.r827 .sco img{width:100%;height:100%;object-fit:contain;pointer-events:none;display:block}
+html body .sumcin.r827 .scf{background:none!important;z-index:5;pointer-events:none}
+.sumcin.r827 .scf img{position:absolute;left:50%;top:72%;width:min(520px,140%);transform:translate(-50%,-50%) scale(.5);opacity:1;pointer-events:none;animation:sc827fl .7s 1.5s both;will-change:transform,opacity}
+.sumcin.r827.leg .scf img{animation-duration:1s}
+@keyframes sc827fl{0%{opacity:0;transform:translate(-50%,-50%) scale(.35)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:.75;transform:translate(-50%,-50%) scale(1)}}
+.sc827sp{position:absolute;inset:0;pointer-events:none;z-index:6}
+.sc827s{position:absolute;left:50%;top:620px;width:28px;height:28px;margin:-14px;opacity:0;will-change:transform,opacity}
+.sc827s.s0{--x:-90px;--y:-210px;animation:sc827sp 1.35s .18s both}
+.sc827s.s1{--x:80px;--y:-190px;animation:sc827sp 1.25s .28s both}
+.sc827s.s2{--x:-40px;--y:-260px;animation:sc827sp 1.4s .22s both}
+.sc827s.s3{--x:110px;--y:-140px;animation:sc827sp 1.2s .4s both}
+.sc827s.s4{--x:-120px;--y:-120px;animation:sc827sp 1.3s .35s both}
+.sc827s.s5{--x:30px;--y:-240px;animation:sc827sp 1.45s .5s both}
+@keyframes sc827sp{0%{opacity:0;transform:translate(0,0) scale(.35)}18%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.85) rotate(70deg)}}
+.sumcin.r827.it .sc827p{animation-duration:.7s}
+.sumcin.r827.it .scf img{animation-delay:.55s;animation-duration:.5s}
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .sc827cA,
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .sc827cB,
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .sc827p,
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .scf img{animation:none!important}
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .sc827p{opacity:.8;transform:none}
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .sco{transform:translateY(728px)}
+body:is(.nofx,.tglite,.fxoff) .sc827sp{display:none!important}
+body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .scf{opacity:.7}
+.sumhero.r827 .shr{background:none!important}
+.sumhero.r827 .shr img{width:100%;height:100%;object-fit:contain;animation:scSpin 18s linear infinite;opacity:.85;pointer-events:none}
+.sumhero.r827 .sh827g{position:absolute;inset:10px;width:auto;height:auto;object-fit:fill;pointer-events:none;z-index:2;opacity:.95}
+body:is(.nofx,.tglite,.fxoff) .sumhero.r827 .shr img{animation:none!important}
+#sumModal .srf .sg827{position:absolute;inset:-18% -14%;width:auto;height:auto;object-fit:fill;pointer-events:none;z-index:0;opacity:0;transform:scale(.92)}
+#sumModal .srf.open .sg827{opacity:.95;transform:none;transition:opacity .25s,transform .25s}
+#sumModal .srf.it827 .srbu{display:none}
+#sumModal .sumcard.it827{background:radial-gradient(circle at 50% 35%,#3a2a10,#140a20)!important;border-color:#e8d080!important}
+#panel .tcard .cup827,#cup small.m827{display:inline-flex;align-items:center;gap:3px}
+.fac827{margin:8px 0 0;padding:8px;border:2px solid #0b0d0f;background:#140a24cc}
+.fac827 .ttl{margin-bottom:6px}
+.fac827 r,.fac827 .fr{display:flex;align-items:center;gap:6px;margin:4px 0}
+.fac827 img{width:28px;height:28px;object-fit:contain}
+.fac827 b{flex:1;font:800 12px Maplestory,sans-serif;color:#fff8e0}
+.fac827 small{color:#c8b8ff}
+.fac827 .pill{padding:2px 8px;font-size:11px}
+#sumModal .sunote827,#screen .sunote827{display:block;margin-top:8px;color:#efe6ff;font-size:11px;line-height:1.45}
+.sug827{margin-top:8px}
+.sug827 .surh{margin:6px 0 4px}
+body:is(.nofx,.tglite,.fxoff) #sumModal .srf.open .sg827{transition:none!important}
+`;
+document.head.appendChild(st);
+
+function decorateCin(v,got){
+  if(!v||v.classList.contains('r827'))return v;
+  const cs=(got||[]).map(k=>typeof k==='string'&&D.COMPS.find(x=>x.k==k)).filter(Boolean);
+  const top=cs.length?Math.max(...cs.map(c=>c.g)):0;
+  const onlyIt=cs.length===0;
+  const k=gkey(top);
+  v.classList.add('r827','fx'+k);if(onlyIt)v.classList.add('it');
+  const scc=v.querySelector('.scc');
+  if(scc&&!scc.querySelector('.sc827c')){
+    scc.insertAdjacentHTML('afterbegin',`<img class="sc827c sc827cA" alt="" src="${FX}circle_${k}.webp"><img class="sc827c sc827cB" alt="" src="${FX}circle_${k}.webp">`);
+  }
+  if(!v.querySelector('.sc827p'))v.insertAdjacentHTML('afterbegin',`<img class=sc827p alt="" src="${FX}pillar_${k}.webp">`);
+  const sco=v.querySelector('.sco');
+  if(sco&&!sco.querySelector('img')){sco.textContent='';const im=document.createElement('img');im.alt='';im.src=FX+'orb_'+k+'.webp';sco.appendChild(im)}
+  const scf=v.querySelector('.scf');
+  if(scf&&!scf.querySelector('img')){const im=document.createElement('img');im.alt='';im.src=FX+'burst_'+k+'.webp';scf.appendChild(im)}
+  if(!off()&&!v.querySelector('.sc827sp')){
+    let sp='';for(let i=0;i<6;i++)sp+=`<img class="sc827s s${i}" alt="" src="${FX}spark.webp">`;
+    v.insertAdjacentHTML('beforeend',`<div class=sc827sp>${sp}</div>`);
+  }
+  if(onlyIt){
+    const lab=v.querySelector('.scl');if(lab&&!/아이템|재료/.test(lab.textContent||''))lab.childNodes.forEach?0:0,lab.innerHTML='재료가 쏟아진다!';
+  }
+  return v;
+}
+G.paintSum827=decorateCin;
+
+function decorateHero(h){
+  if(!h||h.classList.contains('r827'))return;
+  const nm=(h.querySelector('.shn b')||{}).textContent,c=D.COMPS.find(x=>x.n==nm);
+  const k=gkey(c?c.g:4);
+  h.classList.add('r827');
+  const shr=h.querySelector('.shr');
+  if(shr&&!shr.querySelector('img')){const im=document.createElement('img');im.alt='';im.src=FX+'burst_'+k+'.webp';shr.appendChild(im)}
+  if(!h.querySelector('.sh827g'))h.insertAdjacentHTML('beforeend',`<img class=sh827g alt="" src="${FX}glow_${k}.webp">`);
+}
+
+function decorateCards(m,got){
+  if(!m||!got)return;
+  const fs=[...m.querySelectorAll('.srf')];
+  fs.forEach((f,i)=>{
+    const k=got[i];
+    if(typeof k!=='string'){
+      f.classList.add('it827');
+      const card=f.querySelector('.sumcard');if(card)card.classList.add('it827');
+      if(!f.querySelector('.sg827'))f.insertAdjacentHTML('afterbegin',`<img class=sg827 alt="" src="${FX}glow_n.webp">`);
+      return;
+    }
+    const cp=D.COMPS.find(x=>x.k==k);if(!cp)return;
+    const kk=gkey(cp.g);
+    if(!f.querySelector('.sg827'))f.insertAdjacentHTML('afterbegin',`<img class=sg827 alt="" src="${FX}glow_${kk}.webp">`);
+    const bu=f.querySelector('.srbu');
+    if(cp.g>=4&&bu)bu.src=FX+'burst_'+kk+'.webp';
+    else if(cp.g>=3&&!bu)f.insertAdjacentHTML('beforeend',`<img class=srbu sr827 alt="" src="${FX}burst_${kk}.webp">`);
+  });
+}
+
+function paintRates(root){
+  if(!root)return;
+  const note=root.querySelector('.sunote, .sunote827');
+  const extra=`<div class=sug827><div class=surh>소환 구성</div><small class=sunote827>동료 ${C.SUMCOMP}% (전설 ${C.gRate(4)}% · 영웅 ${C.gRate(3)}% · 희귀 ${C.gRate(2)}%) · 수련서·세력 증표 ${100-C.SUMCOMP}% · ${C.PITY}회 전설 확정. 중복 동료는 기존처럼 조각으로 바뀝니다.</small>`+
+    `<div class=surh>아이템 ${100-C.SUMCOMP}%</div><div class=sugrid>${C.itemRates().map(x=>`<div class=sug><img src="assets/${x.img}"><b>${x.name}${x.n>1?' ×'+x.n:''}</b><small>${x.p.toFixed(0)}%</small></div>`).join('')}</div></div>`;
+  if(note&&!root.querySelector('.sug827'))note.insertAdjacentHTML('afterend',extra);
+  else if(!note&&!root.querySelector('.sug827')&&root.querySelector('.sug2,.rbox'))root.insertAdjacentHTML('beforeend',extra);
+}
+
+const os=summon;
+summon=function(n){
+  const r=os.apply(this,arguments);
+  try{
+    const got=G._sumGot,m=document.getElementById('sumModal');
+    const v=document.querySelector('.sumcin:not(.r827)')||document.querySelector('.sumcin');
+    if(v)decorateCin(v,got);
+    if(m&&got)decorateCards(m,got);
+    const cs=(got||[]).filter(k=>typeof k==='string');
+    if(v&&got&&!cs.length&&!off()){clearTimeout(v._t827);v._t827=setTimeout(()=>{try{if(v.isConnected)v.click()}catch(_){}},G.sumT827.item)}
+  }catch(e){console.warn(e)}
+  return r;
+};
+
+new MutationObserver(ms=>{
+  for(const m of ms)for(const n of m.addedNodes){
+    if(n.nodeType!==1)continue;
+    if(n.classList&&n.classList.contains('sumcin'))decorateCin(n,G._sumGot);
+    if(n.classList&&n.classList.contains('sumhero'))decorateHero(n);
+    if(n.querySelector){const v=n.querySelector('.sumcin');if(v)decorateCin(v,G._sumGot);const h=n.querySelector('.sumhero');if(h)decorateHero(h)}
+  }
+}).observe(document.body,{childList:true});
+
+const orS=renderScreen;
+renderScreen=function(){
+  const r=orS.apply(this,arguments);
+  try{
+    const s=C.S();
+    if(G.screen==='summon'){
+      const sb=document.querySelector('#screen');
+      if(sb&&!sb.querySelector('.sunote827')&&!sb.querySelector('.sug827')){
+        const tab=sb.querySelector('.sug2')?sb:null;
+        if(tab)paintRates(tab);
+        const ttl=sb.querySelector('.ttl');
+        /* crystal labels already use C.gRate via source patch */
+      }
+    }
+    if(G.screen==='party'){
+      const sc=document.querySelector('#screen');
+      if(sc&&!sc.querySelector('.fac827')){
+        const host=[...sc.querySelectorAll('.card')].find(c=>{const t=c.querySelector('.ttl');return t&&/세력/.test(t.textContent||'')})||sc.querySelector('.card');
+        if(host){
+          const box=document.createElement('div');box.className='fac827 card';
+          box.innerHTML='<div class=ttl>세력 증표</div>'+C.FACLIST.map(f=>{
+            const F=D.FACTIONS[f]||{},lv=(s.facLv||{})[f]||0,n=(s.ftok||{})[f]||0,need=C.facUpCost(f),mx=lv>=C.FACMAX;
+            return `<div class=fr data-ff=${f}><img src="${A}fac_${f}.png"><b>${F.n||f}</b><small>강화 ${lv}/${C.FACMAX} · 보유 ${n}</small><span class="pill ${mx||n<need?'off':''}" data-facup=${f}>${mx?'MAX':need+'개로 강화'}</span></div>`;
+          }).join('')+'<small>강화 시 해당 세력 동료 공격 +1% (최대 +10%)</small>';
+          host.after(box);
+          box.querySelectorAll('[data-facup]').forEach(b=>b.addEventListener('click',()=>{
+            const f=b.dataset.facup,ok=C.facUp(f);
+            toast(ok==='ok'?'세력 강화 완료':ok==='max'?'이미 최대입니다':'증표가 부족합니다');
+            if(ok==='ok'){updateHud();renderScreen()}
+          }));
+        }
+      }
+    }
+    if(G.screen==='enhance'||G.enTab==='comp'){
+      document.querySelectorAll('#trLv,[data-lu]').forEach(b=>{
+        const k=b.id==='trLv'?(G.trSel||G.enSel||b.dataset.lu):b.dataset.lu;
+        const why=k&&C.compUpWhy?C.compUpWhy(k):'';
+        if(b.dataset.r827)return;
+        b.dataset.r827=1;
+        b.addEventListener('click',e=>{
+          if(!k)return;
+          const w=C.compUpWhy&&C.compUpWhy(k);
+          if(w){e.preventDefault();e.stopImmediatePropagation();toast(w)}
+        },true);
+        if(k&&!b.querySelector('.m827')){
+          const sm=b.querySelector('small')||b;
+          const hold=document.createElement('small');hold.className='m827';
+          hold.innerHTML=`<img class=ci src=${A}rl_tome.png> ${C.compUpMat()} · 보유 ${s.cmat||0}`;
+          b.appendChild(hold);
+        }
+        if(why&&C.S().comps[k])b.classList.add('off');
+      });
+    }
+  }catch(e){console.warn(e)}
+  return r;
+};
+
+const od=compDetail;
+compDetail=function(k){
+  if(typeof k!=='string'||!D.COMPS.find(x=>x.k==k))return;
+  const r=od.apply(this,arguments);
+  try{
+    const b=document.getElementById('cup'),s=C.S();
+    if(b){
+      const why=C.compUpWhy(k);
+      if(!b.querySelector('.m827')){
+        const hold=document.createElement('small');hold.className='m827';
+        hold.innerHTML=`<img class=ci src=${A}rl_tome.png> ${C.compUpMat()} · 보유 ${s.cmat||0}`;
+        b.appendChild(hold);
+      }
+      if(why)b.classList.add('off');else b.classList.remove('off');
+      if(!b.dataset.r827){
+        b.dataset.r827=1;
+        b.addEventListener('click',e=>{
+          const w=C.compUpWhy(k);
+          if(w){e.preventDefault();e.stopImmediatePropagation();toast(w)}
+        },true);
+      }
+      const np=b.nextElementSibling;
+      if(why&&s.comps[k]&&np&&np.classList.contains('np488'))np.textContent=why+' · 보유 수련서 '+(s.cmat||0)+' · 골드 '+fmt(s.gold);
+    }
+  }catch(e){console.warn(e)}
+  return r;
+};
+
+const oRate=typeof rateInfo==='function'?rateInfo:null;
+if(oRate){rateInfo=function(){const r=oRate.apply(this,arguments);try{paintRates(document.querySelector('.rpop .rbox')||document.querySelector('.rpop'))}catch(e){}return r}}
+
+G.r827ok=1;
 })();

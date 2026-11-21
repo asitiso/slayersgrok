@@ -2,7 +2,7 @@
    - HTML / JS / CSS / manifest (same origin): network-first, cache is only the offline / slow-network fallback.
    - Images, fonts, audio (same origin): cached copy first, refreshed in the background (versioned cache name).
    - Everything cross-origin (Supabase, Google sign-in, CDN) and any /auth /api path or OAuth callback URL: not touched at all. */
-const V = 'v825';
+const V = 'v827';
 const CODE = 'slayers-code-' + V;
 const STATIC = 'slayers-static-' + V;
 const MAX_STATIC = 500;
@@ -12,7 +12,17 @@ const CODEX = /\.(?:html?|js|css|json|webmanifest)$/i;
 const SKIP_PATH = /^\/(?:auth|api|rest|realtime|functions|storage|_vercel|~oauth)(?:\/|$)/i;
 const OAUTH_QS = /[?&#](?:code|access_token|refresh_token|id_token|error|error_description|state|provider_token|token_hash)=/i;
 
-self.addEventListener('install', e => { self.skipWaiting(); });
+const PRE827=['assets/sumfx/circle_n.webp','assets/sumfx/circle_r.webp','assets/sumfx/circle_e.webp','assets/sumfx/circle_l.webp','assets/sumfx/pillar_n.webp','assets/sumfx/pillar_r.webp','assets/sumfx/pillar_e.webp','assets/sumfx/pillar_l.webp','assets/sumfx/burst_n.webp','assets/sumfx/burst_r.webp','assets/sumfx/burst_e.webp','assets/sumfx/burst_l.webp','assets/sumfx/orb_n.webp','assets/sumfx/orb_r.webp','assets/sumfx/orb_e.webp','assets/sumfx/orb_l.webp','assets/sumfx/glow_n.webp','assets/sumfx/glow_r.webp','assets/sumfx/glow_e.webp','assets/sumfx/glow_l.webp','assets/sumfx/spark.webp','assets/sumfx/spark_sheet.webp'];
+self.addEventListener('install', e => {
+  e.waitUntil((async () => {
+    try {
+      const base=(self.registration&&self.registration.scope)||self.location.href;
+      const c=await caches.open(STATIC);
+      await c.addAll(PRE827.map(p=>new URL(p,base).href));
+    } catch (_) {}
+    await self.skipWaiting();
+  })());
+});
 /* r819: the page may also ask a waiting worker to take over (normally install already did) */
 self.addEventListener('message', e => { if (e.data === 'skipWaiting' || (e.data && e.data.type === 'SKIP_WAITING')) self.skipWaiting(); });
 self.addEventListener('activate', e => {
