@@ -2,6 +2,8 @@
 var DATA={
 A:'assets/',
 RAR:[{n:'일반',c:'#9a9a9a',m:1,w:620},{n:'고급',c:'#4ad07a',m:1.5,w:270},{n:'희귀',c:'#4ab0ff',m:2.3,w:85},{n:'영웅',c:'#b07cff',m:3.6,w:21},{n:'전설',c:'#ffa03a',m:5.8,w:3.6},{n:'신화',c:'#ff3a4a',m:9.5,w:.4}],
+ /* r829: companion rarity only (equipment keeps RAR + weights above). up = cost to promote FROM that tier. 초월 is the cap (no up). */
+ CRAR:[{n:'일반',c:'#9a9a9a',m:1},{n:'고급',c:'#4ad07a',m:1.5},{n:'희귀',c:'#4ab0ff',m:2.3,up:{sh:30,g:8000,cmat:3,ftok:1}},{n:'영웅',c:'#b07cff',m:3.6,up:{sh:90,g:32000,cmat:12,ftok:4}},{n:'전설',c:'#ffa03a',m:5.8,up:{sh:270,g:128000,cmat:48,ftok:16}},{n:'신화',c:'#ff3a4a',m:9.5,up:{sh:800,g:512000,cmat:180,ftok:64}},{n:'초월',c:'#ffe7a8',m:16}],
 SLOTS:[{k:'staff',n:'지팡이',img:'it3_staff.png',st:'atk'},{k:'cape',n:'망토',img:'it3_cape.png',st:'hp'},{k:'amulet',n:'부적',img:'it3_amulet.png',st:'hp'},{k:'ring',n:'반지',img:'it2_ring.png',st:'atk'},{k:'boots',n:'장화',img:'it3_boots.png',st:'hp'},{k:'orb',n:'오브',img:'it2_exp.png',st:'atk'},{k:'tiara',n:'머리장식',img:'it3_tiara.png',st:'atk'},{k:'glove',n:'장갑',img:'it3_gloves.png',st:'hp'}],
 ITEMNAME:{staff:['떡갈나무','마도사의','용혈의','붉은 마녀의'],cape:['여행자','칠흑의','세이룬','마왕의'],amulet:['수호','정령','현자','마족 봉인'],ring:['구리','루비','탤리즈먼','혼돈의'],boots:['가죽','질풍','방랑자','천공의'],orb:['수정','마정','황혼','금색 마왕의'],tiara:['머리띠','은빛','마력 증폭','데몬 블러드'],glove:['천','강철','룬','라그나']},
 STATS:[{k:'atk',n:'마력',d:'공격력 배율',base:1,mult:1.05,cost:10,g:1.10,img:'sk/fire.png'},{k:'hp',n:'체력',d:'HP 배율',base:1,mult:1.05,cost:10,g:1.10,img:'sk/heal.png'},{k:'def',n:'방어',d:'받는 피해 감소',base:0,inc:1,cost:30,g:1.12,max:120,img:'it3_cape.png'},{k:'crit',n:'집중',d:'치명타 확률',base:5,inc:.5,cost:60,g:1.15,max:50,img:'sk/ice.png'}],

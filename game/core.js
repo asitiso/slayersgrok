@@ -269,17 +269,18 @@ C.TELE={first:4.5,cd:7.5,wind:1.4,mul:2.6};
 /* r827: 세력 증표 spend raises a small per-faction ATK bonus (cap 10, +1%/lv) for that faction's companions. Old saves default facLv 0. */
 {const om=C.compMul;C.compMul=k=>{const c=D.COMPS.find(x=>x.k==k);return om(k)*(1+.01*((S.facLv||{})[c.fac]||0))}}
 
-/* r828: 화룡전-style companion rarity promotion (희귀→영웅→전설→신화).
-   Unlock after ★6 and ◆3 (the current grade's 승급+각성 cycle is complete).
-   Stars reset to ★1; awakening is kept so D.RAR m is the upgrade that covers the
-   star reset (×1.5) — new power is always ≥ old power, with a modest +4–9% bump.
-   S.crar[k] defaults to base c.g; old saves unchanged. Cap is 신화 (no further D.RAR tier). */
-C.RARMAX=5;
+/* r828/r829: 화룡전-style companion rarity promotion (희귀→영웅→전설→신화→초월).
+   Unlock after ★6 and ◆3. Stars reset to ★1; awakening is kept so the rarity m
+   covers the star reset (×1.5) and power never drops. S.crar[k] defaults to base c.g.
+   Companion grades live in D.CRAR (r829 adds 초월). Equipment D.RAR + weights are untouched.
+   Costs are D.CRAR[g].up (one table). Cap is the last CRAR row (초월). */
+C.CRAR=D.CRAR||D.RAR;
+C.RARMAX=(C.CRAR.length-1);
 C.rarOf=k=>{const c=D.COMPS.find(x=>x.k==k);if(!c)return 0;const o=(S.crar||{})[k];return o==null?c.g:o};
-C.rarInfo=k=>D.RAR[Math.max(0,Math.min(D.RAR.length-1,C.rarOf(k)))]||D.RAR[0];
-C.rarMul=k=>{const c=D.COMPS.find(x=>x.k==k);if(!c)return 1;const a=(D.RAR[c.g]&&D.RAR[c.g].m)||1,b=C.rarInfo(k).m||1;return b/a};
+C.rarInfo=k=>C.CRAR[Math.max(0,Math.min(C.CRAR.length-1,C.rarOf(k)))]||C.CRAR[0];
+C.rarMul=k=>{const c=D.COMPS.find(x=>x.k==k);if(!c)return 1;const a=(C.CRAR[c.g]&&C.CRAR[c.g].m)||1,b=C.rarInfo(k).m||1;return b/a};
 {const om=C.compMul;C.compMul=k=>om(k)*C.rarMul(k)}
-C.rarUpCost=k=>{const g=C.rarOf(k),c=D.COMPS.find(x=>x.k==k)||{};const out={sh:80+40*(g-2),g:Math.floor(25000*Math.pow(2.2,Math.max(0,g-2))),cmat:0,ftok:0,fac:c.fac};if(C.SUMIT){out.cmat=5+5*(g-2);out.ftok=3+3*(g-2)}return out};
+C.rarUpCost=k=>{const g=C.rarOf(k),c=D.COMPS.find(x=>x.k==k)||{},u=(C.CRAR[g]&&C.CRAR[g].up)||{};const out={sh:u.sh||0,g:u.g||0,cmat:0,ftok:0,fac:c.fac};if(C.SUMIT){out.cmat=u.cmat||0;out.ftok=u.ftok||0}return out};
 C.rarUpWhy=k=>{if(!S.comps[k])return '보유하지 않은 동료입니다';if((S.comps[k]||0)<C.STARMAX)return '★6까지 승급해야 해요';if(((S.caw||{})[k]||0)<C.AWMAX)return '각성을 먼저 완료해야 해요';if(C.rarOf(k)>=C.RARMAX)return '최고 등급입니다';const c=C.rarUpCost(k);S.csh=S.csh||{};if((S.csh[k]||0)<c.sh)return '조각이 부족합니다';if(S.gold<c.g)return '골드가 부족합니다';if(c.cmat&&(S.cmat||0)<c.cmat)return '수련서가 부족합니다';if(c.ftok&&((S.ftok||{})[c.fac]||0)<c.ftok)return '세력 증표가 부족합니다';return ''};
 C.rarUp=k=>{const why=C.rarUpWhy(k);if(why)return why==='최고 등급입니다'?'max':why==='보유하지 않은 동료입니다'?'none':why==='★6까지 승급해야 해요'?'star':why==='각성을 먼저 완료해야 해요'?'awake':why==='골드가 부족합니다'?'gold':why==='조각이 부족합니다'?'sh':why==='수련서가 부족합니다'?'cmat':why==='세력 증표가 부족합니다'?'ftok':'no';const cost=C.rarUpCost(k),cur=C.rarOf(k);S.csh=S.csh||{};S.csh[k]-=cost.sh;S.gold-=cost.g;if(cost.cmat)S.cmat=(S.cmat||0)-cost.cmat;if(cost.ftok){S.ftok=S.ftok||{};S.ftok[cost.fac]=(S.ftok[cost.fac]||0)-cost.ftok}S.crar=S.crar||{};S.crar[k]=cur+1;S.comps[k]=1;C.buildAllies();return 'ok'};
 {const os=C.starRed;C.starRed=()=>os()||D.COMPS.some(x=>S.comps[x.k]&&C.rarUpWhy(x.k)==='' )}
