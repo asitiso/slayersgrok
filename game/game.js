@@ -11712,3 +11712,18 @@ if(oRate){rateInfo=function(){const r=oRate.apply(this,arguments);try{paintRates
 
 G.r827ok=1;
 })();
+
+;(()=>{/* r830 plan A (difficulty, approved): 마력/체력 training cost growth 1.11 and the d825 ATK columns live in data.js.
+   Here: a daily dungeon tier also needs its stage cleared (tier.si 3/10/17/24/31 = 1-4/2-4/3-4/4-4/5-4) besides the power requirement.
+   Locked tiers show "x-4 클리어"; challenge/sweep of a locked tier is refused; sweep-all falls back to the highest unlocked cleared tier.
+   Rewards, entry counts, costs and the save format are unchanged. */
+const C=G.C;
+const need=t=>{const T=C.DUN.tiers[t];return T&&T.si?T.si:0};
+const stageOk=t=>{const s=C.S(),si=need(t),m=s.maxSi||0;if(!si)return true;return m>si||(!!s.done&&m>=si)};
+const why=t=>stageOk(t)?'':C.stageName(need(t))+' 클리어 후 열려요';
+C.dunStageOk=stageOk;C.dunStageWhy=why;
+const ot=C.dunTry;C.dunTry=function(k,t){if(!stageOk(t))return{fail:1,stage:1,why:why(t)};return ot.apply(this,arguments)};
+const osw=C.dunSweep;C.dunSweep=function(k,t){let u=t;while(u>=0&&!stageOk(u))u--;if(u<0)return{err:'stage',why:why(t)};if(u!==t&&!C.dunCleared(k,u))return{err:'stage',why:why(t)};return osw.call(this,k,u)};
+const ods=dunScreen;dunScreen=function(el,s){const r=ods.apply(this,arguments);try{el.querySelectorAll('.duntl .duntr').forEach((row,i)=>{if(i>=C.DUN.tiers.length||stageOk(i))return;row.classList.add('lock','lk830');const b=row.querySelector('.dtb');if(b)b.innerHTML='<span class="pill off dlk"><img src=assets/sk_lock.png alt=""><b>잠김</b><small>'+C.stageName(need(i))+' 클리어</small></span>';const fc=row.querySelector('.fc');if(fc)fc.remove()})}catch(e){console.warn(e)}return r};
+G.r830ok=1;
+})();
