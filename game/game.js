@@ -11420,3 +11420,18 @@ G.d825=i=>{const T=BL.d825.ch,c=Math.max(0,Math.min(T.length-1,Math.floor(i/7)))
   if(hm!==1||am!==1)r.waves.forEach(w=>w.forEach(e=>{e.max*=hm;e.hp*=hm;e.atk*=am}))}catch(_){}}
  return ot.apply(this,arguments)}}
 })();
+;(()=>{/* r826: (1) 마력 수련 경지 balanced growth — a stat may not pull more than D.BAL.d826.gap levels ahead of the second-highest ("한가지만 골라서 많이 찍기" 금지, especially 마력/ATK). 최대 강화's natural atk≈hp lead over more expensive 방어/집중 is unchanged, so a balanced build still matches r825 wall pacing. Existing over-limit saves keep their levels (no refund/reduction) but cannot raise the leading stat until others catch up. The 강화 pill is greyed and shows "다른 능력치를 먼저 올려야 해요" with the gap; a tap toasts the same reason (no silent fail). Costs, rewards and the save schema are untouched. (2) 방치/오프라인 gold only is multiplied by D.BAL.d826.offGold (exp/orbs/stone unchanged) so AFK gold no longer funds a 경지 in ~1 hour; the 방치 보상 preview follows C.offlineCalc. */
+const BL=D.BAL;
+const gap=()=>{const g=BL.d826&&BL.d826.gap;return g>0?g:5};
+const offM=()=>{const m=BL.d826&&BL.d826.offGold;return m>=0?m:1};
+const lv=k=>(C.S().stl||{})[k]||0;
+const can=k=>{const nxt=lv(k)+1,oth=D.STATS.filter(s=>s.k!==k).map(s=>lv(s.k)),hi=oth.length?Math.max.apply(null,oth):0;return nxt-hi<=gap()};
+const why=k=>{if(can(k))return '';const hi=Math.max(0,...D.STATS.filter(s=>s.k!==k).map(s=>lv(s.k)));return '다른 능력치를 먼저 올려야 해요 (격차 '+(lv(k)-hi)+' · 허용 '+gap()+')'};
+G.t826={gap,can,why,offGold:offM};
+const ot=C.train;C.train=function(k){if(!can(k))return false;return ot.apply(this,arguments)};
+const ocs=C.cheapestStat;C.cheapestStat=function(){const ok=D.STATS.filter(s=>can(s.k)&&isFinite(C.cost(s)));return ok.length?ok.reduce((a,b)=>C.cost(a)<=C.cost(b)?a:b):ocs.apply(this,arguments)};
+const ofc=C.offlineCalc;C.offlineCalc=function(sec){const r=ofc.apply(this,arguments);try{if(r)r.g*=offM()}catch(_){}return r};
+const st=document.createElement('style');st.textContent='#panel .tcard .t826r{display:block;margin:4px 2px 0;color:#ffe27a;font:800 10px/1.35 Maplestory,sans-serif;text-align:center;text-wrap:balance;word-break:keep-all;text-shadow:0 1px 0 #000}#panel .tcard .pill.off.t826{cursor:pointer}';document.head.appendChild(st);
+const orp=renderPanel;renderPanel=function(){const r=orp.apply(this,arguments);try{if(G.tab!=='train')return r;const p=document.getElementById('panel');if(!p)return r;const s=C.S();p.querySelectorAll('.tcard [data-s]').forEach(el=>{const k=el.dataset.s,stt=D.STATS.find(x=>x.k===k),c=stt?C.cost(stt):Infinity,mx=!isFinite(c),blocked=!mx&&!can(k),card=el.closest('.tcard');let note=card&&card.querySelector('.t826r');if(blocked){el.classList.add('off','t826');const msg=why(k);if(!note){note=document.createElement('small');note.className='t826r';el.after(note)}note.textContent=msg;el.addEventListener('click',ev=>{ev.preventDefault();ev.stopImmediatePropagation();toast(msg)},true)}else if(note)note.remove()});const t10=document.getElementById('t10');if(t10){const any=D.STATS.some(stt=>{const c=C.cost(stt);return isFinite(c)&&can(stt.k)&&s.gold>=c});t10.classList.toggle('off',!any)}}catch(_){}return r};
+const ou=updateHud;updateHud=function(){const r=ou.apply(this,arguments);try{const s=C.S(),on=D.STATS.some(stt=>{const c=C.cost(stt);return isFinite(c)&&can(stt.k)&&s.gold>=c});document.querySelectorAll('#navtrain .dot,#sidetrain .dot').forEach(x=>{if(x)$sd(x,on?'':'none')})}catch(_){}return r};
+})();
