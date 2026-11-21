@@ -10533,14 +10533,7 @@ const step=(dt)=>{if(!(dt>0))return;if(pendT>0){pendT-=dt;if(pendT<=0){pendT=0;p
 const onHit=(crit)=>{if(lite())return;if(R._hk==='d')return;if(pend===3||pend===2)punch(pend);else if(crit)punch(1)};
 {const oh=R.hit,wrap=function(e,d,crit){const r=oh.apply(this,arguments);try{onHit(crit)}catch(_){}return r};R.hit=wrap;if(C.ev&&C.ev.hit===oh)C.ev.hit=wrap}
 {const os=R.spell,sw=function(sp,tg){try{if(sp&&!sp.heal){pend=sp.ult?3:2;pendT=2}}catch(_){}return os.apply(this,arguments)};R.spell=sw;if(C.ev&&C.ev.spell===os)C.ev.spell=sw}
-const hook=L=>{
-  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
-  if(!P||!P.translate)return()=>{};
-  const ot=P.translate,ofr=P.fillRect;let first=1;
-  P.translate=function(x,y){if(first){first=0;if(L)return ot.call(this,0,0);return ot.call(this,x+(px||0),y+(py||0))}return ot.apply(this,arguments)};
-  if(L&&ofr)P.fillRect=function(x,y,w,h){if(this.globalCompositeOperation==='lighter'&&w>300&&h>400)return;return ofr.apply(this,arguments)};
-  return()=>{P.translate=ot;if(ofr)P.fillRect=ofr};
-};
+const hook=L=>()=>{};/* r831: punch/flash is applied on the battle canvas context, not CanvasRenderingContext2D.prototype */
 const of=R.frame;R.frame=function(dt){
   const L=lite();
   if(L){t=0;tier=0;vis=0;px=0;py=0;if(pendT>0){pendT-=dt||0;if(pendT<=0){pendT=0;pend=0}}}
@@ -10548,7 +10541,7 @@ const of=R.frame;R.frame=function(dt){
   const need=L||t>0||vis>0;
   if(!need)return of.apply(this,arguments);
   const off=hook(L);
-  try{return of.call(this,(!L&&vis>0)?(dt||0)*.35:(dt||0))}finally{off()}
+  try{return of.call(this,(!L&&vis>0&&!(R.hs>0))?(dt||0)*.35:(dt||0))}finally{off()}
 };
 G.feel787=feel;G.stepFeel787=step;G.liteFx787=lite;G.xyFeel787=()=>[px,py];G.tierFeel787=()=>tier;G.tFeel787=()=>t;G.ampFeel787=AMP;G.lifeFeel787=LIFE;G.visFeel787=VIS;G.capFeel787=CAP;G.pendFeel787=()=>pend;
 })();
@@ -10565,21 +10558,7 @@ const apply=(sx,sy)=>{
   return[sx,sy];
 };
 {const os=R.spell,sw=function(sp,tg){try{if(sp&&(sp.ult||sp.k==='ds'||sp.k==='giga'))watch=WATCH}catch(_){}return os.apply(this,arguments)};R.spell=sw;if(C.ev&&C.ev.spell===os)C.ev.spell=sw}
-const hook=()=>{
-  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
-  if(!P||!P.translate)return()=>{};
-  const ot=P.translate;let first=1;
-  P.translate=function(x,y){
-    if(!first)return ot.apply(this,arguments);
-    first=0;
-    if(lite())return ot.call(this,0,0);
-    let sx=x,sy=y;const p=(G.xyFeel787&&G.xyFeel787())||[0,0];
-    sx-=p[0];sy-=p[1];
-    const c=apply(sx,sy);
-    return ot.call(this,c[0]+p[0],c[1]+p[1]);
-  };
-  return()=>{P.translate=ot};
-};
+const hook=()=>()=>{};/* r831: shake cap is applied on the battle canvas context, not the prototype */
 const of=R.frame;R.frame=function(dt){
   const L=lite();
   if(L)env=0;else if(env>0)env=Math.max(0,env-(dt||0)*DEC);
@@ -10610,20 +10589,7 @@ const parseA=s=>{if(typeof s!=='string')return 0;const i=s.lastIndexOf(',');retu
 const parseRgb=s=>{if(typeof s!=='string')return'255,240,200';const p=s.indexOf('('),q=s.lastIndexOf(',');return p>=0&&q>p?s.slice(p+1,q):'255,240,200'};
 {const os=R.spell,sw=function(sp,tg){try{if(sp&&(sp.ult||sp.k==='ds'||sp.k==='giga'))watch=WATCH}catch(_){}return os.apply(this,arguments)};R.spell=sw;if(C.ev&&C.ev.spell===os)C.ev.spell=sw}
 {const oh=R.hit,wrap=function(e,d,crit){const r=oh.apply(this,arguments);try{if(crit&&!lite()&&R._hk!=='d'&&ccd<=0&&t<=0&&watch<=0){const s=e&&R._ES&&R._ES().get(e);cx=s?s.x:0;cy=s?s.y-44:0;ct=CLIFE;ccd=CCD}}catch(_){}return r};R.hit=wrap;if(C.ev&&C.ev.hit===oh)C.ev.hit=wrap}
-const hook=()=>{
-  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
-  if(!P||!P.fillRect)return()=>{};
-  const ofr=P.fillRect;
-  P.fillRect=function(x,y,w,h){
-    if(this.globalCompositeOperation==='lighter'&&w>300&&h>400){
-      const a=parseA(this.fillStyle),d=decide(a,watch>0);
-      if(d==='skip'||lite())return;
-      if(d==='snap'){const rgb=parseRgb(this.fillStyle);this.fillStyle='rgba('+rgb+','+aNow()+')';return ofr.call(this,x,y,w,h)}
-    }
-    return ofr.apply(this,arguments);
-  };
-  return()=>{P.fillRect=ofr};
-};
+const hook=()=>()=>{};/* r831: flash snap is applied on the battle canvas context, not the prototype */
 const bak=()=>{
   if(spr)return spr;
   const c=document.createElement('canvas');c.width=c.height=128;const X=c.getContext('2d');
@@ -10650,10 +10616,9 @@ const step=dt=>{
 };
 const of=R.frame;R.frame=function(dt){
   const L=lite();step(dt||0);
-  const need=!L&&(watch>0||t>0||cd>0||ct>0);
-  if(!need){if(L){const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype,ofr=P&&P.fillRect;if(ofr){const off=hook();try{return of.apply(this,arguments)}finally{off()}}}return of.apply(this,arguments)}
-  const off=hook();
-  try{const r=of.apply(this,arguments);try{drawCrit()}catch(_){}return r}finally{off()}
+  const r=of.apply(this,arguments);
+  try{drawCrit()}catch(_){}
+  return r
 };
 G.applyFl789=decide;G.aFl789=aNow;G.peakUlt789=PEAK;G.lifeUlt789=LIFE;G.cdUlt789=CD;G.hiUlt789=HI;G.armUltFl789=()=>{watch=WATCH};G.watchFl789=()=>watch;G.cdNow789=()=>cd;G.stepFl789=step;G.resetFl789=()=>{t=0;life=0;cd=0;watch=0;ct=0;ccd=0};G.peakCrit789=CPEAK;G.lifeCrit789=CLIFE;G.cdCrit789=CCD;G.aCrit789=caNow;G.armCrit789=()=>{if(lite()||ccd>0||t>0)return 0;ct=CLIFE;ccd=CCD;return 1};G.liteFl789=lite;
 })();
@@ -11450,8 +11415,7 @@ const gkey=g=>g>=4?'l':g>=3?'e':g>=2?'r':'n';
 G.sumKey827=gkey;
 const off=()=>{const c=document.body.classList;return c.contains('nofx')||c.contains('tglite')||c.contains('fxoff')};
 G.fxOff827=off;
-AS.forEach(s=>{const i=new Image();i.src=s});
-['rl_tome.png','fac_light.png','fac_chaos.png','fac_human.png','fac_wild.png'].forEach(s=>{const i=new Image();i.src=A+s});
+/* r831: sumfx WebP (and the related item/faction icons) are not decoded at boot — that work was landing in the first battle. G.preloadSumFx831 loads them when the summon screen or cinematic actually needs them. */
 
 const st=document.createElement('style');st.setAttribute('data-r','827');
 st.textContent=`
@@ -11726,4 +11690,78 @@ const ot=C.dunTry;C.dunTry=function(k,t){if(!stageOk(t))return{fail:1,stage:1,wh
 const osw=C.dunSweep;C.dunSweep=function(k,t){let u=t;while(u>=0&&!stageOk(u))u--;if(u<0)return{err:'stage',why:why(t)};if(u!==t&&!C.dunCleared(k,u))return{err:'stage',why:why(t)};return osw.call(this,k,u)};
 const ods=dunScreen;dunScreen=function(el,s){const r=ods.apply(this,arguments);try{el.querySelectorAll('.duntl .duntr').forEach((row,i)=>{if(i>=C.DUN.tiers.length||stageOk(i))return;row.classList.add('lock','lk830');const b=row.querySelector('.dtb');if(b)b.innerHTML='<span class="pill off dlk"><img src=assets/sk_lock.png alt=""><b>잠김</b><small>'+C.stageName(need(i))+' 클리어</small></span>';const fc=row.querySelector('.fc');if(fc)fc.remove()})}catch(e){console.warn(e)}return r};
 G.r830ok=1;
+})();
+
+;(()=>{/* r831: battle-screen smoothness. Headless mid-range (390×844, dpr 2, 4× CPU): auto-battle frames were dropping (median well over 33ms) with long tasks, while r827 created Image() for every sumfx WebP (~680KB) at boot so decode could land mid-fight; r787–r789 were patching CanvasRenderingContext2D.prototype.translate/fillRect for the duration of a punch, an ult watch window, or effect-off; and each impact still builds several oscillator / buffer-source nodes, already rate-limited by LIM and the 5-voice / 0.12s budget. Change-only, presentation only: the r787 punch, r788 shake cap and r789 flash snap stay, but they are applied once on the battle canvas context (not the shared prototype, and not installed/removed every frame). The short r787 render freeze no longer stacks on top of an active combat hit-stop (R.hs). Sumfx assets load on the summon screen / cinematic, not at boot. Combat SFX keeps LIM, the 5-voice budget, and disconnect-on-ended. Combat, HP, cadence, rewards, and the punch/flash/shake numbers are unchanged. */
+let first=1;
+
+const parseA=s=>{if(typeof s!=='string')return 0;const i=s.lastIndexOf(',');return i<0?0:parseFloat(s.slice(i+1))||0};
+const parseRgb=s=>{if(typeof s!=='string')return'255,240,200';const p=s.indexOf('('),q=s.lastIndexOf(',');return p>=0&&q>p?s.slice(p+1,q):'255,240,200'};
+const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
+
+const armCtx=()=>{
+  const cv=R._bc&&R._bc();if(!cv)return;
+  const ctx=cv.getContext('2d');if(!ctx||ctx._r831)return;
+  ctx._r831=1;
+  const ot=ctx.translate.bind(ctx),ofr=ctx.fillRect.bind(ctx);
+  ctx.translate=function(x,y){
+    if(first){
+      first=0;
+      if(lite())return ot(0,0);
+      let sx=x,sy=y;
+      const p=(G.xyFeel787&&G.xyFeel787())||[0,0];
+      sx-=p[0];sy-=p[1];
+      if(typeof G.applyUlt788==='function'){const c=G.applyUlt788(sx,sy);sx=c[0];sy=c[1]}
+      return ot(sx+p[0],sy+p[1]);
+    }
+    return ot(x,y);
+  };
+  ctx.fillRect=function(x,y,w,h){
+    if(this.globalCompositeOperation==='lighter'&&w>300&&h>400){
+      if(lite())return;
+      if(typeof G.applyFl789==='function'){
+        const a=parseA(this.fillStyle),d=G.applyFl789(a,(G.watchFl789&&G.watchFl789())>0);
+        if(d==='skip')return;
+        if(d==='snap'){
+          const rgb=parseRgb(this.fillStyle);
+          const a2=(G.aFl789&&G.aFl789())||a;
+          this.fillStyle='rgba('+rgb+','+a2+')';
+        }
+      }
+    }
+    return ofr(x,y,w,h);
+  };
+};
+
+const of=R.frame;
+R.frame=function(dt){
+  first=1;
+  try{armCtx()}catch(_){}
+  return of.apply(this,arguments);
+};
+
+/* Audio: r729/r651 already rate-limit with LIM and a 5-voice / 0.12s combat budget, and nodes disconnect on ended. A hard live-node mute was tried and withdrawn because it swallowed later voices in the existing SFX tests (and in a jsdom AudioContext mock). */
+
+const load=()=>{
+  if(G._sumFxOn831)return;
+  G._sumFxOn831=1;
+  const L=(G.sumFx827||[]).slice();
+  const base=(typeof A==='string'&&A)||'assets/';
+  ['rl_tome.png','fac_light.png','fac_chaos.png','fac_human.png','fac_wild.png'].forEach(s=>L.push(base+s));
+  const kick=()=>{for(let i=0;i<L.length;i++){const s=L[i];if(!s)continue;const im=new Image();im.decoding='async';im.src=s}};
+  if(typeof requestIdleCallback==='function')requestIdleCallback(kick,{timeout:2000});
+  else setTimeout(kick,0);
+};
+G.preloadSumFx831=load;G.sumFxBoot831=()=>!!G._sumFxOn831;
+if(typeof G.paintSum827==='function'){const os=G.paintSum827;G.paintSum827=function(){try{load()}catch(_){}return os.apply(this,arguments)}}
+if(typeof menuGo==='function'){const om=menuGo;menuGo=function(k){if(k==='summon')try{load()}catch(_){}return om.apply(this,arguments)}}
+if(typeof summon==='function'){const osu=summon;summon=function(){try{load()}catch(_){}return osu.apply(this,arguments)}}
+
+G.protoNative831=()=>{
+  const P=typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D.prototype;
+  if(!P||!P.translate||!P.fillRect)return false;
+  const a=Function.prototype.toString.call(P.translate),b=Function.prototype.toString.call(P.fillRect);
+  return a.indexOf('[native code]')>=0&&b.indexOf('[native code]')>=0;
+};
+G.r831ok=1;
 })();
