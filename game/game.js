@@ -1004,10 +1004,10 @@ Object.assign(SFX,{
  swing:t=>{whoosh(t,.17,{vol:.13,fq:600,f2:2800,q:1.4});whoosh(t+.02,.12,{vol:.05,fq:2500,f2:5000,q:2})},
  cast:t=>{whoosh(t,.16,{vol:.08,fq:400,f2:1800,q:1});tone(880,t,.14,{type:'sine',vol:.06,f2:1480,att:.02});tone(1320,t+.03,.11,{type:'sine',vol:.035,f2:1980,att:.02})},
  bow:t=>{tone(340,t,.12,{type:'triangle',vol:.1,f2:290,att:.002});whoosh(t+.01,.09,{vol:.07,fq:2000,f2:4200,q:1.6,pk:.25})},
- hit:t=>{noise(t,.035,{vol:.2,fq:2400,q:.9});noise(t,.14,{vol:.24,fq:700,f2:140,q:.7,type:'lowpass'});tone(190,t,.13,{type:'triangle',vol:.16,f2:70,att:.002})},
- mhit:t=>{noise(t,.12,{vol:.15,fq:3200,f2:900,q:1.2});tone(540,t,.12,{type:'sine',vol:.09,f2:260,att:.002});tone(160,t,.1,{type:'triangle',vol:.11,f2:70,att:.002})},
+ hit:t=>{if((((window.RENDER&&RENDER.qLvl)||0)>=1||(document.body&&document.body.classList.contains('qlo835')))){noise(t,.07,{vol:.2,fq:1800,q:.8});tone(190,t,.1,{type:'triangle',vol:.15,f2:80});return}noise(t,.035,{vol:.2,fq:2400,q:.9});noise(t,.14,{vol:.24,fq:700,f2:140,q:.7,type:'lowpass'});tone(190,t,.13,{type:'triangle',vol:.16,f2:70,att:.002})},
+ mhit:t=>{if((((window.RENDER&&RENDER.qLvl)||0)>=1||(document.body&&document.body.classList.contains('qlo835')))){noise(t,.08,{vol:.15,fq:2800,q:1});tone(400,t,.08,{type:'sine',vol:.1,f2:180});return}noise(t,.12,{vol:.15,fq:3200,f2:900,q:1.2});tone(540,t,.12,{type:'sine',vol:.09,f2:260,att:.002});tone(160,t,.1,{type:'triangle',vol:.11,f2:70,att:.002})},
  crit:t=>{noise(t,.04,{vol:.28,fq:3000,q:.7});noise(t,.2,{vol:.3,fq:1000,f2:150,q:.6,type:'lowpass'});tone(660,t,.11,{type:'square',vol:.08,f2:330});tone(110,t,.22,{type:'sine',vol:.28,f2:42,att:.002})},
- skhit:t=>{noise(t,.3,{vol:.3,fq:1100,f2:100,q:.6,type:'lowpass'});noise(t,.18,{vol:.14,fq:3200,f2:600,q:1});tone(92,t,.3,{type:'sine',vol:.3,f2:38,att:.003})},
+ skhit:t=>{if((((window.RENDER&&RENDER.qLvl)||0)>=1||(document.body&&document.body.classList.contains('qlo835')))){noise(t,.2,{vol:.3,fq:1100,f2:100,q:.6,type:'lowpass'});tone(92,t,.2,{type:'sine',vol:.26,f2:40});return}noise(t,.3,{vol:.3,fq:1100,f2:100,q:.6,type:'lowpass'});noise(t,.18,{vol:.14,fq:3200,f2:600,q:1});tone(92,t,.3,{type:'sine',vol:.3,f2:38,att:.003})},
  tick:t=>{noise(t,.05,{vol:.07,fq:1500,q:.9})},
  hurt:t=>{tone(150,t,.2,{type:'sine',vol:.32,f2:52,att:.002});noise(t,.18,{vol:.26,fq:520,f2:110,q:.6,type:'lowpass'});tone(215,t,.12,{type:'sawtooth',vol:.05,f2:118,att:.004});tone(228,t,.12,{type:'sawtooth',vol:.035,f2:124,att:.004})},
  eswing:t=>{whoosh(t,.22,{vol:.11,fq:300,f2:1150,q:.9,pk:.55});tone(92,t+.04,.13,{type:'triangle',vol:.06,f2:60})},
@@ -1017,7 +1017,7 @@ Object.assign(SFX,{
 G.sfxVoices=()=>Object.keys(SFX);G.sfxLim=LIM;G.sfxPlayed={};G._SFX=SFX;G._aud=()=>({ac,sg,nz,bg});
 const CV=new Set(['hit','mhit','crit','skhit','tick','swing','cast','bow','eswing','bswing','hurt','parry','block','miss','kill']),PRI={tick:1,swing:2,cast:2,bow:2,eswing:2,kill:2};let rec=[];
 /* global budget: at most 5 combat voices per 0.12s so big AoE/multi-ally turns do not become a wall of noise; low-priority voices (DoT ticks, swings) drop first */
-const budget=(k,now)=>{if(!CV.has(k))return true;rec=rec.filter(x=>now-x<.12);if(rec.length>=5||(PRI[k]&&rec.length>=3+PRI[k]-1))return false;rec.push(now);return true};
+const budget=(k,now)=>{if(!CV.has(k))return true;rec=rec.filter(x=>now-x<.12);const cap=(((window.RENDER&&RENDER.qLvl)||0)>=1||(document.body&&document.body.classList.contains('qlo835')))?3:5;if(rec.length>=cap||(PRI[k]&&rec.length>=Math.min(cap,3+PRI[k]-1)))return false;rec.push(now);return true};
 const play=G.sfx=(k,dl)=>{G.sfxN[k]=(G.sfxN[k]||0)+1;if(!ac||!on('sfx')||document.hidden||!SFX[k])return;const now=ac.currentTime;if(LIM[k]&&last[k]&&now-last[k]<LIM[k])return;if(!budget(k,now))return;last[k]=now;G.sfxPlayed[k]=(G.sfxPlayed[k]||0)+1;try{SFX[k](now+.005+(dl>0?Math.min(.4,dl):0))}catch(_){}};
 // hooks
 /* r651: impact voice follows the hit source (basic weapon / basic magic / skill / DoT); basic hits land a beat after the swing whoosh */
@@ -3158,11 +3158,11 @@ const FW=640,FH=350,Y0=196,BW=270;let lay=null,lx=null,dirty=0,fr=null;
 const IC={},img=s=>IC[s]||(IC[s]=Object.assign(new Image(),{src:A+s}));
 const ensure=(W,H)=>{const b=document.getElementById('battle');if(!b)return null;if(!lay||!lay.isConnected){lay=document.createElement('canvas');lay.id='ccLayer';b.appendChild(lay);lx=lay.getContext('2d')}
  const mc=b.querySelector('canvas:not(#ccLayer)'),dpr=mc&&mc.width?mc.width/W:(devicePixelRatio||1),pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(lay.width!=pw||lay.height!=ph){lay.width=pw;lay.height=ph;lay.style.width=W+'px';lay.style.height=H+'px'}lx.setTransform(dpr,0,0,dpr,0,0);return lx};
-const clear=()=>{if(dirty&&lx){lx.setTransform(1,0,0,1,0,0);lx.clearRect(0,0,lay.width,lay.height);dirty=0;const b=document.getElementById('battle');b&&b.classList.remove('ccon');document.body.classList.remove('ccon')}};
+const clear=()=>{if(dirty&&lx){lx.setTransform(1,0,0,1,0,0);lx.clearRect(0,0,lay.width,lay.height);dirty=0;const b=document.getElementById('battle');b&&b.classList.remove('ccon');document.body.classList.remove('ccon');if(lay)lay.style.display='none'}};
 R.ccFrame=(dt,W,H)=>{try{if(C.B.boss||C.B.wb)return false;fr=fr||img('cutin_frame.png');if(!fr.complete||!fr.naturalWidth)return false;const c=R.ccut,cx=ensure(W,H);if(!cx)return false;
  c.t+=dt;const t=c.t;if(t>=1){clear();return true}
  const ein=Math.min(1,t/.16),eo=t>.8?(1-t)/.2:1,a=Math.max(0,Math.min(ein,eo)),k=BW/FW,h=FH*k,e=1-Math.pow(1-ein,3),x0=8-(1-e)*(BW+20)+(t>.8?-(t-.8)/.2*50:0),y0=Y0;{const q=R._ccb520||(R._ccb520=[0,0,0,0,0]);q[0]=0;q[1]=y0-6;q[2]=W;q[3]=y0+h+6;q[4]=performance.now()}/* r520: live cut-in band (canvas px, one reused array) - numbers / strips keep off it */
- cx.clearRect(0,0,W,H);dirty=1;{const bt=document.getElementById('battle');if(!bt.classList.contains('ccon')){bt.classList.add('ccon');document.body.classList.add('ccon')}};if(R._ccUlt&&R._ccUlt(cx,c,t,a,W,H))return true;cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
+ if(lay&&lay.style.display)lay.style.display='';cx.clearRect(0,0,W,H);dirty=1;{const bt=document.getElementById('battle');if(!bt.classList.contains('ccon')){bt.classList.add('ccon');document.body.classList.add('ccon')}};if(R._ccUlt&&R._ccUlt(cx,c,t,a,W,H))return true;cx.save();cx.globalAlpha=a;cx.translate(x0,y0);cx.scale(k,k);
  // bust inside arch (clip: semicircle top + rect)
  const pi=img(c.img);
  cx.save();cx.beginPath();cx.moveTo(45,FH);cx.lineTo(45,140);cx.ellipse(134,140,89,86,0,Math.PI,2*Math.PI);cx.lineTo(223,FH);cx.closePath();cx.clip();
@@ -5060,7 +5060,7 @@ const fix=()=>{const a=document.querySelector('#screen .shbb');if(!a)return;cons
  const bad=t=>t==dt||(off&&/특가|싸게/.test(t));if(!bad(a.textContent.trim()))return;const ok=L.filter(t=>!bad(t)&&t!=a.textContent.trim());a.textContent=ok.length?ok[Math.floor(Math.random()*ok.length)]:L[0]};
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen!='shop')return r;const n=document.querySelector('#screen .shnp');if(n&&!n.dataset.r389){n.dataset.r389=1;n.addEventListener('click',()=>{try{fix()}catch(e){}})}}catch(e){console.warn(e)}return r}})();
 ;(()=>{/* r389 v339b: battle HUD event chip row (#evrow) no longer runs under the right-side 성장/장비 buttons when many chips are up - it keeps clear of the side column (x 62-278, single line so the 증원/대기 pill at y 219 stays clear) by shrinking the row slightly only when it would not fit (measured on chip show/hide/text change via MutationObserver, no per-frame work). Display only */const st=document.createElement('style');st.textContent=`html body #battle #evrow{left:62px;width:216px;transform-origin:50% 50%}html body #battle #evrow>*{flex:none}`;document.head.appendChild(st);
-let q=0;const fit=()=>{q=0;const r=document.getElementById('evrow');if(!r)return;r.style.transform='';const v=[...r.children].filter(e=>e.offsetWidth);if(!v.length)return;const w=v[v.length-1].getBoundingClientRect().right-v[0].getBoundingClientRect().left;r.style.transform=w>214?`scale(${(214/w).toFixed(3)})`:''};
+let q=0,evFp835='';const fit=()=>{q=0;const r=document.getElementById('evrow');if(!r)return;let fp='';for(let i=0,ch=r.children;i<ch.length;i++){const c=ch[i];fp+=c.textContent+'\t'+c.className+'\t'+(c.style.display||'')+'\n'}if(fp===evFp835&&r._sc835!=null)return;evFp835=fp;r.style.transform='';const v=[...r.children].filter(e=>e.offsetWidth);if(!v.length){r._sc835='';return}const w=v[v.length-1].getBoundingClientRect().right-v[0].getBoundingClientRect().left;const sc=w>214?`scale(${(214/w).toFixed(3)})`:'';r._sc835=sc;r.style.transform=sc};
 const go=()=>{const r=document.getElementById('evrow');if(!r)return setTimeout(go,500);new MutationObserver(m=>{if(!q&&m.some(x=>x.target!==r))q=requestAnimationFrame(fit)}).observe(r,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class'],characterData:true});fit()};go()})();
 ;(()=>{/* r389 v339c: 신규 7일 성장 이벤트 popup gets the same ui_ribbon title plate as the other popups (전투 버프 etc.); subtitle stays under it. Display only */const st=document.createElement('style');st.textContent=`html body .modal.nbm .card.nbc{overflow:visible}html body .modal.nbm .card.nbc>.nbh>b{position:relative;display:flex;align-items:center;justify-content:center;height:58px;margin:-50px -6px 2px;padding:10px 20px 0;background:url(assets/ui_ribbon.png) center/100% 100% no-repeat;color:#ffe6b0;text-shadow:0 1px 2px #000,0 0 6px #000;font-size:16px;white-space:nowrap}`;document.head.appendChild(st)})();
 ;(()=>{/* r390 v340: 전투 버프 +30분 buttons show their real terms from the v38 code (G.bufClaim): free, 3 claims per buff per day (MAXN=3), and a claim is refused once it would pass the 2-hour cap (CAP=120분) - shown as "무료 N/3" or "최대 누적". 소진 state untouched. No cost exists in code, none shown. Display only */
@@ -11348,7 +11348,7 @@ G.upd819ok=1;
 ;(()=>{/* r822: installed app (Android 10, Chrome 157) opened with the stage shifted right — left half black, stage starting at the screen centre and cut off on the right, full height. r276 / r817 placed #app with CSS left:50% of its containing block + translateX(-50%) scale(s) about a 'top center' origin, so the result depended on (a) the containing block being exactly the visible screen (r817 made body position:fixed in standalone, so #app is laid out against whatever width the browser gives that fixed body / layout viewport) and (b) the inline transform actually winning the cascade; with either off, the stage's left edge lands on the screen centre, which is exactly what the phone showed. Fix: the stage no longer relies on 50% of anything. Every fit computes the visible box (smallest sane width of innerWidth / clientWidth / visualViewport / a fixed inset:0 probe, minus safe-area insets), the scale, and the exact top-left target in screen coordinates, pins #app with left:0 top:0 origin 0 0 translate(x,y) scale(s) as !important inline styles, then MEASURES the stage and corrects any leftover offset (containing block shifted or wider than the screen). A stray horizontal scroll of the page / body is reset. Refits on resize, orientationchange, visualViewport resize, pageshow, visibilitychange, display-mode change, fonts ready, load, a ResizeObserver on <html>, and a few delayed retries after launch / rotation. Display only — no gameplay, save, economy change. */
 const doc=document,root=doc.documentElement;
 const num=v=>typeof v==='number'&&isFinite(v)&&v>0;
-const probeBox=()=>{try{const p=doc.createElement('div');p.setAttribute('aria-hidden','true');p.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;visibility:hidden;pointer-events:none;z-index:-1';(doc.body||root).appendChild(p);const r=p.getBoundingClientRect();p.remove();return r}catch(_){return null}};
+let _pb835=null;const probeBox=()=>{try{if(!_pb835||!_pb835.isConnected){_pb835=doc.createElement('div');_pb835.setAttribute('aria-hidden','true');_pb835.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;visibility:hidden;pointer-events:none;z-index:-1';(doc.body||root).appendChild(_pb835)}return _pb835.getBoundingClientRect()}catch(_){return null}};
 G.view822=()=>{const vv=window.visualViewport,pb=probeBox(),ws=[innerWidth,root.clientWidth],hs=[innerHeight];
  if(vv&&Math.abs((vv.scale||1)-1)<.01)ws.push(vv.width);if(pb&&pb.width>0){ws.push(pb.width);hs.push(pb.height)}
  const W=Math.min(...ws.filter(v=>num(v)&&v>=50)),H=Math.min(...hs.filter(v=>num(v)&&v>=50));
@@ -11365,9 +11365,9 @@ G.fit822=()=>{const app=doc.getElementById('app');if(!app)return null;
  /* measure & correct: whatever the containing block / origin did, put the real box on the target */
  let dx=0,dy=0,r=null;try{r=app.getBoundingClientRect()}catch(_){}
  if(r&&r.width>0&&r.height>0){dx=tx-r.left;dy=ty-r.top;if(Math.abs(dx)>.5||Math.abs(dy)>.5)place(app,tx+dx,ty+dy,s)}
- root.style.setProperty('--vh',(V.H*.01)+'px');
+ const _vhpx=(V.H*.01)+'px';if(root.style.getPropertyValue('--vh')!==_vhpx)root.style.setProperty('--vh',_vhpx);
  try{const sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||navigator.standalone===true;if(doc.body&&doc.body.classList.contains('sa817')!==!!sa)doc.body.classList.toggle('sa817',!!sa)}catch(_){}
- const last={s,W,H,I,x:tx,y:ty,dx,dy,vw:V.W,vh:V.H,mw:r?r.width:0};G.fit822.last=last;G.fit817.last=last;
+ const last={s,W,H,I,x:tx,y:ty,dx,dy,vw:V.W,vh:V.H,mw:r?r.width:0,_iw:innerWidth,_ih:innerHeight,_vw:(window.visualViewport&&visualViewport.width)||innerWidth,_vh:(window.visualViewport&&visualViewport.height)||innerHeight};G.fit822.last=last;G.fit817.last=last;
  if(G.fitDbg822)G.fitDbg822(last);return last};
 /* every older caller (r276 scale(), r817 listeners) ends in the r822 placement */
 const f817=G.fit817;G.fit817=()=>G.fit822();
@@ -11797,4 +11797,24 @@ G.r831ok=1;
   if(typeof C.MAXHP==='function'){const o=C.MAXHP;C.MAXHP=function(){get();if(hpV!==undefined)return hpV;return hpV=o.apply(this,arguments)}}
   if(typeof C.POW==='function'){const o=C.POW;C.POW=function(){get();if(powV!==undefined)return powV;return powV=o.apply(this,arguments)}}
   G.bust834=bust;G.sig834=sig;G.r834ok=1;
+})();
+;(()=>{/* r835: leftover battle stutter pass (speed first; small cosmetic tradeoffs allowed; combat numbers, timing, rewards and save format unchanged). Headless CDP profile (390x844, CPU 4x, SwiftShader, 150s auto battle, not a real device): getBoundingClientRect 12% self time (r822 fit probe div built + removed each call, evrow fit on every chip mutation, 0.2s overlay rects), canvas font sets 6%, ~324 drawImage/frame, Recalc Style 11.7s of a 25s trace, canvas width/height reassigns, ~1800 oscillators/min. Fixes: auto quality starts at a 1.5 dpr cap and AQ steps down sooner; 22 motes become one cached layer; same-value canvas font/width/height writes are skipped; r822 fit early-outs when the viewport is unchanged and reuses its probe; evrow rescale only on a real content change; overlay rects 1s; idle #ccLayer hidden; slow-quality mode (qlo835) pauses infinite HUD CSS glows and uses lighter hit voices and a 3-voice budget. */
+  try{const P=window.CanvasRenderingContext2D&&CanvasRenderingContext2D.prototype,d=P&&Object.getOwnPropertyDescriptor(P,'font');
+    if(d&&d.set&&d.get)Object.defineProperty(P,'font',{configurable:true,enumerable:d.enumerable,get(){return d.get.call(this)},set(v){if(this._f835===v)return;d.set.call(this,v);this._f835=v}});
+    /* save/restore can change font; drop the memo so the next set goes through */
+    if(typeof P.restore==='function'){const sv=P.restore;P.restore=function(){this._f835=undefined;return sv.apply(this,arguments)}}
+  }catch(_){}
+  try{const P=window.HTMLCanvasElement&&HTMLCanvasElement.prototype;
+    for(const k of ['width','height']){const d=P&&Object.getOwnPropertyDescriptor(P,k);if(!d||!d.set||!d.get)continue;
+      Object.defineProperty(P,k,{configurable:true,enumerable:d.enumerable,get(){return d.get.call(this)},set(v){const n=Math.max(0,Math.floor(+v||0));if(d.get.call(this)===n&&!this._clr835)return;d.set.call(this,v)}})}
+  }catch(_){}
+  const css='html body.qlo835 #skills .sk.ready{box-shadow:none!important}'
+    +'html body.qlo835 #skills .sk.ready::after,html body.qlo835 #skills .sk.ready::before{animation:none!important}'
+    +'html body.qlo835 #partycol .pp .mvpB{animation:none!important;filter:none!important}'
+    +'html body.qlo835 #bossWk{animation:none!important}'
+    +'html body.qlo835 .bossbtn.fight{animation:none!important}';
+  try{const st=document.createElement('style');st.id='r835css';st.textContent=css;document.head.appendChild(st)}catch(_){}
+  const qlo=()=>{try{const R=window.RENDER,on=!!(R&&(R.qLvl||0)>=1&&R.qMode!=='high');document.body&&document.body.classList.toggle('qlo835',on)}catch(_){}};
+  G.qlo835=qlo;qlo();
+  G.r835ok=1;
 })();
