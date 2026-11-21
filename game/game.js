@@ -11492,6 +11492,12 @@ body:is(.nofx,.tglite,.fxoff) .sumhero.r827 .shr img{animation:none!important}
 #sumModal .srf.open .sg827{opacity:.95;transform:none;transition:opacity .25s,transform .25s}
 #sumModal .srf.it827 .srbu{display:none}
 #sumModal .sumcard.it827{background:radial-gradient(circle at 50% 35%,#3a2a10,#140a20)!important;border-color:#e8d080!important}
+#sumModal .srf.open.it827{cursor:pointer}
+.modal.itinfo827{text-align:center}
+.modal.itinfo827 .it827im{height:96px;display:block;margin:6px auto}
+.modal.itinfo827 .it827nm{display:block;margin-top:4px}
+.modal.itinfo827 .it827n{display:block;opacity:.85}
+.modal.itinfo827 .it827w{margin:8px 12px 0;font-size:12px;line-height:1.45}
 #panel .tcard .cup827,#cup small.m827{display:inline-flex;align-items:center;gap:3px}
 .fac827{margin:8px 0 0;padding:8px;border:2px solid #0b0d0f;background:#140a24cc}
 .fac827 .ttl{margin-bottom:6px}
@@ -11553,6 +11559,19 @@ function decorateCards(m,got){
       f.classList.add('it827');
       const card=f.querySelector('.sumcard');if(card)card.classList.add('it827');
       if(!f.querySelector('.sg827'))f.insertAdjacentHTML('afterbegin',`<img class=sg827 alt="" src="${FX}glow_n.webp">`);
+      if(!f.dataset.it827){
+        f.dataset.it827=1;
+        f.setAttribute('role','button');
+        f.setAttribute('aria-label','아이템 정보');
+        f.addEventListener('click',e=>{
+          if(!f.classList.contains('open'))return;
+          e.stopPropagation();
+          const it=k||{};
+          const why=it.t==='cmat'?'동료 레벨 업에 사용합니다. 수련서가 있으면 레벨 업 시 1장을 함께 소모합니다.':it.t==='ftok'?'편성 화면의 「세력 증표」에서 해당 세력 강화에 사용합니다.':'';
+          const pop=modal(`<div class="ttl">아이템</div><img class=it827im src="${A}${it.img||'rl_tome.png'}" alt=""><b class=it827nm>${it.name||''}</b><small class=it827n>×${it.n||1}</small>${why?`<p class=it827w>${why}</p>`:''}`);
+          pop.classList.add('itinfo827');
+        });
+      }
       return;
     }
     const cp=D.COMPS.find(x=>x.k==k);if(!cp)return;
