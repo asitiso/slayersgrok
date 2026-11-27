@@ -51,6 +51,8 @@ BAL:{
  d825:{ch:[[1,1.04,1,1.06,1.03,1.06,1.10,1.15],[1.03,1.10,1.06,1.16,1,1.06,1.08,1.20],[1.10,1.18,1.16,1.26,1.02,1.06,1.10,1.22],[1.18,1.24,1.26,1.32,1.03,1.07,1.10,1.22],[1.24,1.30,1.32,1.38,1.04,1.08,1.10,1.22],[1.30,1.36,1.38,1.44,1.05,1.09,1.10,1.22],[1.36,1.42,1.44,1.50,1.06,1.10,1.10,1.22]],
   tw:{atk:1.35,hp:1.0,per:.01,cap:1.7,rx:1.6},dun:{atk:1.8,hp:1.25,rx:1.5}},
  /* r826: 경지 growth cap (a stat may lead the second-highest by `gap` levels); offGold multiplies 방치/오프라인 gold only (exp/orbs/stone unchanged). */
- d826:{gap:5,offGold:.25}
+ d826:{gap:5,offGold:.25},
+ /* r840: growth x2 harder — cost multiplies growth sinks (경지 수련, 레벨업 EXP, 강화, 스킬, 사본, 동료/펫/영지/특성), rew multiplies gold/exp (via goldKill/expKill) and 강화석/조각 income. comp: 동료 수련서 cost x book, 수련서 gain x bookGain, 중복 조각 x shard. orb = 마정구 drop factor (unchanged). Set cost/rew to 1 to switch off. */
+ g840:{cost:2,rew:.5,orb:1,comp:{book:2,shard:.5,bookGain:.5}}
 }};
 if(typeof module!=='undefined')module.exports=DATA;

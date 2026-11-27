@@ -236,7 +236,7 @@ function renderScreen(first){const k=G.screen,el=$('#screen'),s=C.S();if(!k)retu
       modal(`<div class=ttl style="justify-content:center;font-size:18px">일괄 강화 결과</div><div style="text-align:center;font-size:15px;margin:10px 0"><b class=up>성공 ${ok}</b> · <span style="opacity:.75">실패 ${fail}</span></div><small style="display:block;text-align:center">${why=='stone'?'강화석 소진':why=='gold'?'골드 소진':why=='max'?'모두 최대 강화':'40회 시도 완료'} · 전투력 ${fmt(C.POW())}</small>`);updateHud();renderScreen()};const eg=$('#enGo');if(eg)eg.onclick=()=>{const r=C.enhance(G.enSel);const M={ok:'강화 성공!',fail:'강화 실패… 재료가 소모되었습니다',gold:'골드가 부족합니다',stone:'강화석이 부족합니다',max:'최대 강화입니다'};toast(M[r]);if(r=='ok'||r=='fail'){const a=el.querySelector('.anvil');a&&a.classList.add(r=='ok'?'flashok':'flashno')}setTimeout(renderScreen,r=='ok'||r=='fail'?380:0)};
    el.querySelectorAll('[data-lu]').forEach(b=>b.onclick=()=>{toast(C.compUp(b.dataset.lu)?'레벨업!':'골드가 부족합니다');renderScreen()});
    el.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const r=C.skUp(b.dataset.sk);toast({ok:'스킬 강화 성공!',gold:'골드가 부족합니다',stone:'강화석이 부족합니다',max:'최대 레벨'}[r]||'');renderScreen()})}
- if(k=='pass'){const b=C.bp(),T=C.bpTier(),ri=r=>Object.entries(r).map(([k,v])=>`<img class=ci src=assets/${({gems:'it2_gem',orbs:'it2_exp',stone:'it2_stone',tickets:'it2_ticket',goldH:'it2_gold'})[k]}.png>${k=='goldH'?fmt(Math.floor(C.goldKill(C.S().maxSi)*600*v))/* r391: show the exact gold C.bpClaim adds (goldKill(maxSi)*600*goldH) instead of a bare '골드' */:v}`).join('');
+ if(k=='pass'){const b=C.bp(),T=C.bpTier(),ri=r=>Object.entries(r).map(([k,v])=>`<img class=ci src=assets/${({gems:'it2_gem',orbs:'it2_exp',stone:'it2_stone',tickets:'it2_ticket',goldH:'it2_gold'})[k]}.png>${k=='goldH'?fmt(Math.floor(C.goldKill0(C.S().maxSi)*600*v))/* r391: show the exact gold C.bpClaim adds (goldKill(maxSi)*600*goldH) instead of a bare '골드' */:v}`).join('');
    el.classList.add('pass');el.innerHTML=shell('마도 패스 시즌 '+(b.se%100+1),'bg_lobby.jpg',`<div class=card><div class=ttl>패스 Lv.${T}/${D.BP.tiers} <small>처치·보스·임무로 경험치 획득</small></div><div class=bar><i style="width:${(b.xp%D.BP.xp)/D.BP.xp*100}%"></i></div><small>${b.xp%D.BP.xp}/${D.BP.xp} XP · 4주 시즌</small>${b.prem?'<div class=pill style="margin-top:6px"><img class=ci src=assets/ic4/crown.png> 프리미엄 활성</div>':`<span class="btn g wide" id=bpb style="margin-top:6px">프리미엄 패스 ${D.BP.price} <small>(프로토타입 · 실제 결제 없음)</small></span>`}</div>${(()=>{const b=C.bp(),T=C.bpTier();let n=0;for(let t=0;t<T;t++){if(!b.fc[t])n++;if(b.prem&&!b.pc[t])n++}return n?`<span class="pill green wide" id=bpAll style="margin:6px 0">모두 받기 (${n})</span>`:''})()}
    <div class=card><div class=bpg><b>단계</b><b>무료</b><b>프리미엄</b>${Array.from({length:D.BP.tiers},(_,t)=>{const ok=t<T;const cell=(p)=>{const got=(p?b.pc:b.fc)[t],can=ok&&!got&&(!p||b.prem);return `<span class="bpc ${got?'got':can?'can':''} ${p&&!b.prem?'lockp':''}" data-bp="${t}" data-pp="${p?1:0}">${t==19&&p?'<img class=ci src=assets/skin/lina_gold.png>황금 코스튬':ri(C.bpRew(t,p))}${got?' <img class="emi e_pass_check" src=assets/pass_check.png alt="">':''}</span>`};return `<em class="${ok?'ok':''}">${t+1}</em>${cell(0)}${cell(1)}`}).join('')}</div></div>`);
    const bb=$('#bpb');if(bb)bb.onclick=()=>{C.bpBuy();toast('프리미엄 패스 활성 (데모)');renderScreen()};
@@ -481,7 +481,7 @@ setInterval(()=>{try{const d=document.querySelector('#mgrid a[data-s=star] .dot'
 const PETS=[{k:'slime',n:'말랑 슬라임',img:'pet/slime.png',st:'gold',per:3,g:2},{k:'mush',n:'버섯 꼬마',img:'pet/mush.png',st:'hp',per:3,g:2},{k:'bat',n:'밤그림자 박쥐',img:'pet/bat.png',st:'atk',per:2,g:3},{k:'imp',n:'장난꾸러기 임프',img:'pet/imp.png',st:'atk',per:2.5,g:3},{k:'wolf',n:'은빛 늑대',img:'pet/wolf.png',st:'atk',per:3,g:4},{k:'golem',n:'수호 골렘',img:'pet/golem.png',st:'hp',per:5,g:4}];
 const SN={atk:'공격력',hp:'체력',gold:'골드 획득'},PMAX=20,PW={2:60,3:30,4:10};C.PETS=PETS;C.PW=PW/* r530: read-only, for the 도감 info card */;
 const P=()=>{const s=C.S();s.pet=s.pet||{own:{},eq:null,egg:0,gift:0};return s.pet};
-const lvC=l=>Math.floor(800*Math.pow(1.45,l-1));
+const lvC=l=>Math.floor(800*Math.pow(1.45,l-1)*((D.BAL&&D.BAL.g840&&+D.BAL.g840.cost>0)?+D.BAL.g840.cost:1));/* r840: 펫 Lv↑ gold x g840.cost */
 C.petB=st=>{const p=P();let v=0;for(const x of PETS){const l=p.own[x.k];if(!l||x.st!==st)continue;v+=x.per*l*(p.eq==x.k?1:.2)}return v/100};
 C.petHatch=()=>{const p=P(),s=C.S();if(p.egg<1){if(s.gems<300)return null;s.gems-=300}else p.egg--;const tot=PETS.reduce((a,x)=>a+PW[x.g],0);let r=C.rand()*tot,x=PETS[0];for(const q of PETS){r-=PW[q.g];if(r<=0){x=q;break}}const nw=!p.own[x.k];if(nw)p.own[x.k]=1;else p.own[x.k]=Math.min(PMAX,p.own[x.k]+1);if(!p.eq)p.eq=x.k;C.refreshMax&&C.refreshMax();return{x,nw}};
 C.petUp=k=>{const p=P(),s=C.S(),l=p.own[k];if(!l)return 'none';if(l>=PMAX)return 'max';const c=lvC(l);if(s.gold<c)return 'gold';s.gold-=c;p.own[k]=l+1;C.refreshMax&&C.refreshMax();return 'ok'};
@@ -879,7 +879,7 @@ setInterval(()=>{try{add();const b=document.getElementById('bufBtn');if(!b)retur
 ;(()=>{// v39 빠른 사냥: instantly collect 2h of hunting rewards from the idle popup; 1 free + 2 for 50 gems per day
 const N=3,COST=[0,50,50],SEC=7200;
 const st=()=>{const s=C.S(),d=new Date().toDateString();s.qh=s.qh||{};if(s.qh.day!==d){s.qh.day=d;s.qh.n=0}return s.qh};
-G.quickHunt=()=>{const q=st(),s=C.S();if(q.n>=N)return 'max';const c=COST[q.n];if(s.gems<c)return 'gem';s.gems-=c;const r=C.offlineCalc(SEC);r.o=Math.floor(r.o);C.addGold(r.g);C.gainExp(r.x);s.orbs+=r.o;const stn=Math.floor(SEC/900);s.stone=(s.stone||0)+stn;r.st=stn;q.n++;G.qhN=(G.qhN||0)+1;try{G.save()}catch(_){}return r};
+G.quickHunt=()=>{const q=st(),s=C.S();if(q.n>=N)return 'max';const c=COST[q.n];if(s.gems<c)return 'gem';s.gems-=c;const r=C.offlineCalc(SEC);r.o=Math.floor(r.o);C.addGold(r.g);C.gainExp(r.x);s.orbs+=r.o;const stn=(G.sc840||(x=>x))(Math.floor(SEC/900));s.stone=(s.stone||0)+stn;r.st=stn;q.n++;G.qhN=(G.qhN||0)+1;try{G.save()}catch(_){}return r};
 const lbl=()=>{const q=st();return q.n>=N?'빠른 사냥 (오늘 소진)':`<span class=qhl><img class="emi e_ui_bolt" src=assets/ui_bolt.png alt="">빠른 사냥 2시간 <em>${COST[q.n]?'<img src=assets/it2_gem.png>'+COST[q.n]:'무료'}</em> <small>${N-q.n}/${N}</small></span>`};
 setInterval(()=>{try{const b=document.getElementById('idleClaim');if(!b||document.getElementById('qhBtn'))return;const m=b.closest('.modal');const q=document.createElement('span');q.id='qhBtn';q.className='pill wide '+(st().n>=N?'off':'blue');q.innerHTML=lbl();b.after(q);
  q.onclick=e=>{e.stopPropagation();const r=G.quickHunt();if(r==='max')return toast('오늘 빠른 사냥을 모두 사용했습니다');if(r==='gem')return toast('다이아가 부족합니다');m&&m.remove();try{idleBurst(r)}catch(_){}
@@ -1510,7 +1510,7 @@ setInterval(()=>{try{draw()}catch(_){}},200);G.fever=()=>({g,fv});G.feverStart=s
 (()=>{const C=G.C;const ok=C.ev.kill;C.ev.kill=function(e){const r=ok&&ok.apply(this,arguments);try{if(!e||e.boss||e.wb||e.tg||G.screen||G.storyOn||(G.saverState&&G.saverState()))return r;if(C.alive().length||C.reserve()||C.B.boss)return r;const q=R._ES().get(e),c=R._bc(),b=document.getElementById('battle');R.hs=Math.max(R.hs||0,.18);if(q&&c&&(!R.opt||R.opt.shake)&&!c.style.transform){c.style.transformOrigin=`${q.x}px ${q.y-45}px`;c.style.transition='transform .2s cubic-bezier(.2,.9,.3,1)';c.style.transform='scale(1.07)';setTimeout(()=>{c.style.transition='transform .45s ease-in-out';c.style.transform='';setTimeout(()=>{c.style.transition='';c.style.transformOrigin=''},480)},420)}if(b&&q){b.querySelectorAll('.mkb').forEach(x=>x.remove());const f=document.createElement('div');f.className='wclr';f.style.left=q.x+'px';f.style.top=(q.y-45)+'px';const tx=Math.min(230,Math.max(130,q.x));f.innerHTML=`<i></i><b style="left:${tx-q.x}px">WAVE CLEAR</b>`;b.appendChild(f);setTimeout(()=>f.remove(),1000)}}catch(_){}return r}})();
 /* v90 떠돌이 상인 (전투 중 가끔 등장 · 60초 · 방문당 1회 구매) */
 (()=>{const C=G.C;let clk=0,next=240+Math.random()*120,vis=null;const IMG=()=>'assets/'+(G._merchImg||'merchant.png');
-const offers=()=>{const s=C.S(),gk=C.goldKill(s.si);return[{k:'stone',ic:'it2_stone.png',n:'강화석',v:10,cost:Math.round(gk*150),cur:'gold'},{k:'tickets',ic:'it2_ticket.png',n:'소환권',v:1,cost:240,cur:'gems',tag:'20% 할인'},{k:'gold',ic:'it2_gold.png',n:'골드',v:Math.round(gk*400),cost:40,cur:'gems',tag:'특가'}]};
+const offers=()=>{const s=C.S(),gk=C.goldKill0(s.si);/* r840: gem-priced gold pack + gold-priced 강화석 stay at their r839 amounts */return[{k:'stone',ic:'it2_stone.png',n:'강화석',v:10,cost:Math.round(gk*150),cur:'gold'},{k:'tickets',ic:'it2_ticket.png',n:'소환권',v:1,cost:240,cur:'gems',tag:'20% 할인'},{k:'gold',ic:'it2_gold.png',n:'골드',v:Math.round(gk*400),cost:40,cur:'gems',tag:'특가'}]};
 const show=()=>{const b=document.getElementById('battle');if(!b)return;b.querySelectorAll('.merch').forEach(x=>x.remove());const d=document.createElement('div');d.className='merch';d.innerHTML=`<img src="${IMG()}"><b>떠돌이 상인</b><i class=mtm></i><em>특가!</em>`;d.onclick=open;b.appendChild(d);vis.el=d};
 const hide=()=>{if(vis&&vis.el){vis.el.classList.add('out');const e=vis.el;setTimeout(()=>e.remove(),500)}document.querySelectorAll('.modal.mshop').forEach(x=>x.remove());vis=null};
 function open(){if(!vis)return;const s=C.S(),O=vis.o;const m=document.createElement('div');m.className='modal mshop';const ci=c=>c=='gold'?'it2_gold.png':'it2_gem.png';
@@ -1660,7 +1660,7 @@ const TH=[0,30,80,160,280,450],MX=5,LIM=5;
 const GF=[{k:'f',n:'들꽃 다발',e:10,ic:'bd_flower.png',gold:40},{k:'c',n:'수제 과자',e:35,ic:'bd_cookie.png',gold:120},{k:'j',n:'마법 보석',e:100,ic:'it2_gem.png',gems:30}];
 const st=()=>{const s=C.S();if(!s.bond)s.bond={x:{},day:'',n:{},sel:''};const b=s.bond;if(b.day!=C.today()){b.day=C.today();b.n={}}return b};
 const lv=k=>{const x=st().x[k]||0;let l=0;TH.forEach((t,i)=>{if(x>=t)l=i});return l};
-const price=g=>g.gold?Math.max(50,Math.round(C.goldKill(Math.max(0,C.S().maxSi))*g.gold)):g.gems;
+const price=g=>g.gold?Math.max(50,Math.round(C.goldKill0(Math.max(0,C.S().maxSi))*g.gold)):g.gems;/* r840: bond-gift price stays at its r839 amount */
 const line=(k,l)=>{const L=LN[k]||['…','…','…'];return l>=5?L[2]:l>=3?L[1]:L[0]};
 G.bondGive=(k,gk)=>{const s=C.S(),b=st(),g=GF.find(x=>x.k==gk);if(!g||!s.comps[k])return 0;if(lv(k)>=MX)return -1;if((b.n[k]||0)>=LIM)return -2;const p=price(g);if(g.gold?s.gold<p:s.gems<p)return -3;
  if(g.gold)s.gold-=p;else s.gems-=p;b.n[k]=(b.n[k]||0)+1;const l0=lv(k);b.x[k]=Math.min(TH[MX],(b.x[k]||0)+g.e);const l1=lv(k);if(l1>l0)s.gems+=10*(l1-l0);return {up:l1>l0,l:l1}};
@@ -2394,7 +2394,7 @@ function deco(){const el=$('#screen'),g=el.querySelector('.bpg');if(!g||el.query
  const cells=[...g.querySelectorAll('.bpc')],n=cells.length/2;let h='';
  for(let t=0;t<n;t++){const f=cells[t*2],p=cells[t*2+1],cl=(c,pp)=>`<div class="plc ${pp?'p':''} ${c.classList.contains('can')?'can':''} ${c.classList.contains('got')?'got':''} ${c.classList.contains('lockp')?'lockp':''}" data-px="${t*2+pp}">${c.innerHTML.replace(/ ?<img class="emi e_pass_check"[^>]*>/,'')}${c.classList.contains('got')?`<img class=pck src="${A}pass_check.png">`:''}</div>`;
   h+=`<div class="plr ${t<T?'ok':''} ${t==T||(T>=n&&t==n-1)?'cur':''}">${cl(f,0)}<div class=pln>${t+1}</div>${cl(p,1)}</div>`}
- const d=document.createElement('div');d.className='pld';d.innerHTML=`<div class=plh><span class=plp531><img src="${A}pass_free.png">무료${(()=>{/* r532: free track total from C.bpRew(t,0) over every tier (real data) */const N=(D.BP&&D.BP.tiers)||30,T={gems:0,orbs:0,goldH:0};for(let i=0;i<N;i++){const r=C.bpRew(i,0)||{};for(const k in T)T[k]+=r[k]||0}return `<small>${T.gems?`<img src="${A}it2_gem.png">${T.gems}`:""}${T.orbs?`<img src="${A}it2_exp.png">${T.orbs}`:""}${T.goldH?`<img src="${A}it2_gold.png">${fmt(Math.floor(C.goldKill(C.S().maxSi)*600*T.goldH))}`:""}</small>`})()}</span><span>단계</span><span class=plp531><img src="${A}pass_premium.png">프리미엄${(()=>{/* r531: premium track total, summed from C.bpRew over every tier (real data) */const N=(D.BP&&D.BP.tiers)||30,T={gems:0,stone:0,tickets:0};for(let i=0;i<N;i++){const r=C.bpRew(i,1)||{};for(const k in T)T[k]+=r[k]||0}return `<small>${T.gems?`<img src="${A}it2_gem.png">${T.gems}`:""}${T.stone?`<img src="${A}it2_stone.png">${T.stone}`:""}${T.tickets?`<img src="${A}it2_ticket.png">${T.tickets}`:""}${N>19?"<i style=\"font-style:normal;margin-left:3px\">+ 황금 코스튬</i>":""}</small>`})()}</span></div><div class=pll>${h}</div>`;
+ const d=document.createElement('div');d.className='pld';d.innerHTML=`<div class=plh><span class=plp531><img src="${A}pass_free.png">무료${(()=>{/* r532: free track total from C.bpRew(t,0) over every tier (real data) */const N=(D.BP&&D.BP.tiers)||30,T={gems:0,orbs:0,goldH:0};for(let i=0;i<N;i++){const r=C.bpRew(i,0)||{};for(const k in T)T[k]+=r[k]||0}return `<small>${T.gems?`<img src="${A}it2_gem.png">${T.gems}`:""}${T.orbs?`<img src="${A}it2_exp.png">${T.orbs}`:""}${T.goldH?`<img src="${A}it2_gold.png">${fmt(Math.floor(C.goldKill0(C.S().maxSi)*600*T.goldH))}`:""}</small>`})()}</span><span>단계</span><span class=plp531><img src="${A}pass_premium.png">프리미엄${(()=>{/* r531: premium track total, summed from C.bpRew over every tier (real data) */const N=(D.BP&&D.BP.tiers)||30,T={gems:0,stone:0,tickets:0};for(let i=0;i<N;i++){const r=C.bpRew(i,1)||{};for(const k in T)T[k]+=r[k]||0}return `<small>${T.gems?`<img src="${A}it2_gem.png">${T.gems}`:""}${T.stone?`<img src="${A}it2_stone.png">${T.stone}`:""}${T.tickets?`<img src="${A}it2_ticket.png">${T.tickets}`:""}${N>19?"<i style=\"font-style:normal;margin-left:3px\">+ 황금 코스튬</i>":""}</small>`})()}</span></div><div class=pll>${h}</div>`;
  card.style.display='none';card.parentNode.insertBefore(d,card);
  d.querySelectorAll('.plc.can').forEach(x=>x.onclick=()=>{const c=cells[+x.dataset.px];if(c)c.click()});
  const L=d.querySelector('.pll'),cu=d.querySelector('.plr.cur');if(cu)requestAnimationFrame(()=>{L.scrollTop=Math.max(0,cu.offsetTop-L.clientHeight/2+30)})}
@@ -6481,7 +6481,7 @@ idleInfo=function(){
     const c=m.querySelector(':scope>.card');
     if(!c||c.classList.contains('id597'))return;
     const sec=C.idleSec(),cap=BAL.offCap,r=C.offlineCalc(Math.max(60,sec));
-    const g=Math.floor(r.g*.5),x=Math.floor(r.x*.5),o=Math.floor(r.o*.5),stn=Math.floor(sec/900);
+    const g=Math.floor(r.g*.5),x=Math.floor(r.x*.5),o=Math.floor(r.o*.5),stn=(G.sc840||(x=>x))(Math.floor(sec/900));
     const h=Math.floor(sec/3600),mi=Math.floor(sec%3600/60),pct=Math.min(100,sec/cap*100),full=sec>=cap;
     c.classList.add('id597');
     /* rebuild body under existing ppx header if present, else whole card content after ttl */
@@ -11925,4 +11925,48 @@ G.r831ok=1;
 
 ;(()=>{/* r839: hit-stop and vis-freeze only on ultimates and boss kills (1.5s gap). Crits, normal/double/multi kills, combos and toasts never freeze. Burst FX are capped, pooled, and spawned across frames. Global battle pace D.BAL.pace839=1/1.2 scales combat+render dt (stacks with the ×1/×2 button). Combat numbers, in-game intervals and rewards stay the same; idle/offline uses wall-clock and is unchanged. */
   G.r839ok=1;
+})();
+
+;(()=>{/* r840: 성장 2배 어렵게. D.BAL.g840={cost:2,rew:.5,orb:1,comp:{book:2,shard:.5,bookGain:.5}}.
+  COST x cost (growth sinks only): 마력/체력/방어/집중 수련 (C.cost), 레벨업 필요 EXP (C.needExp), 장비 강화 gold+강화석 (C.enCost), 동료 스킬 강화 gold+강화석 (C.skCost), 클레어 바이블 gold+조각 (C.relicCost), 동료 레벨업 gold (C.compUpCost) + 동료 수련서 x comp.book (C.compUpMat), 동료 ★승급 조각 (C.starCost), 각성 조각+gold (C.awCost), 등급 승급 조각+gold+수련서+세력 증표 (C.rarUpCost), 펫 Lv↑ gold (lvC), 영지 건물 gold (C.bCost), 마도 특성 포인트 (C.TALC; 이미 배운 단계는 예전 값으로 계산해 포인트가 사라지지 않음).
+  REWARDS x rew: C.goldKill/C.expKill are scaled once (the same lever v48 INC_TRIM used), so kills, boss clears, 방치/오프라인 (on top of r826 offGold .25), 빠른 사냥, 일일 던전, 탑, 원정 gold, 월드보스 gold, 협회 출석, 룰렛/낚시/펫 이벤트 gold, 출석 이벤트 gold, 장비 판매가 all follow. 강화석/조각 from kills, idle, offline, quick hunt and daily dungeons are halved too (fractional carry on kills). 
+  UNCHANGED: gems, 마정구(orb knob =1), summon prices/rates/pity, gem/real-money shop prices and what they give (gold packs, 골드 주머니, deal gold use goldKill0), 마도 패스 tier rewards, 업적/미션/주간 (gem rewards), 협회/투기장/레이드. 동료: 수련서 (summon item results) x comp.bookGain, 중복 조각 x comp.shard (>=1 when >0), no change to rates. Save format unchanged (only an optional S.tal840 marker). */
+const K=()=>{const g=(D.BAL&&D.BAL.g840)||{};const n=(v,d)=>(+v>0?+v:d);const cp=g.comp||{};return{c:n(g.cost,1),r:n(g.rew,1),o:n(g.orb,1),book:n(cp.book,1),shard:n(cp.shard,1),bg:n(cp.bookGain,1)}};
+let raw=0;const rawf=f=>function(){raw++;try{return f.apply(this,arguments)}finally{raw--}};
+const og=C.goldKill,ox=C.expKill;
+C.goldKill0=i=>og(i);C.expKill0=i=>ox(i);
+C.goldKill=i=>og(i)*(raw?1:K().r);C.expKill=i=>ox(i)*(raw?1:K().r);
+const sc=v=>{const r=K().r;return v>0&&r!==1?Math.max(1,Math.round(v*r)):v};G.sc840=sc;
+const mulc=(f,fn)=>{const o=C[f];if(typeof o==='function')C[f]=function(){return fn(o.apply(this,arguments))}};
+const X=v=>{const c=K().c;return c===1?v:Math.floor(v*c)};
+const Xc=v=>{const c=K().c;return c===1?v:Math.ceil(v*c)};
+mulc('cost',v=>isFinite(v)?X(v):v);
+mulc('needExp',X);
+mulc('enCost',r=>({g:X(r.g),st:Xc(r.st)}));
+mulc('skCost',r=>({g:X(r.g),st:Xc(r.st)}));
+mulc('relicCost',r=>({f:Xc(r.f),g:X(r.g)}));
+mulc('compUpCost',X);
+mulc('compUpMat',v=>{const b=K().book;return b===1?v:Math.ceil(v*b)});
+mulc('starCost',Xc);
+mulc('awCost',r=>({sh:Xc(r.sh),g:X(r.g)}));
+mulc('rarUpCost',r=>Object.assign({},r,{sh:Xc(r.sh),g:X(r.g),cmat:Xc(r.cmat),ftok:Xc(r.ftok)}));
+{const o=C.bCost;if(o)C.bCost=function(){return X(rawf(o).apply(this,arguments))}}
+/* gold prices / gem products that read goldKill keep their r839 amounts */
+for(const f of ['donateCost','dealBase','dealPrice','dealBuy','buy','bpClaim']){const o=C[f];if(typeof o==='function')C[f]=rawf(o)}
+/* talent: points needed per tier x cost; tiers already learned keep their old price (S.tal840 = levels at the time r840 first saw the save) */
+C.TALC0=C.TALC0||C.TALC.slice();
+const syncTal=()=>{for(let i=0;i<C.TALC0.length;i++)C.TALC[i]=Xc(C.TALC0[i])};syncTal();
+C.talPts=()=>{syncTal();const S=C.S();if(!S.tal840){S.tal840={};for(const b of C.TAL)S.tal840[b.k]=(S.tal||{})[b.k]||0}const t=S.tal||{},g=S.tal840;let used=0;C.TAL.forEach(b=>{const n=t[b.k]||0,g0=Math.min(n,g[b.k]||0);for(let i=0;i<n;i++)used+=i<g0?C.TALC0[i]:C.TALC[i]});return Math.max(0,Math.floor((S.maxSi||0)/3)-used)};
+/* material supply: kill stone (fractional carry), idle/offline stone, daily-dungeon stone+조각 */
+let depth=0,carry=0;
+{const oh=C.hitEnemy;C.hitEnemy=function(){const S=C.S(),b=S.stone||0;depth++;try{return oh.apply(this,arguments)}finally{depth--;if(!depth){const r=K().r,a=S.stone||0;if(r!==1&&a>b){carry+=(a-b)*r;const g=Math.floor(carry+1e-9);carry-=g;S.stone=b+g}}}}}
+{const o=C.offline;if(o)C.offline=function(){const r=o.apply(this,arguments);if(r&&r.st)r.st=sc(r.st);return r}}
+{const o=C.idleClaim;if(o)C.idleClaim=function(){const S=C.S(),b=S.stone||0,r=o.apply(this,arguments);if(r){const a=S.stone||0;if(a>b){const n=sc(a-b);S.stone=b+n;r.st=n}}return r}}
+{const o=C.dunRew;if(o)C.dunRew=function(){const r=o.apply(this,arguments);if(r){if(r.st)r.st=sc(r.st);if(r.f)r.f=sc(r.f)}return r}}
+/* 동료 growth supply: 수련서 from summon item results, 조각 from duplicate pulls */
+{const o=C.grantSumIt;if(o)C.grantSumIt=function(it){if(it&&it.t==='cmat'&&!it._b840){const b=K().bg;if(b!==1)it.n=Math.max(1,Math.round(it.n*b));it._b840=1}return o.apply(this,arguments)}}
+/* C.SHV (조각 per duplicate by grade) is read live by C.summon / C.mileSummon and the pull popup, so scaling the table keeps grant, ledger and popup in sync */
+{const base=Object.assign({},C.SHV),T={};for(const g of Object.keys(base))Object.defineProperty(T,g,{enumerable:true,get(){const k=K().shard;return k===1?base[g]:Math.max(1,Math.round(base[g]*k))}});C.SHV=T}
+G.g840={K,raw:()=>raw};G.r840ok=1;
+try{C.refreshMax&&C.refreshMax()}catch(_){}
 })();
