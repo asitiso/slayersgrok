@@ -65,7 +65,8 @@ C.buildAllies=()=>{const old={};B.allies.forEach(a=>old[a.k]=a.hp/a.max);B.allie
   S.party.slice(0,4).forEach(k=>{const c=D.COMPS.find(x=>x.k==k);B.allies.push({k,c,mul:C.compMul(k),spd:c.spd,max:C.MAXHP()*c.hp*(1+.1*((S.comps[k]||1)-1)),t:C.rand()})});
   B.allies.forEach(a=>{a.hp=a.max*(old[a.k]??1);a.dead=a.hp<=0});emit('allies')};
 C.refreshMax=()=>B.allies.forEach(a=>{const r=a.hp/a.max;a.max=a.k=='lina'?C.MAXHP():C.MAXHP()*a.c.hp*(1+.1*((S.comps[a.k]||1)-1));a.hp=r*a.max});
-const reviveAll=p=>B.allies.forEach(a=>{if(a.dead){a.dead=false;a.hp=a.max*p}else a.hp=Math.min(a.max,a.hp+a.max*p)});
+/* r841: companions' HP bars never moved. Root cause (logic, not display): (1) the field wave-clear reviveAll(.5) gave every living ally +50% of max HP every ~7s, but a companion only takes ~1-3% per wave, so each wave end erased it; (2) enemy single-target picks sent 40% to the leader + a random share, so Lina soaked ~52% of hits and each companion ~12%. C.R841.lina = leader-bias chance (was .4), C.R841.heal = field wave-clear heal for LIVING allies as a fraction of max (was .5). Dead allies still return at 50%; stage clear, boss start/fail, world boss, party wipe and every revive-all stay 100%. Healers, heal spell, potions, v36 revive and lifesteal are unchanged. */C.R841={lina:.2,heal:0};
+const reviveAll=(p,q)=>B.allies.forEach(a=>{if(a.dead){a.dead=false;a.hp=a.max*p}else a.hp=Math.min(a.max,a.hp+a.max*(q==null?p:q))});
 C.spawn=()=>{B.enemies=[];const i=S.si,mh=C.mobHP(i),ma=f(BAL.mobATK,i),fr=k=>i<7?1+((k||1)-1)*(i+1)/8:(k||1)/* r654 stage/field-only toughness; eased in over chapter 1 for a solo new Lina */;
   if(B.boss){const pl=D.BOSSPLAN[Math.floor(i/7)],b=D.BOSSES[pl[i%7==6?1:0]];const h=mh*BAL.bossHP*(i<7?.55+.45*i/7:1)*(b.s||1)*(i%7==6?BAL.chBoss:1)*fr(BAL.stBossHP);B.enemies.push({fac:b.fac,n:b.n,img:b.img,sc:b.sc,max:h,hp:h,atk:ma*BAL.bossATK*fr(BAL.stBossATK),spd:.7,t:-.8,boss:1});B.timer=BAL.bossTime}
   else{const n=BAL.swarm[0]+Math.floor(C.rand()*(BAL.swarm[1]-BAL.swarm[0]+1)),q=3/n;for(let j=0;j<n;j++){const pool=D.FIELDMON[D.FIELDS[i%D.FIELDS.length]].map(k=>D.MONS.find(x=>x.k==k)),m=pick(pool),h=mh*m.h/100*q*BAL.swarmHP*fr(BAL.fieldHP);B.enemies.push({res:j>=C.CAP?1:0,fac:m.fac,sc:m.sc,n:m.n,img:m.img,max:h,hp:h,atk:ma*q*fr(BAL.fieldATK),spd:.6+C.rand()*.3,t:-.6-C.rand()*.6,j,q})}if(n>=3&&C.rand()<.45){const e=B.enemies[B.enemies.length-n+1+Math.floor(C.rand()*(Math.min(n,C.CAP)-1))];if(e&&!e.boss){e.el=1;e.max*=3.5;e.hp=e.max;e.atk*=1.6}}}
@@ -85,7 +86,7 @@ const crit=()=>C.rand()*100<C.stat('crit');
 function allyAttack(a){const al=C.alive();if(!al.length)return;emit('atk',a);
   if(a.c&&a.c.healer){const low=C.aliveAllies().sort((x,y)=>x.hp/x.max-y.hp/y.max)[0];if(low&&low.hp<low.max*.75){const h=low.max*.08;low.hp=Math.min(low.max,low.hp+h);emit('heal',low,h);return}}
   const tg=a.c&&a.c.aoe?al:[al[0]];tg.forEach(t=>{const c=crit();C.hitEnemy(t,C.ATK()*a.mul*rnd(.9,1.1)*(c?2:1)*(tg.length>1?.6:1),c,a)})}
-function enemyAttack(e){const al=C.aliveAllies();if(!al.length)return;const t=C.rand()<.4?al[0]:pick(al);emit('eatk',e);
+function enemyAttack(e){const al=C.aliveAllies();if(!al.length)return;const t=C.rand()<C.R841.lina?al[0]:pick(al);emit('eatk',e);
   let d=Math.max(1,e.atk*(1-Math.min(.6,C.stat('def')/200))*rnd(.85,1.15)),kind='';const r=C.rand();if(r<BAL.dodge){d=0;kind='miss'}else if((t.k=='gourry'||t.k=='zelgadis')&&r<BAL.dodge+BAL.parry){d=0;kind='parry'}else if(r<BAL.dodge+BAL.parry+BAL.block){d*=.4;kind='block'}t.hp-=d;emit('dmgAlly',t,d,kind);if(t.hp<=0){t.hp=0;t.dead=true;emit('allyDead',t)}}
 C.castSpell=sp=>{if((B.cds[sp.k]||0)>0||B.lock>0)return false;if(!sp.heal&&!C.alive().length)return false;B.cds[sp.k]=sp.cd;C.mAdd('spell');
   if(sp.heal){C.aliveAllies().forEach(a=>{const h=a.max*sp.heal;a.hp=Math.min(a.max,a.hp+h);emit('heal',a,h)});emit('spell',sp,[]);return true}
@@ -110,7 +111,7 @@ C.tick=dt=>{
   if(B.boss){B.timer-=dt;if(B.timer<=0&&C.alive().length)return bossFail('시간 초과!')}
   if(!C.aliveAllies().length){if(B.boss)return bossFail('파티 전멸!');reviveAll(1);emit('toast','파티가 쓰러졌다… 재정비');B.lock=1.2;S.wave=0;return}
   {const al=C.alive().length;if(al<C.CAP&&B.lock<=0){const nx=B.enemies.find(e=>e.res);if(nx&&(B.rT=(B.rT||0)-dt)<=0){nx.res=0;nx.rf=1;nx.t=-.9;nx.j=B.rj=(B.rj||0)+1;B.rT=.35}}}
-  if(!C.alive().length&&!C.reserve()&&!B.boss){S.wave++;reviveAll(.5);B.lock=BAL.walk;emit('walk');if(S.wave>=BAL.waves&&C.canAutoBoss())C.startBoss()}
+  if(!C.alive().length&&!C.reserve()&&!B.boss){S.wave++;reviveAll(.5,C.R841.heal);B.lock=BAL.walk;emit('walk');if(S.wave>=BAL.waves&&C.canAutoBoss())C.startBoss()}
 };
 // ---- items
 C.rollRarity=()=>{let r=C.rand()*D.RAR.reduce((a,b)=>a+b.w,0);for(let i=0;i<D.RAR.length;i++){r-=D.RAR[i].w;if(r<=0)return i}return 0};
