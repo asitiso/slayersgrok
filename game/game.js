@@ -17,7 +17,7 @@ function toast(t){let q=$('#toastQ');if(!q){q=document.createElement('div');q.id
 function banner(t){if(/^LEVEL UP/.test(t)&&R.lvup)R.lvup();if(document.querySelector('.vic:not(.out)'))return;const d=document.createElement('div');d.className='banner';d.textContent=t;d.style.top=(150+(banN++%3)*44)+'px';if(/^LEVEL UP/.test(t)){if(document.querySelector('#battle .combo.dlo:not(.cbq):not(.cbo)'))d.classList.add('lvp');else{d.classList.add('lvb');G._dloOn&&G._dloOn()}}setTimeout(()=>banN=Math.max(0,banN-1),1600);$('#battle').appendChild(d);setTimeout(()=>d.remove(),1600)}let banN=0;
 function modal(html,cb){const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class=card>${html}<span class="btn wide" style="margin-top:12px">확인</span></div>`;m.onclick=e=>{if(e.target.closest('.btn')||e.target==m){m.remove();cb&&cb()}};$('#app').appendChild(m);return m}
 // core events -> renderer/UI
-Object.assign(C.ev,{hit:R.hit,kill:(e,...a)=>{R.kill(e,...a);if(e&&e.boss){R.hs=Math.max(R.hs||0,.6);if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash';document.body.appendChild(f);setTimeout(()=>f.remove(),700)}}},atk:R.atk,eatk:R.atk,dmgAlly:R.dmgAlly,heal:R.heal,spell:R.spell,walk:R.walk,banner,toast,clear:()=>{renderPanel();resultPop(1)},fail:()=>{renderPanel();resultPop(0)}});
+Object.assign(C.ev,{hit:R.hit,kill:(e,...a)=>{R.kill(e,...a);if(e&&e.boss){R.applyHs(.6,'boss');if(!R.opt||R.opt.fx){const f=document.createElement('div');f.className='bkflash';document.body.appendChild(f);setTimeout(()=>f.remove(),700)}}},atk:R.atk,eatk:R.atk,dmgAlly:R.dmgAlly,heal:R.heal,spell:R.spell,walk:R.walk,banner,toast,clear:()=>{renderPanel();resultPop(1)},fail:()=>{renderPanel();resultPop(0)}});
 C.deferHit=R.deferHit;
 // ---------- HUD
 let _sk833=null;function _skEls833(){const box=document.getElementById('skills');if(_sk833&&_sk833.length&&_sk833[0]&&_sk833[0].isConnected)return _sk833;_sk833=box?box.querySelectorAll('.sk'):[];return _sk833}
@@ -294,7 +294,7 @@ let lastSig='';setInterval(()=>{const s=C.S();if(JSON.stringify(C.spells().map(x
   if(G.screen){document.querySelectorAll('#screen .timer[data-end]').forEach(t=>{const r=(+t.dataset.end-C.now())/1000;t.textContent=tfmt(r);if(r<=0)renderScreen()});if(G.screen=='base'){C.bUpdate()}return}
   const ro=$('#navroll');if(ro)ro.lastChild.textContent;if(!['train','mission'].includes(G.tab)||document.querySelector('.modal'))return;const sig=JSON.stringify([G.tab,s.si,s.maxSi,s.wave,B.boss,s.autoBoss,s.lv,Math.floor(s.exp/C.needExp()*20),D.STATS.map(x=>s.gold>=C.cost(x)),s.mp,s.mc,s.party]);if(sig!==lastSig){lastSig=sig;renderPanel()}},1000);
 let last=performance.now();
-function frame(now){const real=Math.min(.1,(now-last)/1000);last=now;let dt=real*G.speed;if(R.hs>0){R.hs-=real;dt*=.08};if(G.perfOn)try{G.tick837(real)}catch(_){}R.hsRealDt=real;{const ci=!!((R.cut&&R.cut.t<1.25)||(R.ccut&&R.ccut.t<1));if(ci!==G._ci){G._ci=ci;document.body.classList.toggle('cutin',ci)}}while(dt>0){const st=Math.min(.05,dt);C.tick(st);dt-=st}/* r237 perf: an opaque full screen covers the battle - skip canvas drawing (sim untouched; last frame stays underneath) */if(!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&$('#screen').classList.contains('on'))){/* r239 perf: first frame back after a skip - settle the unseen visual backlog instead of drawing it as one burst */if(G._skT>.3&&R.settle)R.settle();G._skT=0;R.frame(real*G.speed*(R.hs>0?.08:1))}else G._skT=(G._skT||0)+real;try{G.hudBattle832&&G.hudBattle832()}catch(_){};if((G._hT=(G._hT||0)+real)>=1){G._hT=0;updateHud()}requestAnimationFrame(frame)}
+function frame(now){const real=Math.min(.1,(now-last)/1000);last=now;const pace839=(D.BAL&&D.BAL.pace839)>0?D.BAL.pace839:1;let dt=real*G.speed*pace839;if(R.hs>0){R.hs-=real;dt*=.08};if(G.perfOn)try{G.tick837(real)}catch(_){}R.hsRealDt=real;{const ci=!!((R.cut&&R.cut.t<1.25)||(R.ccut&&R.ccut.t<1));if(ci!==G._ci){G._ci=ci;document.body.classList.toggle('cutin',ci)}}while(dt>0){const st=Math.min(.05,dt);C.tick(st);dt-=st}/* r237 perf: an opaque full screen covers the battle - skip canvas drawing (sim untouched; last frame stays underneath) */if(!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&$('#screen').classList.contains('on'))){/* r239 perf: first frame back after a skip - settle the unseen visual backlog instead of drawing it as one burst */if(G._skT>.3&&R.settle)R.settle();G._skT=0;R.frame(real*G.speed*pace839*(R.hs>0?.08:1))}else G._skT=(G._skT||0)+real;try{G.hudBattle832&&G.hudBattle832()}catch(_){};if((G._hT=(G._hT||0)+real)>=1){G._hT=0;updateHud()}requestAnimationFrame(frame)}
 (document.fonts?document.fonts.load('700 16px Maplestory').then(()=>document.fonts.ready):Promise.resolve()).catch(()=>{}).then(()=>requestAnimationFrame(frame));
 
 ;(()=>{const SEL='.side a,#mgrid a,#nav a,.sk,#autoSp,#idleBtn,.pill,.btn,#bossBtn,.back';let cur=null;
@@ -10529,7 +10529,7 @@ G.bakPill786=bake;G.szPill786=SZ;G.swPill786=SW;G.colPill786=COL;G.isPill786=isL
 })();
 
 ;(()=>{/* r787: combat-feel / hit-weight vs 화룡전. Audit: basics already stay light (shake 1.2, no R.hs, no flash). Crits get a 55ms combat hit-stop (R.hs, 350ms cooldown) plus a short render freeze and a 6px random shake, but no directed kick. Skills and 필살기 (드래곤 슬레이브 / 기가 슬레이브) add a large random shake and a short render-only freeze, so they rumble instead of landing with weight. Effect-off (tglite / nofx / fxoff) still lets that shake through and leaves a sliver of flash. Change-only, presentation only: a tiered, directed camera punch and a short render-only freeze on crit / skill / 필살기, so basics stay light. One punch at a time (a heavier tier may replace a lighter one; same or lighter is ignored — no multi-hit stack). Punch life is capped and decays with the already speed-scaled render dt, so ×2 auto play is not slowed. Combat hit-stop (R.hs), damage, HP, C.tick, C.deferHit, rewards and boss presence are untouched. Effect-off: no punch, no shake, no flash. */
-const TIER={crit:1,skill:2,ult:3},AMP=[0,4,7,12],LIFE=[0,.07,.1,.14],VIS=[0,.05,.07,.1],CAP=.14;
+const TIER={crit:1,skill:2,ult:3},AMP=[0,4,7,12],LIFE=[0,.07,.1,.14],VIS=[0,0,0,.1],CAP=.14;/* r839: render freeze only on 필살기, not crit/skill/kills */
 const lite=()=>{const b=document.body&&document.body.classList;return !!(b&&(b.contains('tglite')||b.contains('nofx')||b.contains('fxoff'))||(R.opt&&R.opt.fx===false))};
 let tier=0,t=0,life=0,vis=0,pend=0,pendT=0,px=0,py=0;
 const xy=()=>{if(t<=0||life<=0){px=0;py=0;return}const u=t/life,k=u*u;px=0;py=AMP[tier]*k};
@@ -11921,4 +11921,8 @@ G.r831ok=1;
     if(taps>=4){taps=0;G.togglePerf837()}
   },{passive:true})}catch(_){}
   G.r837ok=1;
+})();
+
+;(()=>{/* r839: hit-stop and vis-freeze only on ultimates and boss kills (1.5s gap). Crits, normal/double/multi kills, combos and toasts never freeze. Burst FX are capped, pooled, and spawned across frames. Global battle pace D.BAL.pace839=1/1.2 scales combat+render dt (stacks with the ×1/×2 button). Combat numbers, in-game intervals and rewards stay the same; idle/offline uses wall-clock and is unchanged. */
+  G.r839ok=1;
 })();
