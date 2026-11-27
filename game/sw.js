@@ -2,7 +2,7 @@
    - HTML / JS / CSS / manifest (same origin): network-first, cache is only the offline / slow-network fallback.
    - Images, fonts, audio (same origin): cached copy first, refreshed in the background (versioned cache name).
    - Everything cross-origin (Supabase, Google sign-in, CDN) and any /auth /api path or OAuth callback URL: not touched at all. */
-const V = 'v836';
+const V = 'v837';
 const CODE = 'slayers-code-' + V;
 const STATIC = 'slayers-static-' + V;
 const MAX_STATIC = 500;

@@ -294,7 +294,7 @@ let lastSig='';setInterval(()=>{const s=C.S();if(JSON.stringify(C.spells().map(x
   if(G.screen){document.querySelectorAll('#screen .timer[data-end]').forEach(t=>{const r=(+t.dataset.end-C.now())/1000;t.textContent=tfmt(r);if(r<=0)renderScreen()});if(G.screen=='base'){C.bUpdate()}return}
   const ro=$('#navroll');if(ro)ro.lastChild.textContent;if(!['train','mission'].includes(G.tab)||document.querySelector('.modal'))return;const sig=JSON.stringify([G.tab,s.si,s.maxSi,s.wave,B.boss,s.autoBoss,s.lv,Math.floor(s.exp/C.needExp()*20),D.STATS.map(x=>s.gold>=C.cost(x)),s.mp,s.mc,s.party]);if(sig!==lastSig){lastSig=sig;renderPanel()}},1000);
 let last=performance.now();
-function frame(now){const real=Math.min(.1,(now-last)/1000);last=now;let dt=real*G.speed;if(R.hs>0){R.hs-=real;dt*=.08}R.hsRealDt=real;{const ci=!!((R.cut&&R.cut.t<1.25)||(R.ccut&&R.ccut.t<1));if(ci!==G._ci){G._ci=ci;document.body.classList.toggle('cutin',ci)}}while(dt>0){const st=Math.min(.05,dt);C.tick(st);dt-=st}/* r237 perf: an opaque full screen covers the battle - skip canvas drawing (sim untouched; last frame stays underneath) */if(!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&$('#screen').classList.contains('on'))){/* r239 perf: first frame back after a skip - settle the unseen visual backlog instead of drawing it as one burst */if(G._skT>.3&&R.settle)R.settle();G._skT=0;R.frame(real*G.speed*(R.hs>0?.08:1))}else G._skT=(G._skT||0)+real;try{G.hudBattle832&&G.hudBattle832()}catch(_){};if((G._hT=(G._hT||0)+real)>=1){G._hT=0;updateHud()}requestAnimationFrame(frame)}
+function frame(now){const real=Math.min(.1,(now-last)/1000);last=now;let dt=real*G.speed;if(R.hs>0){R.hs-=real;dt*=.08};if(G.perfOn)try{G.tick837(real)}catch(_){}R.hsRealDt=real;{const ci=!!((R.cut&&R.cut.t<1.25)||(R.ccut&&R.ccut.t<1));if(ci!==G._ci){G._ci=ci;document.body.classList.toggle('cutin',ci)}}while(dt>0){const st=Math.min(.05,dt);C.tick(st);dt-=st}/* r237 perf: an opaque full screen covers the battle - skip canvas drawing (sim untouched; last frame stays underneath) */if(!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&$('#screen').classList.contains('on'))){/* r239 perf: first frame back after a skip - settle the unseen visual backlog instead of drawing it as one burst */if(G._skT>.3&&R.settle)R.settle();G._skT=0;R.frame(real*G.speed*(R.hs>0?.08:1))}else G._skT=(G._skT||0)+real;try{G.hudBattle832&&G.hudBattle832()}catch(_){};if((G._hT=(G._hT||0)+real)>=1){G._hT=0;updateHud()}requestAnimationFrame(frame)}
 (document.fonts?document.fonts.load('700 16px Maplestory').then(()=>document.fonts.ready):Promise.resolve()).catch(()=>{}).then(()=>requestAnimationFrame(frame));
 
 ;(()=>{const SEL='.side a,#mgrid a,#nav a,.sk,#autoSp,#idleBtn,.pill,.btn,#bossBtn,.back';let cur=null;
@@ -11848,4 +11848,77 @@ G.r831ok=1;
   const scr=()=>{try{const b=document.getElementById('battle');if(!b)return;const on=!!(G.screen&&G.screen!=='sim');if(b._scr836!==on){b._scr836=on;b.classList.toggle('menu836',on)}}catch(_){}};
   try{const of=typeof R!=='undefined'&&R.frame;if(typeof of==='function')R.frame=function(dt){const r=of.apply(this,arguments);try{scr()}catch(_){}return r}}catch(_){}
   G.scr836=scr;G.r836ok=1;
+})();
+
+;(()=>{/* r837: structural motion-timing pass. Auto-battle basics were freezing the whole scene every 0.1–0.2s (incoming R.hs=.09 and melee vis-hs of 40–70ms on a combined hit cadence of that period). Hit-stop is now limited to crit / ult / kill / other big beats, with a 0.5s cooldown. Combat numbers, in-game intervals and rewards stay the same. Cheap-when-off perf overlay: ?perf=1 or 4 taps in the bottom-left corner. */
+  G.perfOn=0;
+  try{if(/(?:^|[?&])perf=1(?:&|$)/.test(location.search||''))G.perfOn=1}catch(_){}
+  let el=null,cvs=null,c2=null,txt=null;
+  const N=90,FT=new Float32Array(N);
+  let i=0,n=0,lastW=0,fps=0,p95=0,hsPs=0,visPs=0,hsMark=0,visMark=0,paintT=0;
+  const hide=()=>{if(el&&el.parentNode)el.parentNode.removeChild(el);el=null;cvs=null;c2=null;txt=null;n=0;i=0;lastW=0;paintT=0};
+  const ensure=()=>{
+    if(el||!G.perfOn||!document.body)return;
+    el=document.createElement('div');el.id='perf837';
+    el.setAttribute('aria-hidden','true');
+    el.style.cssText='position:fixed;left:6px;top:6px;z-index:99999;pointer-events:none;background:rgba(0,0,0,.66);color:#b8ffb8;font:11px/1.3 ui-monospace,Menlo,Consolas,monospace;padding:5px 7px 4px;border-radius:6px;min-width:116px;text-shadow:0 1px 1px #000';
+    txt=document.createElement('div');el.appendChild(txt);
+    cvs=document.createElement('canvas');cvs.width=116;cvs.height=28;
+    cvs.style.cssText='display:block;width:116px;height:28px;margin-top:3px';
+    el.appendChild(cvs);c2=cvs.getContext&&cvs.getContext('2d');
+    document.body.appendChild(el);
+    txt.textContent='FPS --  p95 --ms\nhs/s 0  freeze/s 0';
+    hsMark=R&&R._hsN||0;visMark=R&&R._visN||0;lastW=0;
+  };
+  const p95of=()=>{
+    if(!n)return 0;
+    const a=new Float32Array(n);
+    if(n<N){for(let k=0;k<n;k++)a[k]=FT[k]}
+    else{for(let k=0;k<N;k++)a[k]=FT[(i+k)%N]}
+    a.sort();
+    return a[Math.min(n-1,Math.max(0,(n*.95)|0))];
+  };
+  G.tick837=real=>{
+    if(!G.perfOn)return;
+    ensure();if(!el)return;
+    const ms=Math.max(0,(real||0)*1000);
+    FT[i]=ms;i=i+1>=N?0:i+1;if(n<N)n++;
+    lastW+=(real||0);
+    if(lastW>=1){
+      const hsN=R&&R._hsN||0,visN=R&&R._visN||0;
+      hsPs=hsN-hsMark;visPs=visN-visMark;hsMark=hsN;visMark=visN;
+      fps=n?1000/(FT.length&&lastW? (function(){let s=0,c=0;const m=n<N?n:N;for(let k=0;k<m;k++){s+=FT[k];c++}return c?s/c:16.7})() :16.7):0;
+      /* fps from last 1s of samples in the ring */
+      {let s=0,c=0,m=n<N?n:N;for(let k=0;k<m;k++){const v=n<N?FT[k]:FT[(i+k)%N];if(v>0){s+=v;c++}}fps=c?1000/(s/c):0}
+      p95=p95of();
+      lastW=0;
+    }
+    paintT+=(real||0);
+    if(paintT<0.2||!txt)return;
+    paintT=0;
+    txt.textContent='FPS '+fps.toFixed(0)+'  p95 '+p95.toFixed(0)+'ms\nhs/s '+hsPs+'  freeze/s '+visPs;
+    if(!c2)return;
+    const w=cvs.width,h=cvs.height,m=n<N?n:N;
+    c2.clearRect(0,0,w,h);
+    c2.fillStyle='rgba(255,255,255,.12)';c2.fillRect(0,0,w,h);
+    c2.strokeStyle='rgba(80,255,80,.35)';c2.beginPath();const y16=h-16.7/50*h;c2.moveTo(0,y16);c2.lineTo(w,y16);c2.stroke();
+    for(let k=0;k<m;k++){
+      const v=n<N?FT[k]:FT[(i+k)%N];
+      const x=k/Math.max(1,m-1)*w,y=h-Math.max(1,Math.min(h,v/50*h));
+      c2.fillStyle=v>33?'#f66':v>20?'#fc6':'#6f6';
+      c2.fillRect(x,y,Math.max(1,w/m),h-y);
+    }
+  };
+  G.togglePerf837=on=>{
+    G.perfOn=on==null?(G.perfOn?0:1):(on?1:0);
+    if(!G.perfOn)hide();else try{G.tick837(0)}catch(_){}
+  };
+  /* hidden toggle: 4 taps in the bottom-left 48px corner within 1.2s */
+  let taps=0,tapT=0;
+  try{document.addEventListener('pointerdown',e=>{
+    const x=e.clientX,y=e.clientY;if(!(x>0&&y>0)||x>48||y<(innerHeight-48))return;
+    const now=performance.now();if(now-tapT>1200)taps=0;tapT=now;taps++;
+    if(taps>=4){taps=0;G.togglePerf837()}
+  },{passive:true})}catch(_){}
+  G.r837ok=1;
 })();
