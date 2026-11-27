@@ -220,10 +220,10 @@ function renderScreen(first){const k=G.screen,el=$('#screen'),s=C.S();if(!k)retu
    let body='';
    if(G.enTab=='gear'){const sl=D.SLOTS.filter(x=>s.gear[x.k]);G.enSel=s.gear[G.enSel]?G.enSel:(sl[0]&&sl[0].k);const it=s.gear[G.enSel];
      body=`<div class=card><div class=engrid>${sl.map(x=>{const g=s.gear[x.k];return `<div class="eni ${x.k==G.enSel?'sel':''}" data-es=${x.k} style="--rc:${D.RAR[g.r].c}"><img src="${A}${x.img}" style="${x.f?'filter:'+x.f:''}"><b>+${g.en||0}</b></div>`}).join('')||'<div class=empty style="grid-column:1/-1"><img src="assets/ic3_anvil.png"><b>장착한 장비가 없습니다</b><small>마정구로 장비를 뽑아 장착하면 여기서 강화할 수 있어요</small><span class="pill green" id=goRoll>장비 뽑으러 가기</span></div>'}</div></div>`;if(!sl.length)body+=`<div class="card en535"><div class=ttl>장비 슬롯 <small>0/${D.SLOTS.length} 장착</small></div><div class=en535g>${D.SLOTS.map(x=>`<div class=en535s><img src="${A}${x.img}"><small>${x.n}</small><i>${x.st=='atk'?'공격력':'체력'}</i></div>`).join('')}</div><p class=en535h>슬롯마다 장비 1개를 장착할 수 있어요. 장착한 장비는 골드와 강화석으로 +단계를 올려 능력치를 키웁니다.</p></div>`;
-     if(it){const c=C.enCost(it),r=C.enRate(it),n=it.en||0,cur=Math.round(it.v*(1+.1*n)),nx=Math.round(it.v*(1+.1*(n+1)));
+     if(it){const c=C.enCost(it),r=C.enRate(it),n=it.en||0,cur=Math.round(it.v*C.enMul(n)),nx=Math.round(it.v*C.enMul(n+1))/* r842: diminishing 강화 steps */;
       body+=`<div class="card anvil"><div class=anvilv><img class=av1 src="${A}ic3_anvil.png"><div class=eqbig style="--rc:${D.RAR[it.r].c}"><img src="${A}${D.SLOTS.find(q=>q.k==it.slot).img}"></div></div>
       <div class=ttl style="justify-content:center">${it.name} <span style="color:#ffd66a">+${n}</span></div>
-      <div class=enstat><span>${it.st=='atk'?'공격력':'체력'}</span><b>${fmt(cur)}</b><i>▶</i><b style="color:#7dff8a">${n>=15?'MAX':fmt(nx)}</b></div>
+      <div class=enstat><span>${it.st=='atk'?'공격력':'체력'}</span><b>${fmt(cur)}</b><i>▶</i><b style="color:#7dff8a">${n>=15?'MAX':fmt(nx)}</b></div>${G.sec842txt?G.sec842txt(it.slot,n):''}
       <div class=enstat><span>성공 확률</span><b style="color:${r<1?'#ffb84a':'#7dff8a'}">${Math.round(r*100)}%</b><span style="opacity:.7">실패 시 재료만 소모</span></div>
       <div class=encost>${gi} ${fmt(c.g)} &nbsp; ${si} ${c.st}</div>
       <span class="pill green wide ${n>=15||s.gold<c.g||(s.stone||0)<c.st?'off':''}" id=enGo>${n>=15?'최대 강화':'강화하기'}</span><span class="pill wide" id=enAll style="margin-top:6px"><img class="emi e_ui_bolt" src=assets/ui_bolt.png alt="">일괄 강화 (최저 단계부터)</span></div>`}}
@@ -5648,7 +5648,7 @@ const row=document.createElement('div');row.className='sum487';row.innerHTML=D.R
 
 ;(()=>{/* r488 display-only: enhance stat line (cur ▶ next) synced to the real post-enhance value right after success; summon result 확인 pulled up */
 const cs=document.createElement('style');cs.textContent=`html body #sumModal.srm .sum487+.srall[style*="none"]+.btn.wide,html body #sumModal.srm .sum487+.btn.wide{margin-top:10px!important}`;document.head.appendChild(cs);
-const oe=C.enhance;C.enhance=function(k){const r=oe.apply(this,arguments);try{if(r=='ok'&&G.screen=='enhance'&&k==G.enSel){const it=C.S().gear[k],st=document.querySelector('#screen .card.anvil .enstat');if(it&&st){const n=it.en||0,b=st.querySelectorAll('b');if(b.length>=2){b[0].textContent=fmt(Math.round(it.v*(1+.1*n)));b[1].textContent=n>=15?'MAX':fmt(Math.round(it.v*(1+.1*(n+1))))}}}}catch(_){}return r}})();
+const oe=C.enhance;C.enhance=function(k){const r=oe.apply(this,arguments);try{if(r=='ok'&&G.screen=='enhance'&&k==G.enSel){const it=C.S().gear[k],st=document.querySelector('#screen .card.anvil .enstat');if(it&&st){const n=it.en||0,b=st.querySelectorAll('b');if(b.length>=2){b[0].textContent=fmt(Math.round(it.v*C.enMul(n)));b[1].textContent=n>=15?'MAX':fmt(Math.round(it.v*C.enMul(n+1)));const s2=st.parentNode&&st.parentNode.querySelector('.sec842');if(s2&&G.sec842txt){const t=document.createElement('div');t.innerHTML=G.sec842txt(k,n);if(t.firstChild)s2.replaceWith(t.firstChild)}}}}}catch(_){}return r}})();
 ;(()=>{/* r488 display-only: mail sender tag as a coloured chip (운영/이벤트/기타) like 화룡전 mailbox; expiry chip turns red when under a day left (text parsed from the existing label, no new data) */
 const cs=document.createElement('style');cs.textContent=`
 #screen .mgc .mlm>b .mtg488{display:inline-block;margin-right:5px;padding:0 6px;border-radius:7px;font:900 10.5px/16px Maplestory,'Noto Sans KR',sans-serif;color:#fff;background:#3a8fe0;box-shadow:inset 0 0 0 1px #0b0d0f80;text-shadow:0 1px 0 #0006;vertical-align:1px}
@@ -11969,4 +11969,28 @@ let depth=0,carry=0;
 {const base=Object.assign({},C.SHV),T={};for(const g of Object.keys(base))Object.defineProperty(T,g,{enumerable:true,get(){const k=K().shard;return k===1?base[g]:Math.max(1,Math.round(base[g]*k))}});C.SHV=T}
 G.g840={K,raw:()=>raw};G.r840ok=1;
 try{C.refreshMax&&C.refreshMax()}catch(_){}
+})();
+;(()=>{/* r842: one difficulty curve (voice request t203–t207). Enemy ATK follows the expected (kept-up) growth curve C.R842.ref instead of a fixed 1.42^i, so the gap between the player and the curve decides who dies;
+  field wipes are real defeats (2 on one stage → fall back one stage, auto boss waits like a boss fail) with a reason and a 'what to upgrade' hint; boss DEFEAT shows the same hint.
+  Knobs live in core.js C.R842 (en steps, slot secondaries, companion HP/DEF per level, ref curve, fA/bA, waveHeal .5, wipeRetreat). Rewards, costs, drop rates and the save format are unchanged (new optional keys S.wp842 and S.stats.wipes842 only). */
+const B=C.B,K=()=>C.R842;
+C.refAtk842=i=>K().ref.a0*Math.pow(K().ref.ga,i);C.refHp842=i=>K().ref.h0*Math.pow(K().ref.gh,i);
+/* expected 강화 average per slot and 동료 level at stage i (kept-up profile, headless sim) */
+/* growth index: geometric mean of Lina ATK and HP against the curve (1 = on the curve). Enemy damage is tied to the same curve, so this is the death threshold axis. */
+C.gIdx842=i=>Math.sqrt(C.ATK()/C.refAtk842(i)*C.MAXHP()/C.refHp842(i));
+C.refEn842=i=>Math.max(0,(i-15)*.8);C.refClv842=i=>1+Math.max(0,(i-10)*.9);
+{const os=C.spawn;C.spawn=function(){const r=os.apply(this,arguments);try{const R=K().ref;if(R.on&&!B.rb&&!B.wb&&!B.br){const i=C.S().si,m=G.d825?G.d825(i):{fa:1,ba:1},h=C.refHp842(i);
+  B.enemies.forEach(e=>{if(e.tg||e.wb)return;e.atk=e.boss?R.bA*h*m.ba:(i<7&&R.fA1?R.fA1:R.fA)*h*(e.q||1)*(e.el?1.6:1)*m.fa})}}catch(_){}return r}}
+const SEC={staff:['주무기','공격력 전담'],orb:['주문 피해','+{v}%',100],ring:['치명타','+{v}%p',1],tiara:['동료 공격력','+{v}%',100],cape:['받는 피해 감소','-{v}%p',100],boots:['회피','+{v}%p',100],amulet:['회복량','+{v}%',100],glove:['막기','+{v}%p',100]};
+G.sec842txt=(slot,n)=>{const d=SEC[slot];if(!d)return '';const per=(K().sec[slot]||0)*(d[2]||0),v=x=>(Math.round(x*per*10)/10);const t=d[2]?`${d[0]} <b>${d[1].replace('{v}',v(n))}</b> ▶ <b style="color:#7dff8a">${n>=15?'MAX':d[1].replace('{v}',v(n+1))}</b>`:`${d[0]} · ${d[1]}`;return `<div class=sec842 style="text-align:center;font-size:12px;opacity:.85;margin-top:2px">보조 효과 · ${t}</div>`};
+/* weakest growth axis vs the curve at the current stage → hint text */
+G.hint842=()=>{const s=C.S(),i=s.si,g=Object.values(s.gear||{}).filter(Boolean),en=g.length?g.reduce((a,it)=>a+(it.en||0),0)/8:0,cl=(s.party||[]).length?(s.party.reduce((a,k)=>a+((s.clv||{})[k]||1),0)/s.party.length):1;
+  const ax=[{k:'atk',r:C.ATK()/C.refAtk842(i),t:'마력 수련 (경지)'},{k:'hp',r:C.MAXHP()/C.refHp842(i),t:'체력 수련 (경지)'},{k:'gear',r:g.length>=6?1:g.length/8,t:'장비 칸 채우기 (마정구 뽑기)'},{k:'en',r:(1+en)/(1+C.refEn842(i)),t:'장비 강화'},{k:'comp',r:cl/C.refClv842(i),t:'동료 레벨업'}];
+  ax.sort((a,b)=>a.r-b.r);const pow=C.POW(),req=C.stageReq?C.stageReq(i):0;return {pow,req,ratio:req?pow/req:1,weak:ax[0],axes:ax,text:`전투력 ${fmt(pow)} / 권장 ${fmt(req)} · 가장 부족: ${ax[0].t}`}};
+const card=(title,sub,hint)=>{try{if(G.screen)return;document.querySelectorAll('.vic.w842').forEach(x=>x.remove());const d=document.createElement('div');d.className='vic lose w842';d.innerHTML=`<div class=vt>${title}</div><div class=vs>${sub}</div><div class=vn>${hint}</div>`;document.body.appendChild(d);d.addEventListener('click',()=>d.remove());setTimeout(()=>d.classList.add('out'),2600);setTimeout(()=>d.remove(),3000)}catch(_){}};
+{const ow=C.ev.wipe842;C.ev.wipe842=function(o){try{const h=G.hint842(),nm=C.stageName(o.si);G.last842={o,h};
+  if(o.retreat)card('전멸',`${nm}에서 두 번 전멸 · ${C.stageName(C.S().si)}로 후퇴`,h.text);else card('전멸',`${nm} 재정비 · 한 번 더 전멸하면 이전 스테이지로 후퇴`,h.text)}catch(_){}return ow&&ow.apply(this,arguments)}}
+{const of=C.ev.fail;C.ev.fail=function(){const r=of&&of.apply(this,arguments);try{const h=G.hint842();G.last842={boss:1,h};const put=()=>{const v=document.querySelector('.vic.lose:not(.w842) .vn');if(v){v.textContent=h.text;return 1}};if(!put()){setTimeout(put,120);setTimeout(put,900)}}catch(_){}return r}}
+/* first field wipe: the old toast stays (wave 0, full HP); suppress nothing else */
+G.r842ok=1;
 })();
