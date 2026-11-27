@@ -1073,3 +1073,29 @@ Same gap as r694, on the return popup. When you reopen the game, 어서 오세�
   - SETUP `C.POW()`는 전후 모두 35930. 처치 150 vs 133은 같은 150초 안의 진행 편차이며 전투식은 바꾸지 않음.
 - 서비스 워커 캐시 v835.
 - 테스트 qa618/r835.js: 플래그, font/캔버스 가드, 자동 dpr 상한, qlo 클래스, 전투 클록 유지. `G.noSave`.
+
+## r836 — 전투 화면 Recalc Style / CSS 애니메이션
+
+r835 뒤에도 헤드리스 25초 타임라인에서 UpdateLayoutTree가 약 11.6초, CSS Animation 이벤트가 약 3000회였다. 사용자가 남은 끊김도 고치고 배포해 달라고 해서, 레이아웃·스타일 재계산을 줄이는 패스를 이어서 넣었다. 실제 기기 결과가 아님. 전투 수치·타이밍·보상·저장 형식은 그대로이고, 보이는 연출은 기본적으로 같다.
+
+- 원인 (헤드리스 r835 대비, 390×844, 캔버스 dpr 1.5, CPU 4배, SwiftShader. 실제 기기 아님):
+  - 매 프레임 `style.width`로 쓰는 막대: 스테이지/보스 HP(`#stBar`), 보스 타이머(`#tBar`), 파티 HP(`.hpb i`). 전역 `.bar i{transition:width .15s}`까지 겹쳐 width 보간이 레이아웃을 계속 일으킴. `$sw`의 값 비교는 되지만 HP·타이머는 매 프레임 문자열이 달라진다.
+  - 보스 `$('#stInfo')`에 `toFixed(2)` 초를 매 프레임 써서 텍스트 레이아웃이 남았다.
+  - 스킬 쿨 스윕 `--cdp`는 0.1% 단위, 레디 플래시는 `void el.offsetWidth`로 강제 리플로우.
+  - 무한 애니메이션 중 레이아웃/페인트가 비싼 것: 임무 `.mission.ready`의 `mready`(box-shadow)와 `mshine`(`left` 이동), 피버 풀 `filter:brightness`, 저체력 `.pp.dng`의 box-shadow 펄스.
+  - `frame()`의 `body.cutin`/`body.lcut` 토글은 컷인 시작·끝에만 일어나서, 매 프레임 비용은 막대 width와 무한 CSS가 훨씬 크다. 바디 클래스를 `#battle`로 옮기려다 XP 오브·킬 배너·가이드 검사가 깨질 수 있어 이 부분은 빼 두었다.
+- 수정:
+  - 전투 HUD 막대(경험치·스테이지/보스 HP·보스 타이머·파티 HP·피버)는 `transform:scaleX`로 채운다. 0.5% 단위, 값 같으면 생략. width 트랜지션은 끈다.
+  - 보스 타이머 텍스트는 0.05초 단위로만 갱신(표시는 기존처럼 소수 둘째 자리).
+  - `--cdp`는 1% 단위. 레디 플래시는 rAF로 클래스를 다시 넣으며 강제 리플로우는 제거.
+  - HUD 상자에 `contain: layout style`(넘치는 글로우는 paint 생략).
+  - 임무 샤인·피버 풀·저체력 테두리는 transform/opacity만 애니메이션. 메뉴가 스테이지를 가리면 `#battle.menu836`으로 무한 HUD 애니메이션을 일시 정지.
+  - 컷인 클래스(`cutin`/`lcut`)는 `document.body`에 그대로 둔다. `#battle`로 옮기면 바디 레벨 XP 오브(`body.lcut .xpo`), 킬 배너 위치, 가이드 숨김 검사가 깨져서 이 부분은 빼 두었다.
+- 헤드리스 전후(같은 조건, UpdateLayoutTree는 25초 트레이스 창). 실제 기기 결과가 아님. SwiftShader라 프레임 간격 중앙값은 이 환경의 그리기 하한에 가깝다.
+  - 25초 트레이스 창 UpdateLayoutTree 11640→11006ms(−5.4%), Layout 391→337ms(횟수 493→378). CSS Animation 이벤트 3614→2448(−32%).
+  - 프레임 1403→1511. 간격 평균 106.1→99.4ms, p90 166.6→150ms, 100ms 초과 585→535, 150ms 초과 151→131, 200ms 초과 43→31. 중앙값은 둘 다 약 100ms(이 환경 SwiftShader 하한).
+  - 가장 바깥 `R.frame` 최대 145.8→126.8ms, 평균 17.55→18.56ms. HUD 평균 3.69→3.50ms. `drawImage` 프레임당 311→294.
+  - 롱태스크 907→971회, 합 74167→80319ms로 이 런에서는 늘었다. 한 프레임 최대 간격도 350→400ms. 전투 진행 편차(처치 133 vs 156)와 샘플 흔들림이 있어 개선으로 보지 않는다.
+  - SETUP `C.POW()`는 전후 모두 35930.
+- 서비스 워커 캐시 v836.
+- 테스트 qa618/r836.js: bar836, scaleX 경험치 막대, 컷인 클래스는 body 유지, 전투 클록 유지. `G.noSave`.
