@@ -11390,13 +11390,18 @@ G.fit822ok=1;G._fit817orig=f817;
 const doc=document,root=doc.documentElement;
 const iosSA=()=>{try{const u=navigator.userAgent||'';return navigator.standalone===true&&(/iPad|iPhone|iPod/.test(u)||(/Macintosh/.test(u)&&(navigator.maxTouchPoints||0)>1))}catch(_){return false}};
 G.iosSA843=iosSA;
+/* r844: the r843 stage was cut off at the old short height (793 of 852 on an iPhone 15 Pro): body.sa817 is position:fixed;inset:0, so its box (overflow:hidden) is only as tall as the short layout viewport and clips the taller stage, while the html background still paints the whole screen. So when the visible height is raised to the screen height, the body box gets that same explicit height (!important inline, bottom:auto); undone whenever the raise is not needed. */
+let b843=0;const body843=h=>{try{const b=doc.body;if(!b)return;if(h){if(b843!==h||b.style.getPropertyPriority('height')!=='important'||root.style.getPropertyPriority('height')!=='important'){[root,b].forEach(e=>{e.style.setProperty('height',h+'px','important');e.style.setProperty('min-height',h+'px','important')});b.style.setProperty('bottom','auto','important');b843=h}}else if(b843){[root,b].forEach(e=>{e.style.removeProperty('height');e.style.removeProperty('min-height')});b.style.removeProperty('bottom');b843=0}}catch(_){}};
+/* the real large viewport, measured: a fixed 100lvh probe (iOS standalone keeps 100lvh / 100vh at the full screen while innerHeight / 100dvh are short by the status bar; same finding as WebKit bug 313800 and public iOS 26 PWA reports); screen.height is the fallback */
+let _lv=null;const lvh=()=>{try{if(!(window.CSS&&CSS.supports&&CSS.supports('height','100lvh')))return 0;if(!_lv||!_lv.isConnected){_lv=doc.createElement('div');_lv.setAttribute('aria-hidden','true');_lv.style.cssText='position:fixed;left:0;top:0;width:0;height:100lvh;visibility:hidden;pointer-events:none;z-index:-1';(doc.body||root).appendChild(_lv)}return _lv.getBoundingClientRect().height||0}catch(_){return 0}};
+G.body843=()=>b843;
 const v0=G.view822,i0=G.insets817;
 G.view843=()=>{const V=v0();if(!iosSA())return V;try{const a=screen.width,b=screen.height;if(!(a>=200&&b>=200))return V;const land=innerWidth>innerHeight,sW=land?Math.max(a,b):Math.min(a,b),sH=land?Math.min(a,b):Math.max(a,b);
- if(Math.abs(V.W-sW)<=2&&V.H<sH&&sH-V.H<=sH*.2)return{W:V.W,H:sH}}catch(_){}return V};
+ if(Math.abs(V.W-sW)<=2){const lv=lvh(),H=(lv>V.H+1&&lv<=sH+2)?lv:sH;if(V.H<H&&H-V.H<=H*.2){body843(Math.round(H));return{W:V.W,H:Math.round(H)}}}}catch(_){}body843(0);return V};
 G.insets843=()=>{const I=i0();if(!iosSA()||!I)return I;return{t:I.t,r:I.r,b:Math.round(I.b*.4),l:I.l}};
 G.view822=G.view843;G.insets817=G.insets843;
 try{G.fit822()}catch(_){}
-G.fit843ok=1;
+G.fit843ok=1;G.fit844ok=1;
 })();
 ;(()=>{/* r825: difficulty up a little ("too easy, auto clears everything"). Measured first (qa618/bal825sim.js, r825 notes in UX.md): main-stage walls cost the same 0-3 boss tries per stage in every chapter, the 무한의 탑 fight was won at minHp 0.7-0.9 even with power 20% under the floor's 권장 (the first-clear win bypassed C.POW), and 던전 mobs never touched the party. One central table D.BAL.d825 (data.js) now sets enemy HP/ATK only: (1) main stage: per-chapter ramp, boss multipliers per chapter and an extra spike on each chapter-final boss (x-7); applied right after C.spawn, so mobHP/goldKill/expKill/stageReq maths used by rewards, offline gains, raid and world boss stay as they were; (2) 무한의 탑: ATK and HP grow with the floor (up to x1.7) and being under 권장 power now hurts faster (ratio^1.35); (3) 일일 던전: mobs hit harder. Rewards, drops, unlock thresholds, costs, HP formulas of the party, save format: unchanged. 보스 러시 (open-ended score), 월드 보스, 레이드, 전직 시련 untouched. All-ones table = old behaviour. */
 const B=C.B,BL=D.BAL,lerp=(a,b,t)=>a+(b-a)*t;
