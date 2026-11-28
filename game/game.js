@@ -294,7 +294,8 @@ let lastSig='';setInterval(()=>{const s=C.S();if(JSON.stringify(C.spells().map(x
   if(G.screen){document.querySelectorAll('#screen .timer[data-end]').forEach(t=>{const r=(+t.dataset.end-C.now())/1000;t.textContent=tfmt(r);if(r<=0)renderScreen()});if(G.screen=='base'){C.bUpdate()}return}
   const ro=$('#navroll');if(ro)ro.lastChild.textContent;if(!['train','mission'].includes(G.tab)||document.querySelector('.modal'))return;const sig=JSON.stringify([G.tab,s.si,s.maxSi,s.wave,B.boss,s.autoBoss,s.lv,Math.floor(s.exp/C.needExp()*20),D.STATS.map(x=>s.gold>=C.cost(x)),s.mp,s.mc,s.party]);if(sig!==lastSig){lastSig=sig;renderPanel()}},1000);
 let last=performance.now();
-function frame(now){const real=Math.min(.1,(now-last)/1000);last=now;const pace839=(D.BAL&&D.BAL.pace839)>0?D.BAL.pace839:1;let dt=real*G.speed*pace839;if(R.hs>0){R.hs-=real;dt*=.08};if(G.perfOn)try{G.tick837(real)}catch(_){}R.hsRealDt=real;{const ci=!!((R.cut&&R.cut.t<1.25)||(R.ccut&&R.ccut.t<1));if(ci!==G._ci){G._ci=ci;document.body.classList.toggle('cutin',ci)}}while(dt>0){const st=Math.min(.05,dt);C.tick(st);dt-=st}/* r237 perf: an opaque full screen covers the battle - skip canvas drawing (sim untouched; last frame stays underneath) */if(!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&$('#screen').classList.contains('on'))){/* r239 perf: first frame back after a skip - settle the unseen visual backlog instead of drawing it as one burst */if(G._skT>.3&&R.settle)R.settle();G._skT=0;R.frame(real*G.speed*pace839*(R.hs>0?.08:1))}else G._skT=(G._skT||0)+real;try{G.hudBattle832&&G.hudBattle832()}catch(_){};if((G._hT=(G._hT||0)+real)>=1){G._hT=0;updateHud()}requestAnimationFrame(frame)}
+function frame(now){/* r847: stop while hidden; governor skips rAF ticks (60/30 fps) - dt below stays elapsed-time based */if(document.hidden){G._hid847=1;return}if(G.gov847&&G.gov847(now)){requestAnimationFrame(frame);return}const real=Math.min(.1,(now-last)/1000);last=now;const pace839=(D.BAL&&D.BAL.pace839)>0?D.BAL.pace839:1;let dt=real*G.speed*pace839;if(R.hs>0){R.hs-=real;dt*=.08};if(G.perfOn)try{G.tick837(real)}catch(_){}R.hsRealDt=real;{const ci=!!((R.cut&&R.cut.t<1.25)||(R.ccut&&R.ccut.t<1));if(ci!==G._ci){G._ci=ci;document.body.classList.toggle('cutin',ci)}}while(dt>0){const st=Math.min(.05,dt);C.tick(st);dt-=st}/* r237 perf: an opaque full screen covers the battle - skip canvas drawing (sim untouched; last frame stays underneath) */if(!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&$('#screen').classList.contains('on'))){/* r239 perf: first frame back after a skip - settle the unseen visual backlog instead of drawing it as one burst */if(G._skT>.3&&R.settle)R.settle();G._skT=0;R.frame(real*G.speed*pace839*(R.hs>0?.08:1))}else G._skT=(G._skT||0)+real;try{G.hudBattle832&&G.hudBattle832()}catch(_){};if((G._hT=(G._hT||0)+real)>=1){G._hT=0;updateHud()}requestAnimationFrame(frame)}
+G.kick847=()=>{if(!G._hid847)return;G._hid847=0;last=performance.now();requestAnimationFrame(frame)};document.addEventListener('visibilitychange',()=>{if(!document.hidden)G.kick847()});
 (document.fonts?document.fonts.load('700 16px Maplestory').then(()=>document.fonts.ready):Promise.resolve()).catch(()=>{}).then(()=>requestAnimationFrame(frame));
 
 ;(()=>{const SEL='.side a,#mgrid a,#nav a,.sk,#autoSp,#idleBtn,.pill,.btn,#bossBtn,.back';let cur=null;
@@ -3032,6 +3033,35 @@ const st=document.createElement('style');st.textContent=`.gqseg{display:flex;gap
 const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='settings'){const dm=document.querySelector('#screen [data-set="dmg"]');const row=dm&&dm.closest('.row');if(row&&!document.getElementById('gqrow')){const m=S().gq||'auto';row.insertAdjacentHTML('afterend',`<div class=row id=gqrow><div class=f><b>그래픽 품질</b><small class=gqinfo id=gqinfo>${info()}</small></div><div class=gqseg>${M.map(([k,n])=>`<span data-gq=${k} class="${k==m?'on':''}">${n}</span>`).join('')}</div></div>`);
  document.querySelectorAll('#gqrow [data-gq]').forEach(b=>b.onclick=()=>{const s=S();s.gq=b.dataset.gq;localStorage.setItem('slayers_set',JSON.stringify(s));apply();document.querySelectorAll('#gqrow [data-gq]').forEach(x=>x.classList.toggle('on',x===b));const i=document.getElementById('gqinfo');if(i)i.textContent=info()})}}}catch(_){}return r};
 setInterval(()=>{const i=document.getElementById('gqinfo');if(i){const t=info();if(i.textContent!==t)i.textContent=t}},1000);
+})();
+
+;(()=>{/* r847: heat / battery. Measured (headless Chrome 393x852 @3x, SwiftShader, NOT a phone): the battle canvas was redrawn on every rAF at up to the display rate (60 here, possibly 120 on ProMotion) at backing dpr 2 (1.3M px) = ~70M px/s, ~40% of the GPU raster time was one full-screen 'lighter' mote pass (fixed in render.js), the rAF loop ran at full rate even with an opaque menu covering the battle, and it kept going when the page was hidden. Now: a frame governor on the rAF loop (60 fps while you touch / in cut-ins, 30 fps when nothing is happening or a full-screen menu covers the battle, never above 60 on 120 Hz screens), the loop stops while hidden, AQ judges fps against the governed target, and a 프레임 setting (자동 / 60 / 30). Game time is real-time based (dt = elapsed ms), so nothing slows down, idle/offline gains are wall-clock and unchanged. */
+const R=window.RENDER;if(!R||!G)return;const S=()=>G.loadSet();
+const V={mode:'auto',t:-1e9,k:1,c:0,fps:60,ref:16.7,ds:[],pr:0,inT:performance.now(),why:'init',lastTier:0};
+const rd=()=>{try{const m=S().fps;V.mode=m==='60'||m==='30'?m:'auto'}catch(_){V.mode='auto'}};rd();
+const bump=()=>{V.inT=performance.now();if(V.fps<60&&V.mode==='auto'){V.t=-1e9}};
+['pointerdown','pointermove','touchstart','touchmove','keydown','wheel','click'].forEach(e=>window.addEventListener(e,bump,{passive:true,capture:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)bump()});
+/* display refresh interval: median of recent raw rAF gaps (skipped frames count too) */
+const refresh=now=>{if(V.pr){const d=now-V.pr;if(d>2&&d<60){V.ds.push(d);if(V.ds.length>30)V.ds.shift()}}V.pr=now;if(V.ds.length>=8){const a=V.ds.slice().sort((x,y)=>x-y);V.ref=a[a.length>>1]}};
+const covered=()=>{try{return !!(G.screen&&G.screen!=='sim'&&!G.noScrSkip&&document.getElementById('screen').classList.contains('on'))}catch(_){return false}};
+const calc=now=>{let f=60,why='battle';const gq=(S().gq||'auto');
+ if(V.mode==='30'){f=30;why='setting30'}else if(V.mode==='60'){f=60;why='setting60'}
+ else if(gq==='save'){f=30;why='gqsave'}
+ else if(covered()){f=30;why='covered'}
+ else if(now-V.inT<6000||G._ci||R.hs>0){f=60;why=now-V.inT<6000?'touch':'fx'}
+ else{f=30;why='idle'}
+ const ref=Math.max(4,Math.min(40,V.ref));/* vsyncs per rendered frame: nearest to the target without dropping below it by more than ~1/3 vsync (90 Hz+60 -> every vsync, 120 Hz+60 -> every 2nd) */
+ const k=Math.max(1,Math.floor(1000/f/ref+.35));V.k=k;V.fps=f;V.why=why;V.eff=+(1000/(k*ref)).toFixed(1);R._tfps=Math.max(10,Math.round(1000/(k*ref)/5)*5);return k};
+G.gov847=(now)=>{refresh(now);if(now-V.t>=200){V.t=now;calc(now)}if(++V.c<V.k)return true;V.c=0;return false};
+G.gov847i=()=>({mode:V.mode,fps:V.fps,k:V.k,ref:V.ref,eff:V.eff,why:V.why});G.gov847set=m=>{V.mode=m==='60'||m==='30'?m:'auto';V.t=-1e9;V.c=V.k};
+/* 설정 · 프레임 row (after 그래픽 품질) */
+const M=[['auto','자동'],['60','60'],['30','30 절전']];
+const info=()=>{const i=G.gov847i();const cur=`현재 ${Math.round(i.eff||60)}프레임`;return i.mode==='auto'?`터치·연출 중 60, 가만히 두면 30프레임\n${cur}`:i.mode==='60'?`항상 최대 60프레임 (발열 ↑)\n${cur}`:`항상 30프레임 (발열·배터리 ↓)\n${cur}`};
+const rs=renderScreen;renderScreen=function(){const r=rs.apply(this,arguments);try{if(G.screen=='settings'){const gr=document.getElementById('gqrow');if(gr&&!document.getElementById('fprow')){const m=V.mode;gr.insertAdjacentHTML('afterend',`<div class=row id=fprow><div class=f><b>프레임</b><small class=gqinfo id=fpinfo>${info()}</small></div><div class=gqseg>${M.map(([k,n])=>`<span data-fp=${k} class="${k==m?'on':''}">${n}</span>`).join('')}</div></div>`);
+ document.querySelectorAll('#fprow [data-fp]').forEach(b=>b.addEventListener('click',()=>{const s=S();s.fps=b.dataset.fp;try{localStorage.setItem('slayers_set',JSON.stringify(s))}catch(_){}G.gov847set(s.fps);document.querySelectorAll('#fprow [data-fp]').forEach(x=>x.classList.toggle('on',x===b));const i=document.getElementById('fpinfo');if(i)i.textContent=info()}))}}}catch(_){}return r};
+setInterval(()=>{const i=document.getElementById('fpinfo');if(i){const t=info();if(i.textContent!==t)i.textContent=t}},1000);
+G.r847ok=1;
 })();
 
 /* r237 perf: animation replay without forced reflow (alternate identical _b copies of the CSS rules), and cached layout rects for per-kill effects */
