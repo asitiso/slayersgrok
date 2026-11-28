@@ -12091,3 +12091,16 @@ if(or)renderScreen=function(){const r=or.apply(this,arguments);try{
 }catch(_){}return r};
 G.r846ok=1;
 })();
+;(()=>{/* r846b: r846's Lv.1 ult mul (0.22) still wiped the visible pack in chapter 1 (headless: 1-1 on-screen one-shot 90%, ofPct 98.6%) because early trash HP is tiny vs even a reduced x9, and a kept-up 1-1 has ~2x beginner ATK. The user complaint is chapter 1-2 feel, not mid/late. Change: a per-target cap on Lina ultimates (ds/giga) against non-boss field enemies, as a fraction of that enemy's max HP, by skill level (C.R846.ultCap). Lv.1 = 55% (in the 50-65% band), Lv.2-3 = 62/72% so they still cannot wipe the screen, then the cap rises and is lifted at Lv.10 (no cap) so a kept-up 5-1 DS is the old strength. The cap binds only when raw damage (after the r846 mul, crit, freeze) would exceed it, so a no-upgrade mid/late DS that already deals under the fraction is unchanged. Bosses and world bosses are not capped (their r846 mul already leaves them well below 20% early). Enemy HP, costs, S.spl, legacy conversion and non-ult spells are unchanged. */
+const K=C.R846;K.ultCap=[,.55,.62,.72,.82,.90,1,1.2,1.5,2,99];
+C.splUltCap=lv=>{lv=Math.max(1,Math.min(K.max,lv|0));const c=K.ultCap[lv];return c==null?99:+c};
+const oh=C.hitEnemy;C.hitEnemy=function(e,dmg,crit,src){
+  if(e&&e.max>0&&!e.boss&&!e.wb&&src&&(src.sp==='ds'||src.sp==='giga')){
+    let m=1;if(e.st&&e.st.frz&&!(src.dot))m*=1.25;
+    const cap=C.splUltCap(C.splLv(src.sp))*e.max,fin=dmg*m;
+    if(fin>cap&&cap>0)dmg=cap/m;
+  }
+  return oh.call(this,e,dmg,crit,src);
+};
+G.r846bok=1;
+})();
