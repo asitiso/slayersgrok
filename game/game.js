@@ -12151,6 +12151,12 @@ C.lvOld850=E=>{const t=oldTab();let lo=1,hi=401;while(lo<hi){const m=(lo+hi+1)>>
 let inGain=0;
 C.lvStat=()=>{const S=C.S();if(!K.on)return S.lv;if(!inGain&&(S.xp850==null||S.xpL850!==S.lv)){S.xp850=C.cumOld850(S.lv)+(S.exp||0);S.xpL850=S.lv;S.lvS850=S.lv}return S.lvS850==null?S.lv:S.lvS850};
 const og=C.gainExp;
-C.gainExp=function(x){if(!isFinite(x)||!K.on)return og.apply(this,arguments);const S=C.S();C.lvStat();S.xp850+=x;S.lvS850=Math.max(S.lvS850||1,C.lvOld850(S.xp850));inGain=1;try{return og.apply(this,arguments)}finally{inGain=0;S.xpL850=S.lv}};
+C.gainExp=function(x){if(!isFinite(x)||!K.on)return og.apply(this,arguments);const S=C.S();const l0=C.lvStat(),n0=S.lv;S.xp850+=x;S.lvS850=Math.max(S.lvS850||1,C.lvOld850(S.xp850));inGain=1;let r;try{r=og.apply(this,arguments)}finally{inGain=0;S.xpL850=S.lv}if(S.lvS850!==l0&&S.lv===n0&&C.refreshMax)C.refreshMax();/* stat level rose without a displayed level-up: refresh allies' max HP like a level-up used to */return r};
 G.r850ok=1;
+})();
+
+;(()=>{/* r851: r846's C.load hook that writes S.spl={} for new games never ran on boot. C.init() is at the top of game.js, and the hook is an IIFE at the end, so a fresh session kept S.spl undefined. C.splLv then fell through to C.splLegacy(maxSi). Raising maxSi (qa tests, and real play: clearing stages) auto-leveled every Lina spell — Lv.10 from 3-1 — without spending gold or 강화석, the opposite of r846's "grow through upgrades, not automatically." The sudden Lv.10 Dragon Slave also wiped early packs and leaked kill gold into unrelated UI checks (qa618 r717 전체 수확 hair-under grant, r682 편성 card tap "no gold spent"). Fix: apply the same new-game init to the already-booted save. Old saves still without S.spl stay on C.splLegacy. C.load hook, costs, muls, ult cap and legacy conversion are unchanged. Also kept: r850's C.gainExp calls C.refreshMax when the stat level (C.lvStat) rises without a displayed level-up, so ally max HP tracks the stat curve the way a visible level-up already did. */
+const boot=()=>{const S=C.S&&C.S();if(!S||Object.prototype.hasOwnProperty.call(S,'spl'))return;const st=S.stl||{},played=(S.maxSi||0)>0||(S.lv||1)>1||(S.kills||0)>0||(S.si||0)>0||Object.values(st).some(v=>v>0)||(S.gear&&Object.keys(S.gear).length)||(S.party&&S.party.length)||(S.comps&&Object.keys(S.comps).length)||(S.stone||0)>0;if(!played)S.spl={}};
+boot();
+G.r851ok=1;
 })();
