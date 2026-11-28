@@ -11833,7 +11833,7 @@ G.r831ok=1;
     for(const k in tal)ts+=k+(tal[k]||0);
     const cp=s.comps||{};for(const k in cp)cs+=k+cp[k]+','+(clv[k]||0)+','+(csk[k]||0)+','+(cr[k]||0);
     for(const k in fl)cs+='f'+k+fl[k];
-    return [s.lv,s.stl&&s.stl.atk,s.stl&&s.stl.hp,s.stl&&s.stl.def,s.stl&&s.stl.crit,(s.party||[]).join(','),cs,gs,rs,ts,s.title||'',(s.bld&&s.bld.tower&&s.bld.tower.lv)||0,(s.guild&&s.guild.lv)||0,Object.keys((s.guild&&s.guild.don)||{}).length,Object.keys(s.seen||{}).length].join('|')};
+    return [s.lv,(C.lvStat?C.lvStat():s.lv),s.stl&&s.stl.atk,s.stl&&s.stl.hp,s.stl&&s.stl.def,s.stl&&s.stl.crit,(s.party||[]).join(','),cs,gs,rs,ts,s.title||'',(s.bld&&s.bld.tower&&s.bld.tower.lv)||0,(s.guild&&s.guild.lv)||0,Object.keys((s.guild&&s.guild.don)||{}).length,Object.keys(s.seen||{}).length].join('|')};
   let k='',synV,atkV,hpV,powV,codV,relK='',relC={};
   const bust=()=>{k=''};
   const get=()=>{const n=sig();if(n!==k){k=n;synV=atkV=hpV=powV=codV=undefined;relC={};relK=n}return n};
@@ -12048,6 +12048,7 @@ html body .sumhero.r827 .sh827g{position:absolute;left:10px;top:10px;right:auto;
 document.head.appendChild(st);
 G.r845ok=1;
 })();
+
 ;(()=>{/* r846: early Dragon Slave is too strong (t219u) and skills should grow through upgrades, not by themselves (t221u). Audit: Lina spells (D.SPELLS) have no level — damage is C.ATK()*sp.mul*(1+orb 강화)*(crit?2:1)*(aoe&&!ult?.7:1), heal is max*sp.heal*(1+amulet). ds is unlocked at 1-1, cd 30, mul 9, aoe, ult (no 0.7 AoE tax), no mana; job Ⅱ/극 (1.5/2.2) only after Lv.60/150. Auto-spell still prefers fire, but a manual (or lucky auto) cast wipes the on-field pack (CAP 6) from 1-1 through 3-1 (headless: on-field HP 100% removed, ~55-62% of the whole wave because reserves are not hit; boss ~5-13% per cast). Companion skills already have C.skUp (Lv1-10, gold+강화석, +8% ATK per level, r840 x2) — left as-is. Change: (1) every Lina spell starts at a lower base (ults ds/giga even lower) so a Lv1 DS is a strong finisher, not a full-pack wipe; (2) a new optional S.spl skill level (Lv1-10) per spell, diminishing steps, gold+강화석 costs x g840.cost; a kept-up player (upgrades on the C.splKept curve, Lv10 at 5-1) returns to the old mid/late mul (x1.00 at Lv10). Old saves without S.spl use C.splLegacy(maxSi) (Lv10 from 3-1) so mid/late players are not suddenly cut down; the key is only written on the first upgrade (all spells granted at the legacy level, then the one spent). No gems, no summon/price changes, no economy reward changes. */
 const K={max:10,
   base:.40,steps:[.12,.10,.08,.07,.06,.05,.04,.04,.04],
@@ -12121,6 +12122,7 @@ if(or)renderScreen=function(){const r=or.apply(this,arguments);try{
 }catch(_){}return r};
 G.r846ok=1;
 })();
+
 ;(()=>{/* r846b: r846's Lv.1 ult mul (0.22) still wiped the visible pack in chapter 1 (headless: 1-1 on-screen one-shot 90%, ofPct 98.6%) because early trash HP is tiny vs even a reduced x9, and a kept-up 1-1 has ~2x beginner ATK. The user complaint is chapter 1-2 feel, not mid/late. Change: a per-target cap on Lina ultimates (ds/giga) against non-boss field enemies, as a fraction of that enemy's max HP, by skill level (C.R846.ultCap). Lv.1 = 55% (in the 50-65% band), Lv.2-3 = 62/72% so they still cannot wipe the screen, then the cap rises and is lifted at Lv.10 (no cap) so a kept-up 5-1 DS is the old strength. The cap binds only when raw damage (after the r846 mul, crit, freeze) would exceed it, so a no-upgrade mid/late DS that already deals under the fraction is unchanged. Bosses and world bosses are not capped (their r846 mul already leaves them well below 20% early). Enemy HP, costs, S.spl, legacy conversion and non-ult spells are unchanged. */
 const K=C.R846;K.ultCap=[,.55,.62,.72,.82,.90,1,1.2,1.5,2,99];
 C.splUltCap=lv=>{lv=Math.max(1,Math.min(K.max,lv|0));const c=K.ultCap[lv];return c==null?99:+c};
@@ -12133,4 +12135,22 @@ const oh=C.hitEnemy;C.hitEnemy=function(e,dmg,crit,src){
   return oh.call(this,e,dmg,crit,src);
 };
 G.r846bok=1;
+})();
+
+;(()=>{/* r850: 레벨이 너무 빨리 올라 — level-ups were 1 per ~2 min in the first 10 min and 1 per ~3-4 min for the first hour (headless kept-up sim: Lv5 at 10m, Lv11 at 30m, Lv17 at 1h, Lv25 at 2h). Cause: EXP per kill grows 1.24/stage but the EXP to next level only 1.17/level, and early stages last 1-5 min, so levels come ~1.4 per stage; a constant cost multiplier cannot fix that (the level-up RATE depends on the cost growth, not its size), so r840's x2 only shifted levels by ~4. Fix = reshape C.needExp: need = old need (r840 x2 included) x C.R850.mult(Lv). mult = 2.0 at Lv1, +9%/level up to Lv12 (x5.4), then falls 3.5%/level back to x1 at Lv60 (so Lv60 costs 1.31x the old lifetime EXP, about one stage later) and stays x1 beyond. EXP income (kills, bosses, offline, 방치, dungeons, quests) is untouched, they all go through C.gainExp. POWER IS NOT CHANGED: ATK/MAXHP use C.lvStat(), the level the OLD curve gives for the lifetime EXP (S.xp850, kept in C.gainExp; saves without it start from their current Lv/exp), so a kept-up or beginner player has the same ATK/HP/POW at the same EXP as before r850, the displayed Lv simply climbs slower (each Lv is worth more). Existing saves keep their Lv and only the next level-ups are slower. Class unlock (Lv.60 / 150), 신규 미션 Lv goals and rankings use the displayed Lv. No gem/gold/summon/pack/pass change. */
+const K=C.R850={on:1,m0:2,a:.09,L1:12,s:-.035,mf:1};
+C.mult850=L=>{if(!K.on)return 1;const pk=Math.log(K.m0)+K.a*(K.L1-1);return Math.exp(L<=K.L1?Math.log(K.m0)+K.a*(L-1):Math.max(Math.log(K.mf),pk+K.s*(L-K.L1)))};
+const need0=C.needExp;C.needExp0=need0;
+C.needExp=function(){const v=need0.apply(this,arguments);return K.on?Math.max(1,Math.floor(v*C.mult850(C.S().lv))):v};
+/* old curve (before r850) = r840 x cost applied to the base formula */
+let tab=null,tabC=null;
+const cOld=()=>{try{return G.g840&&G.g840.K?G.g840.K().c:1}catch(_){return 1}};
+const oldTab=()=>{const c=cOld(),b=D.BAL.needExp;if(tab&&tabC===c+'|'+b[0]+'|'+b[1])return tab;const t=[0,0];let sum=0;for(let k=1;k<=400;k++){sum+=c===1?Math.floor(b[0]*Math.pow(b[1],k-1)):Math.floor(Math.floor(b[0]*Math.pow(b[1],k-1))*c);t[k+1]=sum}tab=t;tabC=c+'|'+b[0]+'|'+b[1];return t};/* t[L] = lifetime EXP needed to be at old Lv L (t[1]=0) */
+C.cumOld850=L=>{const t=oldTab();return t[Math.max(1,Math.min(401,L|0))]};
+C.lvOld850=E=>{const t=oldTab();let lo=1,hi=401;while(lo<hi){const m=(lo+hi+1)>>1;if(t[m]<=E)lo=m;else hi=m-1}return lo};
+let inGain=0;
+C.lvStat=()=>{const S=C.S();if(!K.on)return S.lv;if(!inGain&&(S.xp850==null||S.xpL850!==S.lv)){S.xp850=C.cumOld850(S.lv)+(S.exp||0);S.xpL850=S.lv;S.lvS850=S.lv}return S.lvS850==null?S.lv:S.lvS850};
+const og=C.gainExp;
+C.gainExp=function(x){if(!isFinite(x)||!K.on)return og.apply(this,arguments);const S=C.S();C.lvStat();S.xp850+=x;S.lvS850=Math.max(S.lvS850||1,C.lvOld850(S.xp850));inGain=1;try{return og.apply(this,arguments)}finally{inGain=0;S.xpL850=S.lv}};
+G.r850ok=1;
 })();
