@@ -12018,3 +12018,76 @@ html body .sumhero.r827 .sh827g{position:absolute;left:10px;top:10px;right:auto;
 document.head.appendChild(st);
 G.r845ok=1;
 })();
+;(()=>{/* r846: early Dragon Slave is too strong (t219u) and skills should grow through upgrades, not by themselves (t221u). Audit: Lina spells (D.SPELLS) have no level — damage is C.ATK()*sp.mul*(1+orb 강화)*(crit?2:1)*(aoe&&!ult?.7:1), heal is max*sp.heal*(1+amulet). ds is unlocked at 1-1, cd 30, mul 9, aoe, ult (no 0.7 AoE tax), no mana; job Ⅱ/극 (1.5/2.2) only after Lv.60/150. Auto-spell still prefers fire, but a manual (or lucky auto) cast wipes the on-field pack (CAP 6) from 1-1 through 3-1 (headless: on-field HP 100% removed, ~55-62% of the whole wave because reserves are not hit; boss ~5-13% per cast). Companion skills already have C.skUp (Lv1-10, gold+강화석, +8% ATK per level, r840 x2) — left as-is. Change: (1) every Lina spell starts at a lower base (ults ds/giga even lower) so a Lv1 DS is a strong finisher, not a full-pack wipe; (2) a new optional S.spl skill level (Lv1-10) per spell, diminishing steps, gold+강화석 costs x g840.cost; a kept-up player (upgrades on the C.splKept curve, Lv10 at 5-1) returns to the old mid/late mul (x1.00 at Lv10). Old saves without S.spl use C.splLegacy(maxSi) (Lv10 from 3-1) so mid/late players are not suddenly cut down; the key is only written on the first upgrade (all spells granted at the legacy level, then the one spent). No gems, no summon/price changes, no economy reward changes. */
+const K={max:10,
+  base:.40,steps:[.12,.10,.08,.07,.06,.05,.04,.04,.04],
+  ultBase:.22,ultSteps:[.18,.14,.12,.10,.08,.06,.04,.03,.03],
+  gold:600,gg:1.55,st0:1,keptSi:28,legSi:14};
+C.R846=K;
+const ult=k=>{const s=D.SPELLS.find(x=>x.k==k);return !!(s&&s.ult)};
+C.splMul=(lv,k)=>{lv=Math.max(1,Math.min(K.max,lv|0));const b=ult(k)?K.ultBase:K.base,st=ult(k)?K.ultSteps:K.steps;let m=b;for(let i=1;i<lv;i++)m+=st[i-1]||0;return m};
+C.splLegacy=()=>Math.min(K.max,Math.max(1,Math.round(1+9*Math.min(1,(C.S().maxSi||0)/K.legSi))));
+C.splKept=si=>Math.min(K.max,Math.max(1,Math.round(1+9*Math.min(1,(si||0)/K.keptSi))));
+C.splLv=k=>{const s=C.S();if(s.spl&&typeof s.spl[k]==='number')return Math.max(1,Math.min(K.max,s.spl[k]|0));if(s.spl)return 1;return C.splLegacy()};
+C.splEnsure=()=>{const s=C.S();if(s.spl)return s.spl;const lv=C.splLegacy();s.spl={};D.SPELLS.forEach(sp=>{s.spl[sp.k]=lv});return s.spl};
+C.splCost=k=>{const n=C.splLv(k),c=(D.BAL&&D.BAL.g840&&+D.BAL.g840.cost>0)?+D.BAL.g840.cost:1;return{g:Math.floor(K.gold*Math.pow(K.gg,n-1)*c),st:Math.ceil(K.st0*n*c)}};
+C.splUp=k=>{const sp=D.SPELLS.find(x=>x.k==k);if(!sp)return 'none';const s=C.S();if(sp.unlock&&(s.maxSi||0)<sp.unlock)return 'lock';const n=C.splLv(k);if(n>=K.max)return 'max';const c=C.splCost(k);if(s.gold<c.g)return 'gold';if((s.stone||0)<c.st)return 'stone';C.splEnsure();s.gold-=c.g;s.stone=(s.stone||0)-c.st;s.spl[k]=n+1;return 'ok'};
+C.splEff=k=>{const sp=D.SPELLS.find(x=>x.k==k),m=C.splMul(C.splLv(k),k);if(!sp)return m;if(sp.heal)return{heal:sp.heal*m,m};if(sp.mul)return{mul:sp.mul*m,aoe:sp.aoe,ult:sp.ult,m};return{m}};
+const ol=C.load;C.load=function(d){const r=ol.apply(this,arguments);const S=C.S();if(d&&!Object.prototype.hasOwnProperty.call(d,'spl')){const st=d.stl||{},played=(d.maxSi||0)>0||(d.lv||1)>1||(d.kills||0)>0||(d.si||0)>0||Object.values(st).some(v=>v>0)||(d.gear&&Object.keys(d.gear).length)||(d.party&&d.party.length)||(d.comps&&Object.keys(d.comps).length)||(d.stone||0)>0;if(played)delete S.spl;else if(!S.spl)S.spl={}}else if(!d&&!S.spl)S.spl={};return r};
+const oc=C.castSpell;const cs=function(sp){if(sp&&(sp.mul||sp.heal)){const m=C.splMul(C.splLv(sp.k),sp.k);if(m!==1){sp=Object.assign({},sp);if(sp.mul)sp.mul*=m;if(sp.heal)sp.heal*=m}}return oc.call(this,sp)};cs.toString=()=>oc.toString();C.castSpell=cs;
+const oe=C.estDPS;if(typeof oe==='function')C.estDPS=function(){const os=C.spells;C.spells=()=>os().map(s=>{const m=C.splMul(C.splLv(s.k),s.k);if(m===1)return s;const c=Object.assign({},s);if(c.mul)c.mul*=m;if(c.heal)c.heal*=m;return c});try{return oe.apply(this,arguments)}finally{C.spells=os}};
+const F=n=>typeof fmt==='function'?fmt(n):String(n);
+const st=document.createElement('style');st.setAttribute('data-r','846');st.textContent=`
+.spl846{margin-top:8px}.spl846 .splr{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.spl846 .splr:last-child{border-bottom:0}.spl846 .splr img.si{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:0 0 40px}
+.spl846 .splr .f{flex:1;min-width:0}.spl846 .splr .f b{display:block;font-size:12px}
+.spl846 .splr .f small{display:block;color:#c8bdd8;font-size:10px}
+.spl846 .splr .pill{flex:0 0 auto;white-space:nowrap}.spl846 .skp .splv{position:absolute;left:4px;top:0;background:#2a1848;color:#ffe27a;font-size:9px;font-weight:900;border-radius:6px;padding:0 4px;z-index:2;box-shadow:0 1px 3px #000}
+.spl846lock{opacity:.7}`;
+document.head.appendChild(st);
+const or=typeof renderScreen==='function'?renderScreen:null;
+if(or)renderScreen=function(){const r=or.apply(this,arguments);try{
+  const sb=typeof $==='function'?$('#screen'):document.getElementById('screen');
+  if(!sb||G.screen!=='enhance'||G.enTab!=='skill')return r;
+  const s=C.S(),A0=(typeof A!=='undefined'?A:'assets/');
+  sb.querySelectorAll('.skp[data-sl]').forEach(p=>{
+    if(p.querySelector('.splv'))return;
+    const k=p.dataset.sl,lv=C.splLv(k),tag=document.createElement('span');
+    tag.className='splv';tag.textContent='Lv.'+lv;p.style.position=p.style.position||'relative';p.appendChild(tag);
+    const g=p.querySelector('.stg');if(g&&!p.classList.contains('lock')){
+      const e=C.splEff(k),bit=e.heal!=null?('회복 '+Math.round(e.heal*100)+'%'):(e.mul!=null?('×'+e.mul.toFixed(1)+(e.aoe?' 광역':'')):'');
+      const im=g.querySelector('img');g.textContent='';if(im)g.appendChild(im);g.appendChild(document.createTextNode('쿨 '+(D.SPELLS.find(x=>x.k==k)||{}).cd+'초 · Lv.'+lv+(bit?' · '+bit:'')));
+    }
+  });
+  if(sb.querySelector('.spl846'))return r;
+  const box=document.createElement('div');box.className='card spl846';
+  const ttl=document.createElement('div');ttl.className='ttl';ttl.innerHTML='스킬 강화 <small>강화할수록 위력이 커집니다 · 골드·강화석</small>';box.appendChild(ttl);
+  D.SPELLS.forEach(sp=>{
+    const row=document.createElement('div');row.className='splr'+(sp.unlock&&s.maxSi<sp.unlock?' spl846lock':'');
+    const img=document.createElement('img');img.className='si';img.src=A0+sp.img;row.appendChild(img);
+    const f=document.createElement('div');f.className='f';
+    const lv=C.splLv(sp.k),m=C.splMul(lv,sp.k),nx=lv<K.max?C.splMul(lv+1,sp.k):m;
+    const now=sp.heal!=null?('회복 '+Math.round(sp.heal*m*100)+'%'):(sp.mul?('위력 ×'+(sp.mul*m).toFixed(1)):'');
+    const nxt=lv<K.max?(sp.heal!=null?(' → '+Math.round(sp.heal*nx*100)+'%'):(sp.mul?(' → ×'+(sp.mul*nx).toFixed(1)):'')):'';
+    const b=document.createElement('b');b.textContent=sp.n+'  Lv.'+lv+(lv>=K.max?' MAX':'');f.appendChild(b);
+    const sm=document.createElement('small');
+    if(sp.unlock&&s.maxSi<sp.unlock)sm.textContent=C.stageName(sp.unlock)+' 해금';
+    else sm.textContent=now+nxt+'  (기본 대비 '+Math.round(m*100)+'%)';
+    f.appendChild(sm);row.appendChild(f);
+    const pill=document.createElement('span');
+    if(sp.unlock&&s.maxSi<sp.unlock){pill.className='pill off';pill.textContent='미해금'}
+    else if(lv>=K.max){pill.className='pill off';pill.textContent='MAX'}
+    else{
+      const c=C.splCost(sp.k),ok=s.gold>=c.g&&(s.stone||0)>=c.st;
+      pill.className='pill green'+(ok?'':' off');
+      const gi=document.createElement('img');gi.className='ci';gi.src=A0+'it2_gold.png';
+      const si=document.createElement('img');si.className='ci';si.src=A0+'it2_stone.png';
+      pill.appendChild(document.createTextNode('강화 '));pill.appendChild(gi);pill.appendChild(document.createTextNode(F(c.g)+' '));pill.appendChild(si);pill.appendChild(document.createTextNode(String(c.st)));
+      pill.addEventListener('click',ev=>{ev.preventDefault();ev.stopPropagation();const q=C.splUp(sp.k);const msg={ok:'스킬 강화 성공!',gold:'골드가 부족합니다',stone:'강화석이 부족합니다',max:'최대 레벨',lock:'아직 해금되지 않았습니다'}[q]||'';if(typeof toast==='function')toast(msg);try{if(typeof updateHud==='function')updateHud()}catch(_){ }renderScreen()});
+    }
+    row.appendChild(pill);box.appendChild(row);
+  });
+  const pick=sb.querySelector('.skpick');if(pick&&pick.parentNode)pick.parentNode.appendChild(box);else sb.appendChild(box);
+}catch(_){}return r};
+G.r846ok=1;
+})();
