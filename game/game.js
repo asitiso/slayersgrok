@@ -11480,9 +11480,9 @@ body:is(.nofx,.tglite,.fxoff) .sc827sp{display:none!important}
 body:is(.nofx,.tglite,.fxoff) .sumcin.r827 .scf{opacity:.7}
 .sumhero.r827 .shr{background:none!important}
 .sumhero.r827 .shr img{width:100%;height:100%;object-fit:contain;animation:scSpin 18s linear infinite;opacity:.85;pointer-events:none}
-.sumhero.r827 .sh827g{position:absolute;inset:10px;width:auto;height:auto;object-fit:fill;pointer-events:none;z-index:2;opacity:.95}
+.sumhero.r827 .sh827g{position:absolute;left:10px;top:10px;width:calc(100% - 20px);height:calc(100% - 20px);max-width:none;max-height:none;object-fit:fill;object-position:center;pointer-events:none;z-index:2;opacity:.95}
 body:is(.nofx,.tglite,.fxoff) .sumhero.r827 .shr img{animation:none!important}
-#sumModal .srf .sg827{position:absolute;inset:-18% -14%;width:auto;height:auto;object-fit:fill;pointer-events:none;z-index:0;opacity:0;transform:scale(.92)}
+#sumModal .srf .sg827{position:absolute;left:-14%;top:-18%;right:auto;bottom:auto;width:128%;height:136%;max-width:none;max-height:none;object-fit:fill;object-position:center;pointer-events:none;z-index:0;opacity:0;transform:scale(.92);transform-origin:50% 50%}
 #sumModal .srf.open .sg827{opacity:.95;transform:none;transition:opacity .25s,transform .25s}
 #sumModal .srf.it827 .srbu{display:none}
 #sumModal .sumcard.it827{background:radial-gradient(circle at 50% 35%,#3a2a10,#140a20)!important;border-color:#e8d080!important}
@@ -12010,4 +12010,11 @@ const card=(title,sub,hint)=>{try{if(G.screen)return;document.querySelectorAll('
 {const of=C.ev.fail;C.ev.fail=function(){const r=of&&of.apply(this,arguments);try{const h=G.hint842();G.last842={boss:1,h};const put=()=>{const v=document.querySelector('.vic.lose:not(.w842) .vn');if(v){v.textContent=h.text;return 1}};if(!put()){setTimeout(put,120);setTimeout(put,900)}}catch(_){}return r}}
 /* first field wipe: the old toast stays (wave 0, full HP); suppress nothing else */
 G.r842ok=1;
+})();
+;(()=>{/* r845: 소환 결과 카드의 장식 광원 테두리(glow_*.webp, .sg827)가 카드 오른쪽·아래로 어긋나 보였음. 원인: r827이 img를 position:absolute + inset:-18% -14% + width/height:auto 로 놓음. 교체 요소(img)는 width:auto 일 때 고유 크기(272×360)를 쓰고 left/top만 반영해 right/bottom(늘리기)을 무시한다. 1회 결과(.srf.one 150×225)에서 테두리가 272×360으로 나와 가로 약 +40px·세로 +27px 밀림. iOS 홈 화면만이 아니라 모든 화면(헤드리스 390×844·393×852 모두 재현). r843/r844 화면 맞춤과는 무관. 고침: 테두리를 부모(.srf) 기준 left:-14%; top:-18%; width:128%; height:136% 로 명시해 카드 한가운데에 맞춘다(1회·10회, 어떤 배율이든). 동료 공개 화면(.sh827g)도 같은 이유로 calc(100% - 20px)를 명시. 표시만, 소환 확률·보상·저장 변경 없음. */
+const st=document.createElement('style');st.setAttribute('data-r','845');
+st.textContent=`html body #sumModal .srf .sg827,html body .srm .srf .sg827{position:absolute;left:-14%;top:-18%;right:auto;bottom:auto;width:128%;height:136%;max-width:none;max-height:none;object-fit:fill;object-position:center;transform-origin:50% 50%}
+html body .sumhero.r827 .sh827g{position:absolute;left:10px;top:10px;right:auto;bottom:auto;width:calc(100% - 20px);height:calc(100% - 20px);max-width:none;max-height:none;object-fit:fill;object-position:center}`;
+document.head.appendChild(st);
+G.r845ok=1;
 })();
