@@ -11386,6 +11386,18 @@ try{if(/[?&]fit\b/.test(location.search)){const d=doc.createElement('div');d.id=
 G.fit822();burst();
 G.fit822ok=1;G._fit817orig=f817;
 })();
+;(()=>{/* r843: iPhone home-screen app showed the game small (about 82% wide x 82% tall, black bands: top ~7%, bottom ~11%). Cause: on iOS standalone (black-translucent, viewport-fit=cover) the page really covers the whole screen and env(safe-area-inset-*) is measured from the screen edge, but window.innerHeight (and the fixed probe) can come back SHORTER than the screen by about the status-bar height (793 on a 393x852 phone). r822 fit took the smallest height it could find and r817 then subtracted the top/bottom safe insets again, so the status bar was counted twice: scale 0.829 instead of 0.899, stage 700 tall instead of 759, bottom band 93 instead of 34. Fix (display only): (1) on iOS standalone the visible box is the real screen (screen.width x screen.height, swapped when landscape) when the window is full-width and the measured height is shorter by at most 20% — G.view843; (2) there only 40% of the bottom inset (home-indicator strip, nav has its own 8px padding) is reserved, top inset (status bar / Dynamic Island) in full — G.insets843; Safari tabs, Android, desktop: unchanged. Gameplay, economy, saves, layout proportions: unchanged. */
+const doc=document,root=doc.documentElement;
+const iosSA=()=>{try{const u=navigator.userAgent||'';return navigator.standalone===true&&(/iPad|iPhone|iPod/.test(u)||(/Macintosh/.test(u)&&(navigator.maxTouchPoints||0)>1))}catch(_){return false}};
+G.iosSA843=iosSA;
+const v0=G.view822,i0=G.insets817;
+G.view843=()=>{const V=v0();if(!iosSA())return V;try{const a=screen.width,b=screen.height;if(!(a>=200&&b>=200))return V;const land=innerWidth>innerHeight,sW=land?Math.max(a,b):Math.min(a,b),sH=land?Math.min(a,b):Math.max(a,b);
+ if(Math.abs(V.W-sW)<=2&&V.H<sH&&sH-V.H<=sH*.2)return{W:V.W,H:sH}}catch(_){}return V};
+G.insets843=()=>{const I=i0();if(!iosSA()||!I)return I;return{t:I.t,r:I.r,b:Math.round(I.b*.4),l:I.l}};
+G.view822=G.view843;G.insets817=G.insets843;
+try{G.fit822()}catch(_){}
+G.fit843ok=1;
+})();
 ;(()=>{/* r825: difficulty up a little ("too easy, auto clears everything"). Measured first (qa618/bal825sim.js, r825 notes in UX.md): main-stage walls cost the same 0-3 boss tries per stage in every chapter, the 무한의 탑 fight was won at minHp 0.7-0.9 even with power 20% under the floor's 권장 (the first-clear win bypassed C.POW), and 던전 mobs never touched the party. One central table D.BAL.d825 (data.js) now sets enemy HP/ATK only: (1) main stage: per-chapter ramp, boss multipliers per chapter and an extra spike on each chapter-final boss (x-7); applied right after C.spawn, so mobHP/goldKill/expKill/stageReq maths used by rewards, offline gains, raid and world boss stay as they were; (2) 무한의 탑: ATK and HP grow with the floor (up to x1.7) and being under 권장 power now hurts faster (ratio^1.35); (3) 일일 던전: mobs hit harder. Rewards, drops, unlock thresholds, costs, HP formulas of the party, save format: unchanged. 보스 러시 (open-ended score), 월드 보스, 레이드, 전직 시련 untouched. All-ones table = old behaviour. */
 const B=C.B,BL=D.BAL,lerp=(a,b,t)=>a+(b-a)*t;
 G.d825=i=>{const T=BL.d825.ch,c=Math.max(0,Math.min(T.length-1,Math.floor(i/7))),r=T[c],k=(((i%7)+7)%7)/6,hp=lerp(r[0],r[1],k),at=lerp(r[2],r[3],k),fin=i%7==6;return{fh:hp,fa:at,bh:hp*r[4]*(fin?r[6]:1),ba:at*r[5]*(fin?r[7]:1)}};
